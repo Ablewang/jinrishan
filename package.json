@@ -2,10 +2,12 @@
   "name": "jinrishan",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter web build"
+    "dev": "concurrently -n api,web -c blue,green \"pnpm --filter api dev\" \"pnpm --filter web dev\"",
+    "build": "pnpm --filter web build",
+    "deploy": "pnpm --filter api run deploy"
   },
   "devDependencies": {
+    "concurrently": "^9.0.0",
     "typescript": "~5.9.3"
   }
 }
