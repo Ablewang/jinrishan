@@ -9,6 +9,7 @@ type Recipe = {
   id: number
   name: string                  // 红烧肉
   description: string           // 简短描述
+  images: string[]              // 菜谱图片（多张）
 
   // 分类维度
   cuisine: Cuisine              // 菜系：家常 / 川 / 粤 / 湘 / 苏 / 东北 ...
@@ -47,7 +48,7 @@ type Ingredient = {
 type Step = {
   order: number       // 步骤序号
   description: string // 热锅冷油，放入姜片爆香
-  image?: string      // 步骤配图（可选）
+  images: string[]    // 步骤配图（多张）
   duration?: number   // 这一步耗时（分钟，可选）
 }
 ```
@@ -82,17 +83,4 @@ type Step = {
 确认周计划 → 汇总食材 → 买菜清单
 ```
 
----
-
-## 待定义的枚举值
-
-```ts
-type Cuisine = '家常' | '川菜' | '粤菜' | '湘菜' | '苏菜' | '东北菜' | '西餐' | '日料' | '快手菜'
-type Category = '主菜' | '素菜' | '汤羹' | '主食' | '小吃' | '早餐点心'
-type MealType = '早餐' | '午餐' | '晚餐'
-type ProteinType = '猪肉' | '牛肉' | '羊肉' | '鸡肉' | '鱼虾' | '蛋奶' | '豆制品' | '纯素'
-type Flavor = '咸鲜' | '辣' | '清淡' | '酸甜' | '香浓' | '酸辣'
-type CookingMethod = '爆炒' | '红烧' | '清蒸' | '炖煮' | '凉拌' | '烤' | '煎' | '煮'
-type NutritionTag = '高蛋白' | '低脂' | '补钙' | '粗粮' | '少油少盐' | '清热' | '滋补'
-type Season = '春' | '夏' | '秋' | '冬' | '全年'
-```
+> 枚举值的定义与管理见 [enum-config.md](./enum-config.md)
