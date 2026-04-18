@@ -48,7 +48,7 @@ export default function App() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && addTodo()}
-          placeholder="添加待办..."
+          placeholder="记录今日膳食..."
         />
         <button onClick={addTodo}>添加</button>
       </div>
