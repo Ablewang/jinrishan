@@ -42,7 +42,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>今日山</h1>
+      <h1>今日膳</h1>
       <div className="input-row">
         <input
           value={input}
