@@ -1,0 +1,24 @@
+import { apiFetch } from './client'
+import type { Recipe, PagedResult } from '../types'
+
+export const adminRecipesApi = {
+  list: (params?: { cuisine?: string; keyword?: string; page?: number; limit?: number }) => {
+    const qs = new URLSearchParams()
+    if (params?.cuisine) qs.set('cuisine', params.cuisine)
+    if (params?.keyword) qs.set('keyword', params.keyword)
+    qs.set('page', String(params?.page ?? 1))
+    qs.set('limit', String(params?.limit ?? 20))
+    return apiFetch<PagedResult<Recipe>>('/api/admin/recipes?' + qs)
+  },
+
+  get: (id: number) => apiFetch<Recipe>(`/api/admin/recipes/${id}`),
+
+  create: (data: Partial<Recipe> & { ingredients?: Recipe['ingredients']; steps?: Recipe['steps'] }) =>
+    apiFetch<Recipe>('/api/admin/recipes', { method: 'POST', body: JSON.stringify(data) }),
+
+  update: (id: number, data: Partial<Recipe> & { ingredients?: Recipe['ingredients']; steps?: Recipe['steps'] }) =>
+    apiFetch<Recipe>(`/api/admin/recipes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  delete: (id: number) =>
+    apiFetch(`/api/admin/recipes/${id}`, { method: 'DELETE' }),
+}

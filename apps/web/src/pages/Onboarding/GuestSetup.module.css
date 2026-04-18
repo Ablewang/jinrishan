@@ -1,0 +1,85 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 24px 24px;
+  background: linear-gradient(160deg, #fff8f0 0%, #fff 60%);
+}
+
+.header {
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #e67e22;
+  margin: 0;
+}
+
+.sub {
+  color: #888;
+  margin: 6px 0 0;
+  font-size: 15px;
+}
+
+.step h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 8px;
+}
+
+.hint {
+  color: #999;
+  font-size: 13px;
+  margin: 0 0 24px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.tag {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tag.selected {
+  border-color: #e67e22;
+  background: #fff3e0;
+  color: #e67e22;
+  font-weight: 500;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.skip {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #bbb;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}

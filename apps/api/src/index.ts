@@ -1,47 +1,34 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import auth from './routes/auth'
+import enums from './routes/enums'
+import recipes from './routes/recipes'
+import families from './routes/families'
+import preferences from './routes/preferences'
+import events from './routes/events'
+import recommend from './routes/recommend'
+import plans from './routes/plans'
+import shopping from './routes/shopping'
+import bot from './routes/bot'
+import admin from './routes/admin'
+import type { AppContext } from './types'
 
-type Bindings = { DB: D1Database }
-
-const app = new Hono<{ Bindings: Bindings }>()
+const app = new Hono<AppContext>()
 
 app.use('/api/*', cors())
 
-app.get('/api/todos', async (c) => {
-  const { results } = await c.env.DB.prepare(
-    'SELECT * FROM todos ORDER BY created_at DESC'
-  ).all()
-  return c.json(results)
-})
+app.route('/api/auth', auth)
+app.route('/api/enums', enums)
+app.route('/api/recipes', recipes)
+app.route('/api/families', families)
+app.route('/api/families', preferences)
+app.route('/api/events', events)
+app.route('/api/recommend', recommend)
+app.route('/api/plans', plans)
+app.route('/api/shopping', shopping)
+app.route('/api/bot', bot)
+app.route('/api/admin', admin)
 
-app.post('/api/todos', async (c) => {
-  const { title } = await c.req.json<{ title: string }>()
-  if (!title?.trim()) return c.json({ error: 'title required' }, 400)
-  const { meta } = await c.env.DB.prepare(
-    'INSERT INTO todos (title) VALUES (?)'
-  ).bind(title.trim()).run()
-  const todo = await c.env.DB.prepare(
-    'SELECT * FROM todos WHERE id = ?'
-  ).bind(meta.last_row_id).first()
-  return c.json(todo, 201)
-})
-
-app.patch('/api/todos/:id', async (c) => {
-  const id = Number(c.req.param('id'))
-  const { done } = await c.req.json<{ done: boolean }>()
-  await c.env.DB.prepare(
-    'UPDATE todos SET done = ? WHERE id = ?'
-  ).bind(done ? 1 : 0, id).run()
-  const todo = await c.env.DB.prepare(
-    'SELECT * FROM todos WHERE id = ?'
-  ).bind(id).first()
-  return c.json(todo)
-})
-
-app.delete('/api/todos/:id', async (c) => {
-  const id = Number(c.req.param('id'))
-  await c.env.DB.prepare('DELETE FROM todos WHERE id = ?').bind(id).run()
-  return c.json({ ok: true })
-})
+app.get('/health', (c) => c.json({ ok: true }))
 
 export default app

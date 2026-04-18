@@ -1,0 +1,115 @@
+.page {
+  min-height: 100dvh;
+  padding: 24px;
+  background: #fff;
+}
+
+.back {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 8px;
+}
+
+.sub {
+  color: #999;
+  font-size: 14px;
+  margin: 0 0 40px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.prefix {
+  padding: 14px 12px;
+  color: #666;
+  font-size: 15px;
+  border-right: 1px solid #e0e0e0;
+  background: #f8f8f8;
+}
+
+.input {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: transparent;
+}
+
+.codeInput {
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  width: 100%;
+  letter-spacing: 4px;
+  text-align: center;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+.hint {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.devHint {
+  color: #e67e22;
+  font-size: 13px;
+  background: #fff8f0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 13px;
+  margin: 0;
+}
+
+.btn {
+  padding: 14px;
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  background: #f0c898;
+  cursor: not-allowed;
+}
+
+.resend {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+}

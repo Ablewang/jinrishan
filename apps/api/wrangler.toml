@@ -2,6 +2,9 @@ name = "jinrishan-api"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 
+[vars]
+ENV = "development"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "jinrishan"

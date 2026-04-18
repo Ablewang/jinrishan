@@ -1,0 +1,151 @@
+.loading {
+  padding: 60px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.typeList {
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+
+.typeItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.typeItem:last-child {
+  border-bottom: none;
+}
+
+.typeItem:hover {
+  background: #fafaf8;
+  color: var(--text);
+}
+
+.typeItemActive {
+  background: var(--primary-light) !important;
+  color: var(--primary) !important;
+  font-weight: 600;
+  border-right: 3px solid var(--primary);
+}
+
+.typeCount {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: #f0f0ee;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.editor {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+
+.editorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.editorTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.valueList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.valueRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.valueInput {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+}
+
+.labelInput {
+  flex: 1.5;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+}
+
+.valueInput:focus, .labelInput:focus {
+  border-color: var(--primary);
+}
+
+.removeBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f5f5;
+  color: var(--text-muted);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.removeBtn:hover {
+  background: #ffe0df;
+  color: var(--danger);
+}
+
+.addBtn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1.5px dashed var(--primary);
+  background: #fff;
+  color: var(--primary);
+  font-size: 13px;
+  cursor: pointer;
+}

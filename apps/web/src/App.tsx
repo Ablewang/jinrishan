@@ -1,65 +1,47 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { AuthProvider, useAuth } from './store/auth'
+import Layout from './layouts/Layout'
+import GuestSetup from './pages/Onboarding/GuestSetup'
+import Login from './pages/Auth/Login'
+import Home from './pages/Home'
+import RecipeDetail from './pages/Recipe/RecipeDetail'
+import WeeklyPlan from './pages/WeeklyPlan'
+import Shopping from './pages/Shopping'
+import Bot from './pages/Bot'
+import Settings from './pages/Settings'
+import FamilyCreate from './pages/Family/Create'
+import FamilyJoin from './pages/Family/Join'
 
-type Todo = { id: number; title: string; done: number; created_at: string }
-
-const API = (import.meta.env.VITE_API_BASE as string | undefined) ?? ''
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { user, isLoading } = useAuth()
+  const location = useLocation()
+  if (isLoading) return null
+  if (!user) return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />
+  return <>{children}</>
+}
 
 export default function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
-  const [input, setInput] = useState('')
-
-  useEffect(() => {
-    fetch(`${API}/api/todos`).then(r => r.json()).then(setTodos)
-  }, [])
-
-  async function addTodo() {
-    if (!input.trim()) return
-    const res = await fetch(`${API}/api/todos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: input.trim() }),
-    })
-    const todo = await res.json() as Todo
-    setTodos(prev => [todo, ...prev])
-    setInput('')
-  }
-
-  async function toggleTodo(todo: Todo) {
-    const res = await fetch(`${API}/api/todos/${todo.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ done: !todo.done }),
-    })
-    const updated = await res.json() as Todo
-    setTodos(prev => prev.map(t => t.id === updated.id ? updated : t))
-  }
-
-  async function deleteTodo(id: number) {
-    await fetch(`${API}/api/todos/${id}`, { method: 'DELETE' })
-    setTodos(prev => prev.filter(t => t.id !== id))
-  }
-
   return (
-    <div className="app">
-      <h1>今日膳</h1>
-      <div className="input-row">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && addTodo()}
-          placeholder="记录今日膳食..."
-        />
-        <button onClick={addTodo}>添加</button>
-      </div>
-      <ul>
-        {todos.map(todo => (
-          <li key={todo.id} className={todo.done ? 'done' : ''}>
-            <span onClick={() => toggleTodo(todo)}>{todo.title}</span>
-            <button onClick={() => deleteTodo(todo.id)}>×</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/onboarding" element={<GuestSetup />} />
+          <Route path="/auth/login" element={<Login />} />
+
+          <Route element={<Layout />}>
+            <Route index element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
+            <Route path="/plan" element={<RequireAuth><WeeklyPlan /></RequireAuth>} />
+            <Route path="/shopping/:id" element={<RequireAuth><Shopping /></RequireAuth>} />
+            <Route path="/bot" element={<RequireAuth><Bot /></RequireAuth>} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/family/create" element={<RequireAuth><FamilyCreate /></RequireAuth>} />
+            <Route path="/family/join" element={<RequireAuth><FamilyJoin /></RequireAuth>} />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }

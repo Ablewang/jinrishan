@@ -1,0 +1,62 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --primary: #e67e22;
+  --primary-light: #fdf3e8;
+  --primary-dark: #c0642a;
+  --success: #2e7d4f;
+  --danger: #e74c3c;
+  --text: #1a1a1a;
+  --text-secondary: #666;
+  --text-muted: #999;
+  --border: #e0e0e0;
+  --bg: #f8f8f6;
+  --surface: #fff;
+  --sidebar-width: 220px;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+}
+
+button { cursor: pointer; font-family: inherit; font-size: 14px; }
+input, select, textarea { font-family: inherit; font-size: 14px; }
+a { color: inherit; }
+h1, h2, h3, h4 { margin: 0; }
+
+.btn-primary {
+  padding: 8px 18px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  padding: 8px 18px;
+  background: #fff;
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-danger {
+  padding: 8px 18px;
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
