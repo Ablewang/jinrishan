@@ -1,0 +1,67 @@
+#root {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.input-row button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+li span {
+  cursor: pointer;
+  flex: 1;
+}
+
+li.done span {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+li button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.4;
+  padding: 0 0.25rem;
+}
+
+li button:hover {
+  opacity: 1;
+}
