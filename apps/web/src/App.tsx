@@ -3,17 +3,19 @@ import './App.css'
 
 type Todo = { id: number; title: string; done: number; created_at: string }
 
+const API = (import.meta.env.VITE_API_BASE as string | undefined) ?? ''
+
 export default function App() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [input, setInput] = useState('')
 
   useEffect(() => {
-    fetch('/api/todos').then(r => r.json()).then(setTodos)
+    fetch(`${API}/api/todos`).then(r => r.json()).then(setTodos)
   }, [])
 
   async function addTodo() {
     if (!input.trim()) return
-    const res = await fetch('/api/todos', {
+    const res = await fetch(`${API}/api/todos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title: input.trim() }),
@@ -24,7 +26,7 @@ export default function App() {
   }
 
   async function toggleTodo(todo: Todo) {
-    const res = await fetch(`/api/todos/${todo.id}`, {
+    const res = await fetch(`${API}/api/todos/${todo.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ done: !todo.done }),
@@ -34,7 +36,7 @@ export default function App() {
   }
 
   async function deleteTodo(id: number) {
-    await fetch(`/api/todos/${id}`, { method: 'DELETE' })
+    await fetch(`${API}/api/todos/${id}`, { method: 'DELETE' })
     setTodos(prev => prev.filter(t => t.id !== id))
   }
 

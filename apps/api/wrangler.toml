@@ -5,5 +5,5 @@ compatibility_date = "2024-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "jinrishan"
-database_id = "placeholder-replace-after-cf-create"
+database_id = "522c66b3-b556-418c-9e2b-e8b88ac1905c"
 migrations_dir = "migrations"
