@@ -30,6 +30,9 @@ type Recipe = {
   cook_time: number             // 烹饪时间（分钟）
   difficulty: 'easy' | 'medium' | 'hard'
 
+  // 烹饪步骤
+  steps: Step[]
+
   // 营养方向（不计算卡路里，只做定性）
   nutrition_tags: NutritionTag[] // 高蛋白 / 低脂 / 补钙 / 粗粮 / 少油少盐
   season: Season[]               // 适合季节：春 / 夏 / 秋 / 冬 / 全年
@@ -39,6 +42,13 @@ type Ingredient = {
   name: string      // 五花肉
   amount: string    // 500g
   category: string  // 肉类 / 蔬菜 / 调料 / 主食
+}
+
+type Step = {
+  order: number       // 步骤序号
+  description: string // 热锅冷油，放入姜片爆香
+  image?: string      // 步骤配图（可选）
+  duration?: number   // 这一步耗时（分钟，可选）
 }
 ```
 
