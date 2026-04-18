@@ -1,18 +1,20 @@
 import { Hono } from 'hono'
-import { handle } from 'hono/cloudflare-pages'
+import { cors } from 'hono/cors'
 
 type Bindings = { DB: D1Database }
 
-const app = new Hono<{ Bindings: Bindings }>().basePath('/api')
+const app = new Hono<{ Bindings: Bindings }>()
 
-app.get('/todos', async (c) => {
+app.use('/api/*', cors())
+
+app.get('/api/todos', async (c) => {
   const { results } = await c.env.DB.prepare(
     'SELECT * FROM todos ORDER BY created_at DESC'
   ).all()
   return c.json(results)
 })
 
-app.post('/todos', async (c) => {
+app.post('/api/todos', async (c) => {
   const { title } = await c.req.json<{ title: string }>()
   if (!title?.trim()) return c.json({ error: 'title required' }, 400)
   const { meta } = await c.env.DB.prepare(
@@ -24,7 +26,7 @@ app.post('/todos', async (c) => {
   return c.json(todo, 201)
 })
 
-app.patch('/todos/:id', async (c) => {
+app.patch('/api/todos/:id', async (c) => {
   const id = Number(c.req.param('id'))
   const { done } = await c.req.json<{ done: boolean }>()
   await c.env.DB.prepare(
@@ -36,10 +38,10 @@ app.patch('/todos/:id', async (c) => {
   return c.json(todo)
 })
 
-app.delete('/todos/:id', async (c) => {
+app.delete('/api/todos/:id', async (c) => {
   const id = Number(c.req.param('id'))
   await c.env.DB.prepare('DELETE FROM todos WHERE id = ?').bind(id).run()
   return c.json({ ok: true })
 })
 
-export const onRequest = handle(app)
+export default app
