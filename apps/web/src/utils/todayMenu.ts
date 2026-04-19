@@ -31,6 +31,8 @@ export function clearMealFromMenu(mealType: 'breakfast' | 'lunch' | 'dinner') {
   delete data.meals[mealType]
   sessionStorage.setItem(KEY, JSON.stringify(data))
 }
+
+export function setMealInMenu(mealType: 'breakfast' | 'lunch' | 'dinner', entry: TodayMealEntry) {
   const data = getTodayMenu()
   data.meals[mealType] = entry
   sessionStorage.setItem(KEY, JSON.stringify(data))
