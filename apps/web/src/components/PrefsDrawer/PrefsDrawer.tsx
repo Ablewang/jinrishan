@@ -3,6 +3,9 @@ import styles from './PrefsDrawer.module.css'
 
 interface Prefs {
   liked_cuisines: string[]
+  liked_ingredients: string[]
+  disliked_cuisines: string[]
+  disliked_ingredients: string[]
   liked_flavors: string[]
   disliked_flavors: string[]
   allergies: string[]

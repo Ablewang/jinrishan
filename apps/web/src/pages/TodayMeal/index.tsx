@@ -90,11 +90,11 @@ function RecipePanel({ recipe }: { recipe: Recipe }) {
           {recipe.cuisine && <><span className={styles.metaDot}>·</span><span>{recipe.cuisine}</span></>}
         </div>
 
-        {recipe.ingredients?.length > 0 && (
+        {(recipe.ingredients?.length ?? 0) > 0 && (
           <div className={styles.block}>
             <h3 className={styles.blockTitle}>食材</h3>
             <div className={styles.ingredientGrid}>
-              {recipe.ingredients.map((ing, i) => (
+              {recipe.ingredients?.map((ing, i) => (
                 <div key={i} className={styles.ingredient}>
                   <span className={styles.ingName}>{ing.name}</span>
                   <span className={styles.ingAmount}>{ing.amount}</span>
@@ -104,10 +104,10 @@ function RecipePanel({ recipe }: { recipe: Recipe }) {
           </div>
         )}
 
-        {recipe.steps?.length > 0 && (
+        {(recipe.steps?.length ?? 0) > 0 && (
           <div className={styles.block}>
             <h3 className={styles.blockTitle}>步骤</h3>
-            {recipe.steps.map(step => (
+            {recipe.steps?.map(step => (
               <div key={step.step_order} className={styles.step}>
                 <div className={styles.stepNum}>{step.step_order}</div>
                 <div className={styles.stepContent}>

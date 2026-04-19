@@ -16,7 +16,7 @@ interface Props {
 const MEAL_TYPES = ['breakfast', 'lunch', 'dinner']
 const MEAL_LABELS: Record<string, string> = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' }
 
-export default function DayDrawer({ date, dateLabel, familyId, existingRecipeIds, onAdd, onClose }: Props) {
+export default function DayDrawer({ date: _date, dateLabel, familyId, existingRecipeIds, onAdd, onClose }: Props) {
   const [activeMeal, setActiveMeal] = useState(0)
   const [recipesByMeal, setRecipesByMeal] = useState<Record<string, Recipe[]>>({})
   const [selectedByMeal, setSelectedByMeal] = useState<Record<string, Set<number>>>({})

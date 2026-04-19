@@ -34,7 +34,7 @@ function saveToStorage(state: Pick<TodayMenuState, 'date' | 'meals'>) {
   sessionStorage.setItem('todayMenu', JSON.stringify({ date: state.date, meals: state.meals }))
 }
 
-export const useTodayMenu = create<TodayMenuState>((set, get) => ({
+export const useTodayMenu = create<TodayMenuState>((set) => ({
   ...loadFromStorage(),
   confirm(mealType, entry) {
     set(s => {

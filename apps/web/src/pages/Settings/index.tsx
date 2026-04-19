@@ -95,17 +95,19 @@ export default function Settings() {
   const { user, logout, updateUser } = useAuth()
   const navigate = useNavigate()
   const [familyInfo, setFamilyInfo] = useState<{ id: number; name: string; invite_code: string } | null>(null)
-  const [memberId, setMemberId] = useState<number | null>(null)
+  const [_memberId, setMemberId] = useState<number | null>(null)
   const [members, setMembers] = useState<Member[]>([])
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [_saving, setSaving] = useState(false)
+  const [_saved, setSaved] = useState(false)
   const [copied, setCopied] = useState(false)
 
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [rolesDrawerOpen, setRolesDrawerOpen] = useState(false)
   const [personalPrefsOpen, setPersonalPrefsOpen] = useState(false)
   const [editName, setEditName] = useState('')
+  const [isEditingFamilyName, setIsEditingFamilyName] = useState(false)
+  const [editFamilyName, setEditFamilyName] = useState('')
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState('')
   const [avatarPreviewFile, setAvatarPreviewFile] = useState<File | null>(null)
   const [avatarUploading, setAvatarUploading] = useState(false)
@@ -222,6 +224,20 @@ export default function Settings() {
     }
   }
 
+  const isOwner = members.find(m => m.user_id === user?.id)?.role === 'owner'
+
+  async function handleFamilyNameSave() {
+    const trimmed = editFamilyName.trim()
+    setIsEditingFamilyName(false)
+    if (!trimmed || trimmed === familyInfo?.name || !familyId) return
+    try {
+      const res = await familiesApi.rename(familyId, trimmed)
+      setFamilyInfo(prev => prev ? { ...prev, name: res.name } : prev)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   if (!user) return <LoginPrompt title="建立你的口味档案" desc="告诉我你喜欢什么、不吃什么，每一次推荐才能真正懂你" />
 
   return (
@@ -320,7 +336,24 @@ export default function Settings() {
         {familyInfo ? (
           <>
             <div className={styles.familyInfo}>
-              <h3 className={styles.familyName}>{familyInfo.name}</h3>
+              {isOwner && isEditingFamilyName ? (
+                <input
+                  className={styles.familyNameInput}
+                  value={editFamilyName}
+                  autoFocus
+                  onChange={e => setEditFamilyName(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleFamilyNameSave(); if (e.key === 'Escape') setIsEditingFamilyName(false) }}
+                  onBlur={handleFamilyNameSave}
+                />
+              ) : (
+                <h3
+                  className={`${styles.familyName} ${isOwner ? styles.familyNameEditable : ''}`}
+                  onClick={() => { if (isOwner) { setEditFamilyName(familyInfo.name); setIsEditingFamilyName(true) } }}
+                >
+                  {familyInfo.name}
+                  {isOwner && <span className={styles.familyNameEditHint}>编辑</span>}
+                </h3>
+              )}
               <div className={styles.familyCodeWrap} onClick={handleCopy} title="复制邀请码">
                 <span className={styles.familyCodeLabel}>邀请码 / </span>
                 <span className={styles.familyCode}>{familyInfo.invite_code}</span>

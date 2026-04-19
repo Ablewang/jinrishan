@@ -81,7 +81,7 @@ export interface RecommendationEvent {
   event_type: 'shown' | 'accepted' | 'rejected' | 'swapped' | 'cooked'
   meal_type?: string
   event_date?: string
-  source: 'daily' | 'weekly_plan' | 'bot'
+  source: 'daily' | 'weekly_plan' | 'bot' | 'drawer'
 }
 
 export interface RecipeCard {

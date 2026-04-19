@@ -314,6 +314,40 @@
   font-weight: normal;
   letter-spacing: 1px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.familyNameEditable {
+  cursor: pointer;
+}
+
+.familyNameEditable:hover .familyNameEditHint {
+  opacity: 1;
+}
+
+.familyNameEditHint {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-sans, sans-serif);
+  letter-spacing: 1px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.familyNameInput {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--text-main);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--text-main);
+  outline: none;
+  letter-spacing: 1px;
+  padding: 0 0 2px 0;
+  min-width: 80px;
+  width: auto;
 }
 
 .familyCodeWrap {

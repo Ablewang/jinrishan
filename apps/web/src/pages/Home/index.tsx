@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Utensils, Clock, Flame } from 'lucide-react'
 import { useAuth } from '../../store/auth'
 import { useTodayMenu } from '../../store/todayMenu'
 import { recommendApi } from '../../api/recommend'

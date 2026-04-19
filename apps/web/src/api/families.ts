@@ -8,6 +8,11 @@ export const familiesApi = {
 
   get: (id: number) => apiFetch<{ id: number; name: string; invite_code: string }>(`/api/families/${id}`),
 
+  rename: (id: number, name: string) =>
+    apiFetch<{ ok: boolean; name: string }>(`/api/families/${id}`, {
+      method: 'PUT', body: JSON.stringify({ name }),
+    }),
+
   members: (id: number) => apiFetch<{
     id: number; user_id: number | null; display_name: string | null; nickname: string | null; role: string; user_name: string | null
   }[]>(`/api/families/${id}/members`),
