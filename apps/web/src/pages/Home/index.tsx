@@ -2,9 +2,12 @@ import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Utensils, Clock, Flame } from 'lucide-react'
 import { useAuth } from '../../store/auth'
+import { useTodayMenu } from '../../store/todayMenu'
 import { recommendApi } from '../../api/recommend'
 import { eventsApi } from '../../api/events'
+import { logsApi } from '../../api/logs'
 import RecipeDrawer from '../../components/RecipeDrawer'
+import RecipeImages from '../../components/RecipeImages'
 import type { Recipe, GuestPrefs } from '../../types'
 import styles from './index.module.css'
 
@@ -26,27 +29,26 @@ function todayStr() {
 
 interface RecipeCardProps {
   recipe: Recipe
+  selected: boolean
+  onToggleSelect: () => void
   onSwap: () => void
-  onAccept: () => void
   onViewDetail: () => void
   showSwapLimit: boolean
   isLoggedIn: boolean
 }
 
-function RecipeCard({ recipe, onSwap, onAccept, onViewDetail, showSwapLimit, isLoggedIn }: RecipeCardProps) {
+function RecipeCard({ recipe, selected, onToggleSelect, onSwap, onViewDetail, showSwapLimit, isLoggedIn }: RecipeCardProps) {
   const difficultyLabel = { easy: '简单', medium: '中等', hard: '复杂' }[recipe.difficulty] ?? recipe.difficulty
 
   return (
-    <article className={styles.card}>
+    <article className={`${styles.card} ${selected ? styles.cardSelected : ''}`}>
       <div className={styles.cardImageWrapper}>
         <div className={styles.cardImage}>
-          {recipe.images?.[0]
-            ? <img src={recipe.images[0]} alt={recipe.name} />
-            : <div className={styles.imagePlaceholder}>NO IMAGE</div>
-          }
+          <RecipeImages images={recipe.images} alt={recipe.name} />
         </div>
+        {selected && <div className={styles.selectedBadge}>✓</div>}
       </div>
-      
+
       <div className={styles.cardBody}>
         <header className={styles.cardHeader}>
           <div className={styles.tags}>
@@ -60,7 +62,7 @@ function RecipeCard({ recipe, onSwap, onAccept, onViewDetail, showSwapLimit, isL
           <h3 className={styles.cardName}>{recipe.name}</h3>
           <p className={styles.cardDesc}>{recipe.description}</p>
         </header>
-        
+
         <div className={styles.cardMetaGrid}>
           <div className={styles.metaBlock}>
             <span className={styles.metaLabel}>TIME</span>
@@ -82,10 +84,13 @@ function RecipeCard({ recipe, onSwap, onAccept, onViewDetail, showSwapLimit, isL
             </div>
           )}
         </div>
-        
+
         <div className={styles.cardActions}>
-          <button className={styles.btnAccept} onClick={onAccept}>
-            就吃这个
+          <button
+            className={selected ? styles.btnDeselect : styles.btnAccept}
+            onClick={onToggleSelect}
+          >
+            {selected ? '取消选择' : '选这个'}
           </button>
           <div className={styles.actionRow}>
             <button className={styles.btnDetail} onClick={onViewDetail}>
@@ -115,14 +120,18 @@ function RecipeCard({ recipe, onSwap, onAccept, onViewDetail, showSwapLimit, isL
 export default function Home() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { meals, confirm: confirmMeal, clear: clearMeal } = useTodayMenu()
   const [activeMeal, setActiveMeal] = useState(2) // 默认晚餐
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null)
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [loading, setLoading] = useState(false)
   const [swapCount, setSwapCount] = useState(0)
   const [excludeIds, setExcludeIds] = useState<number[]>([])
 
   const familyId = user ? (Number(localStorage.getItem('familyId')) || 0) : 0
+  const mealKey = MEAL_KEYS[activeMeal] as 'breakfast' | 'lunch' | 'dinner'
+  const confirmedEntry = meals[mealKey]
 
   const loadRecommendation = useCallback(async (excludes: number[] = []) => {
     setLoading(true)
@@ -172,7 +181,10 @@ export default function Home() {
     const p = prefs
     setSwapCount(p?.swap_count ?? 0)
     setExcludeIds([])
-    loadRecommendation([])
+    setSelectedIds(new Set())
+    if (!confirmedEntry) {
+      loadRecommendation([])
+    }
   }, [activeMeal, user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSwap(recipeToSwap: Recipe) {
@@ -197,18 +209,38 @@ export default function Home() {
     await loadRecommendation(newExcludes)
   }
 
-  function handleAccept(recipeToAccept: Recipe) {
-    eventsApi.post({
-      family_id: familyId,
-      recipe_id: recipeToAccept.id,
-      event_type: 'accepted',
-      meal_type: MEAL_KEYS[activeMeal],
-      event_date: todayStr(),
-      source: 'daily',
-    }).catch(() => {})
+  const showSwapLimit = !user && swapCount >= SWAP_LIMIT
+
+  function toggleSelect(recipe: Recipe) {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(recipe.id)) {
+        next.delete(recipe.id)
+      } else {
+        next.add(recipe.id)
+      }
+      return next
+    })
   }
 
-  const showSwapLimit = !user && swapCount >= SWAP_LIMIT
+  function handleConfirm() {
+    const selected = recipes.filter(r => selectedIds.has(r.id))
+    selected.forEach(recipe => {
+      eventsApi.post({
+        family_id: familyId,
+        recipe_id: recipe.id,
+        event_type: 'accepted',
+        meal_type: mealKey,
+        event_date: todayStr(),
+        source: 'daily',
+      }).catch(() => {})
+    })
+    confirmMeal(mealKey, { ids: selected.map(r => r.id), names: selected.map(r => r.name) })
+    if (familyId) {
+      logsApi.save({ family_id: familyId, date: todayStr(), meal_type: mealKey, recipe_ids: selected.map(r => r.id) }).catch(() => {})
+    }
+    setSelectedIds(new Set())
+  }
 
   return (
     <div className={styles.page}>
@@ -221,15 +253,20 @@ export default function Home() {
       </header>
 
       <div className={styles.mealTabs}>
-        {MEAL_TYPES.map((label, i) => (
-          <button
-            key={label}
-            className={`${styles.mealTab} ${activeMeal === i ? styles.mealTabActive : ''}`}
-            onClick={() => setActiveMeal(i)}
-          >
-            {label}
-          </button>
-        ))}
+        {MEAL_TYPES.map((label, i) => {
+          const key = MEAL_KEYS[i] as 'breakfast' | 'lunch' | 'dinner'
+          const done = !!meals[key]
+          return (
+            <button
+              key={label}
+              className={`${styles.mealTab} ${activeMeal === i ? styles.mealTabActive : ''}`}
+              onClick={() => setActiveMeal(i)}
+            >
+              {label}
+              {done && <span className={styles.mealTabDot} />}
+            </button>
+          )
+        })}
       </div>
 
       {loading ? (
@@ -237,14 +274,34 @@ export default function Home() {
           <div className={styles.loadingIcon} />
           <span>Curating recipes...</span>
         </div>
+      ) : confirmedEntry ? (
+        <div className={styles.confirmedView}>
+          <div className={styles.confirmedIcon}>✓</div>
+          <h3 className={styles.confirmedTitle}>{MEAL_TYPES[activeMeal]}已定</h3>
+          <div className={styles.confirmedNames}>
+            {confirmedEntry.names.map(name => <span key={name} className={styles.confirmedName}>{name}</span>)}
+          </div>
+          <button className={styles.btnViewMenu} onClick={() => navigate('/today')}>
+            去查看今日菜单
+          </button>
+          <button className={styles.btnReselect} onClick={() => {
+            clearMeal(mealKey)
+            setExcludeIds([])
+            setSelectedIds(new Set())
+            loadRecommendation([])
+          }}>
+            重新选择
+          </button>
+        </div>
       ) : recipes.length > 0 ? (
         <div className={styles.recipeList}>
           {recipes.map(recipe => (
             <RecipeCard
               key={recipe.id}
               recipe={recipe}
+              selected={selectedIds.has(recipe.id)}
+              onToggleSelect={() => toggleSelect(recipe)}
               onSwap={() => handleSwap(recipe)}
-              onAccept={() => handleAccept(recipe)}
               onViewDetail={() => setSelectedRecipeId(recipe.id)}
               showSwapLimit={showSwapLimit}
               isLoggedIn={!!user}
@@ -257,10 +314,24 @@ export default function Home() {
         </div>
       )}
 
+      {selectedIds.size > 0 && (
+        <div className={styles.confirmBar}>
+          <span className={styles.confirmText}>已选 {selectedIds.size} 道菜</span>
+          <button className={styles.confirmBtn} onClick={handleConfirm}>
+            确认{MEAL_TYPES[activeMeal]}菜单
+          </button>
+        </div>
+      )}
+
       <RecipeDrawer
         id={selectedRecipeId}
         onClose={() => setSelectedRecipeId(null)}
         familyId={familyId || undefined}
+        onSwap={selectedRecipeId ? () => {
+          const recipe = recipes.find(r => r.id === selectedRecipeId)
+          if (recipe) handleSwap(recipe)
+        } : undefined}
+        showSwapLimit={showSwapLimit}
       />
     </div>
   )

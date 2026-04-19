@@ -45,21 +45,22 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-main);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   z-index: 10;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: var(--transition);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .closeBtn:hover {
-  background: #fff;
+  background: #ffffff;
   transform: scale(1.05);
 }
 
@@ -77,7 +78,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  padding-bottom: 60px;
+  padding-bottom: 24px;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -92,8 +93,8 @@
 
 .hero {
   width: 100%;
-  aspect-ratio: 4/3;
-  background: var(--primary-bg);
+  aspect-ratio: 16/9;
+  background: var(--bg-color);
   position: relative;
 }
 
@@ -117,7 +118,7 @@
 
 .name {
   font-family: var(--font-serif);
-  font-size: 32px;
+  font-size: 40px;
   color: var(--text-main);
   margin: 0 0 16px;
   font-weight: normal;
@@ -143,10 +144,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 11px;
+  font-family: var(--font-sans);
   color: var(--text-main);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .metaItem svg {
@@ -162,12 +164,13 @@
 
 .tag {
   font-size: 11px;
-  color: var(--accent);
-  background: var(--accent-bg);
+  color: var(--text-main);
+  background: transparent;
+  border: 1px solid var(--border-color);
   padding: 6px 12px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .section {
@@ -176,7 +179,7 @@
 
 .sectionTitle {
   font-family: var(--font-serif);
-  font-size: 20px;
+  font-size: 24px;
   color: var(--text-main);
   margin: 0 0 24px;
   font-weight: normal;
@@ -216,8 +219,8 @@
 .stepNum {
   width: 24px;
   height: 24px;
-  border: 1px solid var(--border-color-strong);
-  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -246,37 +249,94 @@
 }
 
 .cookedArea {
-  margin-top: 64px;
+  padding: 16px 32px;
+  background: var(--surface-solid);
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actionRow {
+  display: flex;
+  gap: 16px;
 }
 
 .cookedBtn {
-  width: 100%;
-  padding: 16px;
+  width: auto;
+  min-width: 200px;
+  margin: 0;
+  padding: 16px 32px;
   background: var(--text-main);
   color: var(--surface-solid);
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border: 1px solid var(--text-main);
+  border-radius: 0;
   transition: var(--transition);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cookedBtn:hover {
   background: var(--primary-hover);
 }
 
+.btnSwap, .btnSwapLock {
+  padding: 16px 32px;
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.btnSwap {
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.btnSwap:hover {
+  border-color: var(--text-main);
+  color: var(--text-main);
+  background: transparent;
+}
+
+.btnSwapLock {
+  color: var(--text-muted);
+  border-color: var(--border-color);
+}
+
 .cookedDone {
-  width: 100%;
-  padding: 16px;
-  border: 1px solid var(--border-color-strong);
+  width: auto;
+  min-width: 200px;
+  margin: 0;
+  padding: 16px 32px;
+  border: 1px solid var(--border-color);
   color: var(--text-main);
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  text-align: center;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border-radius: 0;
 }
 
 /* Mobile Bottom Sheet */
@@ -289,7 +349,7 @@
   .drawer {
     width: 100%;
     height: 90dvh;
-    border-radius: 24px 24px 0 0;
+    border-radius: 0;
     transform: translateY(100%);
   }
 
@@ -298,18 +358,7 @@
   }
 
   .drawer::before {
-    content: '';
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    z-index: 20;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    display: none;
   }
 
   .closeBtn {
@@ -325,5 +374,30 @@
 
   .name {
     font-size: 28px;
+  }
+
+  .cookedArea {
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom)) 24px;
+    display: block;
+  }
+
+  .actionRow {
+    flex-direction: row;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .cookedBtn, .cookedDone {
+    width: 100%;
+    max-width: 100%;
+    flex: 1.5;
+    padding: 16px;
+  }
+
+  .btnSwap, .btnSwapLock {
+    width: 100%;
+    max-width: 100%;
+    flex: 1;
+    padding: 16px;
   }
 }

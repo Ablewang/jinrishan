@@ -530,6 +530,7 @@
     margin: 0 auto;
     width: 100%;
     flex: none;
+    min-height: 560px; /* Keep container height stable to prevent shifting */
   }
 
   .header .logoWrap {

@@ -12,6 +12,8 @@ import Bot from './pages/Bot'
 import Settings from './pages/Settings'
 import FamilyCreate from './pages/Family/Create'
 import FamilyJoin from './pages/Family/Join'
+import TodayMeal from './pages/TodayMeal'
+import TodayOverview from './pages/TodayMeal/TodayOverview'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth()
@@ -33,6 +35,8 @@ export default function App() {
             <Route index element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
             <Route path="/recipe/:id" element={<RecipeDetail />} />
+            <Route path="/today" element={<TodayOverview />} />
+            <Route path="/today/:mealType" element={<TodayMeal />} />
             <Route path="/plan" element={<WeeklyPlan />} />
             <Route path="/shopping/:id" element={<RequireAuth><Shopping /></RequireAuth>} />
             <Route path="/bot" element={<Bot />} />

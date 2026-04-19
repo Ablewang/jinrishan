@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../store/auth'
 import { recipesApi } from '../../api/recipes'
 import { eventsApi } from '../../api/events'
+import RecipeImages from '../../components/RecipeImages'
 import type { Recipe } from '../../types'
 import styles from './RecipeDetail.module.css'
 
@@ -63,10 +64,7 @@ export default function RecipeDetail() {
         <button className={styles.backBtn} onClick={() => navigate(-1)}>← 返回</button>
 
         <div className={styles.hero}>
-          {recipe.images?.[0]
-            ? <img src={recipe.images[0]} alt={recipe.name} className={styles.heroImg} />
-            : <div className={styles.heroPlaceholder}>🍳</div>
-          }
+          <RecipeImages images={recipe.images} alt={recipe.name} className={styles.heroImg} />
         </div>
 
         <div className={styles.content}>

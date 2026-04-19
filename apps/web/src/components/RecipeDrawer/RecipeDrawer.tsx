@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { X, Clock, Flame, Utensils } from 'lucide-react'
 import { recipesApi } from '../../api/recipes'
 import { eventsApi } from '../../api/events'
+import RecipeImages from '../RecipeImages'
 import type { Recipe } from '../../types'
 import styles from './RecipeDrawer.module.css'
 
@@ -9,13 +11,15 @@ interface Props {
   id: number | null
   onClose: () => void
   familyId?: number
+  onSwap?: () => void
+  showSwapLimit?: boolean
 }
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10)
 }
 
-export default function RecipeDrawer({ id, onClose, familyId = 0 }: Props) {
+export default function RecipeDrawer({ id, onClose, familyId = 0, onSwap, showSwapLimit }: Props) {
   const [recipe, setRecipe] = useState<Recipe | null>(null)
   const [loading, setLoading] = useState(false)
   const [cooked, setCooked] = useState(false)
@@ -61,13 +65,10 @@ export default function RecipeDrawer({ id, onClose, familyId = 0 }: Props) {
         {loading ? (
           <div className={styles.loading}>加载中...</div>
         ) : recipe ? (
+          <>
           <div className={styles.content}>
             <div className={styles.hero}>
-              {recipe.images?.[0] ? (
-                <img src={recipe.images[0]} alt={recipe.name} className={styles.heroImg} />
-              ) : (
-                <div className={styles.heroPlaceholder}><Utensils size={48} strokeWidth={1} /></div>
-              )}
+              <RecipeImages images={recipe.images} alt={recipe.name} className={styles.heroImg} />
             </div>
 
             <div className={styles.body}>
@@ -123,18 +124,31 @@ export default function RecipeDrawer({ id, onClose, familyId = 0 }: Props) {
                   ))}
                 </section>
               )}
-
-              <div className={styles.cookedArea}>
-                {cooked ? (
-                  <div className={styles.cookedDone}>✓ 已做完</div>
-                ) : (
-                  <button className={styles.cookedBtn} onClick={handleCooked}>
-                    已完成这道菜
-                  </button>
-                )}
-              </div>
             </div>
           </div>
+          <div className={styles.cookedArea}>
+            {cooked ? (
+              <div className={styles.cookedDone}>✓ 已做完</div>
+            ) : (
+              <div className={styles.actionRow}>
+                <button className={styles.cookedBtn} onClick={handleCooked}>
+                  已完成这道菜
+                </button>
+                {onSwap && (
+                  showSwapLimit ? (
+                    <Link to="/auth/login" className={styles.btnSwapLock}>
+                      登录解锁换一换
+                    </Link>
+                  ) : (
+                    <button className={styles.btnSwap} onClick={onSwap}>
+                      换一换
+                    </button>
+                  )
+                )}
+              </div>
+            )}
+          </div>
+        </>
         ) : (
           <div className={styles.error}>获取菜谱失败</div>
         )}

@@ -76,6 +76,17 @@
   font-weight: 600;
 }
 
+.mealTabDot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-main);
+  margin-left: 5px;
+  vertical-align: middle;
+  opacity: 0.5;
+}
+
 .loading, .empty {
   display: flex;
   flex-direction: column;
@@ -130,11 +141,12 @@
   border: 1px solid var(--border-color);
   box-shadow: none;
   overflow: hidden;
-  padding: 16px;
+  padding: 0;
 }
 
 .cardImageWrapper {
   padding: 0;
+  position: relative;
 }
 
 .cardImage {
@@ -173,7 +185,7 @@
 .cardBody {
   display: flex;
   flex-direction: column;
-  padding: 16px 8px 12px 8px;
+  padding: 16px;
   flex: 1;
 }
 
@@ -305,7 +317,7 @@
   white-space: nowrap;
   background: transparent;
   color: var(--text-main);
-  border: 1px solid var(--border-color-strong);
+  border: 1px solid var(--border-color);
   flex: 1;
 }
 
@@ -344,6 +356,175 @@
   color: var(--text-main);
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+
+/* 已选中卡片 */
+.cardSelected {
+  outline: 2px solid var(--text-main);
+  outline-offset: -2px;
+}
+
+.selectedBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--text-main);
+  color: var(--surface-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 3;
+}
+
+.btnDeselect {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--text-main);
+  width: 100%;
+  padding: 16px;
+  font-size: 13px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btnDeselect:hover {
+  background: var(--surface-raised);
+}
+
+/* 底部确认栏 */
+.confirmBar {
+  position: fixed;
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--text-main);
+  color: var(--surface-solid);
+  padding: 14px 24px;
+  z-index: 100;
+  box-shadow: 0 -2px 24px rgba(0,0,0,0.15);
+  white-space: nowrap;
+}
+
+.confirmText {
+  font-size: 13px;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.confirmBtn {
+  background: var(--surface-solid);
+  color: var(--text-main);
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.confirmBtn:hover {
+  opacity: 0.85;
+}
+
+/* 确认成功视图 */
+.confirmedView {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  border: 1px dashed var(--border-color-strong);
+  margin: 0 0 24px;
+}
+
+.confirmedIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--text-main);
+  color: var(--surface-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.confirmedTitle {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: normal;
+  margin: 0 0 20px;
+  color: var(--text-main);
+}
+
+.confirmedNames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.confirmedName {
+  padding: 6px 14px;
+  border: 1px solid var(--border-color-strong);
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.btnViewMenu {
+  background: var(--text-main);
+  color: var(--surface-solid);
+  border: none;
+  padding: 14px 32px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 16px;
+}
+
+.btnViewMenu:hover {
+  opacity: 0.8;
+}
+
+.btnReselect {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  padding: 0;
+}
+
+.btnReselect:hover {
+  color: var(--text-main);
 }
 
 /* Tablet Layout */
@@ -390,7 +571,7 @@
     background: var(--surface-solid);
     border: 1px solid var(--border-color);
     box-shadow: none;
-    padding: 16px;
+    padding: 0;
   }
 
   .cardImageWrapper {
@@ -430,7 +611,7 @@
     flex: 1;
   }
   
-  .btnAccept, .btnDetail, .btnSwap, .btnSwapLock {
+  .btnAccept, .btnDeselect, .btnDetail, .btnSwap, .btnSwapLock {
     width: auto;
     flex: 1;
     padding: 16px;
@@ -450,5 +631,9 @@
 
   .btnAccept {
     flex: 1.5;
+  }
+
+  .confirmBar {
+    bottom: 24px;
   }
 }
