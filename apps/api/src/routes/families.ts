@@ -85,6 +85,44 @@ families.post('/join', authMiddleware, async (c) => {
   return c.json({ data: { family_id: family.id, family_name: family.name } })
 })
 
+families.put('/:id/members/:userId', authMiddleware, async (c) => {
+  const familyId = Number(c.req.param('id'))
+  const targetUserId = Number(c.req.param('userId'))
+  const requesterId = c.get('userId')
+  const { nickname, role } = await c.req.json<{ nickname?: string; role?: string }>()
+
+  // 只有 owner 或自己可以修改
+  const requester = await c.env.DB.prepare(
+    'SELECT role FROM family_members WHERE family_id = ? AND user_id = ?'
+  ).bind(familyId, requesterId).first<{ role: string }>()
+
+  if (!requester) return c.json({ error: '你不是该家庭成员' }, 403)
+  if (requester.role !== 'owner' && requesterId !== targetUserId) {
+    return c.json({ error: '无权限' }, 403)
+  }
+
+  const updates: string[] = []
+  const values: any[] = []
+
+  if (nickname !== undefined) {
+    updates.push('nickname = ?')
+    values.push(nickname || null)
+  }
+  if (role !== undefined) {
+    updates.push('role = ?')
+    values.push(role)
+  }
+
+  if (updates.length > 0) {
+    values.push(familyId, targetUserId)
+    await c.env.DB.prepare(
+      `UPDATE family_members SET ${updates.join(', ')} WHERE family_id = ? AND user_id = ?`
+    ).bind(...values).run()
+  }
+
+  return c.json({ data: { ok: true } })
+})
+
 families.delete('/:id/members/:userId', authMiddleware, async (c) => {
   const familyId = Number(c.req.param('id'))
   const targetUserId = Number(c.req.param('userId'))

@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { AppContext } from '../types'
 import { signToken } from '../lib/jwt'
+import { authMiddleware } from '../middleware/auth'
 
 const auth = new Hono<AppContext>()
 
@@ -43,9 +44,10 @@ auth.post('/verify-otp', async (c) => {
   ).bind(phone).first<{ id: number; phone: string; name: string | null }>()
 
   if (!user) {
+    const defaultName = `用户${phone.slice(-4)}`
     const { meta } = await c.env.DB.prepare(
-      `INSERT INTO users (phone) VALUES (?)`
-    ).bind(phone).run()
+      `INSERT INTO users (phone, name) VALUES (?, ?)`
+    ).bind(phone, defaultName).run()
     user = await c.env.DB.prepare(
       `SELECT id, phone, name FROM users WHERE id = ?`
     ).bind(meta.last_row_id).first<{ id: number; phone: string; name: string | null }>()
@@ -55,6 +57,19 @@ auth.post('/verify-otp', async (c) => {
 
   const token = await signToken(user.id, c.env.JWT_SECRET)
   return c.json({ data: { token, user } })
+})
+
+auth.put('/me', authMiddleware, async (c) => {
+  const userId = c.get('userId')
+  const { name } = await c.req.json<{ name?: string }>()
+  if (!name?.trim()) return c.json({ error: '姓名不能为空' }, 400)
+
+  await c.env.DB.prepare(`UPDATE users SET name = ? WHERE id = ?`).bind(name.trim(), userId).run()
+  const user = await c.env.DB.prepare(
+    `SELECT id, phone, name FROM users WHERE id = ?`
+  ).bind(userId).first<{ id: number; phone: string; name: string | null }>()
+
+  return c.json({ data: user })
 })
 
 export default auth

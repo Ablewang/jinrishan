@@ -36,10 +36,11 @@ export default function TodayOverview() {
       .catch(() => setLoading(false))
   }, [familyId])
 
-  // 优先用 DB 数据，否则用 store（guest）
-  const data: TodayData = dbData ?? Object.fromEntries(
+  // DB 数据 merge store 数据：store 打底，DB 有记录的覆盖（DB 优先）
+  const storeData: TodayData = Object.fromEntries(
     Object.entries(storeMeals).map(([k, v]) => [k, v.ids.map((id, i) => ({ id, name: v.names[i], images: [] }))])
   )
+  const data: TodayData = dbData ? { ...storeData, ...dbData } : storeData
 
   const hasSomething = MEAL_KEYS.some(k => (data[k]?.length ?? 0) > 0)
   const dateLabel = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' })
@@ -47,7 +48,7 @@ export default function TodayOverview() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.backBtn} onClick={() => navigate('/home')}>← 推荐</button>
+        <button className={styles.backBtn} onClick={() => navigate('/home')}>← 去推荐页</button>
         <span className={styles.overline}>Today</span>
         <h1 className={styles.title}>今日菜单</h1>
         <p className={styles.date}>{dateLabel}</p>

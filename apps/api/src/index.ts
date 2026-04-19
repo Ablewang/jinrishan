@@ -11,6 +11,7 @@ import plans from './routes/plans'
 import shopping from './routes/shopping'
 import bot from './routes/bot'
 import admin from './routes/admin'
+import upload from './routes/upload'
 import logs from './routes/logs'
 import type { AppContext } from './types'
 
@@ -27,6 +28,7 @@ app.route('/api/events', events)
 app.route('/api/recommend', recommend)
 app.route('/api/plans', plans)
 app.route('/api/shopping', shopping)
+app.route('/api/upload', upload)
 app.route('/api/logs', logs)
 app.route('/api/bot', bot)
 app.route('/api/admin', admin)

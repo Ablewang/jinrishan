@@ -6,6 +6,9 @@ compatibility_date = "2024-11-01"
 ENV = "development"
 JWT_SECRET = "dev-secret-change-in-production"
 MOONSHOT_API_KEY = "sk-GiFrnfPJBNg9cdH8V6wrQhwxuzUViSFSquLaZbWVyCxzun4s"
+CLOUDINARY_CLOUD_NAME = "dtilsnqza"
+CLOUDINARY_API_KEY = "671225962841687"
+CLOUDINARY_API_SECRET = "l07upYa-iSaUQTGmMpXcJWOUlB0"
 
 [[d1_databases]]
 binding = "DB"

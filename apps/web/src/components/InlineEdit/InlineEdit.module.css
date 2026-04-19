@@ -1,0 +1,22 @@
+.base {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  font-family: inherit;
+  transition: border-bottom-color 0.15s;
+}
+
+.base:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.readonly {
+  cursor: default;
+}

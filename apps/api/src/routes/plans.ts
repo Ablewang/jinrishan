@@ -29,17 +29,21 @@ plans.get('/', authMiddleware, async (c) => {
     ORDER BY wpi.date, wpi.meal_type
   `).bind(plan.id).all()
 
-  return c.json({ data: { ...plan, items } })
+  const shoppingList = await c.env.DB.prepare(
+    'SELECT id FROM shopping_lists WHERE plan_id = ?'
+  ).bind(plan.id).first<{ id: number }>()
+
+  return c.json({ data: { ...plan, items, shopping_list_id: shoppingList?.id ?? null } })
 })
 
 plans.post('/', authMiddleware, async (c) => {
   const { family_id, week_start_date } = await c.req.json<{ family_id: number; week_start_date: string }>()
   if (!family_id || !week_start_date) return c.json({ error: '参数缺失' }, 400)
 
-  // 删除已有草稿
+  // 删除已有计划（草稿或已确认）
   await c.env.DB.prepare(
-    'DELETE FROM weekly_plans WHERE family_id = ? AND week_start_date = ? AND status = ?'
-  ).bind(family_id, week_start_date, 'draft').run()
+    'DELETE FROM weekly_plans WHERE family_id = ? AND week_start_date = ?'
+  ).bind(family_id, week_start_date).run()
 
   const { meta } = await c.env.DB.prepare(
     'INSERT INTO weekly_plans (family_id, week_start_date, status) VALUES (?, ?, ?)'
@@ -47,7 +51,7 @@ plans.post('/', authMiddleware, async (c) => {
 
   const planId = meta.last_row_id as number
 
-  // 为 7 天 × 晚餐生成推荐（简化：只生成晚餐）
+  const MEAL_TYPES = ['breakfast', 'lunch', 'dinner']
   const items: PlanItem[] = []
   const usedIds: number[] = []
 
@@ -55,18 +59,20 @@ plans.post('/', authMiddleware, async (c) => {
     const date = new Date(new Date(week_start_date).getTime() + i * 86400000)
       .toISOString().slice(0, 10)
 
-    const recs = await recommend({
-      familyId: family_id,
-      date,
-      mealType: 'dinner',
-      count: 1,
-      excludeIds: usedIds,
-      db: c.env.DB,
-    })
+    for (const mealType of MEAL_TYPES) {
+      const recs = await recommend({
+        familyId: family_id,
+        date,
+        mealType,
+        count: 1,
+        excludeIds: usedIds,
+        db: c.env.DB,
+      })
 
-    if (recs[0]) {
-      items.push({ date, meal_type: 'dinner', recipe_id: recs[0].id })
-      usedIds.push(recs[0].id)
+      if (recs[0]) {
+        items.push({ date, meal_type: mealType, recipe_id: recs[0].id })
+        usedIds.push(recs[0].id)
+      }
     }
   }
 
@@ -93,6 +99,34 @@ plans.put('/:planId/items/:itemId', authMiddleware, async (c) => {
   await c.env.DB.prepare(
     'UPDATE weekly_plan_items SET recipe_id = ? WHERE id = ? AND plan_id = ?'
   ).bind(recipe_id, itemId, planId).run()
+
+  return c.json({ data: { ok: true } })
+})
+
+plans.post('/:planId/items', authMiddleware, async (c) => {
+  const planId = Number(c.req.param('planId'))
+  const { date, meal_type, recipe_id } = await c.req.json<{ date: string; meal_type: string; recipe_id: number }>()
+
+  const { meta } = await c.env.DB.prepare(
+    'INSERT INTO weekly_plan_items (plan_id, date, meal_type, recipe_id) VALUES (?, ?, ?, ?)'
+  ).bind(planId, date, meal_type, recipe_id).run()
+
+  const item = await c.env.DB.prepare(`
+    SELECT wpi.*, r.name as recipe_name, r.cuisine, r.cook_time
+    FROM weekly_plan_items wpi JOIN recipes r ON r.id = wpi.recipe_id
+    WHERE wpi.id = ?
+  `).bind(meta.last_row_id).first()
+
+  return c.json({ data: item }, 201)
+})
+
+plans.delete('/:planId/items/:itemId', authMiddleware, async (c) => {
+  const planId = Number(c.req.param('planId'))
+  const itemId = Number(c.req.param('itemId'))
+
+  await c.env.DB.prepare(
+    'DELETE FROM weekly_plan_items WHERE id = ? AND plan_id = ?'
+  ).bind(itemId, planId).run()
 
   return c.json({ data: { ok: true } })
 })

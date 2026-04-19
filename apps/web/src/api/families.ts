@@ -12,6 +12,11 @@ export const familiesApi = {
     id: number; user_id: number; nickname: string | null; role: string; user_name: string | null
   }[]>(`/api/families/${id}/members`),
 
+  updateMember: (familyId: number, memberUserId: number, data: { nickname?: string; role?: string }) =>
+    apiFetch(`/api/families/${familyId}/members/${memberUserId}`, {
+      method: 'PUT', body: JSON.stringify(data),
+    }),
+
   join: (invite_code: string, nickname?: string) =>
     apiFetch<{ family_id: number; family_name: string }>('/api/families/join', {
       method: 'POST', body: JSON.stringify({ invite_code, nickname }),

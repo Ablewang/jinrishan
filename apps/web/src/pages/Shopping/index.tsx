@@ -20,6 +20,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   肉类: '🥩',
   蔬菜: '🥬',
   水产: '🐟',
+  海产: '🐟',
   调味料: '🧂',
   主食: '🍚',
   蛋奶: '🥚',
@@ -33,6 +34,7 @@ export default function Shopping() {
   const [list, setList] = useState<ShoppingList | null>(null)
   const [loading, setLoading] = useState(true)
   const [toggling, setToggling] = useState<number | null>(null)
+  const [activeTab, setActiveTab] = useState(0)
 
   useEffect(() => {
     if (!id || id === '0') { setLoading(false); return }
@@ -58,25 +60,40 @@ export default function Shopping() {
     }
   }
 
-  if (loading) return <div className={styles.page}><div className={styles.loading}>加载中...</div></div>
+  if (loading) return (
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <span className={styles.overline}>Shopping List</span>
+        <div className={styles.titleRow}><h1 className={styles.title}>买菜清单</h1></div>
+      </header>
+      <div className={styles.loading}><div className={styles.loadingIcon} /></div>
+    </div>
+  )
 
   if (!list) return (
     <div className={styles.page}>
+      <header className={styles.header}>
+        <span className={styles.overline}>Shopping List</span>
+        <div className={styles.titleRow}><h1 className={styles.title}>买菜清单</h1></div>
+      </header>
       <div className={styles.empty}>
-        <p>暂无购物清单</p>
+        <p className={styles.emptyText}>暂无购物清单</p>
         <p className={styles.emptyHint}>确认周计划后自动生成</p>
         <button className={styles.btnPrimary} onClick={() => navigate('/plan')}>去周计划</button>
       </div>
     </div>
   )
 
-  // 按品类分组
   const grouped: Record<string, ShoppingItem[]> = {}
   list.items.forEach(item => {
     const cat = item.category || '其他'
     if (!grouped[cat]) grouped[cat] = []
     grouped[cat].push(item)
   })
+  const categories = Object.keys(grouped)
+  const safeTab = Math.min(activeTab, categories.length - 1)
+  const activeCategory = categories[safeTab]
+  const activeItems = grouped[activeCategory] ?? []
 
   const totalCount = list.items.length
   const checkedCount = list.items.filter(i => i.checked).length
@@ -84,44 +101,53 @@ export default function Shopping() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.title}>买菜清单</h1>
-        <span className={styles.progress}>{checkedCount} / {totalCount}</span>
+        <span className={styles.overline}>Shopping List</span>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>买菜清单</h1>
+          <span className={styles.progress}>{checkedCount} / {totalCount}</span>
+        </div>
       </header>
 
-      <div className={styles.progressBar}>
-        <div
-          className={styles.progressFill}
-          style={{ width: totalCount > 0 ? `${checkedCount / totalCount * 100}%` : '0%' }}
-        />
+      <div className={styles.tabs}>
+        {categories.map((cat, i) => {
+          const items = grouped[cat]
+          const done = items.filter(it => it.checked).length
+          const allDone = done === items.length
+          return (
+            <button
+              key={cat}
+              className={`${styles.tab} ${safeTab === i ? styles.tabActive : ''} ${allDone ? styles.tabDone : ''}`}
+              onClick={() => setActiveTab(i)}
+            >
+              <span className={styles.tabIcon}>{CATEGORY_ICONS[cat] ?? '🛒'}</span>
+              {cat}
+              {allDone
+                ? <span className={styles.tabCheck}>✓</span>
+                : done > 0 && <span className={styles.tabDot} />
+              }
+            </button>
+          )
+        })}
       </div>
 
-      {Object.entries(grouped).map(([category, items]) => (
-        <div key={category} className={styles.group}>
-          <div className={styles.groupHeader}>
-            <span>{CATEGORY_ICONS[category] ?? '🛒'}</span>
-            <span className={styles.groupName}>{category}</span>
-            <span className={styles.groupCount}>{items.filter(i => i.checked).length}/{items.length}</span>
+      <div className={styles.itemList}>
+        {activeItems.map(item => (
+          <div
+            key={item.id}
+            className={`${styles.item} ${item.checked ? styles.itemChecked : ''}`}
+            onClick={() => !toggling && handleToggle(item)}
+          >
+            <div className={styles.checkbox}>
+              {item.checked && <span>✓</span>}
+            </div>
+            <span className={styles.itemName}>{item.ingredient_name}</span>
+            <span className={styles.itemAmount}>{item.amount}</span>
           </div>
-          <div className={styles.itemList}>
-            {items.map(item => (
-              <div
-                key={item.id}
-                className={`${styles.item} ${item.checked ? styles.itemChecked : ''}`}
-                onClick={() => !toggling && handleToggle(item)}
-              >
-                <div className={`${styles.checkbox} ${item.checked ? styles.checkboxChecked : ''}`}>
-                  {item.checked && <span>✓</span>}
-                </div>
-                <span className={styles.itemName}>{item.ingredient_name}</span>
-                <span className={styles.itemAmount}>{item.amount}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {checkedCount === totalCount && totalCount > 0 && (
-        <div className={styles.allDone}>✓ 全部买完了，开始做饭吧！</div>
+        <div className={styles.allDone}>全部买好了，开工吧</div>
       )}
     </div>
   )

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { UtensilsCrossed, CalendarDays, MessageSquareText, BookOpenText } from 'lucide-react'
+import { UtensilsCrossed, CalendarDays, BookOpenText, Sparkles } from 'lucide-react'
 import { useAuth } from '../store/auth'
 import Logo from '../components/Logo'
 import styles from './DesktopLayout.module.css'
@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { to: '/home', label: '今日推荐', icon: <UtensilsCrossed size={18} strokeWidth={2} /> },
   { to: '/today', label: '今日菜单', icon: <BookOpenText size={18} strokeWidth={2} /> },
   { to: '/plan', label: '周计划', icon: <CalendarDays size={18} strokeWidth={2} /> },
-  { to: '/bot', label: 'Bot 助手', icon: <MessageSquareText size={18} strokeWidth={2} /> },
+  { to: '/bot', label: 'AI 助手', icon: <Sparkles size={18} strokeWidth={2} /> },
 ]
 
 export default function DesktopLayout({ children }: Props) {

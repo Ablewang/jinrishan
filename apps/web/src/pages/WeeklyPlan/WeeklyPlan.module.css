@@ -1,22 +1,40 @@
 .page {
-  padding: 32px 24px;
+  padding: 16px 20px 80px;
   max-width: 640px;
   margin: 0 auto;
 }
 
 .header {
   display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+}
+
+.overline {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 48px;
 }
 
 .title {
   font-family: var(--font-serif);
-  font-size: 36px;
+  font-size: 32px;
   color: var(--text-main);
   margin: 0;
   font-weight: normal;
+  letter-spacing: 1px;
 }
 
 .weekLabel {
@@ -27,38 +45,56 @@
 }
 
 .loading {
-  text-align: center;
-  padding: 120px 0;
-  color: var(--text-muted);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.empty, .emptyPlan {
-  text-align: center;
-  padding: 100px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 120px 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px dashed var(--border-color-strong);
+  margin: 0 0 24px;
+}
+
+.loadingIcon {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--text-muted);
+  border-radius: 50%;
+  margin-bottom: 24px;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty, .emptyPlan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px;
   gap: 24px;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
+  border: 1px dashed var(--border-color-strong);
+  margin: 0 0 24px;
 }
 
 .emptyText {
-  color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-.planMeta {
+.titleRight {
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin-bottom: 48px;
-  padding: 24px 0;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
+  gap: 12px;
 }
 
 .status {
@@ -67,7 +103,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   border: 1px solid var(--border-color-strong);
-  padding: 4px 12px;
+  padding: 4px 10px;
 }
 
 .statusConfirmed {
@@ -77,84 +113,214 @@
 }
 
 .weekDate {
-  font-size: 12px;
-  color: var(--text-main);
+  font-size: 11px;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
+/* Calendar */
 .calendar {
   display: flex;
   flex-direction: column;
-  gap: 48px;
-  margin-bottom: 80px;
+  margin-bottom: 48px;
 }
 
-/* Print-style Day Block */
 .dayCard {
-  border-bottom: 1px solid var(--border-color-strong);
-  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 0;
 }
 
-.dayCard:last-child {
-  border-bottom: none;
+.dayCard:first-child {
+  border-top: none;
 }
 
 .dayHeader {
-  font-family: var(--font-serif);
-  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 12px;
+}
+
+.dayHeader > span {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.dayActions {
+  display: flex;
+  gap: 8px;
+}
+
+.dayRandomBtn {
+  font-size: 10px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  letter-spacing: 1px;
+  transition: var(--transition);
+}
+
+.dayRandomBtn:hover:not(:disabled) {
   color: var(--text-main);
-  margin: 0 0 24px;
-  font-weight: normal;
+}
+
+.dayRandomBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dayPickBtn {
+  font-size: 10px;
+  color: var(--text-main);
+  background: transparent;
+  border: 1px solid var(--border-color-strong);
+  cursor: pointer;
+  padding: 3px 10px;
+  letter-spacing: 1px;
+  transition: var(--transition);
+}
+
+.dayPickBtn:hover {
+  background: var(--text-main);
+  color: var(--surface-solid);
 }
 
 .meals {
   display: flex;
   flex-direction: column;
+  gap: 0;
+}
+
+.mealSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.mealSection:first-child {
+  border-top: none;
+}
+
+.mealLabel {
+  width: 36px;
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-top: 2px;
+}
+
+.mealContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .mealRow {
   display: flex;
-  align-items: baseline;
-  padding: 16px 0;
-  border-top: 1px solid var(--border-color);
-}
-
-.mealLabel {
-  width: 80px;
-  font-size: 11px;
-  color: var(--text-secondary);
-  flex-shrink: 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  align-items: center;
+  gap: 8px;
 }
 
 .mealName {
   flex: 1;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-main);
+  font-family: var(--font-serif);
+  font-weight: normal;
 }
 
 .swapBtn {
-  font-size: 11px;
-  color: var(--text-secondary);
+  font-size: 10px;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  padding: 2px 8px;
+  flex-shrink: 0;
+  transition: var(--transition);
 }
 
 .swapBtn:hover {
   color: var(--text-main);
+  border-color: var(--text-main);
 }
 
+.deleteBtn {
+  font-size: 14px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.deleteBtn:hover {
+  color: var(--text-main);
+}
+
+.mealActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.addBtn {
+  font-size: 10px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px dashed var(--border-color-strong);
+  cursor: pointer;
+  padding: 3px 10px;
+  letter-spacing: 1px;
+  transition: var(--transition);
+}
+
+.addBtn:hover {
+  color: var(--text-main);
+  border-color: var(--text-main);
+  border-style: solid;
+}
+
+.randomBtn {
+  font-size: 10px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 3px 6px;
+  letter-spacing: 1px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: var(--transition);
+}
+
+.randomBtn:hover {
+  color: var(--text-main);
+}
+
+/* Actions */
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 48px;
-  padding-top: 48px;
-  border-top: 1px solid var(--border-color);
+  gap: 12px;
+  padding-top: 32px;
 }
 
 .btnPrimary, .btnSecondary {
@@ -165,11 +331,13 @@
   font-weight: 600;
   transition: var(--transition);
   text-align: center;
+  cursor: pointer;
 }
 
 .btnPrimary {
   background: var(--text-main);
   color: var(--surface-solid);
+  border: 1px solid var(--text-main);
 }
 
 .btnPrimary:disabled {
@@ -179,6 +347,7 @@
 
 .btnPrimary:hover:not(:disabled) {
   background: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 .btnSecondary {
@@ -188,67 +357,69 @@
 }
 
 .btnSecondary:hover {
-  background: var(--bg-color);
+  background: var(--surface-raised);
 }
 
-/* Editorial Modal */
+/* Swap Modal */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  z-index: 100;
-  padding: 24px;
+  z-index: 200;
 }
 
 .modal {
   background: var(--surface-solid);
-  padding: 48px 32px;
+  padding: 32px 24px 40px;
   width: 100%;
-  max-width: 480px;
-  max-height: 90vh;
+  max-width: 560px;
+  max-height: 80vh;
   overflow-y: auto;
-  border: 1px solid var(--border-color-strong);
+  border-top: 1px solid var(--border-color-strong);
 }
 
 .modalTitle {
   font-family: var(--font-serif);
-  font-size: 28px;
+  font-size: 24px;
   color: var(--text-main);
-  margin: 0 0 16px;
+  margin: 0 0 8px;
   font-weight: normal;
 }
 
 .modalSub {
-  font-size: 15px;
+  font-size: 12px;
   color: var(--text-secondary);
-  margin: 0 0 40px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 32px;
 }
 
 .swapList {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--border-color-strong);
-  margin-bottom: 40px;
+  border-top: 1px solid var(--border-color);
+  margin-bottom: 24px;
 }
 
 .swapOption {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--border-color);
   text-align: left;
   transition: var(--transition);
   background: transparent;
+  cursor: pointer;
+  width: 100%;
 }
 
-.swapOption:hover {
-  background: var(--primary-bg);
-  padding-left: 12px;
-  padding-right: 12px;
+.swapOption:hover .swapOptionName {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .swapOptionName {
@@ -257,7 +428,7 @@
 }
 
 .swapOptionMeta {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -265,39 +436,72 @@
 
 .modalClose {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   background: transparent;
   border: 1px solid var(--border-color-strong);
-  color: var(--text-main);
-  font-size: 12px;
+  color: var(--text-secondary);
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 600;
+  cursor: pointer;
   transition: var(--transition);
 }
 
 .modalClose:hover {
-  background: var(--primary-bg);
+  color: var(--text-main);
+  border-color: var(--text-main);
 }
 
-/* PC Grid Layout */
-@media (min-width: 768px) {
+/* PC Layout */
+@media (min-width: 600px) and (max-width: 1299px) {
   .page {
-    padding: 60px 40px;
+    padding: 32px 32px 80px;
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 1180px) {
+  .page {
+    padding: 32px 40px 80px;
     max-width: 1000px;
   }
+
   .title {
-    font-size: 48px;
+    font-size: 40px;
   }
+
   .calendar {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 64px;
+    gap: 0 48px;
+    margin-bottom: 48px;
   }
+
+  .dayCard {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .dayCard:first-child {
+    border-top: none;
+  }
+
   .actions {
     flex-direction: row;
   }
+
   .btnPrimary, .btnSecondary {
     flex: 1;
+  }
+
+  .modalOverlay {
+    align-items: center;
+  }
+
+  .modal {
+    border: 1px solid var(--border-color-strong);
+    border-top: 1px solid var(--border-color-strong);
+    max-width: 480px;
+    padding: 48px 40px;
   }
 }

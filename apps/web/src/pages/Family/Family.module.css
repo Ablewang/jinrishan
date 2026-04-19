@@ -1,11 +1,11 @@
 .page {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: var(--bg-color);
   padding: 32px 24px;
   max-width: 540px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .backBtn {
@@ -76,7 +76,6 @@
 }
 
 .input:focus {
-  border-bottom-width: 2px;
   border-bottom-color: var(--text-main);
   outline: none;
 }
@@ -141,8 +140,8 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 80px 0;
-  gap: 32px;
+  padding: 40px 0;
+  gap: 20px;
   border-top: 1px solid var(--border-color-strong);
   border-bottom: 1px solid var(--border-color-strong);
 }
@@ -167,10 +166,10 @@
 
 .inviteBlock {
   width: 100%;
-  padding: 40px 0;
+  padding: 24px 0;
   border-top: 1px dashed var(--border-color-strong);
   border-bottom: 1px dashed var(--border-color-strong);
-  margin: 24px 0;
+  margin: 8px 0;
 }
 
 .inviteLabel {
@@ -182,21 +181,21 @@
 }
 
 .inviteCode {
-  font-size: 48px;
+  font-size: 36px;
   color: var(--text-main);
-  letter-spacing: 12px;
+  letter-spacing: 8px;
   font-family: monospace;
   font-weight: normal;
 }
 
-/* PC Media Query */
 @media (min-width: 768px) {
   .page {
     justify-content: center;
+    min-height: 100%;
     max-width: 600px;
     padding: 60px 40px;
   }
-  
+
   .backBtn {
     position: absolute;
     top: 40px;
@@ -205,5 +204,20 @@
 
   .title {
     font-size: 56px;
+  }
+
+  .successBox {
+    padding: 80px 0;
+    gap: 32px;
+  }
+
+  .inviteBlock {
+    padding: 40px 0;
+    margin: 24px 0;
+  }
+
+  .inviteCode {
+    font-size: 48px;
+    letter-spacing: 12px;
   }
 }
