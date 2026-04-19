@@ -1,143 +1,209 @@
 .page {
-  padding: 20px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-color);
+  padding: 32px 24px;
+  max-width: 540px;
+  margin: 0 auto;
 }
 
 .backBtn {
-  background: none;
-  border: none;
-  color: #666;
-  font-size: 14px;
-  cursor: pointer;
   padding: 0;
-  margin-bottom: 24px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  margin-bottom: 48px;
+  width: fit-content;
+  transition: var(--transition);
+}
+
+.backBtn:hover {
+  color: var(--text-main);
 }
 
 .title {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-size: 40px;
+  color: var(--text-main);
+  margin: 0 0 24px;
+  font-weight: normal;
 }
 
 .subtitle {
-  font-size: 14px;
-  color: #888;
-  line-height: 1.6;
-  margin: 0 0 32px;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 48px;
+  line-height: 1.8;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border-color-strong);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .label {
-  font-size: 14px;
-  color: #555;
-  font-weight: 500;
+  font-size: 11px;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 
 .input {
-  padding: 12px 14px;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 10px;
-  font-size: 15px;
-  color: #222;
-  outline: none;
-  transition: border-color 0.15s;
+  padding: 0 0 12px 0;
+  border: none;
+  border-bottom: 1px solid var(--border-color-strong);
+  background: transparent;
+  font-size: 18px;
+  color: var(--text-main);
+  transition: var(--transition);
 }
 
 .input:focus {
-  border-color: #e67e22;
+  border-bottom-width: 2px;
+  border-bottom-color: var(--text-main);
+  outline: none;
 }
 
 .inputUpper {
   text-transform: uppercase;
-  letter-spacing: 2px;
+  font-family: monospace;
+  letter-spacing: 4px;
   font-weight: 600;
-  font-size: 18px;
 }
 
 .error {
-  color: #e74c3c;
-  font-size: 13px;
-  margin: 0;
+  color: #000;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: -8px;
+  border-left: 2px solid #000;
+  padding-left: 8px;
+}
+
+.btnPrimary, .btnSecondary {
+  padding: 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
 }
 
 .btnPrimary {
-  margin-top: 8px;
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: #e67e22;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
+  background: var(--text-main);
+  color: var(--surface-solid);
+  margin-top: 24px;
+}
+
+.btnPrimary:hover {
+  background: var(--primary-hover);
 }
 
 .btnPrimary:disabled {
-  opacity: 0.6;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
   cursor: not-allowed;
 }
 
 .btnSecondary {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1.5px solid #e0e0e0;
-  background: #fff;
-  color: #666;
-  font-size: 15px;
-  cursor: pointer;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color-strong);
 }
 
-/* Success state */
+.btnSecondary:hover {
+  background: var(--primary-bg);
+}
+
 .successBox {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 0;
-  gap: 12px;
+  text-align: center;
+  padding: 80px 0;
+  gap: 32px;
+  border-top: 1px solid var(--border-color-strong);
+  border-bottom: 1px solid var(--border-color-strong);
 }
 
 .successIcon {
-  font-size: 56px;
+  font-size: 48px;
 }
 
 .successTitle {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-family: var(--font-serif);
+  font-size: 36px;
+  color: var(--text-main);
   margin: 0;
+  font-weight: normal;
 }
 
 .successName {
-  font-size: 16px;
-  color: #666;
+  font-size: 15px;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .inviteBlock {
-  background: #fdf3e8;
-  border-radius: 12px;
-  padding: 16px 24px;
-  text-align: center;
-  margin: 8px 0;
   width: 100%;
+  padding: 40px 0;
+  border-top: 1px dashed var(--border-color-strong);
+  border-bottom: 1px dashed var(--border-color-strong);
+  margin: 24px 0;
 }
 
 .inviteLabel {
-  font-size: 12px;
-  color: #888;
-  margin: 0 0 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 24px;
 }
 
 .inviteCode {
-  font-size: 28px;
-  font-weight: 700;
-  color: #e67e22;
-  letter-spacing: 4px;
+  font-size: 48px;
+  color: var(--text-main);
+  letter-spacing: 12px;
+  font-family: monospace;
+  font-weight: normal;
+}
+
+/* PC Media Query */
+@media (min-width: 768px) {
+  .page {
+    justify-content: center;
+    max-width: 600px;
+    padding: 60px 40px;
+  }
+  
+  .backBtn {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+  }
+
+  .title {
+    font-size: 56px;
+  }
 }

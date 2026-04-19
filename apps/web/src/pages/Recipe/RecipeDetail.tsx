@@ -59,16 +59,17 @@ export default function RecipeDetail() {
 
   return (
     <div className={styles.page}>
-      <button className={styles.backBtn} onClick={() => navigate(-1)}>← 返回</button>
+      <div className={styles.container}>
+        <button className={styles.backBtn} onClick={() => navigate(-1)}>← 返回</button>
 
-      <div className={styles.hero}>
-        {recipe.images?.[0]
-          ? <img src={recipe.images[0]} alt={recipe.name} className={styles.heroImg} />
-          : <div className={styles.heroPlaceholder}>🍳</div>
-        }
-      </div>
+        <div className={styles.hero}>
+          {recipe.images?.[0]
+            ? <img src={recipe.images[0]} alt={recipe.name} className={styles.heroImg} />
+            : <div className={styles.heroPlaceholder}>🍳</div>
+          }
+        </div>
 
-      <div className={styles.content}>
+        <div className={styles.content}>
         <h1 className={styles.name}>{recipe.name}</h1>
         <p className={styles.desc}>{recipe.description}</p>
 
@@ -125,6 +126,7 @@ export default function RecipeDetail() {
               ✓ 已做完，记录一下
             </button>
           )}
+        </div>
         </div>
       </div>
     </div>

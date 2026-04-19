@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { User as UserIcon, Home as HomeIcon } from 'lucide-react'
 import { useAuth } from '../../store/auth'
 import { familiesApi } from '../../api/families'
+import LoginPrompt from '../../components/LoginPrompt'
 import styles from './Settings.module.css'
 
 interface Prefs {
+  [key: string]: any
   liked_cuisines: string[]
   liked_flavors: string[]
   liked_ingredients: string[]
@@ -91,25 +94,14 @@ export default function Settings() {
     navigate('/home')
   }
 
-  if (!user) {
-    return (
-      <div className={styles.page}>
-        <h1 className={styles.title}>我的</h1>
-        <div className={styles.guestBox}>
-          <div className={styles.guestIcon}>👤</div>
-          <p className={styles.guestText}>登录后可设置家庭偏好，获得更精准的推荐</p>
-          <Link to="/auth/login" className={styles.btnPrimary}>登录 / 注册</Link>
-        </div>
-      </div>
-    )
-  }
+  if (!user) return <LoginPrompt title="登录后查看个人设置" desc="登录后可设置家庭偏好，获得更精准的推荐" />
 
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>我的</h1>
 
       <div className={styles.userCard}>
-        <div className={styles.avatar}>👤</div>
+        <div className={styles.avatar}><UserIcon size={24} strokeWidth={2} /></div>
         <div className={styles.userInfo}>
           <p className={styles.userName}>{user.name ?? '用户'}</p>
           <p className={styles.userPhone}>{user.phone}</p>
@@ -119,7 +111,7 @@ export default function Settings() {
       {familyInfo ? (
         <div className={styles.familyCard}>
           <div className={styles.familyInfo}>
-            <span className={styles.familyName}>🏠 {familyInfo.name}</span>
+            <span className={styles.familyName}><HomeIcon size={18} style={{marginRight: 6, verticalAlign: 'text-bottom'}} /> {familyInfo.name}</span>
             <span className={styles.familyCode}>邀请码：{familyInfo.invite_code}</span>
           </div>
         </div>

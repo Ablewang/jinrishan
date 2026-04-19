@@ -27,55 +27,54 @@ export default function GuestSetup() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>今日膳</h1>
-        <p className={styles.sub}>帮你决定今天吃什么</p>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>今日膳</h1>
+          <p className={styles.subtitle}>帮你决定今天吃什么</p>
+        </div>
+
+        {step === 1 && (
+          <div className={styles.stepContainer}>
+            <h2 className={styles.stepTitle}>有没有绝对不吃的？</h2>
+            <p className={styles.stepHint}>含有以下食材的菜不会出现在推荐里</p>
+            <div className={styles.tagPicker}>
+              {COMMON_ALLERGIES.map(tag => (
+                <button
+                  key={tag}
+                  className={`${styles.tag} ${allergies.includes(tag) ? styles.tagSelected : ''}`}
+                  onClick={() => toggle(allergies, setAllergies, tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+            <button className={styles.btnNext} onClick={() => setStep(2)}>
+              下一步
+            </button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className={styles.stepContainer}>
+            <h2 className={styles.stepTitle}>喜欢什么口味？</h2>
+            <p className={styles.stepHint}>选几个你喜欢的，推荐会优先匹配</p>
+            <div className={styles.tagPicker}>
+              {FLAVOR_TAGS.map(tag => (
+                <button
+                  key={tag}
+                  className={`${styles.tag} ${flavors.includes(tag) ? styles.tagSelected : ''}`}
+                  onClick={() => toggle(flavors, setFlavors, tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+            <button className={styles.btnNext} onClick={finish}>
+              看推荐
+            </button>
+          </div>
+        )}
       </div>
-
-      {step === 1 && (
-        <div className={styles.step}>
-          <h2>有没有绝对不吃的？</h2>
-          <p className={styles.hint}>含有以下食材的菜不会出现在推荐里</p>
-          <div className={styles.tags}>
-            {COMMON_ALLERGIES.map(tag => (
-              <button
-                key={tag}
-                className={`${styles.tag} ${allergies.includes(tag) ? styles.selected : ''}`}
-                onClick={() => toggle(allergies, setAllergies, tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-          <button className={styles.btn} onClick={() => setStep(2)}>
-            没有 / 下一步
-          </button>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className={styles.step}>
-          <h2>喜欢什么口味？</h2>
-          <p className={styles.hint}>选几个你喜欢的，推荐会优先匹配</p>
-          <div className={styles.tags}>
-            {FLAVOR_TAGS.map(tag => (
-              <button
-                key={tag}
-                className={`${styles.tag} ${flavors.includes(tag) ? styles.selected : ''}`}
-                onClick={() => toggle(flavors, setFlavors, tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-          <button className={styles.btn} onClick={finish}>
-            看推荐
-          </button>
-          <button className={styles.skip} onClick={finish}>
-            跳过
-          </button>
-        </div>
-      )}
     </div>
   )
 }

@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# 今日膳
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+家庭膳食决策助手——在你喜欢的菜里帮你做选择，顺带解决买菜和做法的问题。
 
-Currently, two official plugins are available:
+## 项目结构
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+jinrishan/
+├── apps/
+│   ├── api/       # Cloudflare Workers + Hono，后端 API
+│   ├── web/       # React 主应用（用户端）
+│   └── admin/     # React 管理后台
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 快速启动
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 前置条件
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+
+- pnpm 8+
+- Wrangler CLI（`pnpm add -g wrangler`）
+
+### 安装依赖
+
+```bash
+pnpm install
 ```
+
+### 初始化本地数据库
+
+```bash
+pnpm db:migrate:local
+```
+
+### 启动开发服务
+
+**启动主应用（API + Web）：**
+
+```bash
+pnpm dev
+```
+
+**启动全部服务（API + Web + Admin）：**
+
+```bash
+pnpm dev:all
+```
+
+| 服务 | 地址 |
+|------|------|
+| API | http://localhost:8787 |
+| Web（用户端） | http://localhost:5173 |
+| Admin（管理后台） | http://localhost:5174 |
+
+## 常用命令
+
+```bash
+# 开发
+pnpm dev              # 启动 API + Web
+pnpm dev:all          # 启动 API + Web + Admin
+
+# 构建
+pnpm build            # 构建 Web
+pnpm build:admin      # 构建 Admin
+
+# 数据库迁移
+pnpm db:migrate:local   # 应用本地 D1 迁移
+pnpm db:migrate:remote  # 应用远程 D1 迁移
+
+# 部署
+pnpm deploy           # 部署 API 到 Cloudflare Workers
+```
+
+## 技术栈
+
+- **前端**：React 19 + TypeScript + Vite + React Router v7
+- **后端**：Cloudflare Workers + Hono + Cloudflare D1（SQLite）
+- **Monorepo**：pnpm workspace

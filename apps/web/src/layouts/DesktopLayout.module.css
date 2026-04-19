@@ -1,72 +1,103 @@
 .root {
   display: flex;
-  height: 100dvh;
-  background: #fafaf8;
+  height: 100vh;
+  background: var(--bg-color);
 }
 
 .sidebar {
-  width: 220px;
-  flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #f0f0f0;
+  width: 280px;
+  background: transparent;
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  padding: 24px 16px;
+  padding: 48px 32px;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .logo {
-  font-size: 22px;
-  font-weight: 700;
-  color: #e67e22;
-  padding: 0 12px 24px;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  color: var(--text-main);
+  padding: 0 0 48px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
   flex: 1;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  gap: 16px;
+  padding: 8px 0;
   text-decoration: none;
-  color: #555;
-  font-size: 15px;
-  transition: background 0.15s;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: var(--transition);
+  position: relative;
 }
 
 .navItem:hover {
-  background: #fef3e2;
+  color: var(--text-main);
 }
 
 .navItem.active {
-  background: #fef3e2;
-  color: #e67e22;
-  font-weight: 500;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* Sharp elegant line indicator */
+.navItem::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 0;
+  background: var(--text-main);
+  transition: var(--transition);
+}
+
+.navItem.active::before {
+  height: 16px;
 }
 
 .navIcon {
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .loginBtn {
   display: block;
   text-align: center;
-  padding: 10px;
-  background: #e67e22;
-  color: #fff;
-  border-radius: 8px;
+  padding: 16px;
+  background: var(--text-main);
+  color: var(--surface-solid);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: var(--transition);
+  margin-top: auto;
+}
+
+.loginBtn:hover {
+  background: var(--primary-hover);
 }
 
 .main {
   flex: 1;
   overflow-y: auto;
-  padding: 32px;
+  position: relative;
 }

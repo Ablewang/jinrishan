@@ -4,6 +4,7 @@ import { useAuth } from '../../store/auth'
 import { plansApi } from '../../api/plans'
 import { recommendApi } from '../../api/recommend'
 import type { Recipe } from '../../types'
+import LoginPrompt from '../../components/LoginPrompt'
 import styles from './WeeklyPlan.module.css'
 
 interface PlanItem {
@@ -75,6 +76,8 @@ export default function WeeklyPlan() {
       .then(p => { setPlan(p); setLoading(false) })
       .catch(() => setLoading(false))
   }, [familyId, weekOffset])
+
+  if (!user) return <LoginPrompt title="登录后查看周计划" desc="创建家庭后可规划本周每日饮食，生成购物清单" />
 
   async function handleGenerate() {
     if (!familyId) return

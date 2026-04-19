@@ -33,9 +33,9 @@ export default function App() {
             <Route index element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
             <Route path="/recipe/:id" element={<RecipeDetail />} />
-            <Route path="/plan" element={<RequireAuth><WeeklyPlan /></RequireAuth>} />
+            <Route path="/plan" element={<WeeklyPlan />} />
             <Route path="/shopping/:id" element={<RequireAuth><Shopping /></RequireAuth>} />
-            <Route path="/bot" element={<RequireAuth><Bot /></RequireAuth>} />
+            <Route path="/bot" element={<Bot />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/family/create" element={<RequireAuth><FamilyCreate /></RequireAuth>} />
             <Route path="/family/join" element={<RequireAuth><FamilyJoin /></RequireAuth>} />

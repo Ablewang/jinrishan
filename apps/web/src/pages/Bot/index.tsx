@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../store/auth'
 import { botApi } from '../../api/bot'
 import { eventsApi } from '../../api/events'
+import LoginPrompt from '../../components/LoginPrompt'
 import styles from './Bot.module.css'
 
 interface BotCard {
@@ -41,6 +42,8 @@ export default function Bot() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  if (!user) return <LoginPrompt title="登录后使用 AI 助手" desc="登录后可与膳食助手对话，获取个性化推荐和烹饪建议" />
 
   async function sendMessage(text: string) {
     if (!text.trim() || sending) return

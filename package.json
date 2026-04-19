@@ -3,8 +3,12 @@
   "private": true,
   "scripts": {
     "dev": "concurrently -n api,web -c blue,green \"pnpm --filter api dev\" \"pnpm --filter web dev\"",
+    "dev:all": "concurrently -n api,web,admin -c blue,green,magenta \"pnpm --filter api dev\" \"pnpm --filter web dev\" \"pnpm --filter admin dev\"",
     "build": "pnpm --filter web build",
-    "deploy": "pnpm --filter api run deploy"
+    "build:admin": "pnpm --filter admin build",
+    "deploy": "pnpm --filter api run deploy",
+    "db:migrate:local": "pnpm --filter api db:migrate:local",
+    "db:migrate:remote": "pnpm --filter api db:migrate:remote"
   },
   "devDependencies": {
     "concurrently": "^9.0.0",

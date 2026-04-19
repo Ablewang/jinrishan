@@ -13,7 +13,7 @@ events.post('/', async (c) => {
     source?: string
   }>()
 
-  if (!body.family_id || !body.recipe_id || !body.event_type) {
+  if (body.family_id === undefined || body.family_id === null || !body.recipe_id || !body.event_type) {
     return c.json({ error: '参数缺失' }, 400)
   }
 
@@ -22,15 +22,18 @@ events.post('/', async (c) => {
     return c.json({ error: '无效的 event_type' }, 400)
   }
 
-  await c.env.DB.prepare(`
-    INSERT INTO recommendation_events (family_id, recipe_id, event_type, meal_type, event_date, source)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).bind(
-    body.family_id, body.recipe_id, body.event_type,
-    body.meal_type ?? null,
-    body.event_date ?? new Date().toISOString().slice(0, 10),
-    body.source ?? 'daily'
-  ).run()
+  // 游客（family_id=0）不持久化事件
+  if (body.family_id > 0) {
+    await c.env.DB.prepare(`
+      INSERT INTO recommendation_events (family_id, recipe_id, event_type, meal_type, event_date, source)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(
+      body.family_id, body.recipe_id, body.event_type,
+      body.meal_type ?? null,
+      body.event_date ?? new Date().toISOString().slice(0, 10),
+      body.source ?? 'daily'
+    ).run()
+  }
 
   return c.json({ data: { ok: true } })
 })

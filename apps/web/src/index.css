@@ -1,3 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* High-End Gallery Aesthetic */
+  --bg-color: #F9F9FA; 
+  --surface-solid: #FFFFFF;
+  
+  /* Zinc/Graphite tones for softer contrast */
+  --text-main: #18181B;
+  --text-secondary: #52525B;
+  --text-muted: #A1A1AA;
+  
+  /* Very delicate borders */
+  --border-color: #E4E4E7;
+  --border-color-strong: #E4E4E7; /* Softened from CCCCCC to prevent wireframe look */
+  
+  --primary: #18181B;
+  --primary-hover: #27272A;
+  --primary-bg: #F4F4F5;
+  
+  /* Sophisticated neutral tags */
+  --accent: #3F3F46;
+  --accent-bg: #F4F4F5;
+  
+  /* Sharp Editorial Geometry */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-full: 0px;
+  
+  /* Zero Shadows - Flat, print-like */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  
+  /* Typography Hierarchy */
+  --font-serif: 'Playfair Display', 'Songti SC', 'STSong', 'Noto Serif SC', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  
+  --transition: all 0.2s ease-out;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -9,18 +52,48 @@ html, body, #root {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
-    'Microsoft YaHei', sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  background: #fff;
-  color: #222;
-  line-height: 1.5;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+button, input {
+  font-family: inherit;
+  border-radius: 0; /* Force zero radius */
 }
 
 button {
-  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-input {
-  font-family: inherit;
+button:active {
+  opacity: 0.7;
+}
+
+button:focus-visible, input:focus-visible {
+  outline: 1px solid var(--text-main);
+  outline-offset: 2px;
+}
+
+/* Minimalist Scrollbar */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
 }

@@ -3,6 +3,8 @@ import type { D1Database } from '@cloudflare/workers-types'
 interface Recipe {
   id: number
   name: string
+  description: string
+  images: string[]
   cuisine: string
   category: string
   meal_types: string[]
@@ -12,6 +14,7 @@ interface Recipe {
   cooking_method: string
   prep_time: number
   cook_time: number
+  difficulty: string
   nutrition_tags: string[]
   season: string[]
   created_at: string
@@ -36,6 +39,11 @@ export interface RecommendOptions {
   // 游客模式偏好（登录用户用 DB，游客用这个）
   guestAllergies?: string[]
   guestFlavors?: string[]
+}
+
+const MEAL_TYPE_MAP: Record<string, string> = {
+  breakfast: '早餐', lunch: '午餐', dinner: '晚餐',
+  早餐: '早餐', 午餐: '午餐', 晚餐: '晚餐',
 }
 
 function getCurrentSeason(date: string): string {
@@ -189,7 +197,8 @@ function scoreRecipe(
 }
 
 export async function recommend(opts: RecommendOptions): Promise<Recipe[]> {
-  const { familyId, date, mealType, count = 3, excludeIds = [], db } = opts
+  const { familyId, date, count = 3, excludeIds = [], db } = opts
+  const mealType = MEAL_TYPE_MAP[opts.mealType] ?? opts.mealType
 
   const season = getCurrentSeason(date)
 
@@ -220,6 +229,7 @@ export async function recommend(opts: RecommendOptions): Promise<Recipe[]> {
 
   const recipes: Recipe[] = allRecipes.map(r => ({
     ...(r as unknown as Recipe),
+    images: parseJsonField(r.images),
     meal_types: parseJsonField(r.meal_types),
     flavors: parseJsonField(r.flavors),
     nutrition_tags: parseJsonField(r.nutrition_tags),
