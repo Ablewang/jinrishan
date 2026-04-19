@@ -5,37 +5,119 @@
   justify-content: center;
   padding: 64px 32px;
   text-align: center;
-  gap: 12px;
-  min-height: 60vh;
+  min-height: 80vh;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.illustration {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  width: 64px;
+  height: 64px;
+}
+
+.circle {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed var(--border-color-strong);
+  border-radius: 50%;
+  animation: slow-spin 20s linear infinite;
+}
+
+@keyframes slow-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .icon {
-  color: var(--text-muted, #bbb);
-  margin-bottom: 8px;
+  color: var(--text-main);
+  z-index: 1;
+}
+
+.textWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.overline {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary, #1a1a1a);
-  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--text-main);
+  margin: 0 0 16px;
+  font-weight: normal;
+  letter-spacing: 1px;
 }
 
 .desc {
   font-size: 14px;
-  color: var(--text-muted, #888);
+  color: var(--text-secondary);
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.8;
+  max-width: 420px;
+}
+
+.actionWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
 }
 
 .btn {
-  margin-top: 8px;
-  display: inline-block;
-  padding: 12px 32px;
-  background: var(--color-primary, #ff6b35);
-  color: #fff;
-  border-radius: 24px;
-  font-size: 15px;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  padding: 16px 40px;
+  background: var(--text-main);
+  color: var(--surface-solid);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
   text-decoration: none;
+  transition: var(--transition);
+  border: 1px solid var(--text-main);
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.backLink {
+  color: var(--text-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: var(--transition);
+  padding: 8px;
+}
+
+.backLink:hover {
+  color: var(--text-main);
+}
+
+/* PC Override */
+@media (min-width: 768px) {
+  .wrap {
+    min-height: calc(100vh - 120px);
+  }
 }

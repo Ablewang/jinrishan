@@ -77,7 +77,7 @@ export default function WeeklyPlan() {
       .catch(() => setLoading(false))
   }, [familyId, weekOffset])
 
-  if (!user) return <LoginPrompt title="登录后查看周计划" desc="创建家庭后可规划本周每日饮食，生成购物清单" />
+  if (!user) return <LoginPrompt title="一周三餐，心中有数" desc="登录并创建家庭，按日规划饮食，自动汇总本周采购清单" />
 
   async function handleGenerate() {
     if (!familyId) return

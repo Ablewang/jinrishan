@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { LockKeyhole } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import styles from './index.module.css'
 
 interface Props {
@@ -13,12 +13,25 @@ export default function LoginPrompt({
 }: Props) {
   return (
     <div className={styles.wrap}>
-      <div className={styles.icon}>
-        <LockKeyhole size={48} strokeWidth={1.5} />
+      <div className={styles.illustration}>
+        <div className={styles.circle}></div>
+        <Lock className={styles.icon} size={20} strokeWidth={1.5} />
       </div>
-      <h2 className={styles.title}>{title}</h2>
-      <p className={styles.desc}>{desc}</p>
-      <Link to="/auth/login" className={styles.btn}>登录 / 注册</Link>
+      
+      <div className={styles.textWrap}>
+        <span className={styles.overline}>Members Only</span>
+        <h2 className={styles.title}>{title}</h2>
+        <p className={styles.desc}>{desc}</p>
+      </div>
+
+      <div className={styles.actionWrap}>
+        <Link to="/auth/login" className={styles.btn}>
+          立即登录 / 注册
+        </Link>
+        <Link to="/home" className={styles.backLink}>
+          返回首页
+        </Link>
+      </div>
     </div>
   )
 }

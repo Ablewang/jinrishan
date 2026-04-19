@@ -30,59 +30,85 @@ interface RecipeCardProps {
   onAccept: () => void
   onViewDetail: () => void
   showSwapLimit: boolean
-  familyId?: number
+  isLoggedIn: boolean
 }
 
-function RecipeCard({ recipe, onSwap, onAccept, onViewDetail, showSwapLimit, familyId }: RecipeCardProps) {
+function RecipeCard({ recipe, onSwap, onAccept, onViewDetail, showSwapLimit, isLoggedIn }: RecipeCardProps) {
   const difficultyLabel = { easy: '简单', medium: '中等', hard: '复杂' }[recipe.difficulty] ?? recipe.difficulty
 
   return (
-    <div className={styles.card}>
-      <div className={styles.cardImage}>
-        {recipe.images?.[0]
-          ? <img src={recipe.images[0]} alt={recipe.name} />
-          : <div className={styles.imagePlaceholder}><Utensils size={48} strokeWidth={1} /></div>
-        }
-      </div>
-      <div className={styles.cardBody}>
-        <h3 className={styles.cardName}>{recipe.name}</h3>
-        
-        <div className={styles.cardMeta}>
-          <span className={styles.metaItem}><Clock size={14} /> {recipe.cook_time}分钟</span>
-          <span className={styles.metaItem}><Flame size={14} /> {difficultyLabel}</span>
-          {recipe.cuisine && <span className={styles.metaItem}><Utensils size={14} /> {recipe.cuisine}</span>}
+    <article className={styles.card}>
+      <div className={styles.cardImageWrapper}>
+        <div className={styles.cardImage}>
+          {recipe.images?.[0]
+            ? <img src={recipe.images[0]} alt={recipe.name} />
+            : <div className={styles.imagePlaceholder}>NO IMAGE</div>
+          }
         </div>
-
-        <p className={styles.cardDesc}>{recipe.description}</p>
+      </div>
+      
+      <div className={styles.cardBody}>
+        <header className={styles.cardHeader}>
+          <div className={styles.tags}>
+            {recipe.flavors?.slice(0, 3).map((f, i) => (
+              <span key={f} className={styles.tag}>
+                {i > 0 && <span className={styles.tagDot}>·</span>}
+                {f}
+              </span>
+            ))}
+          </div>
+          <h3 className={styles.cardName}>{recipe.name}</h3>
+          <p className={styles.cardDesc}>{recipe.description}</p>
+        </header>
         
-        <div className={styles.tags}>
-          {recipe.flavors?.slice(0, 3).map(f => <span key={f} className={styles.tag}>{f}</span>)}
+        <div className={styles.cardMetaGrid}>
+          <div className={styles.metaBlock}>
+            <span className={styles.metaLabel}>TIME</span>
+            <span className={styles.metaValue}>{recipe.cook_time} M</span>
+          </div>
+          <div className={styles.metaBlock}>
+            <span className={styles.metaLabel}>LEVEL</span>
+            <span className={styles.metaValue}>{difficultyLabel}</span>
+          </div>
+          {recipe.cuisine ? (
+            <div className={styles.metaBlock}>
+              <span className={styles.metaLabel}>CUISINE</span>
+              <span className={styles.metaValue}>{recipe.cuisine}</span>
+            </div>
+          ) : (
+            <div className={styles.metaBlock}>
+              <span className={styles.metaLabel}>TYPE</span>
+              <span className={styles.metaValue}>家常</span>
+            </div>
+          )}
         </div>
         
         <div className={styles.cardActions}>
-          <button className={styles.btnDetail} onClick={onViewDetail}>
-            查看做法
-          </button>
           <button className={styles.btnAccept} onClick={onAccept}>
-            ✓ 就吃这个
+            就吃这个
           </button>
-          {showSwapLimit ? (
-            <Link to="/auth/login" className={styles.btnSwapLock}>
-              登录解锁换一换
-            </Link>
-          ) : (
-            <button className={styles.btnSwap} onClick={onSwap}>
-              换一换
+          <div className={styles.actionRow}>
+            <button className={styles.btnDetail} onClick={onViewDetail}>
+              查看做法
             </button>
-          )}
+            {showSwapLimit ? (
+              <Link to="/auth/login" className={styles.btnSwapLock}>
+                登录解锁换一换
+              </Link>
+            ) : (
+              <button className={styles.btnSwap} onClick={onSwap}>
+                换一换
+              </button>
+            )}
+          </div>
         </div>
-        {!familyId && (
+        {!isLoggedIn && (
           <p className={styles.guestHint}>
             <Link to="/auth/login">登录</Link> 可获得更精准的家庭专属推荐
           </p>
         )}
       </div>
-    </div>
+    </article>
   )
 }
 
@@ -187,8 +213,11 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.title}>今日推荐</h1>
-        <span className={styles.date}>{new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' })}</span>
+        <span className={styles.overline}>Daily Inspiration</span>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>今日推荐</h1>
+          <span className={styles.date}>{new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' })}</span>
+        </div>
       </header>
 
       <div className={styles.mealTabs}>
@@ -204,7 +233,10 @@ export default function Home() {
       </div>
 
       {loading ? (
-        <div className={styles.loading}>加载中...</div>
+        <div className={styles.loading}>
+          <div className={styles.loadingIcon} />
+          <span>Curating recipes...</span>
+        </div>
       ) : recipes.length > 0 ? (
         <div className={styles.recipeList}>
           {recipes.map(recipe => (
@@ -215,12 +247,14 @@ export default function Home() {
               onAccept={() => handleAccept(recipe)}
               onViewDetail={() => setSelectedRecipeId(recipe.id)}
               showSwapLimit={showSwapLimit}
-              familyId={familyId || undefined}
+              isLoggedIn={!!user}
             />
           ))}
         </div>
       ) : (
-        <div className={styles.empty}>暂无推荐，请稍后重试</div>
+        <div className={styles.empty}>
+          <span>暂无推荐内容</span>
+        </div>
       )}
 
       <RecipeDrawer

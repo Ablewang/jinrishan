@@ -1,3 +1,5 @@
+import { authStore } from '../store/auth'
+
 const BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? ''
 
 export class ApiError extends Error {
@@ -9,7 +11,7 @@ export class ApiError extends Error {
 }
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = localStorage.getItem('token')
+  const token = authStore.getState().token
   const res = await fetch(`${BASE}${path}`, {
     ...init,
     headers: {

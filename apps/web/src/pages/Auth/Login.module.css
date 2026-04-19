@@ -1,11 +1,39 @@
 .page {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--bg-color);
   align-items: center;
-  justify-content: center;
-  padding: 24px;
+  justify-content: flex-start;
+  padding: 12vh 24px 24px;
+  overflow: hidden;
+}
+
+.mobileWatermark {
+  position: absolute;
+  top: 8vh;
+  right: -20px;
+  font-family: var(--font-serif);
+  font-size: 110px;
+  font-weight: 500;
+  line-height: 0.85;
+  color: var(--text-main);
+  opacity: 0.04;
+  pointer-events: none;
+  text-align: right;
+  user-select: none;
+  letter-spacing: -0.02em;
+  z-index: 0;
+}
+
+@media (min-width: 768px) {
+  .mobileWatermark {
+    display: none;
+  }
+}
+
+.rightDeco {
+  display: none;
 }
 
 .container {
@@ -13,70 +41,72 @@
   max-width: 360px;
   display: flex;
   flex-direction: column;
+  flex: 1; /* Allow container to grow so terms can be pushed to bottom */
 }
 
 .header {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.backBtn {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: var(--transition);
-  padding: 16px;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: 64px; /* A good middle ground for spacing */
+  padding-bottom: 0;
+  border-bottom: none;
   width: 100%;
-  text-align: center;
-  margin-top: 24px;
 }
 
-.backBtn:hover {
-  color: var(--text-main);
+.headerText {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
-.title {
+.logoWrap {
+  margin: 0 0 32px;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 48px; /* Restored the large, high-end gallery size */
+}
+
+.formTitle {
   font-family: var(--font-serif);
-  font-size: 32px;
+  font-size: 36px; /* Restored the bold, confident size */
+  font-weight: 500;
   color: var(--text-main);
   margin: 0 0 12px;
-  font-weight: normal;
-  letter-spacing: 2px;
+  line-height: 1;
+  letter-spacing: 0.05em;
 }
 
 .subtitle {
-  font-size: 12px;
+  font-size: 14px; /* Restored size */
   color: var(--text-secondary);
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px; /* Restored gap */
+  flex: 1;
 }
 
 .inputGroup {
   display: flex;
   align-items: center;
-  padding-bottom: 16px;
+  height: 56px; /* Exactly matches OTP box height to prevent layout shift */
+  box-sizing: border-box;
   border-bottom: 1px solid var(--border-color);
+  position: relative;
 }
 
 .prefix {
-  font-size: 13px;
-  color: var(--text-main);
-  margin-right: 16px;
+  font-size: 14px; /* Restored smaller size */
+  color: var(--text-secondary); /* Restored softer color */
+  margin-right: 16px; /* Restored spacing */
   font-family: var(--font-sans);
   letter-spacing: 1px;
 }
@@ -85,13 +115,16 @@
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 18px; /* Restored balanced size */
+  font-family: var(--font-sans);
   color: var(--text-main);
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .input::placeholder {
   color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 14px;
 }
 
 .input:focus {
@@ -114,25 +147,61 @@
   text-align: center;
 }
 
-.btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--surface-solid);
+.submitRow {
+  display: flex;
+  align-items: stretch;
+  gap: 16px; /* restored to perfectly align with prefix margin */
+  margin-top: 8px;
+}
+
+.backIconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 24px; /* Matches the approximate width of the "+86" prefix */
+  border: none;
+  background: transparent;
   color: var(--text-main);
-  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.backIconBtn:hover {
+  opacity: 0.5;
+}
+
+.arrowIcon {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backIconBtn:hover .arrowIcon {
+  transform: translateX(-4px);
+}
+
+.btn {
+  flex: 1;
+  padding: 16px; /* Restored to original tall button */
+  background: var(--text-main);
+  color: var(--surface-solid);
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  border: 1px solid var(--border-color);
+  letter-spacing: 2px;
+  border: 1px solid var(--text-main);
+  border-radius: 0; /* Restored to sharp, brutalist look */
   cursor: pointer;
   transition: var(--transition);
 }
 
 .btn:hover:not(:disabled) {
-  border-color: var(--text-main);
+  background: var(--primary-hover);
 }
 
 .btn:disabled {
+  background: transparent;
   color: var(--text-muted);
+  border: 1px solid var(--border-color);
   cursor: not-allowed;
 }
 
@@ -171,4 +240,376 @@
   margin-top: 24px;
   text-align: center;
   font-family: monospace;
+}
+
+.termsHint {
+  margin-top: auto;
+  padding-top: 48px;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: flex-start;
+  text-align: left;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkboxMark {
+  margin-top: 2px;
+  height: 14px;
+  width: 14px;
+  background-color: transparent;
+  border: 1px solid var(--border-color-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.checkboxLabel:hover input ~ .checkboxMark {
+  border-color: var(--text-main);
+}
+
+.checkboxLabel input:checked ~ .checkboxMark {
+  background-color: var(--text-main);
+  border-color: var(--text-main);
+}
+
+.checkboxMark:after {
+  content: "";
+  opacity: 0;
+  width: 3px;
+  height: 6px;
+  border: solid var(--surface-solid);
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+  transition: opacity 0.15s;
+}
+
+.checkboxLabel input:checked ~ .checkboxMark:after {
+  opacity: 1;
+}
+
+.termsText {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+}
+
+.termsText a {
+  color: var(--text-main);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--border-color-strong);
+  transition: var(--transition);
+}
+
+.termsText a:hover {
+  text-decoration-color: var(--text-main);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  padding: 0 0 env(safe-area-inset-bottom);
+}
+
+@media (min-width: 768px) {
+  .modalOverlay {
+    align-items: center;
+  }
+}
+
+.modal {
+  background: var(--surface-solid);
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 24px 28px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .modal {
+    border-radius: 4px;
+    max-width: 360px;
+    padding: 40px;
+  }
+}
+
+.modalTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.modalBody {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.modalBody a {
+  color: var(--text-main);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.modalBtn {
+  padding: 14px;
+  background: var(--text-main);
+  color: var(--surface-solid);
+  font-size: 13px;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modalBtn:hover {
+  background: var(--primary-hover);
+}
+
+.modalCancel {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-6px); }
+  35%       { transform: translateX(6px); }
+  55%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+  90%       { transform: translateX(-2px); }
+}
+
+.shake {
+  animation: shake 0.6s ease;
+}
+
+.brandingPanel {
+  display: none;
+}
+
+.formPanel {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .page {
+    flex-direction: row;
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .brandingPanel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    padding: 6vw;
+    background: transparent;
+  }
+
+  .brandingContent {
+    margin-top: 10vh;
+  }
+
+  .hugeLogo {
+    transform: scale(1.5);
+    transform-origin: left center;
+    margin-bottom: 80px;
+  }
+
+  .brandingTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 6vw, 72px);
+    line-height: 1.1;
+    color: var(--text-main);
+    margin: 0 0 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .brandingDesc {
+    font-size: 16px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    max-width: 320px;
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .brandingFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .formPanel {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6vw;
+    background: transparent; /* Let the global grid flow through */
+    border-left: 1px solid var(--border-color);
+    position: relative; /* For absolutely positioned deco elements */
+  }
+
+  .rightDeco {
+    display: flex;
+    position: absolute;
+    right: 48px;
+    top: 0;
+    bottom: 0;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .rightDecoLine {
+    width: 1px;
+    height: 160px;
+    background: var(--text-main);
+    opacity: 0.15;
+  }
+
+  .rightDecoText {
+    writing-mode: vertical-rl;
+    font-family: var(--font-serif);
+    font-size: 12px;
+    letter-spacing: 12px;
+    color: var(--text-secondary);
+    margin-top: 32px;
+    opacity: 0.6;
+  }
+
+  .container {
+    background: transparent;
+    padding: 0;
+    border: none;
+    max-width: 360px;
+    margin: 0 auto;
+    width: 100%;
+    flex: none;
+  }
+
+  .header .logoWrap {
+    display: none;
+  }
+
+  .header {
+    text-align: left;
+    align-items: flex-start;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 48px;
+    justify-content: flex-start; /* Reset to left alignment on PC */
+  }
+
+  .formTitle {
+    display: block;
+    font-size: 40px;
+    letter-spacing: 2px;
+    margin: 0 0 16px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--text-main);
+    font-family: var(--font-serif);
+    font-style: italic;
+    letter-spacing: 2px;
+    margin-top: 0;
+  }
+
+  .inputGroup {
+    padding-bottom: 20px;
+  }
+
+  .input {
+    font-size: 24px;
+  }
+
+  .prefix {
+    font-size: 16px;
+  }
+
+  .btn {
+    padding: 20px;
+    font-size: 14px;
+  }
+}
+
+.otpRow {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.otpBox {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 24px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  color: var(--text-main);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-color-strong);
+  border-radius: 4px;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  transition: border-color 0.2s ease;
+  caret-color: transparent;
+  padding: 0;
+}
+
+.otpBox:focus {
+  border-color: var(--text-main);
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.otpBox:not(:placeholder-shown) {
+  caret-color: auto; /* Show caret only when there's text (optional behavior, leaving as transparent for cleaner look usually) */
 }

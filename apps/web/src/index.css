@@ -55,9 +55,20 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--bg-color);
+  background-color: var(--bg-color);
   color: var(--text-main);
   line-height: 1.6;
+  
+  /* 
+   * High-End Architectural Grid (Blueprint / Gallery feel) 
+   * Provides a subtle texture to eliminate the "empty" feeling 
+   * across the entire site without cluttering the design.
+   */
+  background-image: 
+    linear-gradient(to right, rgba(24, 24, 27, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(24, 24, 27, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center top;
 }
 
 button, input {

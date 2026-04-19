@@ -43,7 +43,7 @@ export default function Bot() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  if (!user) return <LoginPrompt title="登录后使用 AI 助手" desc="登录后可与膳食助手对话，获取个性化推荐和烹饪建议" />
+  if (!user) return <LoginPrompt title="今天想吃什么？" desc="说出你的想法或心情，膳食助手为你找到最合适的那道菜" />
 
   async function sendMessage(text: string) {
     if (!text.trim() || sending) return

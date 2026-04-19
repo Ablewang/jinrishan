@@ -94,7 +94,7 @@ export default function Settings() {
     navigate('/home')
   }
 
-  if (!user) return <LoginPrompt title="登录后查看个人设置" desc="登录后可设置家庭偏好，获得更精准的推荐" />
+  if (!user) return <LoginPrompt title="建立你的口味档案" desc="告诉我你喜欢什么、不吃什么，每一次推荐才能真正懂你" />
 
   return (
     <div className={styles.page}>

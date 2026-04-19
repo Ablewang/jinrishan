@@ -3,7 +3,7 @@ import type { AppContext } from '../types'
 import { authMiddleware } from '../middleware/auth'
 import { recommend } from '../lib/recommender'
 
-type BotBindings = AppContext['Bindings'] & { GEMINI_API_KEY?: string }
+type BotBindings = AppContext['Bindings'] & { MOONSHOT_API_KEY?: string }
 
 const bot = new Hono<{ Bindings: BotBindings; Variables: AppContext['Variables'] }>()
 
@@ -31,18 +31,23 @@ params示例：{"meal_type":"dinner","flavors":["清淡"],"ingredients":["土豆
 用户输入：${message}`
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-      }
-    )
+    const res = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'moonshot-v1-8k',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
+        temperature: 0.3,
+      }),
+    })
     const data = await res.json() as {
-      candidates?: { content: { parts: { text: string }[] } }[]
+      choices?: { message: { content: string } }[]
     }
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+    const text = data.choices?.[0]?.message?.content ?? ''
     const json = text.match(/\{[\s\S]*\}/)?.[0]
     if (json) return JSON.parse(json) as { intent: Intent; params: BotParams }
   } catch {
@@ -71,7 +76,7 @@ bot.post('/message', authMiddleware, async (c) => {
 
   if (!message?.trim()) return c.json({ error: '消息不能为空' }, 400)
 
-  const apiKey = (c.env as BotBindings).GEMINI_API_KEY
+  const apiKey = (c.env as BotBindings).MOONSHOT_API_KEY
   const { intent, params } = await detectIntent(message, apiKey)
 
   const date = context?.date ?? new Date().toISOString().slice(0, 10)

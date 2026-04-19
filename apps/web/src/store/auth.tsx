@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import type { ReactNode } from 'react'
 import type { User } from '../types'
 
 interface AuthState {
@@ -9,46 +11,33 @@ interface AuthState {
   logout: () => void
 }
 
-const AuthContext = createContext<AuthState | null>(null)
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token')
-    const storedUser = localStorage.getItem('user')
-    if (storedToken && storedUser) {
-      setToken(storedToken)
-      setUser(JSON.parse(storedUser) as User)
+const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      isLoading: false,
+      login: (token, user) => set({ token, user }),
+      logout: () => set({ token: null, user: null }),
+    }),
+    {
+      name: 'auth',
+      onRehydrateStorage: () => (state) => {
+        if (state) state.isLoading = false
+      },
     }
-    setIsLoading(false)
-  }, [])
-
-  function login(t: string, u: User) {
-    localStorage.setItem('token', t)
-    localStorage.setItem('user', JSON.stringify(u))
-    setToken(t)
-    setUser(u)
-  }
-
-  function logout() {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setToken(null)
-    setUser(null)
-  }
-
-  return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
   )
+)
+
+// 兼容旧的 useAuth 调用方式，无需修改任何页面
+export function useAuth() {
+  return useAuthStore()
 }
 
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-  return ctx
+// 供非组件代码（如 apiFetch）直接访问 token
+export const authStore = useAuthStore
+
+// AuthProvider 保留以兼容 App.tsx，实际不再需要 Context
+export function AuthProvider({ children }: { children: ReactNode }) {
+  return <>{children}</>
 }
