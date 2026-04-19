@@ -52,59 +52,76 @@ export default function Login() {
 
   return (
     <div className={styles.page}>
-      <button className={styles.back} onClick={() => navigate(-1)}>← 返回</button>
-      <h1 className={styles.title}>登录 / 注册</h1>
-      <p className={styles.sub}>手机号验证，安全便捷</p>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>登录 / 注册</h1>
+          <p className={styles.subtitle}>手机号验证，安全便捷</p>
+        </div>
 
-      {step === 'phone' ? (
-        <div className={styles.form}>
-          <div className={styles.field}>
-            <span className={styles.prefix}>+86</span>
-            <input
-              className={styles.input}
-              type="tel"
-              placeholder="手机号"
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-              maxLength={11}
-            />
+        {step === 'phone' ? (
+          <div className={styles.form}>
+            <div className={styles.inputGroup}>
+              <span className={styles.prefix}>+86</span>
+              <input
+                className={styles.input}
+                type="tel"
+                placeholder="手机号"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                maxLength={11}
+              />
+            </div>
+            
+            {error && <p className={styles.error}>{error}</p>}
+            
+            <button
+              className={styles.btn}
+              onClick={sendOtp}
+              disabled={phone.length !== 11 || loading}
+            >
+              {loading ? '发送中...' : '获取验证码'}
+            </button>
           </div>
-          {error && <p className={styles.error}>{error}</p>}
-          <button
-            className={styles.btn}
-            onClick={sendOtp}
-            disabled={phone.length !== 11 || loading}
-          >
-            {loading ? '发送中...' : '获取验证码'}
-          </button>
-        </div>
-      ) : (
-        <div className={styles.form}>
-          <p className={styles.hint}>验证码已发送至 {phone}</p>
-          {devCode && (
-            <p className={styles.devHint}>开发模式验证码：<strong>{devCode}</strong></p>
-          )}
-          <input
-            className={`${styles.input} ${styles.codeInput}`}
-            type="text"
-            placeholder="6 位验证码"
-            value={code}
-            onChange={e => setCode(e.target.value)}
-            maxLength={6}
-          />
-          {error && <p className={styles.error}>{error}</p>}
-          <button
-            className={styles.btn}
-            onClick={verifyOtp}
-            disabled={code.length !== 6 || loading}
-          >
-            {loading ? '验证中...' : '登录'}
-          </button>
-          <button className={styles.resend} onClick={() => setStep('phone')}>
-            重新获取
-          </button>
-        </div>
-      )}
+        ) : (
+          <div className={styles.form}>
+            <div className={styles.inputGroup}>
+              <input
+                className={`${styles.input} ${styles.codeInput}`}
+                type="text"
+                placeholder="6 位验证码"
+                value={code}
+                onChange={e => setCode(e.target.value)}
+                maxLength={6}
+              />
+            </div>
+            
+            {error && <p className={styles.error}>{error}</p>}
+            
+            <button
+              className={styles.btn}
+              onClick={verifyOtp}
+              disabled={code.length !== 6 || loading}
+            >
+              {loading ? '验证中...' : '登录'}
+            </button>
+
+            <div className={styles.actionRow}>
+              <span className={styles.hint}>验证码已发送至 {phone}</span>
+              <button className={styles.resendBtn} onClick={() => setStep('phone')}>
+                修改手机号
+              </button>
+            </div>
+
+            {devCode && (
+              <p className={styles.devHint}>开发模式验证码：<strong>{devCode}</strong></p>
+            )}
+          </div>
+        )}
+
+        <button className={styles.backBtn} onClick={() => navigate(-1)}>
+          返回
+        </button>
+      </div>
     </div>
   )
 }
