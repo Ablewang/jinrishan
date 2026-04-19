@@ -42,6 +42,21 @@ families.get('/:id', authMiddleware, async (c) => {
   return c.json({ data: family })
 })
 
+families.put('/:id', authMiddleware, async (c) => {
+  const familyId = Number(c.req.param('id'))
+  const userId = c.get('userId')
+  const { name } = await c.req.json<{ name: string }>()
+  if (!name?.trim()) return c.json({ error: '家庭名称不能为空' }, 400)
+
+  const member = await c.env.DB.prepare(
+    'SELECT role FROM family_members WHERE family_id = ? AND user_id = ?'
+  ).bind(familyId, userId).first<{ role: string }>()
+  if (!member || member.role !== 'owner') return c.json({ error: '无权限' }, 403)
+
+  await c.env.DB.prepare('UPDATE families SET name = ? WHERE id = ?').bind(name.trim(), familyId).run()
+  return c.json({ data: { ok: true, name: name.trim() } })
+})
+
 families.get('/:id/members', authMiddleware, async (c) => {
   const id = Number(c.req.param('id'))
   const { results } = await c.env.DB.prepare(`

@@ -12,6 +12,7 @@ interface Prefs {
 interface Props {
   open: boolean
   prefs: Prefs
+  title?: string
   onSave: (prefs: Prefs) => Promise<void>
   onClose: () => void
 }
@@ -47,7 +48,7 @@ function TagGroup({ label, options, selected, onChange }: {
   )
 }
 
-export default function PrefsDrawer({ open, prefs, onSave, onClose }: Props) {
+export default function PrefsDrawer({ open, prefs, title, onSave, onClose }: Props) {
   const [local, setLocal] = useState<Prefs>(prefs)
   const [saving, setSaving] = useState(false)
 
@@ -71,7 +72,7 @@ export default function PrefsDrawer({ open, prefs, onSave, onClose }: Props) {
     <div className={`${styles.overlay} ${open ? styles.open : ''}`} onClick={onClose}>
       <div className={styles.drawer} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2 className={styles.title}>口味偏好</h2>
+          <h2 className={styles.title}>{title || '口味偏好'}</h2>
           <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
 

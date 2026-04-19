@@ -30,7 +30,7 @@ function rowsToPrefs(rows: PrefRow[]) {
   return result
 }
 
-preferences.get('/:familyId/members/:memberId', authMiddleware, async (c) => {
+preferences.get('/:familyId/members/:memberId/preferences', authMiddleware, async (c) => {
   const memberId = Number(c.req.param('memberId'))
   const { results } = await c.env.DB.prepare(
     'SELECT pref_type, target_type, target_value FROM user_preferences WHERE member_id = ?'
@@ -39,7 +39,7 @@ preferences.get('/:familyId/members/:memberId', authMiddleware, async (c) => {
   return c.json({ data: { member_id: memberId, ...rowsToPrefs(results) } })
 })
 
-preferences.put('/:familyId/members/:memberId', authMiddleware, async (c) => {
+preferences.put('/:familyId/members/:memberId/preferences', authMiddleware, async (c) => {
   const memberId = Number(c.req.param('memberId'))
   const body = await c.req.json<{
     liked_cuisines?: string[]; liked_flavors?: string[]; liked_ingredients?: string[]

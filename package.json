@@ -4,6 +4,8 @@
   "scripts": {
     "dev": "concurrently -n api,web -c blue,green \"pnpm --filter api dev\" \"pnpm --filter web dev\"",
     "dev:all": "concurrently -n api,web,admin -c blue,green,magenta \"pnpm --filter api dev\" \"pnpm --filter web dev\" \"pnpm --filter admin dev\"",
+    "start": "concurrently -n api,web,admin -c blue,green,magenta \"pnpm --filter api dev\" \"pnpm --filter web dev\" \"pnpm --filter admin dev\"",
+    "stop": "lsof -ti:8787,9527,5174 | xargs kill -9 2>/dev/null; echo 'all stopped'",
     "build": "pnpm --filter web build",
     "build:admin": "pnpm --filter admin build",
     "deploy": "pnpm --filter api run deploy",

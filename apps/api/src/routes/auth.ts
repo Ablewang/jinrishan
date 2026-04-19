@@ -72,4 +72,52 @@ auth.put('/me', authMiddleware, async (c) => {
   return c.json({ data: user })
 })
 
+auth.get('/preferences', authMiddleware, async (c) => {
+  const userId = c.get('userId')
+  const { results } = await c.env.DB.prepare(
+    'SELECT pref_type, target_type, target_value FROM personal_preferences WHERE user_id = ?'
+  ).bind(userId).all<{ pref_type: string; target_type: string; target_value: string }>()
+
+  const prefs: Record<string, string[]> = {
+    liked_cuisines: [], liked_flavors: [], liked_ingredients: [],
+    disliked_cuisines: [], disliked_flavors: [], disliked_ingredients: [],
+    allergies: [],
+  }
+  for (const r of results) {
+    if (r.pref_type === 'allergy') { prefs.allergies.push(r.target_value) }
+    else { const k = `${r.pref_type}_${r.target_type}s`; if (k in prefs) prefs[k].push(r.target_value) }
+  }
+  return c.json({ data: prefs })
+})
+
+auth.put('/preferences', authMiddleware, async (c) => {
+  const userId = c.get('userId')
+  const body = await c.req.json<Record<string, string[]>>()
+
+  await c.env.DB.prepare('DELETE FROM personal_preferences WHERE user_id = ?').bind(userId).run()
+
+  const entries: [string, string, string[]][] = [
+    ['liked', 'cuisine', body.liked_cuisines ?? []],
+    ['liked', 'flavor', body.liked_flavors ?? []],
+    ['liked', 'ingredient', body.liked_ingredients ?? []],
+    ['disliked', 'cuisine', body.disliked_cuisines ?? []],
+    ['disliked', 'flavor', body.disliked_flavors ?? []],
+    ['disliked', 'ingredient', body.disliked_ingredients ?? []],
+  ]
+  for (const [pt, tt, vals] of entries) {
+    for (const v of vals) {
+      await c.env.DB.prepare(
+        'INSERT OR IGNORE INTO personal_preferences (user_id, pref_type, target_type, target_value) VALUES (?, ?, ?, ?)'
+      ).bind(userId, pt, tt, v).run()
+    }
+  }
+  for (const v of body.allergies ?? []) {
+    await c.env.DB.prepare(
+      'INSERT OR IGNORE INTO personal_preferences (user_id, pref_type, target_type, target_value) VALUES (?, ?, ?, ?)'
+    ).bind(userId, 'allergy', 'ingredient', v).run()
+  }
+
+  return c.json({ data: { ok: true } })
+})
+
 export default auth

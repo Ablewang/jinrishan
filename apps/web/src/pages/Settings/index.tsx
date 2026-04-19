@@ -5,6 +5,7 @@ import { useAuth } from '../../store/auth'
 import { apiFetch } from '../../api/client'
 import { uploadWithProgress } from '../../api/upload'
 import { familiesApi } from '../../api/families'
+import { authApi } from '../../api/auth'
 import LoginPrompt from '../../components/LoginPrompt'
 import InlineEdit from '../../components/InlineEdit'
 import PrefsDrawer from '../../components/PrefsDrawer/PrefsDrawer'
@@ -103,10 +104,7 @@ export default function Settings() {
 
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [rolesDrawerOpen, setRolesDrawerOpen] = useState(false)
-  const [prefsDrawerOpen, setPrefsDrawerOpen] = useState(false)
-  const [prefsForMemberId, setPrefsForMemberId] = useState<number | null>(null)
-  const [prefsForMemberName, setPrefsForMemberName] = useState('')
-  const [prefsDrawerData, setPrefsDrawerData] = useState<Prefs>(DEFAULT_PREFS)
+  const [personalPrefsOpen, setPersonalPrefsOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState('')
   const [avatarPreviewFile, setAvatarPreviewFile] = useState<File | null>(null)
@@ -117,24 +115,25 @@ export default function Settings() {
   const familyId = Number(localStorage.getItem('familyId') ?? '0')
 
   useEffect(() => {
+    if (!user) return
+    authApi.getPreferences().then(setPrefs).catch(() => {})
+  }, [user])
+
+  useEffect(() => {
     if (!familyId || !user) return
     familiesApi.get(familyId).then(setFamilyInfo).catch(() => {})
     familiesApi.members(familyId).then(m => {
       setMembers(m)
       const me = m.find(x => x.user_id === user.id)
-      if (!me) return
-      setMemberId(me.id)
-      return familiesApi.getPreferences(familyId, me.id)
-    }).then(p => {
-      if (p) setPrefs(p)
+      if (me) setMemberId(me.id)
     }).catch(() => {})
   }, [familyId, user])
 
   async function handleSave(updated: Prefs) {
-    if (!memberId || !familyId) return
     setSaving(true)
     try {
-      await familiesApi.updatePreferences(familyId, memberId, updated)
+      await authApi.updatePreferences(updated)
+      setPrefs(updated)
       setSaved(true)
       setTimeout(() => setSaved(false), 1000)
     } catch (e) {
@@ -142,6 +141,19 @@ export default function Settings() {
     } finally {
       setSaving(false)
     }
+  }
+
+  async function handleAddVirtual(displayName: string, role?: string) {
+    const res = await familiesApi.createVirtual(familyId, displayName, role)
+    setMembers(prev => [...prev, {
+      id: res.id, user_id: null, display_name: res.display_name,
+      nickname: role ?? null, role: 'member', user_name: null,
+    }])
+  }
+
+  async function handleDeleteVirtual(targetMemberId: number) {
+    await familiesApi.deleteVirtual(familyId, targetMemberId)
+    setMembers(prev => prev.filter(m => m.id !== targetMemberId))
   }
 
   function handleLogout() {
@@ -320,11 +332,11 @@ export default function Settings() {
               {members.map(m => (
                 <div key={m.id} className={styles.memberItem}>
                   <div className={styles.memberAvatar}>
-                    {m.avatar ? <img src={m.avatar} alt="avatar" /> : (m.user_name?.[0] || '用')}
+                    {m.avatar ? <img src={m.avatar} alt="avatar" /> : ((m.display_name || m.user_name)?.[0] || '用')}
                   </div>
                   <div className={styles.memberInfo}>
                     <div className={styles.memberName}>
-                      {m.user_name || m.phone}
+                      {m.display_name || m.user_name || m.phone}
                       {m.user_id === user?.id && <span className={styles.meTag}>自己</span>}
                     </div>
                     <span className={styles.memberRole}>
@@ -343,12 +355,11 @@ export default function Settings() {
         )}
       </div>
 
-      {memberId && (
-        <div className={styles.section}>
+      <div className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>口味偏好</h2>
             <div className={styles.sectionActions}>
-              <button className={styles.sectionAction} onClick={() => setPrefsDrawerOpen(true)}>
+              <button className={styles.sectionAction} onClick={() => setPersonalPrefsOpen(true)}>
                 编辑
               </button>
             </div>
@@ -359,19 +370,17 @@ export default function Settings() {
           <TagPicker label="忌口口味" options={FLAVOR_OPTIONS} selected={prefs.disliked_flavors} onChange={() => {}} disabled />
           <TagPicker label="过敏食材" options={ALLERGY_OPTIONS} selected={prefs.allergies} onChange={() => {}} disabled />
         </div>
-      )}
 
       <button className={styles.logoutBtn} onClick={handleLogout}>退出登录</button>
 
       <PrefsDrawer
-        open={prefsDrawerOpen}
+        open={personalPrefsOpen}
         prefs={prefs}
-        onSave={async (updated) => {
-          await handleSave(updated)
-          setPrefs(updated)
-        }}
-        onClose={() => setPrefsDrawerOpen(false)}
+        onSave={handleSave}
+        onClose={() => setPersonalPrefsOpen(false)}
       />
+
+
 
       <RolesDrawer
         open={rolesDrawerOpen}
@@ -380,6 +389,19 @@ export default function Settings() {
         onRoleChange={async (userId, role) => {
           await familiesApi.updateMember(familyId, userId, { nickname: role })
           setMembers(members.map(m => m.user_id === userId ? { ...m, nickname: role } : m))
+        }}
+        onVirtualRoleChange={async (memberId, role) => {
+          await familiesApi.updateVirtual(familyId, memberId, { nickname: role })
+          setMembers(members.map(m => m.id === memberId ? { ...m, nickname: role } : m))
+        }}
+        onAddVirtual={handleAddVirtual}
+        onDeleteVirtual={handleDeleteVirtual}
+        onLoadPrefs={async (targetMemberId) => {
+          const p = await familiesApi.getPreferences(familyId, targetMemberId)
+          return p ?? { liked_cuisines: [], liked_flavors: [], liked_ingredients: [], disliked_cuisines: [], disliked_flavors: [], disliked_ingredients: [], allergies: [] }
+        }}
+        onSavePrefs={async (targetMemberId, prefs) => {
+          await familiesApi.updatePreferences(familyId, targetMemberId, prefs)
         }}
         onClose={() => setRolesDrawerOpen(false)}
       />

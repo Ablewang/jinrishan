@@ -26,6 +26,11 @@ export const familiesApi = {
   deleteVirtual: (familyId: number, memberId: number) =>
     apiFetch(`/api/families/${familyId}/members/virtual/${memberId}`, { method: 'DELETE' }),
 
+  updateVirtual: (familyId: number, memberId: number, data: { display_name?: string; nickname?: string }) =>
+    apiFetch(`/api/families/${familyId}/members/virtual/${memberId}`, {
+      method: 'PUT', body: JSON.stringify(data),
+    }),
+
   join: (invite_code: string, nickname?: string) =>
     apiFetch<{ family_id: number; family_name: string }>('/api/families/join', {
       method: 'POST', body: JSON.stringify({ invite_code, nickname }),
@@ -37,10 +42,10 @@ export const familiesApi = {
       liked_cuisines: string[]; liked_flavors: string[]; liked_ingredients: string[]
       disliked_cuisines: string[]; disliked_flavors: string[]; disliked_ingredients: string[]
       allergies: string[]
-    }>(`/api/families/${familyId}/members/${memberId}`),
+    }>(`/api/families/${familyId}/members/${memberId}/preferences`),
 
   updatePreferences: (familyId: number, memberId: number, prefs: Record<string, string[]>) =>
-    apiFetch(`/api/families/${familyId}/members/${memberId}`, {
+    apiFetch(`/api/families/${familyId}/members/${memberId}/preferences`, {
       method: 'PUT', body: JSON.stringify(prefs),
     }),
 }
