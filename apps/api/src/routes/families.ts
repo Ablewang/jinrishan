@@ -14,7 +14,6 @@ families.post('/', authMiddleware, async (c) => {
   if (!name?.trim()) return c.json({ error: '家庭名称不能为空' }, 400)
 
   let inviteCode = generateInviteCode()
-  // 保证唯一性
   for (let i = 0; i < 5; i++) {
     const exists = await c.env.DB.prepare(
       'SELECT id FROM families WHERE invite_code = ?'
@@ -28,23 +27,17 @@ families.post('/', authMiddleware, async (c) => {
   ).bind(name.trim(), inviteCode, userId).run()
 
   const familyId = meta.last_row_id as number
-  // 创建者自动成为 owner 成员
   await c.env.DB.prepare(
     'INSERT INTO family_members (family_id, user_id, nickname, role) VALUES (?, ?, ?, ?)'
   ).bind(familyId, userId, null, 'owner').run()
 
-  const family = await c.env.DB.prepare(
-    'SELECT * FROM families WHERE id = ?'
-  ).bind(familyId).first()
-
+  const family = await c.env.DB.prepare('SELECT * FROM families WHERE id = ?').bind(familyId).first()
   return c.json({ data: family }, 201)
 })
 
 families.get('/:id', authMiddleware, async (c) => {
   const id = Number(c.req.param('id'))
-  const family = await c.env.DB.prepare(
-    'SELECT * FROM families WHERE id = ?'
-  ).bind(id).first()
+  const family = await c.env.DB.prepare('SELECT * FROM families WHERE id = ?').bind(id).first()
   if (!family) return c.json({ error: '家庭不存在' }, 404)
   return c.json({ data: family })
 })
@@ -54,7 +47,7 @@ families.get('/:id/members', authMiddleware, async (c) => {
   const { results } = await c.env.DB.prepare(`
     SELECT fm.*, u.phone, u.name as user_name, u.avatar
     FROM family_members fm
-    JOIN users u ON u.id = fm.user_id
+    LEFT JOIN users u ON u.id = fm.user_id
     WHERE fm.family_id = ?
     ORDER BY fm.joined_at
   `).bind(id).all()
@@ -85,13 +78,33 @@ families.post('/join', authMiddleware, async (c) => {
   return c.json({ data: { family_id: family.id, family_name: family.name } })
 })
 
+// 创建虚拟成员（无账号的家庭成员，如老人/孩子）
+families.post('/:id/members/virtual', authMiddleware, async (c) => {
+  const familyId = Number(c.req.param('id'))
+  const requesterId = c.get('userId')
+  const { display_name, nickname } = await c.req.json<{ display_name: string; nickname?: string }>()
+
+  if (!display_name?.trim()) return c.json({ error: '成员名称不能为空' }, 400)
+
+  const requester = await c.env.DB.prepare(
+    'SELECT role FROM family_members WHERE family_id = ? AND user_id = ?'
+  ).bind(familyId, requesterId).first<{ role: string }>()
+  if (!requester) return c.json({ error: '无权限' }, 403)
+
+  const { meta } = await c.env.DB.prepare(
+    'INSERT INTO family_members (family_id, user_id, display_name, nickname, role) VALUES (?, NULL, ?, ?, ?)'
+  ).bind(familyId, display_name.trim(), nickname ?? null, 'member').run()
+
+  return c.json({ data: { id: meta.last_row_id, family_id: familyId, display_name: display_name.trim(), nickname: nickname ?? null } }, 201)
+})
+
+// 更新成员昵称/角色（通过 userId，兼容原有逻辑）
 families.put('/:id/members/:userId', authMiddleware, async (c) => {
   const familyId = Number(c.req.param('id'))
   const targetUserId = Number(c.req.param('userId'))
   const requesterId = c.get('userId')
   const { nickname, role } = await c.req.json<{ nickname?: string; role?: string }>()
 
-  // 只有 owner 或自己可以修改
   const requester = await c.env.DB.prepare(
     'SELECT role FROM family_members WHERE family_id = ? AND user_id = ?'
   ).bind(familyId, requesterId).first<{ role: string }>()
@@ -102,16 +115,9 @@ families.put('/:id/members/:userId', authMiddleware, async (c) => {
   }
 
   const updates: string[] = []
-  const values: any[] = []
-
-  if (nickname !== undefined) {
-    updates.push('nickname = ?')
-    values.push(nickname || null)
-  }
-  if (role !== undefined) {
-    updates.push('role = ?')
-    values.push(role)
-  }
+  const values: unknown[] = []
+  if (nickname !== undefined) { updates.push('nickname = ?'); values.push(nickname || null) }
+  if (role !== undefined) { updates.push('role = ?'); values.push(role) }
 
   if (updates.length > 0) {
     values.push(familyId, targetUserId)
@@ -119,7 +125,49 @@ families.put('/:id/members/:userId', authMiddleware, async (c) => {
       `UPDATE family_members SET ${updates.join(', ')} WHERE family_id = ? AND user_id = ?`
     ).bind(...values).run()
   }
+  return c.json({ data: { ok: true } })
+})
 
+// 更新虚拟成员（通过 member id）
+families.put('/:id/members/virtual/:memberId', authMiddleware, async (c) => {
+  const familyId = Number(c.req.param('id'))
+  const memberId = Number(c.req.param('memberId'))
+  const requesterId = c.get('userId')
+  const { display_name, nickname } = await c.req.json<{ display_name?: string; nickname?: string }>()
+
+  const requester = await c.env.DB.prepare(
+    'SELECT role FROM family_members WHERE family_id = ? AND user_id = ?'
+  ).bind(familyId, requesterId).first<{ role: string }>()
+  if (!requester || requester.role !== 'owner') return c.json({ error: '无权限' }, 403)
+
+  const updates: string[] = []
+  const values: unknown[] = []
+  if (display_name !== undefined) { updates.push('display_name = ?'); values.push(display_name.trim()) }
+  if (nickname !== undefined) { updates.push('nickname = ?'); values.push(nickname || null) }
+
+  if (updates.length > 0) {
+    values.push(memberId, familyId)
+    await c.env.DB.prepare(
+      `UPDATE family_members SET ${updates.join(', ')} WHERE id = ? AND family_id = ? AND user_id IS NULL`
+    ).bind(...values).run()
+  }
+  return c.json({ data: { ok: true } })
+})
+
+// 删除虚拟成员
+families.delete('/:id/members/virtual/:memberId', authMiddleware, async (c) => {
+  const familyId = Number(c.req.param('id'))
+  const memberId = Number(c.req.param('memberId'))
+  const requesterId = c.get('userId')
+
+  const requester = await c.env.DB.prepare(
+    'SELECT role FROM family_members WHERE family_id = ? AND user_id = ?'
+  ).bind(familyId, requesterId).first<{ role: string }>()
+  if (!requester || requester.role !== 'owner') return c.json({ error: '无权限' }, 403)
+
+  await c.env.DB.prepare(
+    'DELETE FROM family_members WHERE id = ? AND family_id = ? AND user_id IS NULL'
+  ).bind(memberId, familyId).run()
   return c.json({ data: { ok: true } })
 })
 
@@ -128,7 +176,6 @@ families.delete('/:id/members/:userId', authMiddleware, async (c) => {
   const targetUserId = Number(c.req.param('userId'))
   const requesterId = c.get('userId')
 
-  // 只有 owner 或自己可以移除
   const requester = await c.env.DB.prepare(
     'SELECT role FROM family_members WHERE family_id = ? AND user_id = ?'
   ).bind(familyId, requesterId).first<{ role: string }>()
@@ -141,7 +188,6 @@ families.delete('/:id/members/:userId', authMiddleware, async (c) => {
   await c.env.DB.prepare(
     'DELETE FROM family_members WHERE family_id = ? AND user_id = ?'
   ).bind(familyId, targetUserId).run()
-
   return c.json({ data: { ok: true } })
 })
 

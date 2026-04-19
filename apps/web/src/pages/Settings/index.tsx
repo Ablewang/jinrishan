@@ -24,7 +24,8 @@ interface Prefs {
 
 interface Member {
   id: number
-  user_id: number
+  user_id: number | null
+  display_name: string | null
   nickname: string | null
   role: string
   user_name: string | null
@@ -103,6 +104,9 @@ export default function Settings() {
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [rolesDrawerOpen, setRolesDrawerOpen] = useState(false)
   const [prefsDrawerOpen, setPrefsDrawerOpen] = useState(false)
+  const [prefsForMemberId, setPrefsForMemberId] = useState<number | null>(null)
+  const [prefsForMemberName, setPrefsForMemberName] = useState('')
+  const [prefsDrawerData, setPrefsDrawerData] = useState<Prefs>(DEFAULT_PREFS)
   const [editName, setEditName] = useState('')
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState('')
   const [avatarPreviewFile, setAvatarPreviewFile] = useState<File | null>(null)

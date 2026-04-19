@@ -9,13 +9,22 @@ export const familiesApi = {
   get: (id: number) => apiFetch<{ id: number; name: string; invite_code: string }>(`/api/families/${id}`),
 
   members: (id: number) => apiFetch<{
-    id: number; user_id: number; nickname: string | null; role: string; user_name: string | null
+    id: number; user_id: number | null; display_name: string | null; nickname: string | null; role: string; user_name: string | null
   }[]>(`/api/families/${id}/members`),
 
   updateMember: (familyId: number, memberUserId: number, data: { nickname?: string; role?: string }) =>
     apiFetch(`/api/families/${familyId}/members/${memberUserId}`, {
       method: 'PUT', body: JSON.stringify(data),
     }),
+
+  createVirtual: (familyId: number, display_name: string, nickname?: string) =>
+    apiFetch<{ id: number; family_id: number; display_name: string; nickname: string | null }>(
+      `/api/families/${familyId}/members/virtual`,
+      { method: 'POST', body: JSON.stringify({ display_name, nickname }) },
+    ),
+
+  deleteVirtual: (familyId: number, memberId: number) =>
+    apiFetch(`/api/families/${familyId}/members/virtual/${memberId}`, { method: 'DELETE' }),
 
   join: (invite_code: string, nickname?: string) =>
     apiFetch<{ family_id: number; family_name: string }>('/api/families/join', {
