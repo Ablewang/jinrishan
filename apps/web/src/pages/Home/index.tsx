@@ -1,10 +1,11 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../store/auth'
 import { useTodayMenu } from '../../store/todayMenu'
 import { recommendApi } from '../../api/recommend'
 import { eventsApi } from '../../api/events'
 import { logsApi } from '../../api/logs'
+import { useRecipePicker } from '../../hooks/useRecipePicker'
 import RecipeDrawer from '../../components/RecipeDrawer'
 import RecipeImages from '../../components/RecipeImages'
 import type { Recipe, GuestPrefs } from '../../types'
@@ -25,12 +26,14 @@ function saveGuestPrefs(p: GuestPrefs) {
 }
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10)
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 interface RecipeCardProps {
   recipe: Recipe
   selected: boolean
+  swapping: boolean
   onToggleSelect: () => void
   onSwap: () => void
   onViewDetail: () => void
@@ -38,7 +41,7 @@ interface RecipeCardProps {
   isLoggedIn: boolean
 }
 
-function RecipeCard({ recipe, selected, onToggleSelect, onSwap, onViewDetail, showSwapLimit, isLoggedIn }: RecipeCardProps) {
+function RecipeCard({ recipe, selected, swapping, onToggleSelect, onSwap, onViewDetail, showSwapLimit, isLoggedIn }: RecipeCardProps) {
   const difficultyLabel = { easy: '简单', medium: '中等', hard: '复杂' }[recipe.difficulty] ?? recipe.difficulty
 
   return (
@@ -102,8 +105,8 @@ function RecipeCard({ recipe, selected, onToggleSelect, onSwap, onViewDetail, sh
                 登录解锁换一换
               </Link>
             ) : (
-              <button className={styles.btnSwap} onClick={onSwap}>
-                换一换
+              <button className={styles.btnSwap} onClick={onSwap} disabled={swapping}>
+                {swapping ? '...' : '换一换'}
               </button>
             )}
           </div>
@@ -122,60 +125,26 @@ export default function Home() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { meals, confirm: confirmMeal, clear: clearMeal } = useTodayMenu()
-  const [activeMeal, setActiveMeal] = useState(2) // 默认晚餐
-  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [activeMeal, setActiveMeal] = useState(2)
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
-  const [loading, setLoading] = useState(false)
-  const [loadingMore, setLoadingMore] = useState(false)
   const [swapCount, setSwapCount] = useState(0)
   const [excludeIds, setExcludeIds] = useState<number[]>([])
+  const [swappingId, setSwappingId] = useState<number | null>(null)
 
   const familyId = user ? (Number(localStorage.getItem('familyId')) || 0) : 0
   const mealKey = MEAL_KEYS[activeMeal] as 'breakfast' | 'lunch' | 'dinner'
   const confirmedEntry = meals[mealKey]
 
-  const loadRecommendation = useCallback(async (excludes: number[] = []) => {
-    setLoading(true)
-    try {
-      const prefs = getGuestPrefs()
-      if (!user && !prefs) {
-        navigate('/onboarding', { replace: true })
-        return
-      }
-      const mealType = MEAL_KEYS[activeMeal]
-      let results: Recipe[]
-      if (familyId) {
-        results = await recommendApi.get({ family_id: familyId, date: todayStr(), meal_type: mealType, exclude_ids: excludes })
-      } else {
-        results = await recommendApi.get({
-          meal_type: mealType,
-          allergies: prefs?.allergies ?? [],
-          flavors: prefs?.liked_flavors ?? [],
-          exclude_ids: excludes,
-        })
-      }
-      const filtered = results.filter(r => !excludes.includes(r.id))
-      const picked = filtered.slice(0, 3)
-      if (picked.length > 0) {
-        setRecipes(picked)
-        eventsApi.post({
-          family_id: familyId,
-          recipe_id: picked[0].id, // Log the first one for simplicity
-          event_type: 'shown',
-          meal_type: mealType,
-          event_date: todayStr(),
-          source: 'daily',
-        }).catch(() => {})
-      }
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }, [user, familyId, activeMeal, navigate])
+  const { recipes, setRecipes, loading, loadingMore, reload, loadMore } = useRecipePicker({
+    mealType: MEAL_KEYS[activeMeal],
+    familyId,
+    excludeIds,
+    guestPrefs: getGuestPrefs(),
+    date: todayStr(),
+  })
 
-  // 登录用户：从 DB 同步今日已确认的餐次到 store（跨 session 保持一致）
+  // 登录用户：从 DB 同步今日已确认的餐次到 store
   useEffect(() => {
     if (!familyId) return
     logsApi.getDay(familyId, todayStr()).then(dbData => {
@@ -192,19 +161,17 @@ export default function Home() {
     }).catch(() => {})
   }, [familyId]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 切换餐次时重置状态，未登录且无偏好则跳转引导页
   useEffect(() => {
     const prefs = getGuestPrefs()
     if (!user && !prefs) {
       navigate('/onboarding', { replace: true })
       return
     }
-    const p = prefs
-    setSwapCount(p?.swap_count ?? 0)
+    setSwapCount(prefs?.swap_count ?? 0)
     setExcludeIds([])
     setSelectedIds(new Set())
-    if (!confirmedEntry) {
-      loadRecommendation([])
-    }
+    if (!confirmedEntry) reload([])
   }, [activeMeal, user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSwap(recipeToSwap: Recipe) {
@@ -225,8 +192,26 @@ export default function Home() {
       event_date: todayStr(),
       source: 'daily',
     }).catch(() => {})
-    
-    await loadRecommendation(newExcludes)
+    // 只替换这一张卡，不刷全部
+    setSwappingId(recipeToSwap.id)
+    try {
+      const allExcludeIds = [...newExcludes, ...recipes.filter(r => r.id !== recipeToSwap.id).map(r => r.id)]
+      const prefs = getGuestPrefs()
+      const mealType = MEAL_KEYS[activeMeal]
+      const results = familyId
+        ? await recommendApi.get({ family_id: familyId, date: todayStr(), meal_type: mealType, exclude_ids: allExcludeIds })
+        : await recommendApi.get({ meal_type: mealType, allergies: prefs?.allergies ?? [], flavors: prefs?.liked_flavors ?? [], exclude_ids: allExcludeIds })
+      const replacement = results[0]
+      if (replacement) {
+        setRecipes(prev => prev.map(r => r.id === recipeToSwap.id ? replacement : r))
+      } else {
+        setRecipes(prev => prev.filter(r => r.id !== recipeToSwap.id))
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setSwappingId(null)
+    }
   }
 
   const showSwapLimit = !user && swapCount >= SWAP_LIMIT
@@ -241,33 +226,6 @@ export default function Home() {
       }
       return next
     })
-  }
-
-  async function handleLoadMore() {
-    setLoadingMore(true)
-    try {
-      const prefs = getGuestPrefs()
-      const mealType = MEAL_KEYS[activeMeal]
-      const currentIds = recipes.map(r => r.id)
-      const excludes = [...excludeIds, ...currentIds]
-      let results: Recipe[]
-      if (familyId) {
-        results = await recommendApi.get({ family_id: familyId, date: todayStr(), meal_type: mealType, exclude_ids: excludes })
-      } else {
-        results = await recommendApi.get({
-          meal_type: mealType,
-          allergies: prefs?.allergies ?? [],
-          flavors: prefs?.liked_flavors ?? [],
-          exclude_ids: excludes,
-        })
-      }
-      const fresh = results.filter(r => !currentIds.includes(r.id))
-      if (fresh.length > 0) setRecipes(prev => [...prev, ...fresh])
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoadingMore(false)
-    }
   }
 
   function handleConfirm() {
@@ -319,7 +277,7 @@ export default function Home() {
         {!confirmedEntry && recipes.length > 0 && (
           <button
             className={styles.loadMoreBtn}
-            onClick={handleLoadMore}
+            onClick={loadMore}
             disabled={loadingMore}
           >
             {loadingMore ? '...' : '+ 更多'}
@@ -335,7 +293,7 @@ export default function Home() {
       ) : confirmedEntry ? (
         <div className={styles.confirmedMenuCard}>
           <Logo className={styles.menuWatermarkLogo} />
-          
+
           <div className={styles.menuHeader}>
             <div className={styles.menuIcon}>
               {activeMeal === 0 && <Coffee size={28} strokeWidth={1.5} />}
@@ -349,7 +307,7 @@ export default function Home() {
             </div>
             <span className={styles.menuOverline}>{MEAL_KEYS[activeMeal].toUpperCase()}</span>
           </div>
-          
+
           <ul className={styles.menuItemList}>
             {confirmedEntry.names.map((name) => (
               <li key={name} className={styles.menuItem}>
@@ -357,7 +315,7 @@ export default function Home() {
               </li>
             ))}
           </ul>
-          
+
           <div className={styles.menuActions}>
             <button className={styles.btnViewMenu} onClick={() => navigate('/today')}>
               查看做法
@@ -366,7 +324,7 @@ export default function Home() {
               clearMeal(mealKey)
               setExcludeIds([])
               setSelectedIds(new Set())
-              loadRecommendation([])
+              reload([])
             }}>
               重新选择
             </button>
@@ -379,6 +337,7 @@ export default function Home() {
               key={recipe.id}
               recipe={recipe}
               selected={selectedIds.has(recipe.id)}
+              swapping={swappingId === recipe.id}
               onToggleSelect={() => toggleSelect(recipe)}
               onSwap={() => handleSwap(recipe)}
               onViewDetail={() => setSelectedRecipeId(recipe.id)}
