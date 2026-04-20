@@ -58,9 +58,7 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   line-height: 1.6;
-  
-  /* 
-   * High-End Architectural Grid (Blueprint / Gallery feel) 
+  /*
    * Provides a subtle texture to eliminate the "empty" feeling 
    * across the entire site without cluttering the design.
    */

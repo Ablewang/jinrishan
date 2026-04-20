@@ -118,6 +118,6 @@
 /* PC Override */
 @media (min-width: 768px) {
   .wrap {
-    min-height: calc(100vh - 120px);
+    min-height: calc(100svh - 120px);
   }
 }

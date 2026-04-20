@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100svh;
   align-items: center;
   justify-content: flex-start;
   padding: 12vh 24px 24px;
@@ -431,7 +431,7 @@
     padding: 0;
     align-items: stretch;
     justify-content: stretch;
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
   }
 
