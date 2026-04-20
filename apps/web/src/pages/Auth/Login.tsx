@@ -142,6 +142,19 @@ export default function Login() {
     try {
       const res = await authApi.verifyOtp(phone, code)
       login(res.token, res.user)
+      // 新用户注册时，将 guest 口味偏好同步到账号
+      if (res.is_new) {
+        try {
+          const raw = localStorage.getItem('guestPrefs')
+          if (raw) {
+            const prefs = JSON.parse(raw)
+            await authApi.updatePreferences({
+              liked_flavors: prefs.liked_flavors ?? [],
+              allergies: prefs.allergies ?? [],
+            })
+          }
+        } catch { /* 同步失败不影响登录 */ }
+      }
       localStorage.removeItem('guestPrefs')
       navigate(from, { replace: true })
     } catch (e) {

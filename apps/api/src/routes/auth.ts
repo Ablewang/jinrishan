@@ -39,11 +39,13 @@ auth.post('/verify-otp', async (c) => {
     `UPDATE otp_codes SET used = 1 WHERE id = ?`
   ).bind(record.id).run()
 
+  let isNew = false
   let user = await c.env.DB.prepare(
     `SELECT id, phone, name FROM users WHERE phone = ?`
   ).bind(phone).first<{ id: number; phone: string; name: string | null }>()
 
   if (!user) {
+    isNew = true
     const defaultName = `用户${phone.slice(-4)}`
     const { meta } = await c.env.DB.prepare(
       `INSERT INTO users (phone, name) VALUES (?, ?)`
@@ -56,7 +58,7 @@ auth.post('/verify-otp', async (c) => {
   if (!user) return c.json({ error: '用户创建失败' }, 500)
 
   const token = await signToken(user.id, c.env.JWT_SECRET)
-  return c.json({ data: { token, user } })
+  return c.json({ data: { token, user, is_new: isNew } })
 })
 
 auth.put('/me', authMiddleware, async (c) => {
