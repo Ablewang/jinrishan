@@ -8,6 +8,7 @@ import { logsApi } from '../../api/logs'
 import { useRecipePicker } from '../../hooks/useRecipePicker'
 import RecipeDrawer from '../../components/RecipeDrawer'
 import RecipeImages from '../../components/RecipeImages'
+import { OnboardingSteps } from '../Onboarding/GuestSetup'
 import type { Recipe, GuestPrefs } from '../../types'
 import { Coffee, Sun, MoonStar } from 'lucide-react'
 import Logo from '../../components/Logo'
@@ -131,6 +132,7 @@ export default function Home() {
   const [swapCount, setSwapCount] = useState(0)
   const [excludeIds, setExcludeIds] = useState<number[]>([])
   const [swappingId, setSwappingId] = useState<number | null>(null)
+  const [showOnboarding, setShowOnboarding] = useState(() => !user && !getGuestPrefs())
 
   const familyId = user ? (Number(localStorage.getItem('familyId')) || 0) : 0
   const mealKey = MEAL_KEYS[activeMeal] as 'breakfast' | 'lunch' | 'dinner'
@@ -161,13 +163,14 @@ export default function Home() {
     }).catch(() => {})
   }, [familyId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 切换餐次时重置状态，未登录且无偏好则跳转引导页
+  // 切换餐次或登录状态变化时更新 onboarding 状态
   useEffect(() => {
     const prefs = getGuestPrefs()
     if (!user && !prefs) {
-      navigate('/onboarding', { replace: true })
+      setShowOnboarding(true)
       return
     }
+    setShowOnboarding(false)
     setSwapCount(prefs?.swap_count ?? 0)
     setExcludeIds([])
     setSelectedIds(new Set())
@@ -285,7 +288,14 @@ export default function Home() {
         )}
       </div>
 
-      {loading ? (
+      {showOnboarding ? (
+        <OnboardingSteps onComplete={() => {
+          setShowOnboarding(false)
+          const prefs = getGuestPrefs()
+          setSwapCount(prefs?.swap_count ?? 0)
+          reload([])
+        }} />
+      ) : loading ? (
         <div className={styles.loading}>
           <div className={styles.loadingIcon} />
           <span>Curating recipes...</span>
