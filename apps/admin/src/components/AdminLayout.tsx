@@ -1,19 +1,33 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Layout, Menu, Avatar, Dropdown, Space, Typography } from 'antd'
+import {
+  DashboardOutlined,
+  BookOutlined,
+  TagsOutlined,
+  UserOutlined,
+  HomeOutlined,
+  BarChartOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons'
+import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { useAdminAuth } from '../store/auth'
-import styles from './AdminLayout.module.css'
+
+const { Sider, Header, Content } = Layout
 
 const NAV_ITEMS = [
-  { to: '/dashboard', icon: '📊', label: '仪表盘' },
-  { to: '/recipes', icon: '🍳', label: '菜谱管理' },
-  { to: '/enums', icon: '🏷️', label: '枚举管理' },
-  { to: '/users', icon: '👥', label: '用户列表' },
-  { to: '/families', icon: '🏠', label: '家庭列表' },
-  { to: '/analytics', icon: '📈', label: '推荐分析' },
+  { key: '/dashboard', icon: <DashboardOutlined />, label: '仪表盘' },
+  { key: '/recipes', icon: <BookOutlined />, label: '菜谱管理' },
+  { key: '/enums', icon: <TagsOutlined />, label: '枚举管理' },
+  { key: '/users', icon: <UserOutlined />, label: '用户列表' },
+  { key: '/families', icon: <HomeOutlined />, label: '家庭列表' },
+  { key: '/analytics', icon: <BarChartOutlined />, label: '推荐分析' },
 ]
 
 export default function AdminLayout() {
   const { admin, logout } = useAdminAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const selectedKey = NAV_ITEMS.find(item => location.pathname.startsWith(item.key))?.key ?? '/dashboard'
 
   function handleLogout() {
     logout()
@@ -21,29 +35,61 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className={styles.root}>
-      <aside className={styles.sidebar}>
-        <div className={styles.logo}>今日膳管理</div>
-        <nav className={styles.nav}>
-          {NAV_ITEMS.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
-            >
-              <span className={styles.navIcon}>{item.icon}</span>
-              <span>{item.label}</span>
-            </NavLink>
-          ))}
-        </nav>
-        <div className={styles.user}>
-          <span className={styles.userName}>{admin?.username}</span>
-          <button className={styles.logoutBtn} onClick={handleLogout}>退出</button>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider theme="dark" width={220} style={{ position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0, zIndex: 100 }}>
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontSize: 16,
+          fontWeight: 600,
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          letterSpacing: 1,
+        }}>
+          今日膳 管理后台
         </div>
-      </aside>
-      <main className={styles.main}>
-        <Outlet />
-      </main>
-    </div>
+        <Menu
+          theme="dark"
+          mode="inline"
+          selectedKeys={[selectedKey]}
+          items={NAV_ITEMS}
+          style={{ borderRight: 0, marginTop: 8 }}
+          onClick={({ key }) => navigate(key)}
+        />
+      </Sider>
+
+      <Layout style={{ marginLeft: 220 }}>
+        <Header style={{
+          background: '#fff',
+          padding: '0 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          borderBottom: '1px solid #f0f0f0',
+          position: 'sticky',
+          top: 0,
+          zIndex: 99,
+        }}>
+          <Dropdown
+            menu={{
+              items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
+              onClick: ({ key }) => { if (key === 'logout') handleLogout() },
+            }}
+            placement="bottomRight"
+          >
+            <Space style={{ cursor: 'pointer' }}>
+              <Avatar size="small" icon={<UserOutlined />} style={{ background: '#e67e22' }} />
+              <Typography.Text>{admin?.username}</Typography.Text>
+            </Space>
+          </Dropdown>
+        </Header>
+
+        <Content style={{ margin: 24, minHeight: 0 }}>
+          <Outlet />
+        </Content>
+      </Layout>
+    </Layout>
   )
 }

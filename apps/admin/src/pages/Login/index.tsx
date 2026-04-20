@@ -1,22 +1,23 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Form, Input, Button, Card, Typography, Alert } from 'antd'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { adminAuthApi } from '../../api/auth'
 import { useAdminAuth } from '../../store/auth'
-import styles from './Login.module.css'
+
+const { Title, Text } = Typography
 
 export default function Login() {
   const navigate = useNavigate()
   const { login } = useAdminAuth()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  async function handleLogin() {
+  async function handleLogin(values: { username: string; password: string }) {
     setError('')
     setLoading(true)
     try {
-      const res = await adminAuthApi.login(username, password)
+      const res = await adminAuthApi.login(values.username, values.password)
       login(res.token, res.admin)
       navigate('/dashboard', { replace: true })
     } catch (e: unknown) {
@@ -27,40 +28,35 @@ export default function Login() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>今日膳 管理后台</h1>
-        <p className={styles.sub}>请使用管理员账号登录</p>
-
-        <div className={styles.form}>
-          <input
-            className={styles.input}
-            type="text"
-            placeholder="用户名"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            autoComplete="username"
-          />
-          <input
-            className={styles.input}
-            type="password"
-            placeholder="密码"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleLogin()}
-            autoComplete="current-password"
-          />
-          {error && <p className={styles.error}>{error}</p>}
-          <button
-            className="btn-primary"
-            style={{ width: '100%', padding: '11px' }}
-            onClick={handleLogin}
-            disabled={!username || !password || loading}
-          >
-            {loading ? '登录中...' : '登录'}
-          </button>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#f5f5f5',
+    }}>
+      <Card style={{ width: 400, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <Title level={3} style={{ marginBottom: 4 }}>今日膳 管理后台</Title>
+          <Text type="secondary">请使用管理员账号登录</Text>
         </div>
-      </div>
+
+        {error && <Alert message={error} type="error" showIcon style={{ marginBottom: 16 }} />}
+
+        <Form layout="vertical" onFinish={handleLogin} autoComplete="off">
+          <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
+            <Input prefix={<UserOutlined />} placeholder="用户名" size="large" autoComplete="username" />
+          </Form.Item>
+          <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
+            <Input.Password prefix={<LockOutlined />} placeholder="密码" size="large" autoComplete="current-password" />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Button type="primary" htmlType="submit" size="large" block loading={loading}>
+              登录
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   )
 }
