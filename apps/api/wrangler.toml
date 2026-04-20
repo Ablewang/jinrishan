@@ -2,6 +2,10 @@ name = "jinrishan-api"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 
+[[routes]]
+pattern = "jinrishan.95sang.cn/api/*"
+zone_name = "95sang.cn"
+
 [vars]
 ENV = "development"
 JWT_SECRET = "dev-secret-change-in-production"
