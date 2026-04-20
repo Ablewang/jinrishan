@@ -12,6 +12,19 @@
   padding-bottom: 20px;
 }
 
+.backBtn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  align-self: flex-start;
+  transition: color 0.2s;
+}
+.backBtn:hover { color: var(--text-main); }
+
 .overline {
   font-size: 10px;
   color: var(--text-muted);
@@ -196,6 +209,75 @@
 
 .itemChecked .itemAmount {
   color: var(--border-color-strong);
+}
+
+/* Skeleton */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeletonBlock {
+  background: linear-gradient(90deg, var(--border-color) 25%, var(--surface-secondary, #f0f0f0) 50%, var(--border-color) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 2px;
+}
+
+.skeletonBackBtn {
+  width: 48px;
+  height: 14px;
+  margin-bottom: 12px;
+}
+
+.skeletonOverline {
+  width: 80px;
+  height: 10px;
+  margin-bottom: 16px;
+}
+
+.skeletonTitle {
+  width: 140px;
+  height: 32px;
+  margin-bottom: 20px;
+}
+
+.skeletonTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 0;
+  padding-bottom: 12px;
+}
+
+.skeletonTab {
+  width: 64px;
+  height: 12px;
+  margin-right: 24px;
+}
+
+.skeletonItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.skeletonCheckbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.skeletonItemName {
+  flex: 1;
+  height: 15px;
+}
+
+.skeletonItemAmount {
+  width: 36px;
+  height: 12px;
 }
 
 /* Loading */

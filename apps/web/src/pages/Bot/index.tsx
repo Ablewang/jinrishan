@@ -42,6 +42,9 @@ const ACTION_LABEL: Record<string, string> = {
   add_to_plan: '加入计划',
 }
 
+// swap 在周计划语境有意义，Bot 卡片里不展示
+const BOT_HIDDEN_ACTIONS = new Set(['swap'])
+
 export default function Bot() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -50,6 +53,7 @@ export default function Bot() {
   ])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [replacingIds, setReplacingIds] = useState<Set<number>>(new Set())
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const familyId = Number(localStorage.getItem('familyId') ?? '0')
@@ -101,15 +105,36 @@ export default function Bot() {
     eventsApi.post({
       family_id: familyId,
       recipe_id: card.recipe_id,
-      event_type: action === 'reject' ? 'rejected' : 'accepted',
+      event_type: action === 'reject' ? 'rejected' : action === 'accept' ? 'accepted' : 'shown',
       event_date: todayStr(),
       source: 'bot',
     }).catch(() => {})
 
     if (action === 'reject') {
-      sendMessage(`不想吃${card.name}，换一个`)
+      replaceCardInPlace(card)
     } else {
       navigate(`/recipe/${card.recipe_id}`)
+    }
+  }
+
+  async function replaceCardInPlace(card: BotCard) {
+    if (replacingIds.has(card.recipe_id)) return
+    setReplacingIds(prev => new Set(prev).add(card.recipe_id))
+    try {
+      const res = await botApi.message(familyId, `不想吃${card.name}，换一个`, { date: todayStr() })
+      const newCard = res.cards?.[0]
+      if (newCard) {
+        // 原地替换那张卡，不新增任何气泡
+        setMessages(prev => prev.map(m => ({
+          ...m,
+          cards: m.cards?.map(c => c.recipe_id === card.recipe_id ? newCard : c),
+        })))
+        eventsApi.post({ family_id: familyId, recipe_id: newCard.recipe_id, event_type: 'shown', event_date: todayStr(), source: 'bot' }).catch(() => {})
+      }
+    } catch {
+      // 换失败了就不动，用户可以再点
+    } finally {
+      setReplacingIds(prev => { const s = new Set(prev); s.delete(card.recipe_id); return s })
     }
   }
 
@@ -176,13 +201,14 @@ export default function Bot() {
                                 </div>
                               )}
                               <div className={styles.cardActions}>
-                                {card.actions.map(action => (
+                                {card.actions.filter(a => !BOT_HIDDEN_ACTIONS.has(a)).map(action => (
                                   <button
                                     key={action}
                                     className={`${styles.cardBtn} ${action === 'accept' ? styles.cardBtnPrimary : ''}`}
                                     onClick={() => handleCardAction(card, action)}
+                                    disabled={replacingIds.has(card.recipe_id)}
                                   >
-                                    {ACTION_LABEL[action] ?? action}
+                                    {action === 'reject' && replacingIds.has(card.recipe_id) ? '换一个…' : (ACTION_LABEL[action] ?? action)}
                                   </button>
                                 ))}
                               </div>

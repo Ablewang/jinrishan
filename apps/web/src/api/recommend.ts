@@ -5,12 +5,14 @@ interface GuestParams {
   meal_type?: string
   allergies?: string[]
   flavors?: string[]
+  exclude_ids?: number[]
 }
 
 interface FamilyParams {
   family_id: number
   date?: string
   meal_type?: string
+  exclude_ids?: number[]
 }
 
 export const recommendApi = {
@@ -25,6 +27,7 @@ export const recommendApi = {
       if (params.allergies?.length) qs.set('allergies', params.allergies.join(','))
       if (params.flavors?.length) qs.set('flavors', params.flavors.join(','))
     }
+    if (params.exclude_ids?.length) qs.set('exclude_ids', params.exclude_ids.join(','))
     return apiFetch<Recipe[]>('/api/recommend?' + qs)
   },
 

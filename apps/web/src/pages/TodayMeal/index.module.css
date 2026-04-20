@@ -1,9 +1,15 @@
 .page {
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 auto;
   padding: 0 24px 80px;
   display: flex;
   flex-direction: column;
+}
+
+@media (min-width: 600px) {
+  .page {
+    max-width: 800px;
+  }
 }
 
 .loading {

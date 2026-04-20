@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Lightbox from 'yet-another-react-lightbox'
 import 'yet-another-react-lightbox/styles.css'
 import styles from './index.module.css'
@@ -12,6 +12,7 @@ interface Props {
 export default function RecipeImages({ images, alt, className }: Props) {
   const [current, setCurrent] = useState(0)
   const [open, setOpen] = useState(false)
+  const touchStartX = useRef<number | null>(null)
 
   if (!images?.length) {
     return <div className={`${styles.placeholder} ${className ?? ''}`}>🍳</div>
@@ -30,9 +31,26 @@ export default function RecipeImages({ images, alt, className }: Props) {
     setCurrent(i => (i + 1) % images.length)
   }
 
+  function onTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  function onTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(dx) < 40) return
+    if (dx < 0) setCurrent(i => (i + 1) % images.length)
+    else setCurrent(i => (i - 1 + images.length) % images.length)
+  }
+
   return (
     <>
-      <div className={`${styles.wrap} ${className ?? ''}`}>
+      <div
+        className={`${styles.wrap} ${className ?? ''}`}
+        onTouchStart={hasMultiple ? onTouchStart : undefined}
+        onTouchEnd={hasMultiple ? onTouchEnd : undefined}
+      >
         <img
           src={images[current]}
           alt={alt}

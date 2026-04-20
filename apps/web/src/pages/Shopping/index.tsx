@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { shoppingApi } from '../../api/shopping'
+import { recipesApi } from '../../api/recipes'
 import styles from './Shopping.module.css'
 
 interface ShoppingItem {
@@ -30,23 +31,57 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 export default function Shopping() {
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [list, setList] = useState<ShoppingList | null>(null)
   const [loading, setLoading] = useState(true)
   const [toggling, setToggling] = useState<number | null>(null)
   const [activeTab, setActiveTab] = useState(0)
+  const isTodayMode = id === 'today'
 
   useEffect(() => {
+    if (isTodayMode) {
+      const recipeIds = (searchParams.get('ids') ?? '').split(',').map(Number).filter(Boolean)
+      if (!recipeIds.length) { setLoading(false); return }
+      Promise.all(recipeIds.map(rid => recipesApi.get(rid)))
+        .then(recipes => {
+          const items: ShoppingItem[] = []
+          let itemId = 1
+          for (const recipe of recipes) {
+            for (const ing of recipe.ingredients ?? []) {
+              if (!ing.amount?.trim()) continue
+              items.push({
+                id: itemId++,
+                ingredient_name: ing.name,
+                amount: ing.amount,
+                category: ing.category || '其他',
+                checked: 0,
+              })
+            }
+          }
+          setList({ id: 0, items })
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+      return
+    }
     if (!id || id === '0') { setLoading(false); return }
     shoppingApi.get(Number(id))
       .then(l => { setList(l); setLoading(false) })
       .catch(() => setLoading(false))
-  }, [id])
+  }, [id, searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleToggle(item: ShoppingItem) {
     if (!list) return
-    setToggling(item.id)
     const newChecked = !item.checked
+    if (isTodayMode) {
+      setList(prev => prev ? {
+        ...prev,
+        items: prev.items.map(i => i.id === item.id ? { ...i, checked: newChecked ? 1 : 0 } : i)
+      } : prev)
+      return
+    }
+    setToggling(item.id)
     try {
       await shoppingApi.toggleItem(list.id, item.id, newChecked)
       setList(prev => prev ? {
@@ -63,10 +98,26 @@ export default function Shopping() {
   if (loading) return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <span className={styles.overline}>Shopping List</span>
-        <div className={styles.titleRow}><h1 className={styles.title}>买菜清单</h1></div>
+        <div className={`${styles.skeletonBlock} ${styles.skeletonBackBtn}`} />
+        <div className={`${styles.skeletonBlock} ${styles.skeletonOverline}`} />
+        <div className={styles.titleRow}>
+          <div className={`${styles.skeletonBlock} ${styles.skeletonTitle}`} />
+        </div>
       </header>
-      <div className={styles.loading}><div className={styles.loadingIcon} /></div>
+      <div className={styles.skeletonTabs}>
+        {[80, 56, 72, 64].map((w, i) => (
+          <div key={i} className={`${styles.skeletonBlock} ${styles.skeletonTab}`} style={{ width: w }} />
+        ))}
+      </div>
+      <div className={styles.itemList}>
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className={styles.skeletonItem}>
+            <div className={`${styles.skeletonBlock} ${styles.skeletonCheckbox}`} />
+            <div className={`${styles.skeletonBlock} ${styles.skeletonItemName}`} style={{ maxWidth: `${[60, 80, 50, 70, 55, 65][i]}%` }} />
+            <div className={`${styles.skeletonBlock} ${styles.skeletonItemAmount}`} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 
@@ -84,8 +135,10 @@ export default function Shopping() {
     </div>
   )
 
+  const visibleItems = list.items.filter(item => item.amount && item.amount.trim() !== '')
+
   const grouped: Record<string, ShoppingItem[]> = {}
-  list.items.forEach(item => {
+  visibleItems.forEach(item => {
     const cat = item.category || '其他'
     if (!grouped[cat]) grouped[cat] = []
     grouped[cat].push(item)
@@ -95,12 +148,13 @@ export default function Shopping() {
   const activeCategory = categories[safeTab]
   const activeItems = grouped[activeCategory] ?? []
 
-  const totalCount = list.items.length
-  const checkedCount = list.items.filter(i => i.checked).length
+  const totalCount = visibleItems.length
+  const checkedCount = visibleItems.filter(i => i.checked).length
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
+        <button className={styles.backBtn} onClick={() => navigate(-1)}>← 返回</button>
         <span className={styles.overline}>Shopping List</span>
         <div className={styles.titleRow}>
           <h1 className={styles.title}>买菜清单</h1>

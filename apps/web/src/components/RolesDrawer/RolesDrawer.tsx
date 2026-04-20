@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from './RolesDrawer.module.css'
 
 interface Member {
@@ -61,6 +61,18 @@ export default function RolesDrawer({
   const [prefsLoading, setPrefsLoading] = useState(false)
   const [prefsSaving, setPrefsSaving] = useState(false)
 
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  // 打开时预加载所有成员口味
+  useEffect(() => {
+    if (!open || members.length === 0) return
+    members.forEach(m => {
+      onLoadPrefs(m.id)
+        .then(p => setPrefsCache(c => ({ ...c, [m.id]: p })))
+        .catch(() => {})
+    })
+  }, [open, members])
+
   async function handleAdd() {
     if (!addName.trim()) return
     setAdding(true)
@@ -79,12 +91,17 @@ export default function RolesDrawer({
       setEditingPrefsId(null)
       return
     }
+    const cached = prefsCache[memberId]
+    if (cached) {
+      setEditingPrefs(cached)
+      setEditingPrefsId(memberId)
+      return
+    }
     setPrefsLoading(true)
     setEditingPrefsId(memberId)
     try {
-      const cached = prefsCache[memberId]
-      const p = cached ?? await onLoadPrefs(memberId)
-      if (!cached) setPrefsCache(c => ({ ...c, [memberId]: p }))
+      const p = await onLoadPrefs(memberId)
+      setPrefsCache(c => ({ ...c, [memberId]: p }))
       setEditingPrefs(p ?? EMPTY_PREFS)
     } catch {
       setEditingPrefs(EMPTY_PREFS)
@@ -94,11 +111,14 @@ export default function RolesDrawer({
   }
 
   async function handleSavePrefs(memberId: number) {
+    setSaveError(null)
     setPrefsSaving(true)
     try {
       await onSavePrefs(memberId, editingPrefs)
       setPrefsCache(c => ({ ...c, [memberId]: editingPrefs }))
       setEditingPrefsId(null)
+    } catch (e: any) {
+      setSaveError(e?.message || '保存失败，请重试')
     } finally {
       setPrefsSaving(false)
     }
@@ -117,7 +137,12 @@ export default function RolesDrawer({
   }
 
   function getDisplayTags(prefs: Prefs): string[] {
-    return [...prefs.liked_flavors, ...prefs.liked_cuisines, ...prefs.allergies.map(a => `忌${a}`)]
+    return [
+      ...prefs.liked_flavors,
+      ...prefs.liked_cuisines,
+      ...prefs.disliked_flavors.map(v => `忌${v}`),
+      ...prefs.allergies.map(a => `忌${a}`),
+    ]
   }
 
   return (
@@ -210,6 +235,14 @@ export default function RolesDrawer({
                           </div>
                         </div>
                         <div className={styles.prefsGroup}>
+                          <div className={styles.prefsGroupLabel}>忌口口味</div>
+                          <div className={styles.prefsTags}>
+                            {FLAVOR_OPTIONS.map(v => (
+                              <button key={v} className={`${styles.prefsTag} ${editingPrefs.disliked_flavors.includes(v) ? styles.prefsTagActive : ''}`} onClick={() => setP('disliked_flavors', v)}>{v}</button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className={styles.prefsGroup}>
                           <div className={styles.prefsGroupLabel}>过敏食材</div>
                           <div className={styles.prefsTags}>
                             {ALLERGY_OPTIONS.map(v => (
@@ -217,9 +250,12 @@ export default function RolesDrawer({
                             ))}
                           </div>
                         </div>
+                        <div className={styles.prefsSaveRow}>
+                        {saveError && <span className={styles.saveError}>{saveError}</span>}
                         <button className={styles.prefsDoneBtn} onClick={() => handleSavePrefs(m.id)} disabled={prefsSaving}>
                           {prefsSaving ? '保存中…' : '保存'}
                         </button>
+                      </div>
                       </>
                     )}
                   </div>

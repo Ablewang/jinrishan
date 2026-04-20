@@ -8,6 +8,8 @@ import { logsApi } from '../../api/logs'
 import RecipeDrawer from '../../components/RecipeDrawer'
 import RecipeImages from '../../components/RecipeImages'
 import type { Recipe, GuestPrefs } from '../../types'
+import { Coffee, Sun, MoonStar } from 'lucide-react'
+import Logo from '../../components/Logo'
 import styles from './index.module.css'
 
 const MEAL_TYPES = ['早餐', '午餐', '晚餐']
@@ -125,6 +127,7 @@ export default function Home() {
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [loading, setLoading] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [swapCount, setSwapCount] = useState(0)
   const [excludeIds, setExcludeIds] = useState<number[]>([])
 
@@ -143,12 +146,13 @@ export default function Home() {
       const mealType = MEAL_KEYS[activeMeal]
       let results: Recipe[]
       if (familyId) {
-        results = await recommendApi.get({ family_id: familyId, date: todayStr(), meal_type: mealType })
+        results = await recommendApi.get({ family_id: familyId, date: todayStr(), meal_type: mealType, exclude_ids: excludes })
       } else {
         results = await recommendApi.get({
           meal_type: mealType,
           allergies: prefs?.allergies ?? [],
           flavors: prefs?.liked_flavors ?? [],
+          exclude_ids: excludes,
         })
       }
       const filtered = results.filter(r => !excludes.includes(r.id))
@@ -170,6 +174,23 @@ export default function Home() {
       setLoading(false)
     }
   }, [user, familyId, activeMeal, navigate])
+
+  // 登录用户：从 DB 同步今日已确认的餐次到 store（跨 session 保持一致）
+  useEffect(() => {
+    if (!familyId) return
+    logsApi.getDay(familyId, todayStr()).then(dbData => {
+      const mealKeys = ['breakfast', 'lunch', 'dinner'] as const
+      for (const mk of mealKeys) {
+        const entries = dbData[mk]
+        if (entries?.length && !meals[mk]) {
+          confirmMeal(mk, {
+            ids: entries.map(e => e.recipe_id),
+            names: entries.map(e => e.name),
+          })
+        }
+      }
+    }).catch(() => {})
+  }, [familyId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const prefs = getGuestPrefs()
@@ -222,6 +243,33 @@ export default function Home() {
     })
   }
 
+  async function handleLoadMore() {
+    setLoadingMore(true)
+    try {
+      const prefs = getGuestPrefs()
+      const mealType = MEAL_KEYS[activeMeal]
+      const currentIds = recipes.map(r => r.id)
+      const excludes = [...excludeIds, ...currentIds]
+      let results: Recipe[]
+      if (familyId) {
+        results = await recommendApi.get({ family_id: familyId, date: todayStr(), meal_type: mealType, exclude_ids: excludes })
+      } else {
+        results = await recommendApi.get({
+          meal_type: mealType,
+          allergies: prefs?.allergies ?? [],
+          flavors: prefs?.liked_flavors ?? [],
+          exclude_ids: excludes,
+        })
+      }
+      const fresh = results.filter(r => !currentIds.includes(r.id))
+      if (fresh.length > 0) setRecipes(prev => [...prev, ...fresh])
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
   function handleConfirm() {
     const selected = recipes.filter(r => selectedIds.has(r.id))
     selected.forEach(recipe => {
@@ -251,21 +299,32 @@ export default function Home() {
         </div>
       </header>
 
-      <div className={styles.mealTabs}>
-        {MEAL_TYPES.map((label, i) => {
-          const key = MEAL_KEYS[i] as 'breakfast' | 'lunch' | 'dinner'
-          const done = !!meals[key]
-          return (
-            <button
-              key={label}
-              className={`${styles.mealTab} ${activeMeal === i ? styles.mealTabActive : ''}`}
-              onClick={() => setActiveMeal(i)}
-            >
-              {label}
-              {done && <span className={styles.mealTabDot} />}
-            </button>
-          )
-        })}
+      <div className={styles.mealTabsRow}>
+        <div className={styles.mealTabs}>
+          {MEAL_TYPES.map((label, i) => {
+            const key = MEAL_KEYS[i] as 'breakfast' | 'lunch' | 'dinner'
+            const done = !!meals[key]
+            return (
+              <button
+                key={label}
+                className={`${styles.mealTab} ${activeMeal === i ? styles.mealTabActive : ''}`}
+                onClick={() => setActiveMeal(i)}
+              >
+                {label}
+                {done && <span className={styles.mealTabDot}>✓</span>}
+              </button>
+            )
+          })}
+        </div>
+        {!confirmedEntry && recipes.length > 0 && (
+          <button
+            className={styles.loadMoreBtn}
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+          >
+            {loadingMore ? '...' : '+ 更多'}
+          </button>
+        )}
       </div>
 
       {loading ? (
@@ -274,23 +333,44 @@ export default function Home() {
           <span>Curating recipes...</span>
         </div>
       ) : confirmedEntry ? (
-        <div className={styles.confirmedView}>
-          <div className={styles.confirmedIcon}>✓</div>
-          <h3 className={styles.confirmedTitle}>{MEAL_TYPES[activeMeal]}已定</h3>
-          <div className={styles.confirmedNames}>
-            {confirmedEntry.names.map(name => <span key={name} className={styles.confirmedName}>{name}</span>)}
+        <div className={styles.confirmedMenuCard}>
+          <Logo className={styles.menuWatermarkLogo} />
+          
+          <div className={styles.menuHeader}>
+            <div className={styles.menuIcon}>
+              {activeMeal === 0 && <Coffee size={28} strokeWidth={1.5} />}
+              {activeMeal === 1 && <Sun size={28} strokeWidth={1.5} />}
+              {activeMeal === 2 && <MoonStar size={28} strokeWidth={1.5} />}
+            </div>
+            <div className={styles.menuTitleRow}>
+              <div className={styles.menuTitleLine} />
+              <h3 className={styles.menuTitle}>{MEAL_TYPES[activeMeal]}</h3>
+              <div className={styles.menuTitleLine} />
+            </div>
+            <span className={styles.menuOverline}>{MEAL_KEYS[activeMeal].toUpperCase()}</span>
           </div>
-          <button className={styles.btnViewMenu} onClick={() => navigate('/today')}>
-            去查看今日菜单
-          </button>
-          <button className={styles.btnReselect} onClick={() => {
-            clearMeal(mealKey)
-            setExcludeIds([])
-            setSelectedIds(new Set())
-            loadRecommendation([])
-          }}>
-            重新选择
-          </button>
+          
+          <ul className={styles.menuItemList}>
+            {confirmedEntry.names.map((name) => (
+              <li key={name} className={styles.menuItem}>
+                <span className={styles.menuItemName}>{name}</span>
+              </li>
+            ))}
+          </ul>
+          
+          <div className={styles.menuActions}>
+            <button className={styles.btnViewMenu} onClick={() => navigate('/today')}>
+              查看做法
+            </button>
+            <button className={styles.btnReselect} onClick={() => {
+              clearMeal(mealKey)
+              setExcludeIds([])
+              setSelectedIds(new Set())
+              loadRecommendation([])
+            }}>
+              重新选择
+            </button>
+          </div>
         </div>
       ) : recipes.length > 0 ? (
         <div className={styles.recipeList}>

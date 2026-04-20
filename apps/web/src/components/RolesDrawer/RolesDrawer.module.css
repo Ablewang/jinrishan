@@ -381,3 +381,15 @@
   transition: var(--transition);
 }
 .prefsDoneBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.prefsSaveRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.saveError {
+  font-size: 12px;
+  color: #e57373;
+}

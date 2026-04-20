@@ -95,7 +95,7 @@ export default function Settings() {
   const { user, logout, updateUser } = useAuth()
   const navigate = useNavigate()
   const [familyInfo, setFamilyInfo] = useState<{ id: number; name: string; invite_code: string } | null>(null)
-  const [_memberId, setMemberId] = useState<number | null>(null)
+  const [memberId, setMemberId] = useState<number | null>(null)
   const [members, setMembers] = useState<Member[]>([])
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS)
   const [_saving, setSaving] = useState(false)
@@ -430,11 +430,19 @@ export default function Settings() {
         onAddVirtual={handleAddVirtual}
         onDeleteVirtual={handleDeleteVirtual}
         onLoadPrefs={async (targetMemberId) => {
-          const p = await familiesApi.getPreferences(familyId, targetMemberId)
-          return p ?? { liked_cuisines: [], liked_flavors: [], liked_ingredients: [], disliked_cuisines: [], disliked_flavors: [], disliked_ingredients: [], allergies: [] }
+          const EMPTY = { liked_cuisines: [], liked_flavors: [], liked_ingredients: [], disliked_cuisines: [], disliked_flavors: [], disliked_ingredients: [], allergies: [] }
+          if (targetMemberId === memberId) {
+            return authApi.getPreferences().catch(() => EMPTY)
+          }
+          return familiesApi.getPreferences(familyId, targetMemberId).catch(() => EMPTY)
         }}
-        onSavePrefs={async (targetMemberId, prefs) => {
-          await familiesApi.updatePreferences(familyId, targetMemberId, prefs)
+        onSavePrefs={async (targetMemberId, updated) => {
+          if (targetMemberId === memberId) {
+            await authApi.updatePreferences(updated)
+            setPrefs(updated)
+          } else {
+            await familiesApi.updatePreferences(familyId, targetMemberId, updated)
+          }
         }}
         onClose={() => setRolesDrawerOpen(false)}
       />

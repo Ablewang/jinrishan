@@ -8,6 +8,7 @@ recommendRoute.get('/', async (c) => {
   const { family_id, date, meal_type } = c.req.query()
   const guestAllergies = c.req.query('allergies')?.split(',').filter(Boolean) ?? []
   const guestFlavors = c.req.query('flavors')?.split(',').filter(Boolean) ?? []
+  const excludeIds = c.req.query('exclude_ids')?.split(',').map(Number).filter(Boolean) ?? []
 
   const isGuest = !family_id
   const targetDate = date || new Date().toISOString().slice(0, 10)
@@ -18,6 +19,7 @@ recommendRoute.get('/', async (c) => {
     date: targetDate,
     mealType: targetMeal,
     count: 3,
+    excludeIds,
     db: c.env.DB,
     ...(isGuest ? { guestAllergies, guestFlavors } : {}),
   })

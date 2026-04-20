@@ -46,13 +46,19 @@
   letter-spacing: 2px;
 }
 
+.mealTabsRow {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+
 .mealTabs {
   display: flex;
   gap: 24px;
-  margin-bottom: 24px;
+  flex: 1;
   overflow-x: auto;
   scrollbar-width: none;
-  border-bottom: 1px solid var(--border-color);
 }
 .mealTabs::-webkit-scrollbar { display: none; }
 
@@ -78,13 +84,11 @@
 
 .mealTabDot {
   display: inline-block;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--text-main);
-  margin-left: 5px;
+  font-size: 10px;
+  margin-left: 3px;
   vertical-align: middle;
-  opacity: 0.5;
+  opacity: 0.7;
+  line-height: 1;
 }
 
 .loading, .empty {
@@ -130,6 +134,23 @@
 .recipeList::-webkit-scrollbar {
   display: none;
 }
+
+.loadMoreBtn {
+  flex-shrink: 0;
+  align-self: center;
+  margin-bottom: 6px;
+  padding: 5px 14px;
+  background: var(--text-main);
+  border: 1px solid var(--text-main);
+  color: var(--surface-solid);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.loadMoreBtn:hover:not(:disabled) { opacity: 0.7; }
+.loadMoreBtn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .card {
   display: flex;
@@ -443,88 +464,168 @@
   opacity: 0.85;
 }
 
-/* 确认成功视图 */
-.confirmedView {
+/* 确认成功菜单视图 */
+.confirmedMenuCard {
+  background-color: #faf9f5;
+  padding: 48px 24px;
+  margin: 0 0 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 80px 24px;
-  text-align: center;
-  border: 1px dashed var(--border-color-strong);
-  margin: 0 0 24px;
+  position: relative;
+  border-radius: 0; /* flattened */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  container-type: inline-size;
 }
 
-.confirmedIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--text-main);
-  color: var(--surface-solid);
+.confirmedMenuCard::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  border: 1px solid #e8e2d2;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.menuWatermarkLogo {
+  position: absolute;
+  top: 24px;
+  left: calc(100% - clamp(20px, 6cqi, 60px));
+  transform-origin: top left;
+  transform: rotate(90deg);
+  opacity: 0.04;
+  font-size: clamp(40px, 18cqi, 100px);
+  gap: 0.15em !important;
+  pointer-events: none;
+  filter: grayscale(100%);
+  z-index: 0;
+}
+
+.menuHeader {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.menuIcon {
+  color: #baa477;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.menuTitleRow {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 6px;
+  width: 100%;
 }
 
-.confirmedTitle {
+.menuTitleLine {
+  flex: 1;
+  height: 1px;
+  background-color: #d4ccba;
+  max-width: 40px;
+}
+
+.menuTitle {
   font-family: var(--font-serif);
   font-size: 24px;
-  font-weight: normal;
-  margin: 0 0 20px;
-  color: var(--text-main);
+  font-weight: 500;
+  color: #3a3327;
+  margin: 0;
+  letter-spacing: 4px;
 }
 
-.confirmedNames {
+.menuOverline {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #8c8273;
+}
+
+.menuItemList {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 56px;
+  width: 100%;
+  max-width: 400px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 32px;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.confirmedName {
-  padding: 6px 14px;
-  border: 1px solid var(--border-color-strong);
-  font-size: 13px;
-  color: var(--text-secondary);
-  letter-spacing: 0.5px;
+.menuItem {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.menuItemName {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: #3a3327;
+  letter-spacing: 3px;
+  text-align: center;
+}
+
+.menuActions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: 32px;
+  border-top: 1px solid #e8e2d2;
 }
 
 .btnViewMenu {
-  background: var(--text-main);
-  color: var(--surface-solid);
+  background: #3a3327;
+  color: #fff;
   border: none;
-  padding: 14px 32px;
+  padding: 12px 32px;
   font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-weight: 500;
+  letter-spacing: 2px;
   cursor: pointer;
   transition: var(--transition);
-  margin-bottom: 16px;
+  border-radius: 0;
 }
 
 .btnViewMenu:hover {
-  opacity: 0.8;
+  background: #2a241a;
 }
 
 .btnReselect {
   background: transparent;
-  color: var(--text-muted);
-  border: none;
-  font-size: 12px;
-  text-transform: uppercase;
+  color: #5a503d;
+  border: 1px solid #d4ccba;
+  padding: 12px 32px;
+  font-size: 13px;
+  font-weight: 500;
   letter-spacing: 2px;
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  padding: 0;
+  transition: var(--transition);
+  border-radius: 0;
 }
 
 .btnReselect:hover {
-  color: var(--text-main);
+  background: #f0eadd;
+  color: #3a3327;
 }
 
 /* Tablet Layout */
