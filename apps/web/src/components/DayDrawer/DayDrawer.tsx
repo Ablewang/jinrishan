@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 import { recommendApi } from '../../api/recommend'
-import RecipeImages from '../RecipeImages'
 import type { Recipe } from '../../types'
 import styles from './DayDrawer.module.css'
 
@@ -21,6 +20,7 @@ export default function DayDrawer({ date: _date, dateLabel, familyId, existingRe
   const [recipesByMeal, setRecipesByMeal] = useState<Record<string, Recipe[]>>({})
   const [selectedByMeal, setSelectedByMeal] = useState<Record<string, Set<number>>>({})
   const [loadingMeal, setLoadingMeal] = useState<string | null>(null)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [confirming, setConfirming] = useState(false)
 
   const mealType = MEAL_TYPES[activeMeal]
@@ -39,6 +39,26 @@ export default function DayDrawer({ date: _date, dateLabel, familyId, existingRe
   }, [familyId, existingRecipeIds, recipesByMeal])
 
   useEffect(() => { load(mealType) }, [mealType]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function handleLoadMore() {
+    setLoadingMore(true)
+    try {
+      const currentIds = (recipesByMeal[mealType] ?? []).map(r => r.id)
+      const results = await recommendApi.get({
+        family_id: familyId,
+        meal_type: mealType,
+        exclude_ids: [...existingRecipeIds, ...currentIds],
+      })
+      setRecipesByMeal(prev => ({
+        ...prev,
+        [mealType]: [...(prev[mealType] ?? []), ...results.filter(r => !currentIds.includes(r.id))]
+      }))
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
 
   function toggleSelect(mt: string, id: number) {
     setSelectedByMeal(prev => {
@@ -91,7 +111,7 @@ export default function DayDrawer({ date: _date, dateLabel, familyId, existingRe
                 onClick={() => setActiveMeal(i)}
               >
                 {MEAL_LABELS[mt]}
-                {count > 0 && <span className={styles.tabBadge}>{count}</span>}
+                {count > 0 && <span className={styles.tabBadge}>({count})</span>}
               </button>
             )
           })}
@@ -102,36 +122,38 @@ export default function DayDrawer({ date: _date, dateLabel, familyId, existingRe
             <div className={styles.loading}><div className={styles.loadingIcon} /></div>
           ) : recipes.length === 0 ? (
             <div className={styles.empty}>暂无推荐</div>
-          ) : recipes.map(recipe => {
-            const isSelected = selected.has(recipe.id)
-            const diffLabel = { easy: '简单', medium: '中等', hard: '复杂' }[recipe.difficulty] ?? recipe.difficulty
-            return (
-              <article key={recipe.id} className={`${styles.card} ${isSelected ? styles.cardSelected : ''}`}>
-                <div className={styles.cardImage}>
-                  <RecipeImages images={recipe.images} alt={recipe.name} />
-                  {isSelected && <div className={styles.selectedBadge}>✓</div>}
-                </div>
-                <div className={styles.cardBody}>
-                  <h3 className={styles.cardName}>{recipe.name}</h3>
-                  <p className={styles.cardDesc}>{recipe.description}</p>
-                  <div className={styles.cardMeta}>
-                    <span>{recipe.cook_time} 分钟</span>
-                    <span>·</span>
-                    <span>{diffLabel}</span>
-                    {recipe.cuisine && <><span>·</span><span>{recipe.cuisine}</span></>}
-                  </div>
-                </div>
-                <div className={styles.cardSelectArea}>
-                  <button
-                    className={`${styles.selectBtn} ${isSelected ? styles.selectBtnActive : ''}`}
+          ) : (
+            <>
+              {recipes.map(recipe => {
+                const isSelected = selected.has(recipe.id)
+                return (
+                  <div
+                    key={recipe.id}
+                    className={`${styles.row} ${isSelected ? styles.rowSelected : ''}`}
                     onClick={() => toggleSelect(mealType, recipe.id)}
                   >
-                    ✓
-                  </button>
-                </div>
-              </article>
-            )
-          })}
+                    <div className={styles.rowImg}>
+                      {recipe.images?.[0]
+                        ? <img src={recipe.images[0]} alt={recipe.name} />
+                        : <span className={styles.rowImgEmpty}>🍳</span>
+                      }
+                    </div>
+                    <div className={styles.rowInfo}>
+                      <span className={styles.rowName}>{recipe.name}</span>
+                      <span className={styles.rowMeta}>
+                        {recipe.cook_time}分钟
+                        {recipe.cuisine && ` · ${recipe.cuisine}`}
+                      </span>
+                    </div>
+                    <div className={`${styles.check} ${isSelected ? styles.checkActive : ''}`}>✓</div>
+                  </div>
+                )
+              })}
+              <button className={styles.loadMoreBtn} onClick={handleLoadMore} disabled={loadingMore}>
+                {loadingMore ? '...' : '更多推荐'}
+              </button>
+            </>
+          )}
         </div>
 
         {totalSelected > 0 && (

@@ -7,7 +7,6 @@
 .header {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 20px;
 }
@@ -44,53 +43,6 @@
   letter-spacing: 2px;
 }
 
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 120px 0;
-  color: var(--text-muted);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  border: 1px dashed var(--border-color-strong);
-  margin: 0 0 24px;
-}
-
-.loadingIcon {
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--text-muted);
-  border-radius: 50%;
-  margin-bottom: 24px;
-  border-top-color: transparent;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.empty, .emptyPlan {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 24px;
-  gap: 24px;
-  border: 1px dashed var(--border-color-strong);
-  margin: 0 0 24px;
-}
-
-.emptyText {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
 .titleRight {
   display: flex;
   align-items: center;
@@ -112,46 +64,81 @@
   border-color: var(--text-main);
 }
 
-.weekDate {
-  font-size: 11px;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+/* 日期选择 tab 条 */
+.dayTabs {
+  display: flex;
+  gap: 0;
+  margin: 0 -20px;
+  padding: 0 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border-color);
 }
+.dayTabs::-webkit-scrollbar { display: none; }
 
-/* Calendar */
-.calendar {
+.dayTab {
   display: flex;
   flex-direction: column;
-  margin-bottom: 48px;
-}
-
-.dayCard {
-  border-bottom: 1px solid var(--border-color);
-  padding: 20px 0;
-}
-
-.dayCard:first-child {
-  border-top: none;
-}
-
-.dayHeader {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 0 0 12px;
+  gap: 4px;
+  padding: 16px 14px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: var(--transition);
+  margin-bottom: -1px;
 }
 
-.dayHeader > span {
+.dayTabWeekday {
   font-size: 10px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 3px;
+  letter-spacing: 1px;
+  line-height: 1;
 }
 
+.dayTabDate {
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.dayTabActive .dayTabWeekday,
+.dayTabActive .dayTabDate {
+  color: var(--text-main);
+}
+
+.dayTabActive {
+  border-bottom-color: var(--text-main);
+}
+
+.dayTabToday .dayTabWeekday {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.dayTabDot {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+/* 当天操作栏 */
 .dayActions {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0 0;
+  justify-content: flex-end;
 }
 
 .dayRandomBtn {
@@ -166,15 +153,8 @@
   letter-spacing: 1px;
   transition: var(--transition);
 }
-
-.dayRandomBtn:hover:not(:disabled) {
-  color: var(--text-main);
-}
-
-.dayRandomBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+.dayRandomBtn:hover:not(:disabled) { color: var(--text-main); }
+.dayRandomBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .dayPickBtn {
   font-size: 10px;
@@ -182,32 +162,29 @@
   background: transparent;
   border: 1px solid var(--border-color-strong);
   cursor: pointer;
-  padding: 3px 10px;
+  padding: 4px 12px;
   letter-spacing: 1px;
   transition: var(--transition);
 }
-
 .dayPickBtn:hover {
   background: var(--text-main);
   color: var(--surface-solid);
 }
 
+/* 三餐 */
 .meals {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  margin-top: 4px;
+  margin-bottom: 40px;
 }
 
 .mealSection {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  padding: 8px 0;
-  border-top: 1px solid var(--border-color);
-}
-
-.mealSection:first-child {
-  border-top: none;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .mealLabel {
@@ -217,7 +194,7 @@
   flex-shrink: 0;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding-top: 2px;
+  padding-top: 3px;
 }
 
 .mealContent {
@@ -235,7 +212,7 @@
 
 .mealName {
   flex: 1;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-main);
   font-family: var(--font-serif);
   font-weight: normal;
@@ -253,11 +230,7 @@
   flex-shrink: 0;
   transition: var(--transition);
 }
-
-.swapBtn:hover {
-  color: var(--text-main);
-  border-color: var(--text-main);
-}
+.swapBtn:hover { color: var(--text-main); border-color: var(--text-main); }
 
 .deleteBtn {
   font-size: 14px;
@@ -270,15 +243,12 @@
   line-height: 1;
   transition: var(--transition);
 }
-
-.deleteBtn:hover {
-  color: var(--text-main);
-}
+.deleteBtn:hover { color: var(--text-main); }
 
 .mealActions {
   display: flex;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .addBtn {
@@ -291,12 +261,7 @@
   letter-spacing: 1px;
   transition: var(--transition);
 }
-
-.addBtn:hover {
-  color: var(--text-main);
-  border-color: var(--text-main);
-  border-style: solid;
-}
+.addBtn:hover { color: var(--text-main); border-color: var(--text-main); border-style: solid; }
 
 .randomBtn {
   font-size: 10px;
@@ -310,17 +275,59 @@
   text-underline-offset: 3px;
   transition: var(--transition);
 }
+.randomBtn:hover { color: var(--text-main); }
 
-.randomBtn:hover {
-  color: var(--text-main);
+/* Loading / Empty */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px dashed var(--border-color-strong);
+  margin: 24px 0;
 }
 
-/* Actions */
+.loadingIcon {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--text-muted);
+  border-radius: 50%;
+  margin-bottom: 24px;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty, .emptyPlan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  gap: 24px;
+  border: 1px dashed var(--border-color-strong);
+  margin: 24px 0;
+}
+
+.emptyText {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Bottom actions */
 .actions {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 32px;
 }
 
 .btnPrimary, .btnSecondary {
@@ -332,6 +339,7 @@
   transition: var(--transition);
   text-align: center;
   cursor: pointer;
+  border: none;
 }
 
 .btnPrimary {
@@ -339,28 +347,17 @@
   color: var(--surface-solid);
   border: 1px solid var(--text-main);
 }
-
-.btnPrimary:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.btnPrimary:hover:not(:disabled) {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
-}
+.btnPrimary:disabled { opacity: 0.3; cursor: not-allowed; }
+.btnPrimary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
 
 .btnSecondary {
   background: transparent;
   color: var(--text-main);
   border: 1px solid var(--border-color-strong);
 }
+.btnSecondary:hover { background: var(--surface-raised); }
 
-.btnSecondary:hover {
-  background: var(--surface-raised);
-}
-
-/* Swap Modal */
+/* Modal */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -415,12 +412,11 @@
   background: transparent;
   cursor: pointer;
   width: 100%;
+  border-left: none;
+  border-right: none;
+  border-top: none;
 }
-
-.swapOption:hover .swapOptionName {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
+.swapOption:hover .swapOptionName { text-decoration: underline; text-underline-offset: 4px; }
 
 .swapOptionName {
   font-size: 15px;
@@ -447,61 +443,18 @@
   cursor: pointer;
   transition: var(--transition);
 }
-
-.modalClose:hover {
-  color: var(--text-main);
-  border-color: var(--text-main);
-}
+.modalClose:hover { color: var(--text-main); border-color: var(--text-main); }
 
 /* PC Layout */
 @media (min-width: 600px) and (max-width: 1299px) {
-  .page {
-    padding: 32px 32px 80px;
-    max-width: 800px;
-  }
+  .page { padding: 32px 32px 80px; max-width: 800px; }
 }
 
 @media (min-width: 1180px) {
-  .page {
-    padding: 32px 40px 80px;
-    max-width: 1000px;
-  }
-
-  .title {
-    font-size: 40px;
-  }
-
-  .calendar {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0 48px;
-    margin-bottom: 48px;
-  }
-
-  .dayCard {
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .dayCard:first-child {
-    border-top: none;
-  }
-
-  .actions {
-    flex-direction: row;
-  }
-
-  .btnPrimary, .btnSecondary {
-    flex: 1;
-  }
-
-  .modalOverlay {
-    align-items: center;
-  }
-
-  .modal {
-    border: 1px solid var(--border-color-strong);
-    border-top: 1px solid var(--border-color-strong);
-    max-width: 480px;
-    padding: 48px 40px;
-  }
+  .page { padding: 32px 40px 80px; max-width: 1000px; }
+  .title { font-size: 40px; }
+  .actions { flex-direction: row; }
+  .btnPrimary, .btnSecondary { flex: 1; }
+  .modalOverlay { align-items: center; }
+  .modal { border: 1px solid var(--border-color-strong); max-width: 480px; padding: 48px 40px; }
 }

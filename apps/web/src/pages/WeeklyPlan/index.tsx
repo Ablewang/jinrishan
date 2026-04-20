@@ -34,24 +34,42 @@ const MEAL_TYPE_LABEL: Record<string, string> = {
 }
 
 const MEAL_ORDER = ['breakfast', 'lunch', 'dinner']
+const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
 function getWeekStart(offset = 0) {
   const d = new Date()
   const day = d.getDay()
   const diff = d.getDate() - day + (day === 0 ? -6 : 1) + offset * 7
   d.setDate(diff)
-  return d.toISOString().slice(0, 10)
+  return localDateStr(d)
 }
 
 function getWeekEnd(offset = 0) {
   const d = new Date(getWeekStart(offset) + 'T00:00:00')
   d.setDate(d.getDate() + 6)
-  return d.toISOString().slice(0, 10)
+  return localDateStr(d)
 }
 
-function formatDate(dateStr: string) {
+function getWeekDates(offset = 0) {
+  const start = new Date(getWeekStart(offset) + 'T00:00:00')
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(start)
+    d.setDate(start.getDate() + i)
+    return localDateStr(d)
+  })
+}
+
+function localDateStr(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function todayStr() {
+  return localDateStr(new Date())
+}
+
+function formatShort(dateStr: string) {
   const d = new Date(dateStr + 'T00:00:00')
-  return d.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric', weekday: 'short' })
+  return `${d.getMonth() + 1}/${d.getDate()}`
 }
 
 function groupByDate(items: PlanItem[]) {
@@ -73,6 +91,7 @@ export default function WeeklyPlan() {
   const [generating, setGenerating] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [weekOffset] = useState(0)
+  const [selectedDate, setSelectedDate] = useState(todayStr)
   const [swapModal, setSwapModal] = useState<PlanItem | null>(null)
   const [addModal, setAddModal] = useState<AddModalState | null>(null)
   const [dayDrawer, setDayDrawer] = useState<string | null>(null)
@@ -82,6 +101,15 @@ export default function WeeklyPlan() {
   const [randomizing, setRandomizing] = useState<string | null>(null)
 
   const familyId = Number(localStorage.getItem('familyId') ?? '0')
+  const weekDates = getWeekDates(weekOffset)
+  const today = todayStr()
+
+  // If selectedDate is outside this week's range, default to today or first day
+  useEffect(() => {
+    if (!weekDates.includes(selectedDate)) {
+      setSelectedDate(weekDates.includes(today) ? today : weekDates[0])
+    }
+  }, [weekOffset]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!familyId) return
@@ -188,14 +216,12 @@ export default function WeeklyPlan() {
     if (!plan) return
     setRandomizing(date)
     try {
-      const MEAL_TYPES = ['breakfast', 'lunch', 'dinner']
       const dayItems = plan.items.filter(i => i.date === date)
       await Promise.all(dayItems.map(item => plansApi.deleteItem(plan.id, item.id)))
-
       const kept = plan.items.filter(i => i.date !== date)
       const added: PlanItem[] = []
       const usedIds: number[] = []
-      for (const mealType of MEAL_TYPES) {
+      for (const mealType of MEAL_ORDER) {
         const recs = await recommendApi.get({ family_id: familyId, meal_type: mealType })
         const pick = recs.find(r => !usedIds.includes(r.id))
         if (pick) {
@@ -227,8 +253,7 @@ export default function WeeklyPlan() {
     try {
       const existing = plan.items.filter(i => i.date === date && i.meal_type === meal_type)
       await Promise.all(existing.map(item => plansApi.deleteItem(plan.id, item.id)))
-
-      const recipes = await recommendApi.get({ family_id: familyId, meal_type: meal_type })
+      const recipes = await recommendApi.get({ family_id: familyId, meal_type })
       const usedIds = plan.items.filter(i => i.date === date && i.meal_type !== meal_type).map(i => i.recipe_id)
       const pick = recipes.find(r => !usedIds.includes(r.id)) ?? recipes[0]
       if (pick) {
@@ -280,7 +305,7 @@ export default function WeeklyPlan() {
   const weekStart = getWeekStart(weekOffset)
   const weekEnd = getWeekEnd(weekOffset)
   const grouped = plan ? groupByDate(plan.items ?? []) : {}
-  const dates = Object.keys(grouped).sort()
+  const dayItems = grouped[selectedDate] ?? []
 
   return (
     <div className={styles.page}>
@@ -299,6 +324,27 @@ export default function WeeklyPlan() {
         </div>
       </header>
 
+      {/* 日期选择条 */}
+      <div className={styles.dayTabs}>
+        {weekDates.map(date => {
+          const d = new Date(date + 'T00:00:00')
+          const isToday = date === today
+          const isSelected = date === selectedDate
+          const hasItems = (grouped[date]?.length ?? 0) > 0
+          return (
+            <button
+              key={date}
+              className={`${styles.dayTab} ${isSelected ? styles.dayTabActive : ''} ${isToday ? styles.dayTabToday : ''}`}
+              onClick={() => setSelectedDate(date)}
+            >
+              <span className={styles.dayTabWeekday}>{WEEKDAY_LABELS[d.getDay()]}</span>
+              <span className={styles.dayTabDate}>{formatShort(date)}</span>
+              {hasItems && !isSelected && <span className={styles.dayTabDot} />}
+            </button>
+          )
+        })}
+      </div>
+
       {!plan ? (
         <div className={styles.emptyPlan}>
           <p className={styles.emptyText}>本周还没有计划</p>
@@ -308,76 +354,66 @@ export default function WeeklyPlan() {
         </div>
       ) : (
         <>
+          {/* 当天操作栏 */}
+          <div className={styles.dayActions}>
+            <button
+              className={styles.dayRandomBtn}
+              onClick={() => handleDayRandom(selectedDate)}
+              disabled={randomizing === selectedDate}
+            >
+              {randomizing === selectedDate ? '...' : '随机这天'}
+            </button>
+            <button className={styles.dayPickBtn} onClick={() => setDayDrawer(selectedDate)}>
+              批量选菜
+            </button>
+          </div>
 
-          <div className={styles.calendar}>
-            {dates.map(date => (
-              <div key={date} className={styles.dayCard}>
-                <div className={styles.dayHeader}>
-                  <span>{formatDate(date)}</span>
-                  <div className={styles.dayActions}>
-                    <button
-                      className={styles.dayRandomBtn}
-                      onClick={() => handleDayRandom(date)}
-                      disabled={randomizing === date}
-                    >
-                      {randomizing === date ? '...' : '随机'}
-                    </button>
-                    <button
-                      className={styles.dayPickBtn}
-                      onClick={() => setDayDrawer(date)}
-                    >
-                      批量选菜
-                    </button>
+          {/* 三餐列表 */}
+          <div className={styles.meals}>
+            {MEAL_ORDER.map(mealType => {
+              const items = dayItems.filter(i => i.meal_type === mealType)
+              return (
+                <div key={mealType} className={styles.mealSection}>
+                  <span className={styles.mealLabel}>{MEAL_TYPE_LABEL[mealType]}</span>
+                  <div className={styles.mealContent}>
+                    {items.map(item => (
+                      <div key={item.id} className={styles.mealRow}>
+                        <span className={styles.mealName}>{item.recipe_name}</span>
+                        <button
+                          className={styles.swapBtn}
+                          onClick={() => openSwap(item)}
+                          disabled={actingItem === item.id}
+                        >
+                          替换
+                        </button>
+                        {items.length > 1 && (
+                          <button
+                            className={styles.deleteBtn}
+                            onClick={() => handleDeleteItem(item)}
+                            disabled={actingItem === item.id}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <div className={styles.mealActions}>
+                      <button className={styles.addBtn} onClick={() => openAdd(selectedDate, mealType)}>
+                        + 选菜
+                      </button>
+                      <button className={styles.randomBtn} onClick={() => handleRandom(selectedDate, mealType)}>
+                        随机
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div className={styles.meals}>
-                  {MEAL_ORDER.map(mealType => {
-                    const items = grouped[date]?.filter(i => i.meal_type === mealType) ?? []
-                    return (
-                      <div key={mealType} className={styles.mealSection}>
-                        <span className={styles.mealLabel}>{MEAL_TYPE_LABEL[mealType]}</span>
-                        <div className={styles.mealContent}>
-                          {items.map(item => (
-                            <div key={item.id} className={styles.mealRow}>
-                              <span className={styles.mealName}>{item.recipe_name}</span>
-                              <button
-                                className={styles.swapBtn}
-                                onClick={() => openSwap(item)}
-                                disabled={actingItem === item.id}
-                              >
-                                替换
-                              </button>
-                              {items.length > 1 && (
-                                <button
-                                  className={styles.deleteBtn}
-                                  onClick={() => handleDeleteItem(item)}
-                                  disabled={actingItem === item.id}
-                                >
-                                  ×
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                          <div className={styles.mealActions}>
-                            <button className={styles.addBtn} onClick={() => openAdd(date, mealType)}>
-                              + 选菜
-                            </button>
-                            <button className={styles.randomBtn} onClick={() => handleRandom(date, mealType)}>
-                              随机
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className={styles.actions}>
             <button className={styles.btnSecondary} onClick={handleGenerate} disabled={generating}>
-              {generating ? '生成中...' : '重新生成'}
+              {generating ? '生成中...' : '重新生成全周'}
             </button>
             {plan.status === 'draft' ? (
               <button className={styles.btnPrimary} onClick={handleConfirm} disabled={confirming}>
@@ -397,7 +433,7 @@ export default function WeeklyPlan() {
         <div className={styles.modalOverlay} onClick={() => setSwapModal(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <h3 className={styles.modalTitle}>替换菜品</h3>
-            <p className={styles.modalSub}>{formatDate(swapModal.date)} · {MEAL_TYPE_LABEL[swapModal.meal_type]} · 当前：{swapModal.recipe_name}</p>
+            <p className={styles.modalSub}>{MEAL_TYPE_LABEL[swapModal.meal_type]} · 当前：{swapModal.recipe_name}</p>
             {modalLoading ? <p className={styles.modalSub}>加载中...</p> : (
               <div className={styles.swapList}>
                 {modalRecipes.map(r => (
@@ -418,7 +454,7 @@ export default function WeeklyPlan() {
         <div className={styles.modalOverlay} onClick={() => setAddModal(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <h3 className={styles.modalTitle}>加一道菜</h3>
-            <p className={styles.modalSub}>{formatDate(addModal.date)} · {MEAL_TYPE_LABEL[addModal.meal_type]}</p>
+            <p className={styles.modalSub}>{MEAL_TYPE_LABEL[addModal.meal_type]}</p>
             {modalLoading ? <p className={styles.modalSub}>加载中...</p> : (
               <div className={styles.swapList}>
                 {modalRecipes.map(r => (
@@ -433,11 +469,12 @@ export default function WeeklyPlan() {
           </div>
         </div>
       )}
+
       {/* 批量选菜抽屉 */}
       {dayDrawer && plan && (
         <DayDrawer
           date={dayDrawer}
-          dateLabel={formatDate(dayDrawer)}
+          dateLabel={`${WEEKDAY_LABELS[new Date(dayDrawer + 'T00:00:00').getDay()]} ${formatShort(dayDrawer)}`}
           familyId={familyId}
           existingRecipeIds={[]}
           onAdd={(mealType, recipes) => handleDayAdd(dayDrawer, mealType, recipes)}
