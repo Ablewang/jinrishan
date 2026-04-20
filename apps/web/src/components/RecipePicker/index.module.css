@@ -161,10 +161,14 @@
   flex-shrink: 0;
 }
 
+.row:last-of-type {
+  border-bottom: none;
+}
+
 /* 更多推荐 */
 .loadMoreBtn {
   width: 100%;
-  padding: 16px 24px;
+  padding: 16px 24px 28px;
   background: transparent;
   border: none;
   border-top: 1px solid var(--border-color);
