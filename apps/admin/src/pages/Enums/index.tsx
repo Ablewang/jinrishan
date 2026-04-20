@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
+import { Card, Menu, Input, Button, Space, Typography, Spin, App, Row, Col } from 'antd'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import { adminEnumsApi } from '../../api/enums'
 import type { EnumValue } from '../../types'
-import styles from './Enums.module.css'
+
+const { Title } = Typography
 
 const ENUM_TYPE_LABELS: Record<string, string> = {
   cuisine: '菜系',
@@ -15,11 +18,11 @@ const ENUM_TYPE_LABELS: Record<string, string> = {
 }
 
 export default function EnumManager() {
+  const { message } = App.useApp()
   const [allEnums, setAllEnums] = useState<Record<string, EnumValue[]>>({})
   const [activeType, setActiveType] = useState('')
   const [editing, setEditing] = useState<EnumValue[]>([])
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -28,14 +31,13 @@ export default function EnumManager() {
       const firstType = Object.keys(data)[0] ?? ''
       setActiveType(firstType)
       setEditing(data[firstType] ? [...data[firstType]] : [])
-      setLoading(false)
-    }).catch(() => setLoading(false))
+    }).catch(() => message.error('加载失败'))
+      .finally(() => setLoading(false))
   }, [])
 
   function selectType(type: string) {
     setActiveType(type)
     setEditing(allEnums[type] ? [...allEnums[type]] : [])
-    setSaved(false)
   }
 
   function updateValue(index: number, field: 'value' | 'label', val: string) {
@@ -53,68 +55,76 @@ export default function EnumManager() {
   async function handleSave() {
     setSaving(true)
     try {
-      const values = editing.filter(e => e.value.trim()).map((e, i) => ({ value: e.value, label: e.label || e.value, sort_order: i + 1 }))
+      const values = editing.filter(e => e.value.trim()).map((e, i) => ({
+        value: e.value, label: e.label || e.value, sort_order: i + 1,
+      }))
       await adminEnumsApi.update(activeType, values)
-      const updated = { ...allEnums, [activeType]: editing }
-      setAllEnums(updated)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
+      setAllEnums(prev => ({ ...prev, [activeType]: editing }))
+      message.success('保存成功')
     } catch (e) {
-      alert(e instanceof Error ? e.message : '保存失败')
+      message.error(e instanceof Error ? e.message : '保存失败')
     } finally {
       setSaving(false)
     }
   }
 
-  if (loading) return <div className={styles.loading}>加载中...</div>
-
-  const types = Object.keys(allEnums)
+  const menuItems = Object.keys(allEnums).map(type => ({
+    key: type,
+    label: (
+      <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>{ENUM_TYPE_LABELS[type] ?? type}</span>
+        <span style={{ color: '#999', fontSize: 12 }}>{allEnums[type]?.length ?? 0}</span>
+      </span>
+    ),
+  }))
 
   return (
     <div>
-      <h1 className={styles.title}>枚举管理</h1>
-      <div className={styles.layout}>
-        <aside className={styles.typeList}>
-          {types.map(type => (
-            <button
-              key={type}
-              className={`${styles.typeItem} ${type === activeType ? styles.typeItemActive : ''}`}
-              onClick={() => selectType(type)}
+      <Title level={4} style={{ marginBottom: 16 }}>枚举管理</Title>
+      <Spin spinning={loading}>
+        <Row gutter={16}>
+          <Col span={5}>
+            <Card bodyStyle={{ padding: 0 }}>
+              <Menu
+                mode="inline"
+                selectedKeys={[activeType]}
+                items={menuItems}
+                style={{ border: 'none' }}
+                onClick={({ key }) => selectType(key)}
+              />
+            </Card>
+          </Col>
+          <Col span={19}>
+            <Card
+              title={ENUM_TYPE_LABELS[activeType] ?? activeType}
+              extra={
+                <Button type="primary" loading={saving} onClick={handleSave}>保存</Button>
+              }
             >
-              {ENUM_TYPE_LABELS[type] ?? type}
-              <span className={styles.typeCount}>{allEnums[type]?.length ?? 0}</span>
-            </button>
-          ))}
-        </aside>
-        <div className={styles.editor}>
-          <div className={styles.editorHeader}>
-            <h2 className={styles.editorTitle}>{ENUM_TYPE_LABELS[activeType] ?? activeType}</h2>
-            <button className="btn-primary" onClick={handleSave} disabled={saving}>
-              {saved ? '✓ 已保存' : saving ? '保存中...' : '保存'}
-            </button>
-          </div>
-          <div className={styles.valueList}>
-            {editing.map((e, i) => (
-              <div key={i} className={styles.valueRow}>
-                <input
-                  className={styles.valueInput}
-                  placeholder="值 (value)"
-                  value={e.value}
-                  onChange={ev => updateValue(i, 'value', ev.target.value)}
-                />
-                <input
-                  className={styles.labelInput}
-                  placeholder="显示名 (label, 可与值相同)"
-                  value={e.label}
-                  onChange={ev => updateValue(i, 'label', ev.target.value)}
-                />
-                <button className={styles.removeBtn} onClick={() => removeValue(i)}>×</button>
-              </div>
-            ))}
-          </div>
-          <button className={styles.addBtn} onClick={addValue}>+ 添加值</button>
-        </div>
-      </div>
+              <Space direction="vertical" style={{ width: '100%' }}>
+                {editing.map((e, i) => (
+                  <Space key={i} style={{ width: '100%' }}>
+                    <Input
+                      placeholder="值 (value)"
+                      value={e.value}
+                      style={{ width: 180 }}
+                      onChange={ev => updateValue(i, 'value', ev.target.value)}
+                    />
+                    <Input
+                      placeholder="显示名 (label)"
+                      value={e.label}
+                      style={{ width: 200 }}
+                      onChange={ev => updateValue(i, 'label', ev.target.value)}
+                    />
+                    <Button icon={<DeleteOutlined />} danger type="text" onClick={() => removeValue(i)} />
+                  </Space>
+                ))}
+                <Button icon={<PlusOutlined />} type="dashed" onClick={addValue}>添加值</Button>
+              </Space>
+            </Card>
+          </Col>
+        </Row>
+      </Spin>
     </div>
   )
 }
