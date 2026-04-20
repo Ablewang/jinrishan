@@ -6,6 +6,7 @@ import { recommendApi } from '../../api/recommend'
 import type { Recipe } from '../../types'
 import LoginPrompt from '../../components/LoginPrompt'
 import DayDrawer from '../../components/DayDrawer'
+import RecipePicker from '../../components/RecipePicker'
 import styles from './WeeklyPlan.module.css'
 
 interface PlanItem {
@@ -95,8 +96,6 @@ export default function WeeklyPlan() {
   const [swapModal, setSwapModal] = useState<PlanItem | null>(null)
   const [addModal, setAddModal] = useState<AddModalState | null>(null)
   const [dayDrawer, setDayDrawer] = useState<string | null>(null)
-  const [modalRecipes, setModalRecipes] = useState<Recipe[]>([])
-  const [modalLoading, setModalLoading] = useState(false)
   const [actingItem, setActingItem] = useState<number | null>(null)
   const [randomizing, setRandomizing] = useState<string | null>(null)
 
@@ -148,23 +147,15 @@ export default function WeeklyPlan() {
     }
   }
 
-  async function openSwap(item: PlanItem) {
-    setSwapModal(item)
-    setModalLoading(true)
-    const recipes = await recommendApi.get({ family_id: familyId, meal_type: item.meal_type })
-    setModalRecipes(recipes.filter(r => r.id !== item.recipe_id).slice(0, 6))
-    setModalLoading(false)
-  }
-
-  async function handleSwap(item: PlanItem, recipeId: number) {
+  async function handleSwap(item: PlanItem, recipe: Recipe) {
     if (!plan) return
     setActingItem(item.id)
     try {
-      await plansApi.replaceItem(plan.id, item.id, recipeId)
+      await plansApi.replaceItem(plan.id, item.id, recipe.id)
       setPlan(prev => prev ? {
         ...prev,
         items: prev.items.map(i => i.id === item.id
-          ? { ...i, recipe_id: recipeId, recipe_name: modalRecipes.find(r => r.id === recipeId)?.name ?? i.recipe_name }
+          ? { ...i, recipe_id: recipe.id, recipe_name: recipe.name }
           : i)
       } : prev)
       setSwapModal(null)
@@ -188,23 +179,13 @@ export default function WeeklyPlan() {
     }
   }
 
-  async function openAdd(date: string, meal_type: string) {
-    setAddModal({ date, meal_type })
-    setModalLoading(true)
-    const existingIds = plan?.items.filter(i => i.date === date && i.meal_type === meal_type).map(i => i.recipe_id) ?? []
-    const recipes = await recommendApi.get({ family_id: familyId, meal_type })
-    setModalRecipes(recipes.filter(r => !existingIds.includes(r.id)).slice(0, 6))
-    setModalLoading(false)
-  }
-
-  async function handleAddItem(recipeId: number) {
+  async function handleAddItem(recipe: Recipe) {
     if (!plan || !addModal) return
-    const recipe = modalRecipes.find(r => r.id === recipeId)
     try {
-      const newItem = await plansApi.addItem(plan.id, addModal.date, addModal.meal_type, recipeId)
+      const newItem = await plansApi.addItem(plan.id, addModal.date, addModal.meal_type, recipe.id)
       setPlan(prev => prev ? {
         ...prev,
-        items: [...prev.items, { ...newItem, recipe_name: recipe?.name ?? newItem.recipe_name }]
+        items: [...prev.items, { ...newItem, recipe_name: recipe.name }]
       } : prev)
       setAddModal(null)
     } catch (e) {
@@ -381,7 +362,7 @@ export default function WeeklyPlan() {
                         <span className={styles.mealName}>{item.recipe_name}</span>
                         <button
                           className={styles.swapBtn}
-                          onClick={() => openSwap(item)}
+                          onClick={() => setSwapModal(item)}
                           disabled={actingItem === item.id}
                         >
                           替换
@@ -398,7 +379,7 @@ export default function WeeklyPlan() {
                       </div>
                     ))}
                     <div className={styles.mealActions}>
-                      <button className={styles.addBtn} onClick={() => openAdd(selectedDate, mealType)}>
+                      <button className={styles.addBtn} onClick={() => setAddModal({ date: selectedDate, meal_type: mealType })}>
                         + 选菜
                       </button>
                       <button className={styles.randomBtn} onClick={() => handleRandom(selectedDate, mealType)}>
@@ -432,19 +413,20 @@ export default function WeeklyPlan() {
       {swapModal && (
         <div className={styles.modalOverlay} onClick={() => setSwapModal(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h3 className={styles.modalTitle}>替换菜品</h3>
-            <p className={styles.modalSub}>{MEAL_TYPE_LABEL[swapModal.meal_type]} · 当前：{swapModal.recipe_name}</p>
-            {modalLoading ? <p className={styles.modalSub}>加载中...</p> : (
-              <div className={styles.swapList}>
-                {modalRecipes.map(r => (
-                  <button key={r.id} className={styles.swapOption} onClick={() => handleSwap(swapModal, r.id)}>
-                    <span className={styles.swapOptionName}>{r.name}</span>
-                    <span className={styles.swapOptionMeta}>{r.cuisine} · {r.cook_time}分钟</span>
-                  </button>
-                ))}
+            <div className={styles.modalHeader}>
+              <div>
+                <p className={styles.modalSub}>{MEAL_TYPE_LABEL[swapModal.meal_type]} · 当前：{swapModal.recipe_name}</p>
+                <h3 className={styles.modalTitle}>替换菜品</h3>
               </div>
-            )}
-            <button className={styles.modalClose} onClick={() => setSwapModal(null)}>取消</button>
+              <button className={styles.modalClose} onClick={() => setSwapModal(null)}>×</button>
+            </div>
+            <RecipePicker
+              mealType={swapModal.meal_type}
+              familyId={familyId}
+              excludeIds={[swapModal.recipe_id]}
+              mode="single"
+              onSelect={r => handleSwap(swapModal, r)}
+            />
           </div>
         </div>
       )}
@@ -453,19 +435,20 @@ export default function WeeklyPlan() {
       {addModal && (
         <div className={styles.modalOverlay} onClick={() => setAddModal(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h3 className={styles.modalTitle}>加一道菜</h3>
-            <p className={styles.modalSub}>{MEAL_TYPE_LABEL[addModal.meal_type]}</p>
-            {modalLoading ? <p className={styles.modalSub}>加载中...</p> : (
-              <div className={styles.swapList}>
-                {modalRecipes.map(r => (
-                  <button key={r.id} className={styles.swapOption} onClick={() => handleAddItem(r.id)}>
-                    <span className={styles.swapOptionName}>{r.name}</span>
-                    <span className={styles.swapOptionMeta}>{r.cuisine} · {r.cook_time}分钟</span>
-                  </button>
-                ))}
+            <div className={styles.modalHeader}>
+              <div>
+                <p className={styles.modalSub}>{MEAL_TYPE_LABEL[addModal.meal_type]}</p>
+                <h3 className={styles.modalTitle}>加一道菜</h3>
               </div>
-            )}
-            <button className={styles.modalClose} onClick={() => setAddModal(null)}>取消</button>
+              <button className={styles.modalClose} onClick={() => setAddModal(null)}>×</button>
+            </div>
+            <RecipePicker
+              mealType={addModal.meal_type}
+              familyId={familyId}
+              excludeIds={plan?.items.filter(i => i.date === addModal.date && i.meal_type === addModal.meal_type).map(i => i.recipe_id) ?? []}
+              mode="single"
+              onSelect={r => handleAddItem(r)}
+            />
           </div>
         </div>
       )}

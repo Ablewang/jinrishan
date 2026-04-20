@@ -2,7 +2,7 @@ import { apiFetch } from './client'
 import type { Recipe } from '../types'
 
 export const recipesApi = {
-  list: (params?: { cuisine?: string; category?: string; keyword?: string; limit?: number }) =>
+  list: (params?: { cuisine?: string; category?: string; keyword?: string; limit?: number; offset?: number }) =>
     apiFetch<Recipe[]>('/api/recipes?' + new URLSearchParams(
       Object.entries(params ?? {}).filter(([, v]) => v != null).map(([k, v]) => [k, String(v)])
     )),

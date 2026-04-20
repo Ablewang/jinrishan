@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
-import { recommendApi } from '../../api/recommend'
+import { useState } from 'react'
+import RecipePicker from '../RecipePicker'
 import type { Recipe } from '../../types'
 import styles from './DayDrawer.module.css'
 
@@ -17,67 +17,29 @@ const MEAL_LABELS: Record<string, string> = { breakfast: '早餐', lunch: '午�
 
 export default function DayDrawer({ date: _date, dateLabel, familyId, existingRecipeIds, onAdd, onClose }: Props) {
   const [activeMeal, setActiveMeal] = useState(0)
-  const [recipesByMeal, setRecipesByMeal] = useState<Record<string, Recipe[]>>({})
-  const [selectedByMeal, setSelectedByMeal] = useState<Record<string, Set<number>>>({})
-  const [loadingMeal, setLoadingMeal] = useState<string | null>(null)
-  const [loadingMore, setLoadingMore] = useState(false)
+  const [selectedByMeal, setSelectedByMeal] = useState<Record<string, Map<number, Recipe>>>({})
   const [confirming, setConfirming] = useState(false)
 
   const mealType = MEAL_TYPES[activeMeal]
 
-  const load = useCallback(async (mt: string) => {
-    if (recipesByMeal[mt]) return
-    setLoadingMeal(mt)
-    try {
-      const results = await recommendApi.get({ family_id: familyId, meal_type: mt })
-      setRecipesByMeal(prev => ({ ...prev, [mt]: results.filter(r => !existingRecipeIds.includes(r.id)) }))
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoadingMeal(null)
-    }
-  }, [familyId, existingRecipeIds, recipesByMeal])
-
-  useEffect(() => { load(mealType) }, [mealType]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  async function handleLoadMore() {
-    setLoadingMore(true)
-    try {
-      const currentIds = (recipesByMeal[mealType] ?? []).map(r => r.id)
-      const results = await recommendApi.get({
-        family_id: familyId,
-        meal_type: mealType,
-        exclude_ids: [...existingRecipeIds, ...currentIds],
-      })
-      setRecipesByMeal(prev => ({
-        ...prev,
-        [mealType]: [...(prev[mealType] ?? []), ...results.filter(r => !currentIds.includes(r.id))]
-      }))
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoadingMore(false)
-    }
-  }
-
-  function toggleSelect(mt: string, id: number) {
+  function handleToggle(recipe: Recipe) {
     setSelectedByMeal(prev => {
-      const set = new Set(prev[mt] ?? [])
-      set.has(id) ? set.delete(id) : set.add(id)
-      return { ...prev, [mt]: set }
+      const map = new Map(prev[mealType] ?? [])
+      map.has(recipe.id) ? map.delete(recipe.id) : map.set(recipe.id, recipe)
+      return { ...prev, [mealType]: map }
     })
   }
 
-  const totalSelected = Object.values(selectedByMeal).reduce((sum, s) => sum + s.size, 0)
+  const selectedIds = new Set((selectedByMeal[mealType] ?? new Map()).keys())
+  const totalSelected = Object.values(selectedByMeal).reduce((sum, m) => sum + m.size, 0)
 
   async function handleConfirm() {
     setConfirming(true)
     try {
       for (const mt of MEAL_TYPES) {
-        const ids = [...(selectedByMeal[mt] ?? [])]
-        if (ids.length === 0) continue
-        const recipes = (recipesByMeal[mt] ?? []).filter(r => ids.includes(r.id))
-        await onAdd(mt, recipes.map(r => ({ id: r.id, name: r.name })))
+        const map = selectedByMeal[mt]
+        if (!map?.size) continue
+        await onAdd(mt, [...map.values()].map(r => ({ id: r.id, name: r.name })))
       }
       onClose()
     } catch (e) {
@@ -86,9 +48,6 @@ export default function DayDrawer({ date: _date, dateLabel, familyId, existingRe
       setConfirming(false)
     }
   }
-
-  const recipes = recipesByMeal[mealType] ?? []
-  const selected = selectedByMeal[mealType] ?? new Set<number>()
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -103,7 +62,7 @@ export default function DayDrawer({ date: _date, dateLabel, familyId, existingRe
 
         <div className={styles.tabs}>
           {MEAL_TYPES.map((mt, i) => {
-            const count = (selectedByMeal[mt] ?? new Set()).size
+            const count = (selectedByMeal[mt] ?? new Map()).size
             return (
               <button
                 key={mt}
@@ -117,43 +76,16 @@ export default function DayDrawer({ date: _date, dateLabel, familyId, existingRe
           })}
         </div>
 
-        <div className={styles.recipeList}>
-          {loadingMeal === mealType ? (
-            <div className={styles.loading}><div className={styles.loadingIcon} /></div>
-          ) : recipes.length === 0 ? (
-            <div className={styles.empty}>暂无推荐</div>
-          ) : (
-            <>
-              {recipes.map(recipe => {
-                const isSelected = selected.has(recipe.id)
-                return (
-                  <div
-                    key={recipe.id}
-                    className={`${styles.row} ${isSelected ? styles.rowSelected : ''}`}
-                    onClick={() => toggleSelect(mealType, recipe.id)}
-                  >
-                    <div className={styles.rowImg}>
-                      {recipe.images?.[0]
-                        ? <img src={recipe.images[0]} alt={recipe.name} />
-                        : <span className={styles.rowImgEmpty}>🍳</span>
-                      }
-                    </div>
-                    <div className={styles.rowInfo}>
-                      <span className={styles.rowName}>{recipe.name}</span>
-                      <span className={styles.rowMeta}>
-                        {recipe.cook_time}分钟
-                        {recipe.cuisine && ` · ${recipe.cuisine}`}
-                      </span>
-                    </div>
-                    <div className={`${styles.check} ${isSelected ? styles.checkActive : ''}`}>✓</div>
-                  </div>
-                )
-              })}
-              <button className={styles.loadMoreBtn} onClick={handleLoadMore} disabled={loadingMore}>
-                {loadingMore ? '...' : '更多推荐'}
-              </button>
-            </>
-          )}
+        <div className={styles.pickerWrap}>
+          <RecipePicker
+            key={mealType}
+            mealType={mealType}
+            familyId={familyId}
+            excludeIds={existingRecipeIds}
+            mode="multi"
+            selectedIds={selectedIds}
+            onToggle={handleToggle}
+          />
         </div>
 
         {totalSelected > 0 && (
