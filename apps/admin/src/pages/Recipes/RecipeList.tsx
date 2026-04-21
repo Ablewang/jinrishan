@@ -36,7 +36,7 @@ export default function RecipeList() {
     {
       title: '菜名', dataIndex: 'name',
       fieldProps: { placeholder: '搜索菜名' },
-      render: (_, record) => <strong>{record.name}</strong>,
+      render: (_, record) => record.name,
     },
     {
       title: '菜系', dataIndex: 'cuisine', width: 100,

@@ -23,7 +23,7 @@ export default function FamilyList() {
 
   const columns: ColumnsType<Family> = [
     { title: 'ID', dataIndex: 'id', width: 70 },
-    { title: '家庭名', dataIndex: 'name', render: v => <strong>{v}</strong> },
+    { title: '家庭名', dataIndex: 'name' },
     {
       title: '邀请码', dataIndex: 'invite_code',
       render: v => (
