@@ -157,7 +157,10 @@ export default function EnumManager() {
       <Spin spinning={loading}>
         <Row gutter={16}>
           <Col span={5}>
-            <Card bodyStyle={{ padding: 0 }}>
+            <Card title="数据分类" bodyStyle={{ padding: 0 }}>
+              <div style={{ padding: '8px 16px 4px', fontSize: 12, color: '#999', borderBottom: '1px solid #f0f0f0' }}>
+                点击左侧分类进行编辑
+              </div>
               <Menu
                 mode="inline"
                 selectedKeys={[activeType]}
