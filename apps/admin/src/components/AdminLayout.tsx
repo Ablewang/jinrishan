@@ -25,7 +25,6 @@ const NAV_ITEMS = [
 const ROUTE_LABELS: Record<string, string> = {
   '/dashboard': '仪表盘',
   '/recipes': '菜谱管理',
-  '/recipes/new': '新建菜谱',
   '/enums': '枚举管理',
   '/users': '用户列表',
   '/families': '家庭列表',
@@ -39,20 +38,8 @@ function getBreadcrumbs(pathname: string) {
 
   if (pathname === '/dashboard') return items
 
-  // 处理 /recipes/:id/edit
-  const editMatch = pathname.match(/^\/recipes\/(\d+)\/edit$/)
-  if (editMatch) {
-    items.push({ title: <Link to="/recipes">菜谱管理</Link> })
-    items.push({ title: '编辑菜谱' })
-    return items
-  }
-
   const label = ROUTE_LABELS[pathname]
   if (label) {
-    // 子页面补充父级
-    if (pathname === '/recipes/new') {
-      items.push({ title: <Link to="/recipes">菜谱管理</Link> })
-    }
     items.push({ title: label })
   }
 
