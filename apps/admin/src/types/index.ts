@@ -47,7 +47,16 @@ export interface User {
   id: number
   phone: string
   name: string | null
+  avatar: string | null
   created_at: string
+  last_login_at: string | null
+}
+
+export interface UserDetail extends User {
+  families: { id: number; name: string; invite_code: string; role: string; joined_at: string }[]
+  preferences: { pref_type: string; target_type: string; target_value: string }[]
+  plan_count: number
+  event_count: number
 }
 
 export interface Family {
