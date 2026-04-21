@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Card, Menu, Input, Button, Space, Spin, App, Row, Col } from 'antd'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Card, Menu, Input, Button, Spin, App, Row, Col } from 'antd'
+import { PlusOutlined, DeleteOutlined, HolderOutlined } from '@ant-design/icons'
+import {
+  DndContext, closestCenter, PointerSensor, useSensor, useSensors,
+} from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { adminEnumsApi } from '../../api/enums'
 import type { EnumValue } from '../../types'
 
@@ -15,27 +23,84 @@ const ENUM_TYPE_LABELS: Record<string, string> = {
   allergy: '过敏原',
 }
 
+// 拖拽行组件
+function SortableRow({
+  item, index, onChange, onRemove,
+}: {
+  item: EnumValue & { _key: string }
+  index: number
+  onChange: (index: number, field: 'value' | 'label', val: string) => void
+  onRemove: (index: number) => void
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item._key })
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 8,
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        background: isDragging ? '#fafafa' : 'transparent',
+        borderRadius: 4,
+      }}
+    >
+      <span
+        {...attributes}
+        {...listeners}
+        style={{ cursor: 'grab', color: '#bbb', fontSize: 16, flexShrink: 0, lineHeight: 1, paddingTop: 2 }}
+      >
+        <HolderOutlined />
+      </span>
+      <Input
+        placeholder="值 (英文)"
+        value={item.value}
+        style={{ width: 180 }}
+        onChange={e => onChange(index, 'value', e.target.value)}
+      />
+      <Input
+        placeholder="显示名"
+        value={item.label}
+        style={{ width: 180 }}
+        onChange={e => onChange(index, 'label', e.target.value)}
+      />
+      <Button icon={<DeleteOutlined />} danger type="text" onClick={() => onRemove(index)} />
+    </div>
+  )
+}
+
+let _keyCounter = 0
+function mkKey() { return String(++_keyCounter) }
+
+type EditItem = EnumValue & { _key: string }
+
 export default function EnumManager() {
   const { message } = App.useApp()
   const [allEnums, setAllEnums] = useState<Record<string, EnumValue[]>>({})
   const [activeType, setActiveType] = useState('')
-  const [editing, setEditing] = useState<EnumValue[]>([])
+  const [editing, setEditing] = useState<EditItem[]>([])
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   useEffect(() => {
     adminEnumsApi.list().then(data => {
       setAllEnums(data)
       const firstType = Object.keys(data)[0] ?? ''
       setActiveType(firstType)
-      setEditing(data[firstType] ? [...data[firstType]] : [])
+      setEditing((data[firstType] ?? []).map(e => ({ ...e, _key: mkKey() })))
     }).catch(() => message.error('加载失败'))
       .finally(() => setLoading(false))
   }, [])
 
   function selectType(type: string) {
     setActiveType(type)
-    setEditing(allEnums[type] ? [...allEnums[type]] : [])
+    setEditing((allEnums[type] ?? []).map(e => ({ ...e, _key: mkKey() })))
   }
 
   function updateValue(index: number, field: 'value' | 'label', val: string) {
@@ -43,11 +108,21 @@ export default function EnumManager() {
   }
 
   function addValue() {
-    setEditing(prev => [...prev, { id: 0, enum_type: activeType, value: '', label: '', sort_order: prev.length + 1 }])
+    setEditing(prev => [...prev, { id: 0, enum_type: activeType, value: '', label: '', sort_order: prev.length + 1, _key: mkKey() }])
   }
 
   function removeValue(index: number) {
     setEditing(prev => prev.filter((_, i) => i !== index))
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setEditing(prev => {
+      const oldIndex = prev.findIndex(e => e._key === active.id)
+      const newIndex = prev.findIndex(e => e._key === over.id)
+      return arrayMove(prev, oldIndex, newIndex)
+    })
   }
 
   async function handleSave() {
@@ -98,20 +173,22 @@ export default function EnumManager() {
                 <Button type="primary" loading={saving} onClick={handleSave}>保存</Button>
               }
             >
-              <Space direction="vertical" style={{ width: '100%' }}>
-                {editing.map((e, i) => (
-                  <Space key={i} style={{ width: '100%' }}>
-                    <Input
-                      placeholder="值 / 显示名"
-                      value={e.value}
-                      style={{ width: 240 }}
-                      onChange={ev => updateValue(i, 'value', ev.target.value)}
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={editing.map(e => e._key)} strategy={verticalListSortingStrategy}>
+                  {editing.map((e, i) => (
+                    <SortableRow
+                      key={e._key}
+                      item={e}
+                      index={i}
+                      onChange={updateValue}
+                      onRemove={removeValue}
                     />
-                    <Button icon={<DeleteOutlined />} danger type="text" onClick={() => removeValue(i)} />
-                  </Space>
-                ))}
-                <Button icon={<PlusOutlined />} type="dashed" onClick={addValue}>添加值</Button>
-              </Space>
+                  ))}
+                </SortableContext>
+              </DndContext>
+              <Button icon={<PlusOutlined />} type="dashed" onClick={addValue} style={{ marginTop: 4 }}>
+                添加值
+              </Button>
             </Card>
           </Col>
         </Row>
