@@ -19,28 +19,18 @@ const route = {
   ],
 }
 
-const menuTextColor = 'rgba(255, 255, 255, .85)'
-const colorPrimary = '#e67e22'
 
 const layoutToken = {
   header: {
     colorBgHeader: '#141414',
     colorHeaderTitle: '#fff',
-    colorTextMenu: 'rgba(255,255,255,.65)',
-    colorTextMenuSelected: '#fff',
-    colorBgMenuItemSelected: 'rgba(255,255,255,.1)',
   },
   sider: {
     colorMenuBackground: '#141414',
-    colorBgCollapsedButton: '#1f1f1f',
-    colorTextCollapsedButtonHover: menuTextColor,
-    colorTextCollapsedButton: menuTextColor,
-    colorBgMenuItemCollapsedElevated: '#1f1f1f',
-    colorBgMenuItemSelected: colorPrimary,
-    colorTextMenuTitle: menuTextColor,
-    colorTextMenuSelected: menuTextColor,
-    colorTextMenuItemHover: menuTextColor,
-    colorTextMenu: menuTextColor,
+    colorBgMenuItemSelected: '#e67e22',
+    colorTextMenuSelected: '#fff',
+    colorTextMenu: 'rgba(255,255,255,.75)',
+    colorTextMenuItemHover: '#fff',
   },
 }
 
@@ -60,7 +50,6 @@ export default function AdminLayout() {
       logo={false}
       route={route}
       location={location}
-      layout="side"
       token={layoutToken}
       menuItemRender={(item, dom) => (
         <Link to={item.path ?? '/'}>{dom}</Link>
