@@ -35,7 +35,7 @@ export default function AdminLayout() {
       logo={false}
       route={route}
       location={location}
-      token={{ header: { colorBgHeader: '#fff', colorHeaderTitle: '#1a1a1a' } }}
+      token={{ header: { colorBgHeader: '#141414', colorHeaderTitle: '#fff' }, sider: { colorMenuBackground: '#141414' } }}
       menuItemRender={(item, dom) => (
         <Link to={item.path ?? '/'}>{dom}</Link>
       )}

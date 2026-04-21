@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Table, Tag, App, Typography } from 'antd'
+import { Table, App, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { adminUsersApi } from '../../api/users'
 import type { Family } from '../../types'
