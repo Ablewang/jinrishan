@@ -2,10 +2,17 @@ import { apiFetch } from './client'
 import type { Recipe, PagedResult } from '../types'
 
 export const adminRecipesApi = {
-  list: (params?: { cuisine?: string; keyword?: string; page?: number; limit?: number }) => {
+  list: (params?: {
+    keyword?: string; cuisine?: string; difficulty?: string; source?: string
+    cook_time_min?: number; cook_time_max?: number; page?: number; limit?: number
+  }) => {
     const qs = new URLSearchParams()
-    if (params?.cuisine) qs.set('cuisine', params.cuisine)
     if (params?.keyword) qs.set('keyword', params.keyword)
+    if (params?.cuisine) qs.set('cuisine', params.cuisine)
+    if (params?.difficulty) qs.set('difficulty', params.difficulty)
+    if (params?.source) qs.set('source', params.source)
+    if (params?.cook_time_min != null) qs.set('cook_time_min', String(params.cook_time_min))
+    if (params?.cook_time_max != null) qs.set('cook_time_max', String(params.cook_time_max))
     qs.set('page', String(params?.page ?? 1))
     qs.set('limit', String(params?.limit ?? 20))
     return apiFetch<PagedResult<Recipe>>('/api/admin/recipes?' + qs)
