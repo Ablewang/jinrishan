@@ -1,4 +1,4 @@
-import { Layout, Menu, Avatar, Dropdown, Space, Typography } from 'antd'
+import { Layout, Menu, Avatar, Dropdown, Space, Typography, Breadcrumb } from 'antd'
 import {
   DashboardOutlined,
   BookOutlined,
@@ -8,7 +8,7 @@ import {
   BarChartOutlined,
   LogoutOutlined,
 } from '@ant-design/icons'
-import { useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { useNavigate, useLocation, Outlet, Link } from 'react-router-dom'
 import { useAdminAuth } from '../store/auth'
 
 const { Sider, Header, Content } = Layout
@@ -22,12 +22,50 @@ const NAV_ITEMS = [
   { key: '/analytics', icon: <BarChartOutlined />, label: '推荐分析' },
 ]
 
+const ROUTE_LABELS: Record<string, string> = {
+  '/dashboard': '仪表盘',
+  '/recipes': '菜谱管理',
+  '/recipes/new': '新建菜谱',
+  '/enums': '枚举管理',
+  '/users': '用户列表',
+  '/families': '家庭列表',
+  '/analytics': '推荐分析',
+}
+
+function getBreadcrumbs(pathname: string) {
+  const items: { title: React.ReactNode }[] = [
+    { title: <Link to="/dashboard">首页</Link> },
+  ]
+
+  if (pathname === '/dashboard') return items
+
+  // 处理 /recipes/:id/edit
+  const editMatch = pathname.match(/^\/recipes\/(\d+)\/edit$/)
+  if (editMatch) {
+    items.push({ title: <Link to="/recipes">菜谱管理</Link> })
+    items.push({ title: '编辑菜谱' })
+    return items
+  }
+
+  const label = ROUTE_LABELS[pathname]
+  if (label) {
+    // 子页面补充父级
+    if (pathname === '/recipes/new') {
+      items.push({ title: <Link to="/recipes">菜谱管理</Link> })
+    }
+    items.push({ title: label })
+  }
+
+  return items
+}
+
 export default function AdminLayout() {
   const { admin, logout } = useAdminAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const selectedKey = NAV_ITEMS.find(item => location.pathname.startsWith(item.key))?.key ?? '/dashboard'
+  const breadcrumbs = getBreadcrumbs(location.pathname)
 
   function handleLogout() {
     logout()
@@ -66,12 +104,13 @@ export default function AdminLayout() {
           padding: '0 24px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'space-between',
           borderBottom: '1px solid #f0f0f0',
           position: 'sticky',
           top: 0,
           zIndex: 99,
         }}>
+          <Breadcrumb items={breadcrumbs} />
           <Dropdown
             menu={{
               items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
@@ -86,8 +125,10 @@ export default function AdminLayout() {
           </Dropdown>
         </Header>
 
-        <Content style={{ margin: 24, minHeight: 0 }}>
-          <Outlet />
+        <Content style={{ margin: 24 }}>
+          <div style={{ background: '#fff', padding: 24, borderRadius: 8, minHeight: 'calc(100vh - 112px)' }}>
+            <Outlet />
+          </div>
         </Content>
       </Layout>
     </Layout>

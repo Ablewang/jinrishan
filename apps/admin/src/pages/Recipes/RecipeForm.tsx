@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Form, Input, Select, InputNumber, Checkbox, Button, Card, Row, Col,
-  Space, Typography, App, Divider,
+  Space, App, Divider,
 } from 'antd'
 import { ArrowLeftOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import { adminRecipesApi } from '../../api/recipes'
 import type { Recipe } from '../../types'
 
-const { Title } = Typography
 const { TextArea } = Input
 
 const CUISINES = ['川菜', '粤菜', '湘菜', '东北菜', '家常菜', '西式', '日式', '韩式', '其他']
@@ -79,7 +78,6 @@ export default function RecipeForm() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <Space>
           <Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate('/recipes')} />
-          <Title level={4} style={{ margin: 0 }}>{isEdit ? '编辑菜谱' : '新建菜谱'}</Title>
         </Space>
         <Button type="primary" loading={saving} onClick={handleSave}>保存</Button>
       </div>

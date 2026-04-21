@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Card, Row, Col, DatePicker, Typography, Spin, App } from 'antd'
+import { Card, Row, Col, DatePicker, Spin, App } from 'antd'
 import dayjs from 'dayjs'
 import {
   PieChart, Pie, Cell, Tooltip, Legend,
@@ -9,7 +9,6 @@ import {
 import { adminStatsApi } from '../../api/stats'
 import type { RecommendStats } from '../../types'
 
-const { Title } = Typography
 const { RangePicker } = DatePicker
 
 const EVENT_COLORS: Record<string, string> = {
@@ -54,7 +53,6 @@ export default function Analytics() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-        <Title level={4} style={{ margin: 0 }}>推荐分析</Title>
         <RangePicker
           value={[dayjs(dateRange[0]), dayjs(dateRange[1])]}
           onChange={dates => {

@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Table, Typography, Tag, App } from 'antd'
+import { Table, Tag, App } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { adminUsersApi } from '../../api/users'
 import type { Family } from '../../types'
 
-const { Title } = Typography
 const LIMIT = 20
 
 export default function FamilyList() {
@@ -38,7 +37,6 @@ export default function FamilyList() {
 
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 16 }}>家庭列表</Title>
       <Table
         rowKey="id"
         columns={columns}

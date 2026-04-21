@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Card, Menu, Input, Button, Space, Typography, Spin, App, Row, Col } from 'antd'
+import { Card, Menu, Input, Button, Space, Spin, App, Row, Col } from 'antd'
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import { adminEnumsApi } from '../../api/enums'
 import type { EnumValue } from '../../types'
-
-const { Title } = Typography
 
 const ENUM_TYPE_LABELS: Record<string, string> = {
   cuisine: '菜系',
@@ -80,7 +78,6 @@ export default function EnumManager() {
 
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 16 }}>枚举管理</Title>
       <Spin spinning={loading}>
         <Row gutter={16}>
           <Col span={5}>

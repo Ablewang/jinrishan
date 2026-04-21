@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Table, Input, Button, Tag, Space, Popconfirm, Typography, App } from 'antd'
+import { Table, Input, Button, Tag, Space, Popconfirm, App } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import { adminRecipesApi } from '../../api/recipes'
 import type { Recipe } from '../../types'
 
-const { Title } = Typography
 const DIFFICULTY_LABEL: Record<string, string> = { easy: '简单', medium: '中等', hard: '复杂' }
 const LIMIT = 20
 
@@ -80,7 +79,6 @@ export default function RecipeList() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Title level={4} style={{ margin: 0 }}>菜谱管理</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/recipes/new')}>新建菜谱</Button>
       </div>
 

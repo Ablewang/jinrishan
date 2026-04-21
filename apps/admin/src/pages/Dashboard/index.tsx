@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Row, Col, Card, Statistic, Button, Spin, Space, Typography } from 'antd'
+import { Row, Col, Card, Statistic, Button, Spin, Space } from 'antd'
 import {
   BookOutlined, UserOutlined, HomeOutlined, BarChartOutlined, PlusOutlined, TagsOutlined, LineChartOutlined,
 } from '@ant-design/icons'
 import { adminStatsApi } from '../../api/stats'
 import type { OverviewStats } from '../../types'
-
-const { Title } = Typography
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -22,8 +20,6 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 24 }}>仪表盘</Title>
-
       <Spin spinning={loading}>
         <Row gutter={[16, 16]}>
           <Col span={6}>

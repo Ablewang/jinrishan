@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Table, Input, Typography, App } from 'antd'
+import { Table, Input, App } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { adminUsersApi } from '../../api/users'
 import type { User } from '../../types'
 
-const { Title } = Typography
 const LIMIT = 20
 
 export default function UserList() {
@@ -35,9 +34,6 @@ export default function UserList() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Title level={4} style={{ margin: 0 }}>用户列表</Title>
-      </div>
       <div style={{ marginBottom: 16 }}>
         <Input.Search
           placeholder="搜索手机号..."
