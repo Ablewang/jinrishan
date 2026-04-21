@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Table, Input, Button, Tag, Space, Popconfirm, App } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import { adminRecipesApi } from '../../api/recipes'
 import type { Recipe } from '../../types'
+import RecipeDrawer from './RecipeDrawer'
 
 const DIFFICULTY_LABEL: Record<string, string> = { easy: '简单', medium: '中等', hard: '复杂' }
 const LIMIT = 20
 
 export default function RecipeList() {
-  const navigate = useNavigate()
   const { message } = App.useApp()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [total, setTotal] = useState(0)
@@ -18,6 +17,8 @@ export default function RecipeList() {
   const [keyword, setKeyword] = useState('')
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<number | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editId, setEditId] = useState<number | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -26,6 +27,26 @@ export default function RecipeList() {
       .catch(() => message.error('加载失败'))
       .finally(() => setLoading(false))
   }, [keyword, page])
+
+  function openNew() {
+    setEditId(null)
+    setDrawerOpen(true)
+  }
+
+  function openEdit(id: number) {
+    setEditId(id)
+    setDrawerOpen(true)
+  }
+
+  function handleSaved(recipe: Recipe) {
+    setDrawerOpen(false)
+    if (editId) {
+      setRecipes(prev => prev.map(r => r.id === recipe.id ? recipe : r))
+    } else {
+      setRecipes(prev => [recipe, ...prev])
+      setTotal(prev => prev + 1)
+    }
+  }
 
   async function handleDelete(id: number) {
     setDeleting(id)
@@ -61,7 +82,7 @@ export default function RecipeList() {
       title: '操作', key: 'action', width: 120,
       render: (_, record) => (
         <Space>
-          <Button size="small" icon={<EditOutlined />} onClick={() => navigate(`/recipes/${record.id}/edit`)}>编辑</Button>
+          <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(record.id)}>编辑</Button>
           <Popconfirm
             title={`确认删除「${record.name}」？`}
             okText="删除"
@@ -78,8 +99,8 @@ export default function RecipeList() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/recipes/new')}>新建菜谱</Button>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={openNew}>新建菜谱</Button>
       </div>
 
       <div style={{ marginBottom: 16 }}>
@@ -103,6 +124,13 @@ export default function RecipeList() {
           showTotal: t => `共 ${t} 条`,
           onChange: p => setPage(p),
         }}
+      />
+
+      <RecipeDrawer
+        open={drawerOpen}
+        id={editId}
+        onClose={() => setDrawerOpen(false)}
+        onSaved={handleSaved}
       />
     </div>
   )

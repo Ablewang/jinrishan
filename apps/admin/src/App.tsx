@@ -7,7 +7,6 @@ import AdminLayout from './components/AdminLayout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import RecipeList from './pages/Recipes/RecipeList'
-import RecipeForm from './pages/Recipes/RecipeForm'
 import EnumManager from './pages/Enums'
 import UserList from './pages/Users/UserList'
 import FamilyList from './pages/Users/FamilyList'
@@ -29,8 +28,6 @@ function AppRoutes() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/recipes" element={<RecipeList />} />
-        <Route path="/recipes/new" element={<RecipeForm />} />
-        <Route path="/recipes/:id/edit" element={<RecipeForm />} />
         <Route path="/enums" element={<EnumManager />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/families" element={<FamilyList />} />
