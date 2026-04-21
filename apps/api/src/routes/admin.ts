@@ -247,10 +247,46 @@ admin.get('/users', async (c) => {
   ).bind(...param).first<{ cnt: number }>()
 
   const rows = await c.env.DB.prepare(
-    `SELECT id, phone, name, created_at FROM users ${where} ORDER BY id DESC LIMIT ? OFFSET ?`
+    `SELECT id, phone, name, avatar, created_at, last_login_at FROM users ${where} ORDER BY id DESC LIMIT ? OFFSET ?`
   ).bind(...param, limit, offset).all()
 
   return c.json({ data: rows.results, total: totalRow?.cnt ?? 0 })
+})
+
+admin.get('/users/:id', async (c) => {
+  const id = Number(c.req.param('id'))
+  const user = await c.env.DB.prepare(
+    `SELECT id, phone, name, avatar, created_at, last_login_at FROM users WHERE id = ?`
+  ).bind(id).first()
+  if (!user) return c.json({ error: '用户不存在' }, 404)
+
+  const families = await c.env.DB.prepare(
+    `SELECT f.id, f.name, f.invite_code, fm.role, fm.joined_at
+     FROM family_members fm JOIN families f ON f.id = fm.family_id
+     WHERE fm.user_id = ?`
+  ).bind(id).all()
+
+  const prefs = await c.env.DB.prepare(
+    `SELECT pref_type, target_type, target_value FROM personal_preferences WHERE user_id = ?`
+  ).bind(id).all()
+
+  const planCount = await c.env.DB.prepare(
+    `SELECT COUNT(*) as cnt FROM weekly_plans WHERE family_id IN (
+      SELECT family_id FROM family_members WHERE user_id = ?
+    )`
+  ).bind(id).first<{ cnt: number }>()
+
+  const eventCount = await c.env.DB.prepare(
+    `SELECT COUNT(*) as cnt FROM recommendation_events WHERE user_id = ?`
+  ).bind(id).first<{ cnt: number }>()
+
+  return c.json({
+    ...user,
+    families: families.results,
+    preferences: prefs.results,
+    plan_count: planCount?.cnt ?? 0,
+    event_count: eventCount?.cnt ?? 0,
+  })
 })
 
 admin.get('/families', async (c) => {

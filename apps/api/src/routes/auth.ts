@@ -57,6 +57,10 @@ auth.post('/verify-otp', async (c) => {
 
   if (!user) return c.json({ error: '用户创建失败' }, 500)
 
+  await c.env.DB.prepare(
+    `UPDATE users SET last_login_at = datetime('now') WHERE id = ?`
+  ).bind(user.id).run()
+
   const membership = await c.env.DB.prepare(
     `SELECT family_id FROM family_members WHERE user_id = ? LIMIT 1`
   ).bind(user.id).first<{ family_id: number }>()
