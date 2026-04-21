@@ -1,49 +1,55 @@
 import { useEffect, useState } from 'react'
+import { Table, Tag, App } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import { adminUsersApi } from '../../api/users'
-import Pagination from '../../components/Pagination'
 import type { Family } from '../../types'
-import styles from './Users.module.css'
+
+const LIMIT = 20
 
 export default function FamilyList() {
+  const { message } = App.useApp()
   const [families, setFamilies] = useState<Family[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
-  const LIMIT = 20
 
   useEffect(() => {
     setLoading(true)
     adminUsersApi.families({ page, limit: LIMIT })
-      .then(res => { setFamilies(res.data); setTotal(res.total); setLoading(false) })
-      .catch(() => setLoading(false))
+      .then(res => { setFamilies(res.data); setTotal(res.total) })
+      .catch(() => message.error('加载失败'))
+      .finally(() => setLoading(false))
   }, [page])
+
+  const columns: ColumnsType<Family> = [
+    { title: 'ID', dataIndex: 'id', width: 70 },
+    { title: '家庭名', dataIndex: 'name', render: v => <strong>{v}</strong> },
+    {
+      title: '邀请码', dataIndex: 'invite_code',
+      render: v => <Tag style={{ fontFamily: 'monospace' }}>{v}</Tag>,
+    },
+    { title: '成员数', dataIndex: 'member_count', width: 90 },
+    {
+      title: '创建时间', dataIndex: 'created_at',
+      render: v => new Date(v).toLocaleDateString('zh-CN'),
+    },
+  ]
 
   return (
     <div>
-      <h1 className={styles.title}>家庭列表</h1>
-      <div className={styles.tableWrap}>
-        <table className={styles.table}>
-          <thead>
-            <tr><th>ID</th><th>家庭名</th><th>邀请码</th><th>成员数</th><th>创建时间</th></tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={5} className={styles.center}>加载中...</td></tr>
-            ) : families.length === 0 ? (
-              <tr><td colSpan={5} className={styles.center}>暂无家庭</td></tr>
-            ) : families.map(f => (
-              <tr key={f.id}>
-                <td className={styles.idCell}>{f.id}</td>
-                <td style={{ fontWeight: 500 }}>{f.name}</td>
-                <td><code className={styles.code}>{f.invite_code}</code></td>
-                <td>{f.member_count}</td>
-                <td className={styles.dateCell}>{new Date(f.created_at).toLocaleDateString('zh-CN')}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <Pagination total={total} page={page} limit={LIMIT} onChange={setPage} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={families}
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize: LIMIT,
+          total,
+          showTotal: t => `共 ${t} 条`,
+          onChange: p => setPage(p),
+        }}
+      />
     </div>
   )
 }

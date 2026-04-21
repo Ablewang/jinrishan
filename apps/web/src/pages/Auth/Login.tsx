@@ -142,6 +142,12 @@ export default function Login() {
     try {
       const res = await authApi.verifyOtp(phone, code)
       login(res.token, res.user)
+      // 同步 familyId 到 localStorage
+      if (res.family_id) {
+        localStorage.setItem('familyId', String(res.family_id))
+      } else {
+        localStorage.removeItem('familyId')
+      }
       // 新用户注册时，将 guest 口味偏好同步到账号
       if (res.is_new) {
         try {

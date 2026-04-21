@@ -41,8 +41,8 @@ auth.post('/verify-otp', async (c) => {
 
   let isNew = false
   let user = await c.env.DB.prepare(
-    `SELECT id, phone, name FROM users WHERE phone = ?`
-  ).bind(phone).first<{ id: number; phone: string; name: string | null }>()
+    `SELECT id, phone, name, avatar FROM users WHERE phone = ?`
+  ).bind(phone).first<{ id: number; phone: string; name: string | null; avatar: string | null }>()
 
   if (!user) {
     isNew = true
@@ -51,14 +51,18 @@ auth.post('/verify-otp', async (c) => {
       `INSERT INTO users (phone, name) VALUES (?, ?)`
     ).bind(phone, defaultName).run()
     user = await c.env.DB.prepare(
-      `SELECT id, phone, name FROM users WHERE id = ?`
-    ).bind(meta.last_row_id).first<{ id: number; phone: string; name: string | null }>()
+      `SELECT id, phone, name, avatar FROM users WHERE id = ?`
+    ).bind(meta.last_row_id).first<{ id: number; phone: string; name: string | null; avatar: string | null }>()
   }
 
   if (!user) return c.json({ error: '用户创建失败' }, 500)
 
+  const membership = await c.env.DB.prepare(
+    `SELECT family_id FROM family_members WHERE user_id = ? LIMIT 1`
+  ).bind(user.id).first<{ family_id: number }>()
+
   const token = await signToken(user.id, c.env.JWT_SECRET)
-  return c.json({ data: { token, user, is_new: isNew } })
+  return c.json({ data: { token, user, is_new: isNew, family_id: membership?.family_id ?? null } })
 })
 
 auth.put('/me', authMiddleware, async (c) => {

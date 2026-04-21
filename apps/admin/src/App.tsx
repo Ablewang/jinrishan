@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import type { ReactNode } from 'react'
+import { ConfigProvider, App as AntApp } from 'antd'
+import zhCN from 'antd/locale/zh_CN'
 import { AdminAuthProvider, useAdminAuth } from './store/auth'
 import AdminLayout from './components/AdminLayout'
 import Login from './pages/Login'
@@ -40,10 +42,23 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AdminAuthProvider>
-        <AppRoutes />
-      </AdminAuthProvider>
-    </BrowserRouter>
+    <ConfigProvider
+      locale={zhCN}
+      theme={{
+        token: {
+          colorPrimary: '#e67e22',
+          borderRadius: 6,
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif",
+        },
+      }}
+    >
+      <AntApp>
+        <BrowserRouter>
+          <AdminAuthProvider>
+            <AppRoutes />
+          </AdminAuthProvider>
+        </BrowserRouter>
+      </AntApp>
+    </ConfigProvider>
   )
 }

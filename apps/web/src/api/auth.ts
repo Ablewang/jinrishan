@@ -15,7 +15,7 @@ export const authApi = {
     }),
 
   verifyOtp: (phone: string, code: string) =>
-    apiFetch<{ token: string; user: User; is_new: boolean }>('/api/auth/verify-otp', {
+    apiFetch<{ token: string; user: User; is_new: boolean; family_id: number | null }>('/api/auth/verify-otp', {
       method: 'POST',
       body: JSON.stringify({ phone, code }),
     }),
