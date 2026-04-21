@@ -21,6 +21,7 @@ const ENUM_TYPE_LABELS: Record<string, string> = {
   nutrition_tag: '营养标签',
   season: '季节',
   allergy: '过敏原',
+  meal_type: '餐次类型',
 }
 
 // 拖拽行组件
@@ -173,6 +174,10 @@ export default function EnumManager() {
                 <Button type="primary" loading={saving} onClick={handleSave}>保存</Button>
               }
             >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, paddingLeft: 24, color: '#999', fontSize: 12 }}>
+                <span style={{ width: 180 }}>值（英文/标识符）</span>
+                <span style={{ width: 180 }}>显示名</span>
+              </div>
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={editing.map(e => e._key)} strategy={verticalListSortingStrategy}>
                   {editing.map((e, i) => (
