@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Table, Tag, App } from 'antd'
+import { Table, Tag, App, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { adminUsersApi } from '../../api/users'
 import type { Family } from '../../types'
@@ -26,7 +26,9 @@ export default function FamilyList() {
     { title: '家庭名', dataIndex: 'name', render: v => <strong>{v}</strong> },
     {
       title: '邀请码', dataIndex: 'invite_code',
-      render: v => <Tag style={{ fontFamily: 'monospace' }}>{v}</Tag>,
+      render: v => (
+        <Typography.Text code copyable={{ tooltips: ['复制', '已复制'] }}>{v}</Typography.Text>
+      ),
     },
     { title: '成员数', dataIndex: 'member_count', width: 90 },
     {
