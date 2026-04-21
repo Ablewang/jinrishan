@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import {
   Drawer, Form, Input, Select, InputNumber, Checkbox, Button, Card, Row, Col,
   Space, App, Divider,
@@ -20,33 +20,41 @@ const MEAL_TYPE_OPTIONS = [
   { label: '晚餐', value: 'dinner' },
 ]
 
-interface Props {
-  open: boolean
-  id?: number | null
-  onClose: () => void
-  onSaved: (recipe?: Recipe) => void
+const DEFAULT_VALUES = {
+  difficulty: 'easy',
+  spicy_level: 0,
+  prep_time: 15,
+  cook_time: 30,
+  ingredients: [{ name: '', amount: '', category: '主料' }],
+  steps: [{ description: '' }],
 }
 
-export default function RecipeDrawer({ open, id, onClose, onSaved }: Props) {
+export interface RecipeDrawerHandle {
+  open: (id?: number | null) => void
+}
+
+interface Props {
+  onSaved?: () => void
+}
+
+const RecipeDrawer = forwardRef<RecipeDrawerHandle, Props>(function RecipeDrawer({ onSaved }, ref) {
   const { message } = App.useApp()
   const [form] = Form.useForm()
-  const isEdit = Boolean(id)
+  const [open, setOpen] = useState(false)
+  const [editId, setEditId] = useState<number | null>(null)
+  const isEdit = Boolean(editId)
 
+  useImperativeHandle(ref, () => ({
+    open(id) {
+      setEditId(id ?? null)
+      setOpen(true)
+    },
+  }))
+
+  // 仅当 editId 变化时加载数据，在 open 动画期间不触发任何 re-render
   useEffect(() => {
-    if (!open) return
-    if (!isEdit || !id) {
-      form.resetFields()
-      form.setFieldsValue({
-        difficulty: 'easy',
-        spicy_level: 0,
-        prep_time: 15,
-        cook_time: 30,
-        ingredients: [{ name: '', amount: '', category: '主料' }],
-        steps: [{ description: '' }],
-      })
-      return
-    }
-    adminRecipesApi.get(id).then(recipe => {
+    if (!editId) return
+    adminRecipesApi.get(editId).then(recipe => {
       form.setFieldsValue({
         ...recipe,
         ingredients: recipe.ingredients?.length
@@ -57,20 +65,24 @@ export default function RecipeDrawer({ open, id, onClose, onSaved }: Props) {
           : [{ description: '' }],
       })
     }).catch(() => message.error('加载菜谱失败'))
-  }, [open, id])
+  }, [editId])
+
+  function handleClose() {
+    setOpen(false)
+  }
 
   async function handleSave() {
     try {
       const values = await form.validateFields() as Partial<Recipe> & { ingredients: unknown[]; steps: unknown[] }
-      if (isEdit && id) {
-        const updated = await adminRecipesApi.update(id, values)
+      if (isEdit && editId) {
+        await adminRecipesApi.update(editId, values)
         message.success('保存成功')
-        onSaved(updated)
       } else {
-        const created = await adminRecipesApi.create(values)
+        await adminRecipesApi.create(values)
         message.success('创建成功')
-        onSaved(created)
       }
+      setOpen(false)
+      onSaved?.()
     } catch (e) {
       if (e && typeof e === 'object' && 'errorFields' in e) return
       message.error(e instanceof Error ? e.message : '保存失败')
@@ -80,18 +92,22 @@ export default function RecipeDrawer({ open, id, onClose, onSaved }: Props) {
   return (
     <Drawer
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       title={isEdit ? '编辑菜谱' : '新建菜谱'}
       width="clamp(960px, 70vw, 1280px)"
       styles={{ body: { padding: '16px 24px 80px' } }}
+      afterOpenChange={(visible) => {
+        // 关闭动画结束后再重置，不干扰开启动画
+        if (!visible) form.resetFields()
+      }}
       extra={
         <Space>
-          <Button onClick={onClose}>取消</Button>
+          <Button onClick={handleClose}>取消</Button>
           <Button type="primary" onClick={handleSave}>保存</Button>
         </Space>
       }
     >
-      <Form form={form} layout="vertical">
+      <Form form={form} layout="vertical" initialValues={DEFAULT_VALUES}>
         <Row gutter={16}>
           <Col span={12}>
             <Card title="基本信息" style={{ marginBottom: 16 }}>
@@ -216,4 +232,6 @@ export default function RecipeDrawer({ open, id, onClose, onSaved }: Props) {
       </Form>
     </Drawer>
   )
-}
+})
+
+export default RecipeDrawer
