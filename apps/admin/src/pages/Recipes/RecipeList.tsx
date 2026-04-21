@@ -14,7 +14,7 @@ const CUISINES = ['家常菜', '川菜', '粤菜', '湘菜', '东北菜', '苏�
 
 export default function RecipeList() {
   const { message } = App.useApp()
-  const tableRef = useRef<ActionType>()
+  const tableRef = useRef<ActionType>(undefined)
   const drawerRef = useRef<RecipeDrawerHandle>(null)
   const [deleting, setDeleting] = useState<number | null>(null)
 

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import type { ReactNode } from 'react'
-import { ConfigProvider, App as AntApp } from 'antd'
+import { ConfigProvider, App as AntApp, theme } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
 import { AdminAuthProvider, useAdminAuth } from './store/auth'
 import AdminLayout from './components/AdminLayout'
@@ -42,6 +42,7 @@ export default function App() {
     <ConfigProvider
       locale={zhCN}
       theme={{
+        algorithm: theme.darkAlgorithm,
         token: {
           colorPrimary: '#e67e22',
           borderRadius: 6,
