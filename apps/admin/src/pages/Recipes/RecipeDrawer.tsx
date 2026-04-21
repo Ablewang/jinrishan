@@ -24,7 +24,7 @@ interface Props {
   open: boolean
   id?: number | null
   onClose: () => void
-  onSaved: (recipe: Recipe) => void
+  onSaved: (recipe?: Recipe) => void
 }
 
 export default function RecipeDrawer({ open, id, onClose, onSaved }: Props) {
@@ -90,7 +90,6 @@ export default function RecipeDrawer({ open, id, onClose, onSaved }: Props) {
           <Button type="primary" onClick={handleSave}>保存</Button>
         </Space>
       }
-      destroyOnHidden
     >
       <Form form={form} layout="vertical">
         <Row gutter={16}>

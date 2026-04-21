@@ -41,21 +41,35 @@ admin.use('/*', adminAuthMiddleware)
 
 admin.get('/recipes', async (c) => {
   const keyword = c.req.query('keyword') ?? ''
+  const cuisine = c.req.query('cuisine') ?? ''
+  const difficulty = c.req.query('difficulty') ?? ''
+  const source = c.req.query('source') ?? ''
+  const cookTimeMin = c.req.query('cook_time_min') ? Number(c.req.query('cook_time_min')) : null
+  const cookTimeMax = c.req.query('cook_time_max') ? Number(c.req.query('cook_time_max')) : null
   const page = Math.max(1, Number(c.req.query('page') ?? '1'))
   const limit = Math.min(100, Number(c.req.query('limit') ?? '20'))
   const offset = (page - 1) * limit
 
-  const where = keyword ? `WHERE r.name LIKE ?` : ''
-  const param = keyword ? [`%${keyword}%`] : []
+  const conditions: string[] = []
+  const params: (string | number)[] = []
+
+  if (keyword) { conditions.push('r.name LIKE ?'); params.push(`%${keyword}%`) }
+  if (cuisine) { conditions.push('r.cuisine = ?'); params.push(cuisine) }
+  if (difficulty) { conditions.push('r.difficulty = ?'); params.push(difficulty) }
+  if (source) { conditions.push('r.source = ?'); params.push(source) }
+  if (cookTimeMin !== null) { conditions.push('r.cook_time >= ?'); params.push(cookTimeMin) }
+  if (cookTimeMax !== null) { conditions.push('r.cook_time <= ?'); params.push(cookTimeMax) }
+
+  const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
 
   const totalRow = await c.env.DB.prepare(
     `SELECT COUNT(*) as cnt FROM recipes r ${where}`
-  ).bind(...param).first<{ cnt: number }>()
+  ).bind(...params).first<{ cnt: number }>()
 
   const rows = await c.env.DB.prepare(
     `SELECT id, name, description, cuisine, category, difficulty, cook_time, source, created_at
      FROM recipes r ${where} ORDER BY id DESC LIMIT ? OFFSET ?`
-  ).bind(...param, limit, offset).all()
+  ).bind(...params, limit, offset).all()
 
   return c.json({ data: rows.results, total: totalRow?.cnt ?? 0 })
 })
