@@ -277,7 +277,9 @@ admin.get('/users/:id', async (c) => {
   ).bind(id).first<{ cnt: number }>()
 
   const eventCount = await c.env.DB.prepare(
-    `SELECT COUNT(*) as cnt FROM recommendation_events WHERE user_id = ?`
+    `SELECT COUNT(*) as cnt FROM recommendation_events WHERE family_id IN (
+      SELECT family_id FROM family_members WHERE user_id = ?
+    )`
   ).bind(id).first<{ cnt: number }>()
 
   return c.json({
