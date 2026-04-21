@@ -204,7 +204,7 @@ admin.delete('/recipes/:id', async (c) => {
 
 admin.get('/enums', async (c) => {
   const rows = await c.env.DB.prepare(
-    'SELECT id, enum_type, value, label, sort_order FROM system_enum_configs ORDER BY enum_type, sort_order'
+    'SELECT id, type AS enum_type, value, value AS label, sort_order FROM system_enum_configs ORDER BY type, sort_order'
   ).all<{ id: number; enum_type: string; value: string; label: string; sort_order: number }>()
 
   const grouped: Record<string, typeof rows.results> = {}
@@ -221,11 +221,11 @@ admin.put('/enums/:type', async (c) => {
     values: { value: string; label: string; sort_order: number }[]
   }>()
 
-  const deleteStmt = c.env.DB.prepare('DELETE FROM system_enum_configs WHERE enum_type = ?').bind(type)
+  const deleteStmt = c.env.DB.prepare('DELETE FROM system_enum_configs WHERE type = ?').bind(type)
   const insertStmts = values.map(v =>
     c.env.DB.prepare(
-      'INSERT INTO system_enum_configs (enum_type, value, label, sort_order) VALUES (?,?,?,?)'
-    ).bind(type, v.value, v.label || v.value, v.sort_order)
+      'INSERT INTO system_enum_configs (type, value, sort_order) VALUES (?,?,?)'
+    ).bind(type, v.value, v.sort_order)
   )
   await c.env.DB.batch([deleteStmt, ...insertStmts])
   return c.json({ ok: true })

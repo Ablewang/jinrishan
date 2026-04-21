@@ -105,16 +105,10 @@ export default function EnumManager() {
                 {editing.map((e, i) => (
                   <Space key={i} style={{ width: '100%' }}>
                     <Input
-                      placeholder="值 (value)"
+                      placeholder="值 / 显示名"
                       value={e.value}
-                      style={{ width: 180 }}
+                      style={{ width: 240 }}
                       onChange={ev => updateValue(i, 'value', ev.target.value)}
-                    />
-                    <Input
-                      placeholder="显示名 (label)"
-                      value={e.label}
-                      style={{ width: 200 }}
-                      onChange={ev => updateValue(i, 'label', ev.target.value)}
                     />
                     <Button icon={<DeleteOutlined />} danger type="text" onClick={() => removeValue(i)} />
                   </Space>
