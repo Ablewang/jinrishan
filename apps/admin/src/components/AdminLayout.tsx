@@ -10,15 +10,23 @@ import { useAdminAuth } from '../store/auth'
 const route = {
   path: '/',
   routes: [
-    { path: '/dashboard', name: '仪表盘', icon: <DashboardOutlined /> },
-    { path: '/recipes', name: '菜谱管理', icon: <BookOutlined /> },
-    { path: '/enums', name: '枚举管理', icon: <TagsOutlined /> },
-    { path: '/users', name: '用户列表', icon: <UserOutlined /> },
-    { path: '/families', name: '家庭列表', icon: <HomeOutlined /> },
-    { path: '/analytics', name: '推荐分析', icon: <BarChartOutlined /> },
+    { path: '/dashboard', name: '仪表盘' },
+    { path: '/recipes',   name: '菜谱管理' },
+    { path: '/enums',     name: '枚举管理' },
+    { path: '/users',     name: '用户列表' },
+    { path: '/families',  name: '家庭列表' },
+    { path: '/analytics', name: '推荐分析' },
   ],
 }
 
+const menuItems = [
+  { key: '/dashboard', icon: <DashboardOutlined />, label: '仪表盘' },
+  { key: '/recipes',   icon: <BookOutlined />,      label: '菜谱管理' },
+  { key: '/enums',     icon: <TagsOutlined />,      label: '枚举管理' },
+  { key: '/users',     icon: <UserOutlined />,      label: '用户列表' },
+  { key: '/families',  icon: <HomeOutlined />,      label: '家庭列表' },
+  { key: '/analytics', icon: <BarChartOutlined />,  label: '推荐分析' },
+]
 
 const layoutToken = {
   header: {
@@ -28,6 +36,10 @@ const layoutToken = {
   sider: {
     colorMenuBackground: '#141414',
     colorBgMenuItemSelected: '#e67e22',
+    colorTextMenuSelected: '#fff',
+    colorTextMenu: 'rgba(255,255,255,.75)',
+    colorTextMenuItemHover: '#fff',
+    colorTextMenuTitle: '#fff',
   },
 }
 
@@ -46,12 +58,13 @@ export default function AdminLayout() {
       title="今日膳管理"
       logo={false}
       route={route}
-      location={location}
-      navTheme="realDark"
       token={layoutToken}
+      location={location}
       menuProps={{
+        items: menuItems,
         selectedKeys: [location.pathname],
         onClick: ({ key }) => navigate(key),
+        theme: 'dark',
       }}
       avatarProps={{
         render: () => (
