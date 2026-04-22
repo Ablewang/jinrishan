@@ -37,3 +37,6 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
+
+/* ProLayout header 底部 border 移除 */
+.ant-pro-layout-header, .ant-pro-global-header, .ant-layout-header { border-bottom: none !important; box-shadow: none !important; }
