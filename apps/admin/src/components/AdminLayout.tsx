@@ -116,6 +116,9 @@ export default function AdminLayout() {
             width: collapsed ? 64 : 215, flexShrink: 0,
             background: '#141414', display: 'flex', alignItems: 'center',
             padding: '0 16px', transition: 'width 0.2s',
+            borderTop: '3px solid #e67e22',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            boxSizing: 'border-box',
           }}>
             {collapsed ? SiderMiniLogo : HeaderLogo}
           </div>
