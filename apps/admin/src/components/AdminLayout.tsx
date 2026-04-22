@@ -10,19 +10,38 @@ import { useAdminAuth } from '../store/auth'
 
 const SERIF = "ui-serif, 'Songti SC', 'Noto Serif CJK SC', serif"
 
+// 基准 fontSize 28px，完整还原 web Logo 结构，白色配色适配深色背景
+const BASE = 28
+
 const HeaderLogo = (
-  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-    <span style={{ fontFamily: SERIF, fontSize: 22, lineHeight: 1, color: '#fff' }}>膳</span>
-    <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,.2)' }} />
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 18, padding: '1px 0' }}>
-      <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 10, color: 'rgba(255,255,255,.5)', letterSpacing: '0.05em', lineHeight: 1 }}>/ shàn /</span>
-      <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.25em', color: '#fff', lineHeight: 1 }}>JINRI</span>
+  <div style={{ display: 'inline-flex', alignItems: 'center', gap: BASE * 0.4, userSelect: 'none' }}>
+    <span style={{
+      fontFamily: SERIF, fontSize: BASE, lineHeight: 1, color: '#fff',
+      transform: 'translateY(-0.06em)',
+    }}>膳</span>
+    <div style={{
+      width: 1, height: BASE * 0.82,
+      background: 'rgba(255,255,255,.15)',
+    }} />
+    <div style={{
+      display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+      height: BASE * 0.82, padding: `${BASE * 0.03}px 0`,
+    }}>
+      <span style={{
+        fontFamily: SERIF, fontStyle: 'italic',
+        fontSize: BASE * 0.32, color: 'rgba(255,255,255,.45)',
+        letterSpacing: '0.05em', lineHeight: 1,
+      }}>/ shàn /</span>
+      <span style={{
+        fontSize: BASE * 0.38, fontWeight: 800, letterSpacing: '0.25em',
+        color: '#fff', lineHeight: 1,
+      }}>JINRI</span>
     </div>
   </div>
 )
 
 const SiderMiniLogo = (
-  <span style={{ fontFamily: SERIF, fontSize: 24, lineHeight: 1, color: '#fff' }}>膳</span>
+  <span style={{ fontFamily: SERIF, fontSize: BASE + 2, lineHeight: 1, color: '#fff', userSelect: 'none' }}>膳</span>
 )
 
 const ROUTE_NAMES: Record<string, string> = {
