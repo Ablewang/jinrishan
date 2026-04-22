@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { ProLayout } from '@ant-design/pro-components'
-import { Avatar, Dropdown, Space, Typography } from 'antd'
+import { Avatar, Breadcrumb, Dropdown, Space, Typography } from 'antd'
 import {
   DashboardOutlined, BookOutlined, TagsOutlined,
   UserOutlined, HomeOutlined, BarChartOutlined, LogoutOutlined,
 } from '@ant-design/icons'
-import { useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { useNavigate, useLocation, Outlet, Link } from 'react-router-dom'
 import { useAdminAuth } from '../store/auth'
 
 const SERIF = "ui-serif, 'Songti SC', 'Noto Serif CJK SC', serif"
@@ -25,16 +25,18 @@ const MiniLogo = (
   <span style={{ fontFamily: SERIF, fontSize: 24, lineHeight: 1, color: '#fff' }}>膳</span>
 )
 
+const ROUTE_NAMES: Record<string, string> = {
+  '/dashboard': '仪表盘',
+  '/recipes':   '菜谱管理',
+  '/enums':     '枚举管理',
+  '/users':     '用户列表',
+  '/families':  '家庭列表',
+  '/analytics': '推荐分析',
+}
+
 const route = {
   path: '/',
-  routes: [
-    { path: '/dashboard', name: '仪表盘' },
-    { path: '/recipes',   name: '菜谱管理' },
-    { path: '/enums',     name: '枚举管理' },
-    { path: '/users',     name: '用户列表' },
-    { path: '/families',  name: '家庭列表' },
-    { path: '/analytics', name: '推荐分析' },
-  ],
+  routes: Object.entries(ROUTE_NAMES).map(([path, name]) => ({ path, name })),
 }
 
 const menuItems = [
@@ -48,8 +50,8 @@ const menuItems = [
 
 const layoutToken = {
   header: {
-    colorBgHeader: '#141414',
-    colorHeaderTitle: '#fff',
+    colorBgHeader: '#fff',
+    colorHeaderTitle: '#141414',
   },
   sider: {
     colorMenuBackground: '#141414',
@@ -72,6 +74,8 @@ export default function AdminLayout() {
     navigate('/login')
   }
 
+  const currentName = ROUTE_NAMES[location.pathname]
+
   return (
     <ProLayout
       title={false}
@@ -87,22 +91,29 @@ export default function AdminLayout() {
         onClick: ({ key }) => navigate(key),
         theme: 'dark',
       }}
-      avatarProps={{
-        render: () => (
-          <Dropdown
-            menu={{
-              items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
-              onClick: ({ key }) => { if (key === 'logout') handleLogout() },
-            }}
-            placement="bottomRight"
-          >
-            <Space style={{ cursor: 'pointer' }}>
-              <Avatar size="small" icon={<UserOutlined />} style={{ background: '#e67e22' }} />
-              <Typography.Text>{admin?.username}</Typography.Text>
-            </Space>
-          </Dropdown>
-        ),
-      }}
+      headerContentRender={() => (
+        <Breadcrumb items={[
+          { title: <Link to="/dashboard">首页</Link> },
+          ...(currentName && location.pathname !== '/dashboard'
+            ? [{ title: currentName }]
+            : []),
+        ]} />
+      )}
+      actionsRender={() => [
+        <Dropdown
+          key="user"
+          menu={{
+            items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
+            onClick: ({ key }) => { if (key === 'logout') handleLogout() },
+          }}
+          placement="bottomRight"
+        >
+          <Space style={{ cursor: 'pointer', padding: '0 8px' }}>
+            <Avatar size="small" icon={<UserOutlined />} style={{ background: '#e67e22' }} />
+            <Typography.Text>{admin?.username}</Typography.Text>
+          </Space>
+        </Dropdown>,
+      ]}
     >
       <Outlet />
     </ProLayout>
