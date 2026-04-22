@@ -7,6 +7,20 @@ import {
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { useAdminAuth } from '../store/auth'
 
+const SiderLogo = (
+  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+    <span style={{
+      fontFamily: "ui-serif, 'Songti SC', 'Noto Serif CJK SC', serif",
+      fontSize: 22, lineHeight: 1, color: '#fff',
+    }}>膳</span>
+    <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,.2)' }} />
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 18, padding: '1px 0' }}>
+      <span style={{ fontStyle: 'italic', fontSize: 10, color: 'rgba(255,255,255,.55)', letterSpacing: '0.05em', lineHeight: 1 }}>/ shàn /</span>
+      <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.25em', color: '#fff', lineHeight: 1 }}>JINRI</span>
+    </div>
+  </div>
+)
+
 const route = {
   path: '/',
   routes: [
@@ -55,8 +69,8 @@ export default function AdminLayout() {
 
   return (
     <ProLayout
-      title="今日膳管理"
-      logo={false}
+      title={false}
+      logo={SiderLogo}
       route={route}
       token={layoutToken}
       location={location}
