@@ -4,7 +4,7 @@ import {
   DashboardOutlined, BookOutlined, TagsOutlined,
   UserOutlined, HomeOutlined, BarChartOutlined, LogoutOutlined,
 } from '@ant-design/icons'
-import { useNavigate, useLocation, Outlet, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { useAdminAuth } from '../store/auth'
 
 const route = {
@@ -51,9 +51,10 @@ export default function AdminLayout() {
       route={route}
       location={location}
       token={layoutToken}
-      menuItemRender={(item, dom) => (
-        <Link to={item.path ?? '/'}>{dom}</Link>
-      )}
+      menuProps={{
+        selectedKeys: [location.pathname],
+        onClick: ({ key }) => navigate(key),
+      }}
       avatarProps={{
         render: () => (
           <Dropdown
