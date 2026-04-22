@@ -10,18 +10,18 @@ import { useAdminAuth } from '../store/auth'
 
 const SERIF = "ui-serif, 'Songti SC', 'Noto Serif CJK SC', serif"
 
-const FullLogo = (
+const HeaderLogo = (
   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
     <span style={{ fontFamily: SERIF, fontSize: 22, lineHeight: 1, color: '#fff' }}>膳</span>
     <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,.2)' }} />
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 18, padding: '1px 0' }}>
-      <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 10, color: 'rgba(255,255,255,.55)', letterSpacing: '0.05em', lineHeight: 1 }}>/ shàn /</span>
+      <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 10, color: 'rgba(255,255,255,.5)', letterSpacing: '0.05em', lineHeight: 1 }}>/ shàn /</span>
       <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.25em', color: '#fff', lineHeight: 1 }}>JINRI</span>
     </div>
   </div>
 )
 
-const MiniLogo = (
+const SiderMiniLogo = (
   <span style={{ fontFamily: SERIF, fontSize: 24, lineHeight: 1, color: '#fff' }}>膳</span>
 )
 
@@ -50,8 +50,8 @@ const menuItems = [
 
 const layoutToken = {
   header: {
-    colorBgHeader: '#fff',
-    colorHeaderTitle: '#141414',
+    colorBgHeader: '#141414',
+    colorHeaderTitle: '#fff',
   },
   sider: {
     colorMenuBackground: '#141414',
@@ -79,9 +79,10 @@ export default function AdminLayout() {
   return (
     <ProLayout
       title={false}
-      logo={collapsed ? MiniLogo : FullLogo}
+      logo={collapsed ? SiderMiniLogo : HeaderLogo}
       collapsed={collapsed}
       onCollapse={setCollapsed}
+      layout="mix"
       route={route}
       token={layoutToken}
       location={location}
@@ -89,32 +90,40 @@ export default function AdminLayout() {
         items: menuItems,
         selectedKeys: [location.pathname],
         onClick: ({ key }) => navigate(key),
-        theme: 'dark',
       }}
       headerRender={() => (
-        <div style={{
-          height: 48, background: '#fff',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 24px', borderBottom: '1px solid #f0f0f0',
-        }}>
-          <Breadcrumb items={[
-            { title: <Link to="/dashboard">首页</Link> },
-            ...(currentName && location.pathname !== '/dashboard'
-              ? [{ title: currentName }]
-              : []),
-          ]} />
-          <Dropdown
-            menu={{
-              items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
-              onClick: ({ key }) => { if (key === 'logout') handleLogout() },
-            }}
-            placement="bottomRight"
-          >
-            <Space style={{ cursor: 'pointer' }}>
-              <Avatar size="small" icon={<UserOutlined />} style={{ background: '#e67e22' }} />
-              <Typography.Text>{admin?.username}</Typography.Text>
-            </Space>
-          </Dropdown>
+        <div style={{ display: 'flex', height: '100%' }}>
+          <div style={{
+            width: collapsed ? 64 : 215, flexShrink: 0,
+            background: '#141414', display: 'flex', alignItems: 'center',
+            padding: '0 16px', transition: 'width 0.2s',
+          }}>
+            {collapsed ? SiderMiniLogo : HeaderLogo}
+          </div>
+          <div style={{
+            flex: 1, background: '#fff', display: 'flex', alignItems: 'center',
+            justifyContent: 'space-between', padding: '0 24px',
+            borderBottom: '1px solid #f0f0f0',
+          }}>
+            <Breadcrumb items={[
+              { title: <Link to="/dashboard">首页</Link> },
+              ...(currentName && location.pathname !== '/dashboard'
+                ? [{ title: currentName }]
+                : []),
+            ]} />
+            <Dropdown
+              menu={{
+                items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
+                onClick: ({ key }) => { if (key === 'logout') handleLogout() },
+              }}
+              placement="bottomRight"
+            >
+              <Space style={{ cursor: 'pointer' }}>
+                <Avatar size="small" icon={<UserOutlined />} style={{ background: '#e67e22' }} />
+                <Typography.Text>{admin?.username}</Typography.Text>
+              </Space>
+            </Dropdown>
+          </div>
         </div>
       )}
     >
