@@ -91,29 +91,32 @@ export default function AdminLayout() {
         onClick: ({ key }) => navigate(key),
         theme: 'dark',
       }}
-      headerContentRender={() => (
-        <Breadcrumb items={[
-          { title: <Link to="/dashboard">首页</Link> },
-          ...(currentName && location.pathname !== '/dashboard'
-            ? [{ title: currentName }]
-            : []),
-        ]} />
+      headerRender={() => (
+        <div style={{
+          height: 48, background: '#fff',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '0 24px', borderBottom: '1px solid #f0f0f0',
+        }}>
+          <Breadcrumb items={[
+            { title: <Link to="/dashboard">首页</Link> },
+            ...(currentName && location.pathname !== '/dashboard'
+              ? [{ title: currentName }]
+              : []),
+          ]} />
+          <Dropdown
+            menu={{
+              items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
+              onClick: ({ key }) => { if (key === 'logout') handleLogout() },
+            }}
+            placement="bottomRight"
+          >
+            <Space style={{ cursor: 'pointer' }}>
+              <Avatar size="small" icon={<UserOutlined />} style={{ background: '#e67e22' }} />
+              <Typography.Text>{admin?.username}</Typography.Text>
+            </Space>
+          </Dropdown>
+        </div>
       )}
-      actionsRender={() => [
-        <Dropdown
-          key="user"
-          menu={{
-            items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录', danger: true }],
-            onClick: ({ key }) => { if (key === 'logout') handleLogout() },
-          }}
-          placement="bottomRight"
-        >
-          <Space style={{ cursor: 'pointer', padding: '0 8px' }}>
-            <Avatar size="small" icon={<UserOutlined />} style={{ background: '#e67e22' }} />
-            <Typography.Text>{admin?.username}</Typography.Text>
-          </Space>
-        </Dropdown>,
-      ]}
     >
       <Outlet />
     </ProLayout>
