@@ -1,55 +1,317 @@
-.page {
-  min-height: 100vh;
+/* ── Logo (shared within this file) ── */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  user-select: none;
+  font-size: 34px;
+}
+
+.logoInverted .logoHanzi,
+.logoInverted .logoBrand {
+  color: #fff;
+}
+
+.logoInverted .logoPinyin {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.logoInverted .logoDivider {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.logoHanzi {
+  font-family: var(--font-serif);
+  font-size: 1em;
+  line-height: 1;
+  color: var(--text);
+  transform: translateY(-0.06em);
+}
+
+.logoDivider {
+  width: 1px;
+  height: 0.82em;
+  background: var(--text);
+  opacity: 0.15;
+}
+
+.logoMeta {
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 0.82em;
+  padding: 0.03em 0;
+}
+
+.logoPinyin {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.32em;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.logoBrand {
+  font-family: var(--font-sans);
+  font-size: 0.38em;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* ── Page layout ── */
+.page {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+  /* Subtle grid texture matching the web app */
+  background-image:
+    linear-gradient(to right, rgba(24, 24, 27, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(24, 24, 27, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ── Left branding panel ── */
+.brandPanel {
+  display: none;
+}
+
+/* ── Right form panel ── */
+.formPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f0f0ee;
+  padding: 12vh 24px 24px;
+  position: relative;
 }
 
-.card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 40px 36px;
+.formDeco {
+  display: none;
+}
+
+.formWrap {
   width: 100%;
-  max-width: 380px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+  max-width: 360px;
 }
 
-.title {
-  font-size: 22px;
-  font-weight: 700;
+.formLogo {
+  font-size: 40px;
+  margin-bottom: 40px;
+}
+
+.formHeader {
+  margin-bottom: 56px;
+}
+
+.formTitle {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 500;
   color: var(--text);
-  margin-bottom: 6px;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
 }
 
-.sub {
+.formSubtitle {
   font-size: 13px;
   color: var(--text-muted);
-  margin: 0 0 28px;
+  letter-spacing: 2px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
+}
+
+.field {
+  border-bottom: 1px solid var(--border);
+}
+
+.field + .field {
+  margin-top: 0;
 }
 
 .input {
-  padding: 11px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  font-family: var(--font-sans);
   color: var(--text);
+  letter-spacing: 1px;
+  padding: 18px 0;
   outline: none;
-  transition: border-color 0.15s;
 }
 
-.input:focus {
-  border-color: var(--primary);
+.input::placeholder {
+  color: var(--text-muted);
+  font-size: 14px;
+  letter-spacing: 0.5px;
 }
 
 .error {
-  color: var(--danger);
+  font-size: 11px;
+  color: #c0392b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 16px 0 0;
+}
+
+.btn {
+  margin-top: 40px;
+  width: 100%;
+  padding: 18px;
+  background: var(--text);
+  color: #fff;
   font-size: 13px;
-  margin: 0;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  border: 1px solid var(--text);
+  border-radius: 0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn:hover:not(:disabled) {
+  background: #27272a;
+}
+
+.btn:disabled {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+
+/* ── Desktop layout ── */
+@media (min-width: 768px) {
+  .brandPanel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 45%;
+    min-height: 100vh;
+    padding: 6vw;
+    background: #18181b;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brandWatermark {
+    position: absolute;
+    top: 50%;
+    left: -0.1em;
+    transform: translateY(-50%);
+    font-family: var(--font-serif);
+    font-size: 40vw;
+    font-weight: 500;
+    line-height: 0.85;
+    color: #fff;
+    opacity: 0.035;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.04em;
+  }
+
+  .brandContent {
+    position: relative;
+    z-index: 1;
+    margin-top: 8vh;
+  }
+
+  .brandLogo {
+    font-size: 42px;
+    margin-bottom: 72px;
+  }
+
+  .brandTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+  }
+
+  .brandDesc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 2px;
+    line-height: 1.8;
+  }
+
+  .brandFooter {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+  }
+
+  .formPanel {
+    flex: 1;
+    padding: 0 6vw;
+    border-left: 1px solid var(--border);
+    position: relative;
+  }
+
+  .formDeco {
+    display: flex;
+    position: absolute;
+    right: 52px;
+    top: 0;
+    bottom: 0;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .formDecoLine {
+    width: 1px;
+    height: 160px;
+    background: var(--text);
+    opacity: 0.12;
+  }
+
+  .formDecoText {
+    writing-mode: vertical-rl;
+    font-family: var(--font-serif);
+    font-size: 11px;
+    letter-spacing: 12px;
+    color: var(--text-secondary);
+    margin-top: 28px;
+    opacity: 0.5;
+  }
+
+  .formLogo {
+    display: none;
+  }
+
+  .formTitle {
+    font-size: 42px;
+    letter-spacing: 3px;
+  }
+
+  .formSubtitle {
+    font-size: 14px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+  }
+
+  .input {
+    font-size: 22px;
+  }
 }
