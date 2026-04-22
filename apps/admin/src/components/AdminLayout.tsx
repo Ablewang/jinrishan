@@ -28,9 +28,6 @@ const layoutToken = {
   sider: {
     colorMenuBackground: '#141414',
     colorBgMenuItemSelected: '#e67e22',
-    colorTextMenuSelected: '#fff',
-    colorTextMenu: 'rgba(255,255,255,.75)',
-    colorTextMenuItemHover: '#fff',
   },
 }
 
@@ -50,6 +47,7 @@ export default function AdminLayout() {
       logo={false}
       route={route}
       location={location}
+      navTheme="realDark"
       token={layoutToken}
       menuProps={{
         selectedKeys: [location.pathname],
