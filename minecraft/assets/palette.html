@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>拼豆色板</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 12px;
+    background: #f5f5f5;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 500px;
+  }
+  h2 {
+    margin: 16px 0 8px;
+    font-size: 14px;
+    color: #333;
+  }
+  h2 span {
+    font-weight: normal;
+    color: #999;
+    font-size: 12px;
+  }
+  .group {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    margin-bottom: 10px;
+  }
+  .swatch {
+    height: 70px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 11px;
+  }
+  .swatch b {
+    font-size: 12px;
+  }
+  .swatch span {
+    opacity: 0.85;
+  }
+  @media (max-width: 360px) {
+    .group {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .swatch {
+      font-size: 10px;
+      height: 64px;
+    }
+  }
+</style>
+</head>
+<body>
+<h2>系列 A <span>(26 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(251, 237, 86); color: #000">
+    <b>A4</b><span>明亮柠檬黄</span><span>#FBED56</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 172, 76); color: #000">
+    <b>A6</b><span>蜜橙色</span><span>#FEAC4C</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 139, 76); color: #000">
+    <b>A7</b><span>鲜橙色</span><span>#FE8B4C</span>
+  </div>
+  <div class="swatch" style="background: rgb(247, 124, 49); color: #000">
+    <b>A10</b><span>南瓜橙</span><span>#F77C31</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 221, 153); color: #000">
+    <b>A11</b><span>淡肤橙</span><span>#FFDD99</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 195, 101); color: #000">
+    <b>A13</b><span>杏桃色</span><span>#FFC365</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 255, 139); color: #000">
+    <b>A3</b><span>荧光浅黄</span><span>#FEFF8B</span>
+  </div>
+  <div class="swatch" style="background: rgb(253, 84, 61); color: #000">
+    <b>A14</b><span>珊瑚橙红</span><span>#FD543D</span>
+  </div>
+  <div class="swatch" style="background: rgb(250, 244, 200); color: #000">
+    <b>A1</b><span>奶油米黄</span><span>#FAF4C8</span>
+  </div>
+  <div class="swatch" style="background: rgb(244, 215, 56); color: #000">
+    <b>A5</b><span>向日葵黄</span><span>#F4D738</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 218, 69); color: #000">
+    <b>A8</b><span>金黄色</span><span>#FFDA45</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 153, 91); color: #000">
+    <b>A9</b><span>杏橙色</span><span>#FF995B</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 159, 114); color: #000">
+    <b>A12</b><span>桃橙色</span><span>#FE9F72</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 243, 101); color: #000">
+    <b>A15</b><span>亮柠檬黄</span><span>#FFF365</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 255, 213); color: #000">
+    <b>A2</b><span>象牙黄</span><span>#FFFFD5</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 255, 159); color: #000">
+    <b>A16</b><span>荧光淡黄</span><span>#FFFF9F</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 227, 110); color: #000">
+    <b>A17</b><span>蜂蜜黄</span><span>#FFE36E</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 190, 125); color: #000">
+    <b>A18</b><span>浅蜜桃色</span><span>#FEBE7D</span>
+  </div>
+  <div class="swatch" style="background: rgb(253, 124, 114); color: #000">
+    <b>A19</b><span>鲑鱼粉橙</span><span>#FD7C72</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 213, 104); color: #000">
+    <b>A20</b><span>金杏黄</span><span>#FFD568</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 227, 149); color: #000">
+    <b>A21</b><span>香草黄</span><span>#FFE395</span>
+  </div>
+  <div class="swatch" style="background: rgb(244, 245, 125); color: #000">
+    <b>A22</b><span>黄绿色</span><span>#F4F57D</span>
+  </div>
+  <div class="swatch" style="background: rgb(230, 201, 183); color: #000">
+    <b>A23</b><span>奶茶肤色</span><span>#E6C9B7</span>
+  </div>
+  <div class="swatch" style="background: rgb(247, 248, 162); color: #000">
+    <b>A24</b><span>淡黄绿</span><span>#F7F8A2</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 214, 125); color: #000">
+    <b>A25</b><span>杏仁黄</span><span>#FFD67D</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 200, 48); color: #000">
+    <b>A26</b><span>琥珀黄</span><span>#FFC830</span>
+  </div>
+</div>
+<h2>系列 B <span>(32 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(158, 247, 128); color: #000">
+    <b>B3</b><span>浅绿</span><span>#9EF780</span>
+  </div>
+  <div class="swatch" style="background: rgb(53, 227, 82); color: #000">
+    <b>B5</b><span>翠绿</span><span>#35E352</span>
+  </div>
+  <div class="swatch" style="background: rgb(28, 156, 79); color: #fff">
+    <b>B8</b><span>森林绿</span><span>#1C9C4F</span>
+  </div>
+  <div class="swatch" style="background: rgb(22, 111, 65); color: #fff">
+    <b>B12</b><span>深翠绿</span><span>#166F41</span>
+  </div>
+  <div class="swatch" style="background: rgb(61, 175, 128); color: #000">
+    <b>B7</b><span>深薄荷</span><span>#3DAF80</span>
+  </div>
+  <div class="swatch" style="background: rgb(149, 211, 194); color: #000">
+    <b>B10</b><span>灰绿</span><span>#95D3C2</span>
+  </div>
+  <div class="swatch" style="background: rgb(173, 233, 70); color: #000">
+    <b>B14</b><span>酸橙绿</span><span>#ADE946</span>
+  </div>
+  <div class="swatch" style="background: rgb(155, 177, 58); color: #000">
+    <b>B17</b><span>黄橄榄绿</span><span>#9BB13A</span>
+  </div>
+  <div class="swatch" style="background: rgb(230, 238, 73); color: #000">
+    <b>B18</b><span>淡黄绿</span><span>#E6EE49</span>
+  </div>
+  <div class="swatch" style="background: rgb(36, 184, 140); color: #000">
+    <b>B19</b><span>青绿色</span><span>#24B88C</span>
+  </div>
+  <div class="swatch" style="background: rgb(194, 240, 204); color: #000">
+    <b>B20</b><span>浅薄荷绿</span><span>#C2F0CC</span>
+  </div>
+  <div class="swatch" style="background: rgb(230, 238, 49); color: #000">
+    <b>B1</b><span>黄绿色</span><span>#E6EE31</span>
+  </div>
+  <div class="swatch" style="background: rgb(99, 243, 71); color: #000">
+    <b>B2</b><span>鲜绿色</span><span>#63F347</span>
+  </div>
+  <div class="swatch" style="background: rgb(93, 224, 53); color: #000">
+    <b>B4</b><span>亮翠绿</span><span>#5DE035</span>
+  </div>
+  <div class="swatch" style="background: rgb(101, 226, 166); color: #000">
+    <b>B6</b><span>薄荷绿</span><span>#65E2A6</span>
+  </div>
+  <div class="swatch" style="background: rgb(93, 114, 42); color: #fff">
+    <b>B11</b><span>橄榄绿</span><span>#5D722A</span>
+  </div>
+  <div class="swatch" style="background: rgb(202, 235, 123); color: #000">
+    <b>B13</b><span>浅酸橙绿</span><span>#CAEB7B</span>
+  </div>
+  <div class="swatch" style="background: rgb(46, 81, 50); color: #fff">
+    <b>B15</b><span>暗绿</span><span>#2E5132</span>
+  </div>
+  <div class="swatch" style="background: rgb(197, 237, 156); color: #000">
+    <b>B16</b><span>柔绿</span><span>#C5ED9C</span>
+  </div>
+  <div class="swatch" style="background: rgb(39, 82, 58); color: #fff">
+    <b>B9</b><span>深森林绿</span><span>#27523A</span>
+  </div>
+  <div class="swatch" style="background: rgb(21, 106, 107); color: #fff">
+    <b>B21</b><span>深青色</span><span>#156A6B</span>
+  </div>
+  <div class="swatch" style="background: rgb(11, 60, 67); color: #fff">
+    <b>B22</b><span>暗青色</span><span>#0B3C43</span>
+  </div>
+  <div class="swatch" style="background: rgb(48, 58, 33); color: #fff">
+    <b>B23</b><span>暗橄榄</span><span>#303A21</span>
+  </div>
+  <div class="swatch" style="background: rgb(238, 252, 165); color: #000">
+    <b>B24</b><span>浅柠檬绿</span><span>#EEFCA5</span>
+  </div>
+  <div class="swatch" style="background: rgb(78, 132, 109); color: #fff">
+    <b>B25</b><span>灰蓝绿</span><span>#4E846D</span>
+  </div>
+  <div class="swatch" style="background: rgb(141, 122, 53); color: #fff">
+    <b>B26</b><span>暗黄绿</span><span>#8D7A35</span>
+  </div>
+  <div class="swatch" style="background: rgb(204, 225, 175); color: #000">
+    <b>B27</b><span>浅苹果绿</span><span>#CCE1AF</span>
+  </div>
+  <div class="swatch" style="background: rgb(158, 229, 185); color: #000">
+    <b>B28</b><span>浅薄荷青</span><span>#9EE5B9</span>
+  </div>
+  <div class="swatch" style="background: rgb(197, 226, 84); color: #000">
+    <b>B29</b><span>亮黄绿</span><span>#C5E254</span>
+  </div>
+  <div class="swatch" style="background: rgb(226, 252, 177); color: #000">
+    <b>B30</b><span>极浅黄绿</span><span>#E2FCB1</span>
+  </div>
+  <div class="swatch" style="background: rgb(176, 231, 146); color: #000">
+    <b>B31</b><span>苹果绿</span><span>#B0E792</span>
+  </div>
+  <div class="swatch" style="background: rgb(156, 171, 90); color: #000">
+    <b>B32</b><span>灰橄榄绿</span><span>#9CAB5A</span>
+  </div>
+</div>
+<h2>系列 C <span>(29 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(160, 226, 251); color: #000">
+    <b>C3</b><span>浅天蓝</span><span>#A0E2FB</span>
+  </div>
+  <div class="swatch" style="background: rgb(1, 172, 235); color: #000">
+    <b>C5</b><span>天蓝色</span><span>#01ACEB</span>
+  </div>
+  <div class="swatch" style="background: rgb(15, 84, 192); color: #fff">
+    <b>C8</b><span>深蓝色</span><span>#0F54C0</span>
+  </div>
+  <div class="swatch" style="background: rgb(169, 249, 252); color: #000">
+    <b>C2</b><span>浅青色</span><span>#A9F9FC</span>
+  </div>
+  <div class="swatch" style="background: rgb(80, 170, 240); color: #000">
+    <b>C6</b><span>浅钴蓝</span><span>#50AAF0</span>
+  </div>
+  <div class="swatch" style="background: rgb(54, 119, 210); color: #fff">
+    <b>C7</b><span>中蓝色</span><span>#3677D2</span>
+  </div>
+  <div class="swatch" style="background: rgb(62, 188, 226); color: #000">
+    <b>C10</b><span>浅湖蓝</span><span>#3EBCE2</span>
+  </div>
+  <div class="swatch" style="background: rgb(40, 221, 222); color: #000">
+    <b>C11</b><span>青蓝色</span><span>#28DDDE</span>
+  </div>
+  <div class="swatch" style="background: rgb(205, 232, 255); color: #000">
+    <b>C13</b><span>浅粉蓝</span><span>#CDE8FF</span>
+  </div>
+  <div class="swatch" style="background: rgb(21, 87, 168); color: #fff">
+    <b>C16</b><span>深钴蓝</span><span>#1557A8</span>
+  </div>
+  <div class="swatch" style="background: rgb(232, 255, 231); color: #000">
+    <b>C1</b><span>极浅薄荷</span><span>#E8FFE7</span>
+  </div>
+  <div class="swatch" style="background: rgb(65, 204, 255); color: #000">
+    <b>C4</b><span>亮蓝色</span><span>#41CCFF</span>
+  </div>
+  <div class="swatch" style="background: rgb(50, 75, 202); color: #fff">
+    <b>C9</b><span>靛蓝色</span><span>#324BCA</span>
+  </div>
+  <div class="swatch" style="background: rgb(213, 253, 255); color: #000">
+    <b>C14</b><span>冰蓝色</span><span>#D5FDFF</span>
+  </div>
+  <div class="swatch" style="background: rgb(34, 196, 198); color: #000">
+    <b>C15</b><span>青绿色</span><span>#22C4C6</span>
+  </div>
+  <div class="swatch" style="background: rgb(4, 209, 246); color: #000">
+    <b>C17</b><span>亮青色</span><span>#04D1F6</span>
+  </div>
+  <div class="swatch" style="background: rgb(28, 51, 77); color: #fff">
+    <b>C12</b><span>深海军蓝</span><span>#1C334D</span>
+  </div>
+  <div class="swatch" style="background: rgb(29, 51, 68); color: #fff">
+    <b>C18</b><span>暗海军蓝</span><span>#1D3344</span>
+  </div>
+  <div class="swatch" style="background: rgb(24, 135, 162); color: #fff">
+    <b>C19</b><span>深湖蓝</span><span>#1887A2</span>
+  </div>
+  <div class="swatch" style="background: rgb(23, 109, 175); color: #fff">
+    <b>C20</b><span>中海蓝</span><span>#176DAF</span>
+  </div>
+  <div class="swatch" style="background: rgb(190, 221, 255); color: #000">
+    <b>C21</b><span>柔蓝色</span><span>#BEDDFF</span>
+  </div>
+  <div class="swatch" style="background: rgb(103, 180, 190); color: #000">
+    <b>C22</b><span>灰蓝绿</span><span>#67B4BE</span>
+  </div>
+  <div class="swatch" style="background: rgb(200, 226, 255); color: #000">
+    <b>C23</b><span>浅婴儿蓝</span><span>#C8E2FF</span>
+  </div>
+  <div class="swatch" style="background: rgb(124, 196, 255); color: #000">
+    <b>C24</b><span>婴儿蓝</span><span>#7CC4FF</span>
+  </div>
+  <div class="swatch" style="background: rgb(169, 229, 229); color: #000">
+    <b>C25</b><span>浅青绿</span><span>#A9E5E5</span>
+  </div>
+  <div class="swatch" style="background: rgb(60, 174, 216); color: #000">
+    <b>C26</b><span>中海蓝</span><span>#3CAED8</span>
+  </div>
+  <div class="swatch" style="background: rgb(211, 223, 250); color: #000">
+    <b>C27</b><span>浅紫蓝</span><span>#D3DFFA</span>
+  </div>
+  <div class="swatch" style="background: rgb(187, 207, 237); color: #000">
+    <b>C28</b><span>浅灰蓝</span><span>#BBCFED</span>
+  </div>
+  <div class="swatch" style="background: rgb(52, 72, 142); color: #fff">
+    <b>C29</b><span>深靛蓝</span><span>#34488E</span>
+  </div>
+</div>
+<h2>系列 D <span>(26 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(172, 123, 222); color: #000">
+    <b>D6</b><span>浅紫</span><span>#AC7BDE</span>
+  </div>
+  <div class="swatch" style="background: rgb(136, 84, 179); color: #fff">
+    <b>D7</b><span>中紫色</span><span>#8854B3</span>
+  </div>
+  <div class="swatch" style="background: rgb(213, 185, 248); color: #000">
+    <b>D9</b><span>淡紫色</span><span>#D5B9F8</span>
+  </div>
+  <div class="swatch" style="background: rgb(47, 84, 175); color: #fff">
+    <b>D3</b><span>靛蓝色</span><span>#2F54AF</span>
+  </div>
+  <div class="swatch" style="background: rgb(185, 0, 149); color: #fff">
+    <b>D13</b><span>亮洋红</span><span>#B90095</span>
+  </div>
+  <div class="swatch" style="background: rgb(47, 31, 144); color: #fff">
+    <b>D15</b><span>深蓝紫</span><span>#2F1F90</span>
+  </div>
+  <div class="swatch" style="background: rgb(164, 94, 199); color: #fff">
+    <b>D18</b><span>中紫红</span><span>#A45EC7</span>
+  </div>
+  <div class="swatch" style="background: rgb(216, 195, 215); color: #000">
+    <b>D19</b><span>灰紫粉</span><span>#D8C3D7</span>
+  </div>
+  <div class="swatch" style="background: rgb(154, 0, 155); color: #fff">
+    <b>D21</b><span>紫红色</span><span>#9A009B</span>
+  </div>
+  <div class="swatch" style="background: rgb(133, 142, 221); color: #000">
+    <b>D2</b><span>蓝紫色</span><span>#858EDD</span>
+  </div>
+  <div class="swatch" style="background: rgb(226, 211, 255); color: #000">
+    <b>D8</b><span>浅淡紫</span><span>#E2D3FF</span>
+  </div>
+  <div class="swatch" style="background: rgb(185, 186, 225); color: #000">
+    <b>D11</b><span>灰蓝紫</span><span>#B9BAE1</span>
+  </div>
+  <div class="swatch" style="background: rgb(222, 154, 212); color: #000">
+    <b>D12</b><span>浅紫粉</span><span>#DE9AD4</span>
+  </div>
+  <div class="swatch" style="background: rgb(139, 39, 155); color: #fff">
+    <b>D14</b><span>深紫红</span><span>#8B279B</span>
+  </div>
+  <div class="swatch" style="background: rgb(227, 225, 238); color: #000">
+    <b>D16</b><span>极浅紫</span><span>#E3E1EE</span>
+  </div>
+  <div class="swatch" style="background: rgb(156, 50, 178); color: #fff">
+    <b>D20</b><span>深洋红</span><span>#9C32B2</span>
+  </div>
+  <div class="swatch" style="background: rgb(184, 67, 197); color: #fff">
+    <b>D5</b><span>亮紫色</span><span>#B843C5</span>
+  </div>
+  <div class="swatch" style="background: rgb(174, 180, 242); color: #000">
+    <b>D1</b><span>浅薰衣草</span><span>#AEB4F2</span>
+  </div>
+  <div class="swatch" style="background: rgb(196, 212, 246); color: #000">
+    <b>D17</b><span>浅蓝紫</span><span>#C4D4F6</span>
+  </div>
+  <div class="swatch" style="background: rgb(24, 42, 132); color: #fff">
+    <b>D4</b><span>深皇家蓝</span><span>#182A84</span>
+  </div>
+  <div class="swatch" style="background: rgb(54, 24, 81); color: #fff">
+    <b>D10</b><span>深紫黑</span><span>#361851</span>
+  </div>
+  <div class="swatch" style="background: rgb(51, 58, 149); color: #fff">
+    <b>D22</b><span>暗靛紫</span><span>#333A95</span>
+  </div>
+  <div class="swatch" style="background: rgb(235, 218, 252); color: #000">
+    <b>D23</b><span>浅粉紫</span><span>#EBDAFC</span>
+  </div>
+  <div class="swatch" style="background: rgb(119, 134, 229); color: #000">
+    <b>D24</b><span>中蓝紫</span><span>#7786E5</span>
+  </div>
+  <div class="swatch" style="background: rgb(73, 79, 199); color: #fff">
+    <b>D25</b><span>深蓝紫</span><span>#494FC7</span>
+  </div>
+  <div class="swatch" style="background: rgb(223, 194, 248); color: #000">
+    <b>D26</b><span>淡粉紫</span><span>#DFC2F8</span>
+  </div>
+</div>
+<h2>系列 E <span>(24 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(254, 192, 223); color: #000">
+    <b>E2</b><span>浅粉色</span><span>#FEC0DF</span>
+  </div>
+  <div class="swatch" style="background: rgb(232, 100, 158); color: #000">
+    <b>E4</b><span>深玫瑰粉</span><span>#E8649E</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 183, 231); color: #000">
+    <b>E3</b><span>亮粉色</span><span>#FFB7E7</span>
+  </div>
+  <div class="swatch" style="background: rgb(198, 52, 120); color: #fff">
+    <b>E7</b><span>暗玫瑰</span><span>#C63478</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 219, 233); color: #000">
+    <b>E8</b><span>浅糖果粉</span><span>#FFDBE9</span>
+  </div>
+  <div class="swatch" style="background: rgb(253, 211, 204); color: #000">
+    <b>E1</b><span>浅鲑鱼粉</span><span>#FDD3CC</span>
+  </div>
+  <div class="swatch" style="background: rgb(245, 81, 162); color: #000">
+    <b>E5</b><span>亮玫瑰粉</span><span>#F551A2</span>
+  </div>
+  <div class="swatch" style="background: rgb(247, 143, 195); color: #000">
+    <b>E12</b><span>中粉红</span><span>#F78FC3</span>
+  </div>
+  <div class="swatch" style="background: rgb(181, 0, 109); color: #fff">
+    <b>E13</b><span>深洋红粉</span><span>#B5006D</span>
+  </div>
+  <div class="swatch" style="background: rgb(241, 61, 116); color: #fff">
+    <b>E6</b><span>深粉红</span><span>#F13D74</span>
+  </div>
+  <div class="swatch" style="background: rgb(233, 112, 204); color: #000">
+    <b>E9</b><span>浅洋红</span><span>#E970CC</span>
+  </div>
+  <div class="swatch" style="background: rgb(211, 55, 147); color: #fff">
+    <b>E10</b><span>深洋红</span><span>#D33793</span>
+  </div>
+  <div class="swatch" style="background: rgb(252, 221, 210); color: #000">
+    <b>E11</b><span>浅蜜桃粉</span><span>#FCDDD2</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 209, 186); color: #000">
+    <b>E14</b><span>浅杏粉</span><span>#FFD1BA</span>
+  </div>
+  <div class="swatch" style="background: rgb(248, 199, 201); color: #000">
+    <b>E15</b><span>柔粉色</span><span>#F8C7C9</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 243, 235); color: #000">
+    <b>E16</b><span>极浅粉白</span><span>#FFF3EB</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 226, 234); color: #000">
+    <b>E17</b><span>浅糖果</span><span>#FFE2EA</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 199, 219); color: #000">
+    <b>E18</b><span>浅玫瑰粉</span><span>#FFC7DB</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 186, 213); color: #000">
+    <b>E19</b><span>浅芭比粉</span><span>#FEBAD5</span>
+  </div>
+  <div class="swatch" style="background: rgb(216, 199, 209); color: #000">
+    <b>E20</b><span>灰紫粉</span><span>#D8C7D1</span>
+  </div>
+  <div class="swatch" style="background: rgb(189, 157, 161); color: #000">
+    <b>E21</b><span>灰玫瑰</span><span>#BD9DA1</span>
+  </div>
+  <div class="swatch" style="background: rgb(183, 133, 161); color: #000">
+    <b>E22</b><span>灰紫玫瑰</span><span>#B785A1</span>
+  </div>
+  <div class="swatch" style="background: rgb(147, 122, 141); color: #000">
+    <b>E23</b><span>暗灰紫</span><span>#937A8D</span>
+  </div>
+  <div class="swatch" style="background: rgb(225, 188, 232); color: #000">
+    <b>E24</b><span>浅紫粉</span><span>#E1BCE8</span>
+  </div>
+</div>
+<h2>系列 F <span>(25 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(231, 0, 47); color: #fff">
+    <b>F5</b><span>大红色</span><span>#E7002F</span>
+  </div>
+  <div class="swatch" style="background: rgb(188, 0, 40); color: #fff">
+    <b>F8</b><span>深酒红</span><span>#BC0028</span>
+  </div>
+  <div class="swatch" style="background: rgb(243, 87, 68); color: #000">
+    <b>F13</b><span>珊瑚红</span><span>#F35744</span>
+  </div>
+  <div class="swatch" style="background: rgb(151, 25, 55); color: #fff">
+    <b>F7</b><span>暗血红</span><span>#971937</span>
+  </div>
+  <div class="swatch" style="background: rgb(138, 69, 38); color: #fff">
+    <b>F10</b><span>红棕色</span><span>#8A4526</span>
+  </div>
+  <div class="swatch" style="background: rgb(253, 149, 123); color: #000">
+    <b>F1</b><span>浅珊瑚红</span><span>#FD957B</span>
+  </div>
+  <div class="swatch" style="background: rgb(252, 61, 70); color: #fff">
+    <b>F2</b><span>亮红色</span><span>#FC3D46</span>
+  </div>
+  <div class="swatch" style="background: rgb(247, 73, 65); color: #fff">
+    <b>F3</b><span>鲜红色</span><span>#F74941</span>
+  </div>
+  <div class="swatch" style="background: rgb(252, 40, 60); color: #fff">
+    <b>F4</b><span>深红色</span><span>#FC283C</span>
+  </div>
+  <div class="swatch" style="background: rgb(148, 54, 48); color: #fff">
+    <b>F6</b><span>深红褐</span><span>#943630</span>
+  </div>
+  <div class="swatch" style="background: rgb(226, 103, 122); color: #000">
+    <b>F9</b><span>浅玫瑰红</span><span>#E2677A</span>
+  </div>
+  <div class="swatch" style="background: rgb(90, 33, 33); color: #fff">
+    <b>F11</b><span>暗红棕</span><span>#5A2121</span>
+  </div>
+  <div class="swatch" style="background: rgb(253, 78, 106); color: #000">
+    <b>F12</b><span>亮粉红</span><span>#FD4E6A</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 169, 173); color: #000">
+    <b>F14</b><span>浅粉红</span><span>#FFA9AD</span>
+  </div>
+  <div class="swatch" style="background: rgb(211, 0, 34); color: #fff">
+    <b>F15</b><span>深红</span><span>#D30022</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 194, 166); color: #000">
+    <b>F16</b><span>浅蜜桃</span><span>#FEC2A6</span>
+  </div>
+  <div class="swatch" style="background: rgb(230, 156, 121); color: #000">
+    <b>F17</b><span>浅棕橙</span><span>#E69C79</span>
+  </div>
+  <div class="swatch" style="background: rgb(211, 124, 70); color: #000">
+    <b>F18</b><span>中棕橙</span><span>#D37C46</span>
+  </div>
+  <div class="swatch" style="background: rgb(193, 68, 74); color: #fff">
+    <b>F19</b><span>深玫瑰红</span><span>#C1444A</span>
+  </div>
+  <div class="swatch" style="background: rgb(205, 147, 145); color: #000">
+    <b>F20</b><span>灰玫瑰</span><span>#CD9391</span>
+  </div>
+  <div class="swatch" style="background: rgb(247, 180, 198); color: #000">
+    <b>F21</b><span>浅糖果粉</span><span>#F7B4C6</span>
+  </div>
+  <div class="swatch" style="background: rgb(253, 192, 208); color: #000">
+    <b>F22</b><span>浅芭比粉</span><span>#FDC0D0</span>
+  </div>
+  <div class="swatch" style="background: rgb(246, 126, 102); color: #000">
+    <b>F23</b><span>浅珊瑚</span><span>#F67E66</span>
+  </div>
+  <div class="swatch" style="background: rgb(230, 152, 170); color: #000">
+    <b>F24</b><span>灰玫瑰粉</span><span>#E698AA</span>
+  </div>
+  <div class="swatch" style="background: rgb(229, 75, 79); color: #fff">
+    <b>F25</b><span>中红色</span><span>#E54B4F</span>
+  </div>
+</div>
+<h2>系列 G <span>(21 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(255, 226, 206); color: #000">
+    <b>G1</b><span>浅奶咖</span><span>#FFE2CE</span>
+  </div>
+  <div class="swatch" style="background: rgb(237, 176, 69); color: #000">
+    <b>G5</b><span>焦糖色</span><span>#EDB045</span>
+  </div>
+  <div class="swatch" style="background: rgb(157, 91, 62); color: #fff">
+    <b>G7</b><span>深棕色</span><span>#9D5B3E</span>
+  </div>
+  <div class="swatch" style="background: rgb(117, 56, 50); color: #fff">
+    <b>G8</b><span>巧克力棕</span><span>#753832</span>
+  </div>
+  <div class="swatch" style="background: rgb(230, 180, 131); color: #000">
+    <b>G9</b><span>肉桂棕</span><span>#E6B483</span>
+  </div>
+  <div class="swatch" style="background: rgb(183, 113, 74); color: #000">
+    <b>G13</b><span>赤陶棕</span><span>#B7714A</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 196, 170); color: #000">
+    <b>G2</b><span>浅肤棕</span><span>#FFC4AA</span>
+  </div>
+  <div class="swatch" style="background: rgb(244, 195, 165); color: #000">
+    <b>G3</b><span>奶茶棕</span><span>#F4C3A5</span>
+  </div>
+  <div class="swatch" style="background: rgb(141, 97, 76); color: #fff">
+    <b>G14</b><span>灰咖棕</span><span>#8D614C</span>
+  </div>
+  <div class="swatch" style="background: rgb(120, 82, 75); color: #fff">
+    <b>G17</b><span>深咖啡</span><span>#78524B</span>
+  </div>
+  <div class="swatch" style="background: rgb(233, 156, 23); color: #000">
+    <b>G6</b><span>深焦糖</span><span>#E99C17</span>
+  </div>
+  <div class="swatch" style="background: rgb(225, 179, 131); color: #000">
+    <b>G4</b><span>浅驼色</span><span>#E1B383</span>
+  </div>
+  <div class="swatch" style="background: rgb(217, 140, 57); color: #000">
+    <b>G10</b><span>栗子棕</span><span>#D98C39</span>
+  </div>
+  <div class="swatch" style="background: rgb(224, 197, 147); color: #000">
+    <b>G11</b><span>卡其米色</span><span>#E0C593</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 200, 144); color: #000">
+    <b>G12</b><span>浅橙肤色</span><span>#FFC890</span>
+  </div>
+  <div class="swatch" style="background: rgb(252, 249, 224); color: #000">
+    <b>G15</b><span>奶白色</span><span>#FCF9E0</span>
+  </div>
+  <div class="swatch" style="background: rgb(242, 217, 186); color: #000">
+    <b>G16</b><span>浅奶茶</span><span>#F2D9BA</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 228, 204); color: #000">
+    <b>G18</b><span>淡肤米色</span><span>#FFE4CC</span>
+  </div>
+  <div class="swatch" style="background: rgb(224, 121, 53); color: #000">
+    <b>G19</b><span>橘棕色</span><span>#E07935</span>
+  </div>
+  <div class="swatch" style="background: rgb(169, 64, 35); color: #fff">
+    <b>G20</b><span>红棕色</span><span>#A94023</span>
+  </div>
+  <div class="swatch" style="background: rgb(184, 133, 88); color: #000">
+    <b>G21</b><span>浅木棕</span><span>#B88558</span>
+  </div>
+</div>
+<h2>系列 H <span>(23 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(253, 251, 255); color: #000">
+    <b>H1</b><span>暖白</span><span>#FDFBFF</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 255, 255); color: #000">
+    <b>H2</b><span>纯白</span><span>#FEFFFF</span>
+  </div>
+  <div class="swatch" style="background: rgb(182, 177, 186); color: #000">
+    <b>H3</b><span>浅灰紫</span><span>#B6B1BA</span>
+  </div>
+  <div class="swatch" style="background: rgb(137, 133, 140); color: #000">
+    <b>H4</b><span>中灰</span><span>#89858C</span>
+  </div>
+  <div class="swatch" style="background: rgb(72, 70, 78); color: #fff">
+    <b>H5</b><span>深灰</span><span>#48464E</span>
+  </div>
+  <div class="swatch" style="background: rgb(0, 0, 0); color: #fff">
+    <b>H7</b><span>黑色</span><span>#000000</span>
+  </div>
+  <div class="swatch" style="background: rgb(47, 43, 47); color: #fff">
+    <b>H6</b><span>炭灰</span><span>#2F2B2F</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 245, 237); color: #000">
+    <b>H12</b><span>米白色</span><span>#FFF5ED</span>
+  </div>
+  <div class="swatch" style="background: rgb(231, 214, 219); color: #000">
+    <b>H8</b><span>浅灰粉</span><span>#E7D6DB</span>
+  </div>
+  <div class="swatch" style="background: rgb(237, 237, 237); color: #000">
+    <b>H9</b><span>浅灰白</span><span>#EDEDED</span>
+  </div>
+  <div class="swatch" style="background: rgb(238, 233, 234); color: #000">
+    <b>H10</b><span>珍珠灰</span><span>#EEE9EA</span>
+  </div>
+  <div class="swatch" style="background: rgb(206, 205, 213); color: #000">
+    <b>H11</b><span>银灰色</span><span>#CECDD5</span>
+  </div>
+  <div class="swatch" style="background: rgb(245, 236, 210); color: #000">
+    <b>H13</b><span>浅米色</span><span>#F5ECD2</span>
+  </div>
+  <div class="swatch" style="background: rgb(207, 215, 211); color: #000">
+    <b>H14</b><span>灰绿色</span><span>#CFD7D3</span>
+  </div>
+  <div class="swatch" style="background: rgb(152, 166, 168); color: #000">
+    <b>H15</b><span>蓝灰色</span><span>#98A6A8</span>
+  </div>
+  <div class="swatch" style="background: rgb(29, 20, 20); color: #fff">
+    <b>H16</b><span>墨黑色</span><span>#1D1414</span>
+  </div>
+  <div class="swatch" style="background: rgb(241, 237, 237); color: #000">
+    <b>H17</b><span>雾白色</span><span>#F1EDED</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 253, 240); color: #000">
+    <b>H18</b><span>奶油白</span><span>#FFFDF0</span>
+  </div>
+  <div class="swatch" style="background: rgb(246, 239, 226); color: #000">
+    <b>H19</b><span>暖米白</span><span>#F6EFE2</span>
+  </div>
+  <div class="swatch" style="background: rgb(148, 159, 163); color: #000">
+    <b>H20</b><span>钢灰色</span><span>#949FA3</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 251, 225); color: #000">
+    <b>H21</b><span>浅奶黄</span><span>#FFFBE1</span>
+  </div>
+  <div class="swatch" style="background: rgb(202, 202, 212); color: #000">
+    <b>H22</b><span>浅冷灰</span><span>#CACAD4</span>
+  </div>
+  <div class="swatch" style="background: rgb(154, 157, 148); color: #000">
+    <b>H23</b><span>苔灰色</span><span>#9A9D94</span>
+  </div>
+</div>
+<h2>系列 M <span>(15 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(208, 204, 170); color: #000">
+    <b>M5</b><span>灰米色</span><span>#D0CCAA</span>
+  </div>
+  <div class="swatch" style="background: rgb(176, 167, 130); color: #000">
+    <b>M6</b><span>暖灰棕</span><span>#B0A782</span>
+  </div>
+  <div class="swatch" style="background: rgb(165, 135, 103); color: #000">
+    <b>M9</b><span>棕褐色</span><span>#A58767</span>
+  </div>
+  <div class="swatch" style="background: rgb(100, 71, 73); color: #fff">
+    <b>M12</b><span>深暗紫</span><span>#644749</span>
+  </div>
+  <div class="swatch" style="background: rgb(188, 198, 184); color: #000">
+    <b>M1</b><span>浅鼠尾草</span><span>#BCC6B8</span>
+  </div>
+  <div class="swatch" style="background: rgb(138, 163, 134); color: #000">
+    <b>M2</b><span>灰绿色</span><span>#8AA386</span>
+  </div>
+  <div class="swatch" style="background: rgb(105, 125, 128); color: #fff">
+    <b>M3</b><span>蓝灰色</span><span>#697D80</span>
+  </div>
+  <div class="swatch" style="background: rgb(227, 210, 188); color: #000">
+    <b>M4</b><span>浅米色</span><span>#E3D2BC</span>
+  </div>
+  <div class="swatch" style="background: rgb(180, 164, 151); color: #000">
+    <b>M7</b><span>灰棕色</span><span>#B4A497</span>
+  </div>
+  <div class="swatch" style="background: rgb(179, 130, 129); color: #000">
+    <b>M8</b><span>灰玫瑰</span><span>#B38281</span>
+  </div>
+  <div class="swatch" style="background: rgb(197, 178, 188); color: #000">
+    <b>M10</b><span>灰紫色</span><span>#C5B2BC</span>
+  </div>
+  <div class="swatch" style="background: rgb(159, 117, 148); color: #000">
+    <b>M11</b><span>紫灰色</span><span>#9F7594</span>
+  </div>
+  <div class="swatch" style="background: rgb(209, 144, 102); color: #000">
+    <b>M13</b><span>铜棕色</span><span>#D19066</span>
+  </div>
+  <div class="swatch" style="background: rgb(199, 115, 98); color: #000">
+    <b>M14</b><span>赤陶色</span><span>#C77362</span>
+  </div>
+  <div class="swatch" style="background: rgb(117, 125, 120); color: #fff">
+    <b>M15</b><span>中灰色</span><span>#757D78</span>
+  </div>
+</div>
+<h2>系列 P <span>(23 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(252, 247, 248); color: #000">
+    <b>P1</b><span>极浅粉白</span><span>#FCF7F8</span>
+  </div>
+  <div class="swatch" style="background: rgb(176, 169, 172); color: #000">
+    <b>P2</b><span>浅灰色</span><span>#B0A9AC</span>
+  </div>
+  <div class="swatch" style="background: rgb(175, 220, 171); color: #000">
+    <b>P3</b><span>浅苹果绿</span><span>#AFDCAB</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 164, 159); color: #000">
+    <b>P4</b><span>浅珊瑚粉</span><span>#FEA49F</span>
+  </div>
+  <div class="swatch" style="background: rgb(238, 140, 62); color: #000">
+    <b>P5</b><span>浅橙色</span><span>#EE8C3E</span>
+  </div>
+  <div class="swatch" style="background: rgb(95, 208, 167); color: #000">
+    <b>P6</b><span>浅薄荷绿</span><span>#5FD0A7</span>
+  </div>
+  <div class="swatch" style="background: rgb(235, 146, 112); color: #000">
+    <b>P7</b><span>浅杏橙</span><span>#EB9270</span>
+  </div>
+  <div class="swatch" style="background: rgb(240, 217, 88); color: #000">
+    <b>P8</b><span>柔黄色</span><span>#F0D958</span>
+  </div>
+  <div class="swatch" style="background: rgb(217, 217, 217); color: #000">
+    <b>P9</b><span>浅灰色</span><span>#D9D9D9</span>
+  </div>
+  <div class="swatch" style="background: rgb(217, 199, 234); color: #000">
+    <b>P10</b><span>浅淡紫</span><span>#D9C7EA</span>
+  </div>
+  <div class="swatch" style="background: rgb(243, 236, 201); color: #000">
+    <b>P11</b><span>浅米黄</span><span>#F3ECC9</span>
+  </div>
+  <div class="swatch" style="background: rgb(230, 238, 242); color: #000">
+    <b>P12</b><span>浅蓝灰</span><span>#E6EEF2</span>
+  </div>
+  <div class="swatch" style="background: rgb(170, 203, 239); color: #000">
+    <b>P13</b><span>浅天蓝</span><span>#AACBEF</span>
+  </div>
+  <div class="swatch" style="background: rgb(51, 118, 128); color: #fff">
+    <b>P14</b><span>深青色</span><span>#337680</span>
+  </div>
+  <div class="swatch" style="background: rgb(102, 133, 117); color: #fff">
+    <b>P15</b><span>灰绿色</span><span>#668575</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 191, 69); color: #000">
+    <b>P16</b><span>亮黄色</span><span>#FEBF45</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 163, 36); color: #000">
+    <b>P17</b><span>浅橙黄</span><span>#FEA324</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 184, 159); color: #000">
+    <b>P18</b><span>浅杏色</span><span>#FEB89F</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 254, 236); color: #000">
+    <b>P19</b><span>奶油白</span><span>#FFFEEC</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 190, 207); color: #000">
+    <b>P20</b><span>浅粉色</span><span>#FEBECF</span>
+  </div>
+  <div class="swatch" style="background: rgb(236, 190, 191); color: #000">
+    <b>P21</b><span>灰粉色</span><span>#ECBEBF</span>
+  </div>
+  <div class="swatch" style="background: rgb(228, 168, 159); color: #000">
+    <b>P22</b><span>浅玫瑰</span><span>#E4A89F</span>
+  </div>
+  <div class="swatch" style="background: rgb(165, 98, 104); color: #fff">
+    <b>P23</b><span>深玫瑰</span><span>#A56268</span>
+  </div>
+</div>
+<h2>系列 Q <span>(5 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(233, 236, 145); color: #000">
+    <b>Q2</b><span>浅黄绿</span><span>#E9EC91</span>
+  </div>
+  <div class="swatch" style="background: rgb(118, 206, 222); color: #000">
+    <b>Q5</b><span>浅蓝色</span><span>#76CEDE</span>
+  </div>
+  <div class="swatch" style="background: rgb(242, 165, 232); color: #000">
+    <b>Q1</b><span>亮粉色</span><span>#F2A5E8</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 255, 0); color: #000">
+    <b>Q3</b><span>纯黄色</span><span>#FFFF00</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 235, 250); color: #000">
+    <b>Q4</b><span>浅粉色</span><span>#FFEBFA</span>
+  </div>
+</div>
+<h2>系列 R <span>(28 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(213, 13, 33); color: #fff">
+    <b>R1</b><span>鲜红色</span><span>#D50D21</span>
+  </div>
+  <div class="swatch" style="background: rgb(249, 47, 131); color: #fff">
+    <b>R2</b><span>亮粉色</span><span>#F92F83</span>
+  </div>
+  <div class="swatch" style="background: rgb(253, 131, 36); color: #000">
+    <b>R3</b><span>亮橙色</span><span>#FD8324</span>
+  </div>
+  <div class="swatch" style="background: rgb(248, 236, 49); color: #000">
+    <b>R4</b><span>鲜黄色</span><span>#F8EC31</span>
+  </div>
+  <div class="swatch" style="background: rgb(53, 199, 91); color: #000">
+    <b>R5</b><span>亮绿色</span><span>#35C75B</span>
+  </div>
+  <div class="swatch" style="background: rgb(35, 136, 145); color: #fff">
+    <b>R6</b><span>深青色</span><span>#238891</span>
+  </div>
+  <div class="swatch" style="background: rgb(25, 119, 157); color: #fff">
+    <b>R7</b><span>深蓝色</span><span>#19779D</span>
+  </div>
+  <div class="swatch" style="background: rgb(26, 96, 195); color: #fff">
+    <b>R8</b><span>皇家蓝</span><span>#1A60C3</span>
+  </div>
+  <div class="swatch" style="background: rgb(154, 86, 180); color: #fff">
+    <b>R9</b><span>紫色</span><span>#9A56B4</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 219, 76); color: #000">
+    <b>R10</b><span>金黄色</span><span>#FFDB4C</span>
+  </div>
+  <div class="swatch" style="background: rgb(255, 235, 250); color: #000">
+    <b>R11</b><span>浅粉色</span><span>#FFEBFA</span>
+  </div>
+  <div class="swatch" style="background: rgb(216, 213, 206); color: #000">
+    <b>R12</b><span>浅灰色</span><span>#D8D5CE</span>
+  </div>
+  <div class="swatch" style="background: rgb(85, 81, 76); color: #fff">
+    <b>R13</b><span>深灰色</span><span>#55514C</span>
+  </div>
+  <div class="swatch" style="background: rgb(159, 228, 223); color: #000">
+    <b>R14</b><span>浅薄荷</span><span>#9FE4DF</span>
+  </div>
+  <div class="swatch" style="background: rgb(119, 206, 233); color: #000">
+    <b>R15</b><span>浅蓝色</span><span>#77CEE9</span>
+  </div>
+  <div class="swatch" style="background: rgb(62, 207, 202); color: #000">
+    <b>R16</b><span>青绿色</span><span>#3ECFCA</span>
+  </div>
+  <div class="swatch" style="background: rgb(74, 134, 122); color: #fff">
+    <b>R17</b><span>深绿</span><span>#4A867A</span>
+  </div>
+  <div class="swatch" style="background: rgb(127, 205, 157); color: #000">
+    <b>R18</b><span>浅绿色</span><span>#7FCD9D</span>
+  </div>
+  <div class="swatch" style="background: rgb(205, 229, 93); color: #000">
+    <b>R19</b><span>黄绿色</span><span>#CDE55D</span>
+  </div>
+  <div class="swatch" style="background: rgb(232, 199, 180); color: #000">
+    <b>R20</b><span>浅杏色</span><span>#E8C7B4</span>
+  </div>
+  <div class="swatch" style="background: rgb(173, 111, 60); color: #fff">
+    <b>R21</b><span>棕色</span><span>#AD6F3C</span>
+  </div>
+  <div class="swatch" style="background: rgb(108, 55, 47); color: #fff">
+    <b>R22</b><span>深棕色</span><span>#6C372F</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 184, 114); color: #000">
+    <b>R23</b><span>浅橙色</span><span>#FEB872</span>
+  </div>
+  <div class="swatch" style="background: rgb(243, 193, 192); color: #000">
+    <b>R24</b><span>浅玫瑰</span><span>#F3C1C0</span>
+  </div>
+  <div class="swatch" style="background: rgb(201, 103, 94); color: #000">
+    <b>R25</b><span>浅珊瑚</span><span>#C9675E</span>
+  </div>
+  <div class="swatch" style="background: rgb(210, 147, 190); color: #000">
+    <b>R26</b><span>浅紫色</span><span>#D293BE</span>
+  </div>
+  <div class="swatch" style="background: rgb(234, 140, 177); color: #000">
+    <b>R27</b><span>浅粉红</span><span>#EA8CB1</span>
+  </div>
+  <div class="swatch" style="background: rgb(156, 135, 214); color: #000">
+    <b>R28</b><span>浅蓝紫</span><span>#9C87D6</span>
+  </div>
+</div>
+<h2>系列 T <span>(1 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(255, 255, 255); color: #000">
+    <b>T1</b><span>透明白</span><span>#FFFFFF</span>
+  </div>
+</div>
+<h2>系列 Y <span>(5 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(253, 111, 180); color: #000">
+    <b>Y1</b><span>夜光粉</span><span>#FD6FB4</span>
+  </div>
+  <div class="swatch" style="background: rgb(254, 180, 129); color: #000">
+    <b>Y2</b><span>夜光橙</span><span>#FEB481</span>
+  </div>
+  <div class="swatch" style="background: rgb(215, 250, 160); color: #000">
+    <b>Y3</b><span>夜光绿</span><span>#D7FAA0</span>
+  </div>
+  <div class="swatch" style="background: rgb(139, 219, 250); color: #000">
+    <b>Y4</b><span>夜光蓝</span><span>#8BDBFA</span>
+  </div>
+  <div class="swatch" style="background: rgb(233, 135, 234); color: #000">
+    <b>Y5</b><span>夜光紫</span><span>#E987EA</span>
+  </div>
+</div>
+<h2>系列 ZG <span>(8 色)</span></h2>
+<div class="group">
+  <div class="swatch" style="background: rgb(218, 171, 179); color: #000">
+    <b>ZG1</b><span>珠光粉灰</span><span>#DAABB3</span>
+  </div>
+  <div class="swatch" style="background: rgb(214, 170, 135); color: #000">
+    <b>ZG2</b><span>珠光驼色</span><span>#D6AA87</span>
+  </div>
+  <div class="swatch" style="background: rgb(193, 189, 141); color: #000">
+    <b>ZG3</b><span>珠光橄榄</span><span>#C1BD8D</span>
+  </div>
+  <div class="swatch" style="background: rgb(150, 134, 159); color: #000">
+    <b>ZG4</b><span>珠光灰紫</span><span>#96869F</span>
+  </div>
+  <div class="swatch" style="background: rgb(132, 144, 166); color: #000">
+    <b>ZG5</b><span>珠光蓝灰</span><span>#8490A6</span>
+  </div>
+  <div class="swatch" style="background: rgb(148, 191, 226); color: #000">
+    <b>ZG6</b><span>珠光浅蓝</span><span>#94BFE2</span>
+  </div>
+  <div class="swatch" style="background: rgb(226, 169, 210); color: #000">
+    <b>ZG7</b><span>珠光粉紫</span><span>#E2A9D2</span>
+  </div>
+  <div class="swatch" style="background: rgb(171, 145, 192); color: #000">
+    <b>ZG8</b><span>珠光紫灰</span><span>#AB91C0</span>
+  </div>
+</div>
+</body>
+</html>
