@@ -16,6 +16,7 @@
 
 html { background: #ddd; }
 
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -33,21 +34,11 @@ a { color: inherit; text-decoration: none; }
 button { background: none; border: none; cursor: pointer; color: inherit; font: inherit; padding: 0; }
 img { display: block; }
 
+#app { position: relative; z-index: 1; background: var(--bg); overflow: hidden; }
+
 /* ── Page ── */
 .page {
   min-height: 100vh;
-  animation: pgIn-forward 0.25s ease-in-out;
-}
-.nav-back .page {
-  animation: pgIn-back 0.25s ease-in-out;
-}
-@keyframes pgIn-forward {
-  from { opacity: 0; transform: translateX(-30%); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes pgIn-back {
-  from { opacity: 0; transform: translateX(30%); }
-  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ── Splash ── */

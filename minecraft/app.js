@@ -29,34 +29,41 @@ async function init() {
       '<div class="err-hint">请通过 HTTP 服务器访问<br>python3 -m http.server 8080</div></div>';
     return;
   }
-  // Intercept h-back clicks to mark as back navigation
+  initGesture();
   document.addEventListener('click', e => {
-    if (e.target.closest('.h-back')) _isBack = true;
-  }, true);
-  window.addEventListener('popstate', () => { _isBack = true; });
-  window.addEventListener('hashchange', route);
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    navigate(a.getAttribute('href'), !!a.closest('.h-back'));
+  });
+  window.addEventListener('popstate', () => {
+    _isBack = true;
+    _preSnap = takeCurrentSnap(document.getElementById('app'));
+    route();
+  });
   route();
 }
 
 // ─── Router ─────────────────────────────────────────────────────────────────
 
-const scrollCache = {};
-let _isBack  = false;
-let prevHash = location.hash || '#/';
+const scrollCache  = {};
+let _isBack        = false;
+let prevHash       = location.hash || '#/';
+let _gestureSnap   = null;
+let _gestureSnapDx = 0;
+let _preSnap       = null;
 
-function route() {
-  const fullHash = location.hash || '#/';
-  const hash = fullHash.slice(1) || '/';
-  const app  = document.getElementById('app');
-  const isBack = _isBack;
-  _isBack = false;
+function navigate(hash, back = false) {
+  if (hash === (location.hash || '#/')) return;
+  _isBack = back;
+  if (!_gestureSnap) {
+    _preSnap = takeCurrentSnap(document.getElementById('app'));
+  }
+  history.pushState(null, '', hash);
+  route();
+}
 
-  // Save scroll of the page we're leaving
-  scrollCache[prevHash] = window.scrollY;
-  prevHash = fullHash;
-
-  app.classList.toggle('nav-back', isBack);
-
+function render(hash, app) {
   if (hash === '/' || hash === '') {
     renderHome(app);
   } else if (hash.startsWith('/category/')) {
@@ -70,9 +77,234 @@ function route() {
   } else {
     renderHome(app);
   }
+}
+
+function route() {
+  const fullHash = location.hash || '#/';
+  const hash     = fullHash.slice(1) || '/';
+  const app      = document.getElementById('app');
+  const isBack   = _isBack;
+  _isBack = false;
+
+  scrollCache[prevHash] = window.scrollY;
+  prevHash = fullHash;
+
+  const curSnap = _gestureSnap || _preSnap || null;
+  const snapDx  = _gestureSnapDx;
+  _gestureSnap = _preSnap = null;
+  _gestureSnapDx = 0;
+
+  if (!isBack && app.firstElementChild && !app.querySelector('.splash')) {
+    pushPage(snapHTML(app), window.scrollY);
+  }
+
+  render(hash, app);
+
+  if (isBack) runBackTransition(curSnap, snapDx);
+  else        runForwardTransition(curSnap);
 
   const saved = isBack ? (scrollCache[fullHash] || 0) : 0;
   requestAnimationFrame(() => window.scrollTo(0, saved));
+}
+
+// ─── Transition ──────────────────────────────────────────────────────────────
+
+let transitioning  = false;
+let pageHTMLStack  = [];
+let persistedEl    = null;
+
+const SNAP_CSS = 'position:fixed;inset:0;max-width:768px;width:100%;margin:0 auto;overflow:hidden;pointer-events:none;background:#f5f4f0;will-change:transform;';
+
+function snapHTML(app) {
+  app.querySelectorAll('canvas').forEach(c => {
+    try {
+      const img = new Image();
+      img.src = c.toDataURL();
+      img.style.cssText = `width:${c.offsetWidth}px;height:${c.offsetHeight}px;display:block;`;
+      c.replaceWith(img);
+    } catch (_) {}
+  });
+  return app.innerHTML;
+}
+
+function makeEl(html, scrollY, zIndex, transformX) {
+  if (!html) return null;
+  const el = document.createElement('div');
+  el.style.cssText = `${SNAP_CSS}z-index:${zIndex};transform:translateX(${transformX});`;
+  const inner = document.createElement('div');
+  inner.style.transform = `translateY(-${scrollY || 0}px)`;
+  inner.innerHTML = html;
+  el.appendChild(inner);
+  document.body.appendChild(el);
+  return el;
+}
+
+function refreshPersistedEl() {
+  persistedEl?.remove(); persistedEl = null;
+  const entry = pageHTMLStack[pageHTMLStack.length - 1];
+  if (entry) persistedEl = makeEl(entry.html, entry.scrollY, 0, '-30%');
+}
+
+function pushPage(html, scrollY) { pageHTMLStack.push({ html, scrollY: scrollY || 0 }); refreshPersistedEl(); }
+function popPage()                { pageHTMLStack.pop(); refreshPersistedEl(); }
+
+function takeCurrentSnap(app) {
+  if (!app.firstElementChild || app.querySelector('.splash')) return null;
+  const el = document.createElement('div');
+  el.style.cssText = `${SNAP_CSS}z-index:500;transform:translateX(0);`;
+  const inner = document.createElement('div');
+  inner.style.transform = `translateY(-${window.scrollY}px)`;
+  const clone = app.cloneNode(true);
+  // 复制内部可滚动容器的 scrollTop
+  const origEls  = [...app.querySelectorAll('*')];
+  const cloneEls = [...clone.querySelectorAll('*')];
+  origEls.forEach((orig, i) => {
+    if (orig.scrollTop || orig.scrollLeft) {
+      cloneEls[i].scrollTop  = orig.scrollTop;
+      cloneEls[i].scrollLeft = orig.scrollLeft;
+    }
+  });
+  // canvas → img
+  const canvases = app.querySelectorAll('canvas');
+  clone.querySelectorAll('canvas').forEach((cc, i) => {
+    try {
+      const src = canvases[i]?.toDataURL();
+      if (!src) return;
+      const img = new Image();
+      img.src = src;
+      img.style.cssText = `width:${canvases[i].offsetWidth}px;height:${canvases[i].offsetHeight}px;display:block;`;
+      cc.replaceWith(img);
+    } catch (_) {}
+  });
+  inner.appendChild(clone);
+  el.appendChild(inner);
+  document.body.appendChild(el);
+  return el;
+}
+
+function runForwardTransition(curSnap) {
+  curSnap?.remove();
+  if (!persistedEl) return;
+  transitioning = true;
+  const app  = document.getElementById('app');
+  const w    = app.offsetWidth || window.innerWidth;
+  const page = app.firstElementChild;
+  const done = () => { transitioning = false; };
+  if (page) page.animate(
+    [{ transform: `translateX(${w}px)` }, { transform: 'translateX(0)' }],
+    { duration: 280, easing: 'cubic-bezier(0.4,0,0.2,1)' }
+  ).onfinish = done;
+  else done();
+}
+
+function runBackTransition(curSnap, startDx) {
+  if (!curSnap && !persistedEl) { transitioning = false; return; }
+  transitioning = true;
+  const app  = document.getElementById('app');
+  const w    = app.offsetWidth || window.innerWidth;
+  const rem  = w - (startDx || 0);
+  const dur  = Math.round(Math.min(280, Math.max(120, rem * 0.65)));
+  const ease = 'cubic-bezier(0.4,0,0.2,1)';
+
+  const done = () => {
+    curSnap?.remove();
+    if (persistedEl) { persistedEl.remove(); persistedEl = null; }
+    transitioning = false;
+    popPage();
+  };
+
+  if (curSnap) {
+    curSnap.style.zIndex = '500';
+    curSnap.animate(
+      [{ transform: `translateX(${startDx || 0}px)` }, { transform: `translateX(${w}px)` }],
+      { duration: dur, easing: ease, fill: 'forwards' }
+    ).onfinish = done;
+  } else {
+    done();
+  }
+
+  if (persistedEl) {
+    persistedEl.style.zIndex = '2';
+    const fromT = persistedEl.style.transform || 'translateX(-30%)';
+    persistedEl.animate(
+      [{ transform: fromT }, { transform: 'translateX(0)' }],
+      { duration: dur, easing: ease }
+    );
+  }
+}
+
+// ─── Swipe Gesture ───────────────────────────────────────────────────────────
+
+function backTarget() {
+  const h = location.hash.slice(1) || '/';
+  if (h.startsWith('/item/')) {
+    const rest = h.slice(6);
+    return '#/category/' + rest.slice(0, rest.indexOf('/'));
+  }
+  if (h.startsWith('/category/') || h === '/summary') return '#/';
+  return null;
+}
+
+function initGesture() {
+  let sw = null;
+
+  document.addEventListener('touchstart', e => {
+    if (transitioning) return;
+    sw = { x0: e.touches[0].clientX, y0: e.touches[0].clientY, decided: false, active: false };
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!sw) return;
+    const dx = e.touches[0].clientX - sw.x0;
+    const dy = e.touches[0].clientY - sw.y0;
+
+    if (!sw.decided) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      sw.decided = true;
+      const target = backTarget();
+      if (dx <= 0 || Math.abs(dy) > Math.abs(dx) || !target || !persistedEl) { sw = null; return; }
+      sw.active  = true;
+      sw.target  = target;
+      sw.app     = document.getElementById('app');
+    }
+
+    if (!sw?.active) return;
+    e.preventDefault();
+    const d = Math.max(0, dx);
+    const w = window.innerWidth;
+    sw.app.style.transform = `translateX(${d}px)`;
+    if (persistedEl) persistedEl.style.transform = `translateX(${-30 + (d / w) * 30}%)`;
+  }, { passive: false });
+
+  function onEnd(e) {
+    if (!sw?.active) { sw = null; return; }
+    const dx  = (e.changedTouches?.[0]?.clientX ?? sw.x0) - sw.x0;
+    const { app, target } = sw;
+    sw = null;
+
+    const w = app.offsetWidth || window.innerWidth;
+    if (dx > w * 0.3) {
+      const curSnap = takeCurrentSnap(app);
+      if (curSnap) curSnap.style.transform = `translateX(${dx}px)`;
+      app.style.transform = '';
+      _gestureSnap   = curSnap;
+      _gestureSnapDx = curSnap ? dx : 0;
+      navigate(target, true);
+    } else {
+      const fromT = app.style.transform;
+      app.animate(
+        [{ transform: fromT }, { transform: 'translateX(0)' }],
+        { duration: 200, easing: 'ease-out' }
+      ).onfinish = () => { app.style.transform = ''; };
+      if (persistedEl) persistedEl.animate(
+        [{ transform: persistedEl.style.transform }, { transform: 'translateX(-30%)' }],
+        { duration: 200, easing: 'ease-out' }
+      ).onfinish = () => { if (persistedEl) persistedEl.style.transform = 'translateX(-30%)'; };
+    }
+  }
+
+  document.addEventListener('touchend',    onEnd, { passive: true });
+  document.addEventListener('touchcancel', onEnd, { passive: true });
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
