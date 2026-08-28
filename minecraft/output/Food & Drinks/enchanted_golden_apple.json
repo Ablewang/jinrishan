@@ -1,0 +1,509 @@
+{
+  "name": "enchanted_golden_apple",
+  "display_name": "附魔金苹果",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 114,
+  "color_count": 19,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F19",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R21",
+      "R22",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R21",
+      "R21",
+      "F7",
+      "R22",
+      "F7",
+      "F7",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G7",
+      "A26",
+      "T1",
+      "A26",
+      "R22",
+      "R21",
+      "A20",
+      "P16",
+      "F7",
+      "F10",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G7",
+      "G10",
+      "A22",
+      "A25",
+      "T1",
+      "T1",
+      "T1",
+      "A25",
+      "A3",
+      "P16",
+      "F7",
+      "F10",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R21",
+      "A26",
+      "A22",
+      "A3",
+      "A3",
+      "A3",
+      "A3",
+      "A3",
+      "A20",
+      "A3",
+      "A26",
+      "F7",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R21",
+      "A26",
+      "A21",
+      "A3",
+      "A20",
+      "A3",
+      "A20",
+      "A20",
+      "A20",
+      "A17",
+      "A21",
+      "F11",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "F7",
+      "A26",
+      "A26",
+      "A20",
+      "A20",
+      "P16",
+      "A26",
+      "A18",
+      "A26",
+      "A17",
+      "A18",
+      "R22",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "F7",
+      "A26",
+      "A26",
+      "A26",
+      "A26",
+      "A26",
+      "A18",
+      "P16",
+      "A6",
+      "A3",
+      "P16",
+      "R22",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "F7",
+      "A26",
+      "G10",
+      "A18",
+      "A26",
+      "A6",
+      "A6",
+      "A20",
+      "A6",
+      "R22",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "F7",
+      "R21",
+      "A26",
+      "P16",
+      "A6",
+      "A20",
+      "A20",
+      "A6",
+      "R21",
+      "R22",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "F11",
+      "R21",
+      "A26",
+      "R21",
+      "R21",
+      "A6",
+      "R21",
+      "R22",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F11",
+      "F7",
+      "F10",
+      "F7",
+      "R22",
+      "R22",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "A26",
+      "name": "琥珀黄",
+      "rgb": [
+        227,
+        177,
+        78
+      ],
+      "count": 18,
+      "pct": 15.8
+    },
+    {
+      "code": "F7",
+      "name": "暗血红",
+      "rgb": [
+        147,
+        35,
+        36
+      ],
+      "count": 13,
+      "pct": 11.4
+    },
+    {
+      "code": "R21",
+      "name": "棕色",
+      "rgb": [
+        173,
+        111,
+        60
+      ],
+      "count": 12,
+      "pct": 10.5
+    },
+    {
+      "code": "A20",
+      "name": "金杏黄",
+      "rgb": [
+        245,
+        206,
+        85
+      ],
+      "count": 11,
+      "pct": 9.6
+    },
+    {
+      "code": "R22",
+      "name": "深棕色",
+      "rgb": [
+        108,
+        55,
+        47
+      ],
+      "count": 10,
+      "pct": 8.8
+    },
+    {
+      "code": "A3",
+      "name": "荧光浅黄",
+      "rgb": [
+        239,
+        242,
+        100
+      ],
+      "count": 10,
+      "pct": 8.8
+    },
+    {
+      "code": "A6",
+      "name": "蜜橙色",
+      "rgb": [
+        245,
+        179,
+        30
+      ],
+      "count": 7,
+      "pct": 6.1
+    },
+    {
+      "code": "P16",
+      "name": "亮黄色",
+      "rgb": [
+        254,
+        191,
+        69
+      ],
+      "count": 6,
+      "pct": 5.3
+    },
+    {
+      "code": "T1",
+      "name": "透明白",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "count": 4,
+      "pct": 3.5
+    },
+    {
+      "code": "A18",
+      "name": "浅蜜桃色",
+      "rgb": [
+        244,
+        191,
+        84
+      ],
+      "count": 4,
+      "pct": 3.5
+    },
+    {
+      "code": "F10",
+      "name": "红棕色",
+      "rgb": [
+        115,
+        44,
+        2
+      ],
+      "count": 3,
+      "pct": 2.6
+    },
+    {
+      "code": "F11",
+      "name": "暗红棕",
+      "rgb": [
+        88,
+        25,
+        60
+      ],
+      "count": 3,
+      "pct": 2.6
+    },
+    {
+      "code": "G7",
+      "name": "深棕色",
+      "rgb": [
+        216,
+        95,
+        75
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "G10",
+      "name": "栗子棕",
+      "rgb": [
+        205,
+        145,
+        56
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "A22",
+      "name": "黄绿色",
+      "rgb": [
+        247,
+        232,
+        141
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "A25",
+      "name": "杏仁黄",
+      "rgb": [
+        245,
+        249,
+        168
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "A21",
+      "name": "香草黄",
+      "rgb": [
+        249,
+        192,
+        95
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "A17",
+      "name": "蜂蜜黄",
+      "rgb": [
+        238,
+        254,
+        128
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "F19",
+      "name": "深玫瑰红",
+      "rgb": [
+        170,
+        39,
+        88
+      ],
+      "count": 1,
+      "pct": 0.9
+    }
+  ]
+}

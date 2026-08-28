@@ -1,0 +1,443 @@
+{
+  "name": "calibrated_sculk_sensor",
+  "display_name": "校准幽匿感测体",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 134,
+  "color_count": 13,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "ZG4",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H10",
+      "ZG4",
+      "ZG4",
+      "ZG8",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "ZG4",
+      "ZG4",
+      "H18",
+      "H18",
+      "ZG4",
+      "ZG8",
+      "ZG8",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "ZG8",
+      "ZG4",
+      "ZG8",
+      "H18",
+      "M8",
+      "M8",
+      "C13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "M8",
+      "ZG8",
+      "ZG4",
+      "H18",
+      "M8",
+      "C13",
+      "C13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "B23",
+      "M8",
+      "ZG8",
+      "ZG4",
+      "H10",
+      "H1",
+      "B23",
+      "B23",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "B23",
+      "B23",
+      "B23",
+      "C13",
+      "C13",
+      "B23",
+      "H1",
+      "H1",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      null,
+      null
+    ],
+    [
+      null,
+      "H10",
+      "B23",
+      "B23",
+      "B23",
+      "H10",
+      "B23",
+      "B23",
+      "H1",
+      "H1",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "H10",
+      null
+    ],
+    [
+      null,
+      "H10",
+      "H10",
+      "H10",
+      "B23",
+      "B23",
+      "B23",
+      "H10",
+      "H1",
+      "B23",
+      "E15",
+      "D26",
+      "H10",
+      "P14",
+      "H10",
+      null
+    ],
+    [
+      null,
+      "H1",
+      "H1",
+      "H10",
+      "H10",
+      "H10",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "M3",
+      "M8",
+      "H1",
+      "H1",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H10",
+      "H10",
+      "H10",
+      "H10",
+      "H10",
+      "ZG8",
+      "M3",
+      "H1",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H10",
+      "H10",
+      "H1",
+      "M3",
+      "C13",
+      "M3",
+      "H1",
+      "H1",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "M3",
+      "M3",
+      "C13",
+      "H1",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      "C20",
+      "H1",
+      "H1",
+      "C13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 40,
+      "pct": 29.9
+    },
+    {
+      "code": "B23",
+      "name": "暗橄榄",
+      "rgb": [
+        20,
+        83,
+        112
+      ],
+      "count": 28,
+      "pct": 20.9
+    },
+    {
+      "code": "H10",
+      "name": "珍珠灰",
+      "rgb": [
+        40,
+        50,
+        58
+      ],
+      "count": 21,
+      "pct": 15.7
+    },
+    {
+      "code": "ZG4",
+      "name": "珠光灰紫",
+      "rgb": [
+        150,
+        134,
+        159
+      ],
+      "count": 9,
+      "pct": 6.7
+    },
+    {
+      "code": "ZG8",
+      "name": "珠光紫灰",
+      "rgb": [
+        171,
+        145,
+        192
+      ],
+      "count": 8,
+      "pct": 6.0
+    },
+    {
+      "code": "C13",
+      "name": "浅粉蓝",
+      "rgb": [
+        32,
+        52,
+        111
+      ],
+      "count": 8,
+      "pct": 6.0
+    },
+    {
+      "code": "M8",
+      "name": "灰玫瑰",
+      "rgb": [
+        62,
+        83,
+        167
+      ],
+      "count": 6,
+      "pct": 4.5
+    },
+    {
+      "code": "M3",
+      "name": "蓝灰色",
+      "rgb": [
+        66,
+        57,
+        72
+      ],
+      "count": 6,
+      "pct": 4.5
+    },
+    {
+      "code": "H18",
+      "name": "奶油白",
+      "rgb": [
+        142,
+        174,
+        143
+      ],
+      "count": 4,
+      "pct": 3.0
+    },
+    {
+      "code": "E15",
+      "name": "柔粉色",
+      "rgb": [
+        250,
+        201,
+        222
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "D26",
+      "name": "淡粉紫",
+      "rgb": [
+        208,
+        151,
+        255
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "P14",
+      "name": "深青色",
+      "rgb": [
+        51,
+        118,
+        128
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "C20",
+      "name": "中海蓝",
+      "rgb": [
+        60,
+        183,
+        196
+      ],
+      "count": 1,
+      "pct": 0.7
+    }
+  ]
+}

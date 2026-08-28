@@ -1,0 +1,443 @@
+{
+  "name": "parrot_spawn_egg",
+  "display_name": "鹦鹉刷怪蛋",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 103,
+  "color_count": 13,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      "F7",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      "F7",
+      "F7",
+      "F13",
+      "F7",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      "F13",
+      "F7",
+      "A15",
+      "F7",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      "F7",
+      "F6",
+      "F6",
+      "F7",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      "F6",
+      "A15",
+      "A15",
+      "F6",
+      "F7",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      "F6",
+      "F13",
+      "A15",
+      "A15",
+      "A15",
+      "F7",
+      "F7",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "F7",
+      "F13",
+      "F13",
+      "A15",
+      "A15",
+      "A15",
+      "F6",
+      "F7",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "F7",
+      "F6",
+      "F13",
+      "A15",
+      "H1",
+      "H1",
+      "A15",
+      "F6",
+      "F7",
+      "F7",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G10",
+      "R4",
+      "A15",
+      "A15",
+      "H1",
+      "H1",
+      "F6",
+      "F6",
+      "A5",
+      "G10",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G10",
+      "R4",
+      "R4",
+      "A15",
+      "H1",
+      "H1",
+      "F7",
+      "A5",
+      "A5",
+      "G10",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "M9",
+      "C16",
+      "R4",
+      "R4",
+      "H1",
+      "H1",
+      "G10",
+      "A5",
+      "C10",
+      "M8",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "M9",
+      "C10",
+      "C16",
+      "R4",
+      "A5",
+      "G10",
+      "A5",
+      "C10",
+      "D4",
+      "M8",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "M8",
+      "D4",
+      "C10",
+      "A5",
+      "A5",
+      "C10",
+      "D4",
+      "M8",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M8",
+      "M8",
+      "M8",
+      "M8",
+      "M8",
+      "M8",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "F7",
+      "name": "暗血红",
+      "rgb": [
+        147,
+        35,
+        36
+      ],
+      "count": 23,
+      "pct": 22.3
+    },
+    {
+      "code": "A15",
+      "name": "亮柠檬黄",
+      "rgb": [
+        255,
+        40,
+        33
+      ],
+      "count": 14,
+      "pct": 13.6
+    },
+    {
+      "code": "F6",
+      "name": "深红褐",
+      "rgb": [
+        186,
+        2,
+        3
+      ],
+      "count": 10,
+      "pct": 9.7
+    },
+    {
+      "code": "M8",
+      "name": "灰玫瑰",
+      "rgb": [
+        62,
+        83,
+        167
+      ],
+      "count": 10,
+      "pct": 9.7
+    },
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 8,
+      "pct": 7.8
+    },
+    {
+      "code": "A5",
+      "name": "向日葵黄",
+      "rgb": [
+        239,
+        184,
+        30
+      ],
+      "count": 8,
+      "pct": 7.8
+    },
+    {
+      "code": "F13",
+      "name": "珊瑚红",
+      "rgb": [
+        237,
+        51,
+        75
+      ],
+      "count": 6,
+      "pct": 5.8
+    },
+    {
+      "code": "G10",
+      "name": "栗子棕",
+      "rgb": [
+        205,
+        145,
+        56
+      ],
+      "count": 6,
+      "pct": 5.8
+    },
+    {
+      "code": "R4",
+      "name": "鲜黄色",
+      "rgb": [
+        248,
+        236,
+        49
+      ],
+      "count": 6,
+      "pct": 5.8
+    },
+    {
+      "code": "C10",
+      "name": "浅湖蓝",
+      "rgb": [
+        34,
+        100,
+        255
+      ],
+      "count": 5,
+      "pct": 4.9
+    },
+    {
+      "code": "D4",
+      "name": "深皇家蓝",
+      "rgb": [
+        18,
+        34,
+        188
+      ],
+      "count": 3,
+      "pct": 2.9
+    },
+    {
+      "code": "M9",
+      "name": "棕褐色",
+      "rgb": [
+        51,
+        83,
+        193
+      ],
+      "count": 2,
+      "pct": 1.9
+    },
+    {
+      "code": "C16",
+      "name": "深钴蓝",
+      "rgb": [
+        38,
+        113,
+        236
+      ],
+      "count": 2,
+      "pct": 1.9
+    }
+  ]
+}

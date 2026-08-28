@@ -1,0 +1,421 @@
+{
+  "name": "waxed_exposed_cut_copper_slab",
+  "display_name": "涂蜡轻微氧化切制铜台阶",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 112,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G14",
+      "M4",
+      "G14",
+      "M4",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G13",
+      "G14",
+      "M4",
+      "G14",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G14",
+      "G13",
+      "G14",
+      "H20",
+      "M4",
+      "G14",
+      "M4",
+      "G14",
+      "G13",
+      "G14",
+      "G12",
+      "M4",
+      null,
+      null
+    ],
+    [
+      null,
+      "G14",
+      "G14",
+      "G14",
+      "G13",
+      "G13",
+      "M4",
+      "G14",
+      "M4",
+      "G14",
+      "G13",
+      "G14",
+      "G13",
+      "M4",
+      "G9",
+      null
+    ],
+    [
+      null,
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G12",
+      "G14",
+      "G13",
+      "G14",
+      "M4",
+      "G14",
+      "G9",
+      "G9",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "M4",
+      "G9",
+      "G9",
+      "B24",
+      "G9",
+      "G18",
+      null
+    ],
+    [
+      null,
+      "G14",
+      "G14",
+      "G18",
+      "G14",
+      "P15",
+      "G14",
+      "G14",
+      "G9",
+      "G9",
+      "G9",
+      "G9",
+      "G18",
+      "G9",
+      "G9",
+      null
+    ],
+    [
+      null,
+      "G18",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G18",
+      "G18",
+      "G9",
+      "H1",
+      "G9",
+      "H1",
+      "H1",
+      "H1",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G18",
+      "G14",
+      "G18",
+      "G14",
+      "G14",
+      "G18",
+      "G9",
+      "G18",
+      "H1",
+      "H1",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G18",
+      "R13",
+      "G14",
+      "G18",
+      "H1",
+      "H1",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G18",
+      "H1",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "G14",
+      "name": "灰咖棕",
+      "rgb": [
+        117,
+        86,
+        67
+      ],
+      "count": 49,
+      "pct": 43.8
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 15,
+      "pct": 13.4
+    },
+    {
+      "code": "G18",
+      "name": "淡肤米色",
+      "rgb": [
+        69,
+        68,
+        59
+      ],
+      "count": 13,
+      "pct": 11.6
+    },
+    {
+      "code": "M4",
+      "name": "浅米色",
+      "rgb": [
+        215,
+        131,
+        128
+      ],
+      "count": 11,
+      "pct": 9.8
+    },
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 10,
+      "pct": 8.9
+    },
+    {
+      "code": "G13",
+      "name": "赤陶棕",
+      "rgb": [
+        138,
+        93,
+        60
+      ],
+      "count": 8,
+      "pct": 7.1
+    },
+    {
+      "code": "G12",
+      "name": "浅橙肤色",
+      "rgb": [
+        199,
+        158,
+        115
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "H20",
+      "name": "钢灰色",
+      "rgb": [
+        108,
+        150,
+        120
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "B24",
+      "name": "浅柠檬绿",
+      "rgb": [
+        39,
+        58,
+        40
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "P15",
+      "name": "灰绿色",
+      "rgb": [
+        102,
+        133,
+        117
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "R13",
+      "name": "深灰色",
+      "rgb": [
+        85,
+        81,
+        76
+      ],
+      "count": 1,
+      "pct": 0.9
+    }
+  ]
+}

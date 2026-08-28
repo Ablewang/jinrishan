@@ -1,0 +1,432 @@
+{
+  "name": "evoker_spawn_egg",
+  "display_name": "唤魔者刷怪蛋",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 134,
+  "color_count": 12,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R13",
+      "R13",
+      "R13",
+      "R13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R13",
+      "M6",
+      "P2",
+      "P2",
+      "M6",
+      "R13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "R13",
+      "M6",
+      "P2",
+      "P2",
+      "P2",
+      "P2",
+      "M6",
+      "R13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "R13",
+      "H1",
+      "H1",
+      "H14",
+      "H14",
+      "P2",
+      "P2",
+      "H1",
+      "H1",
+      "R13",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "R13",
+      "H1",
+      "H1",
+      "H1",
+      "H14",
+      "P2",
+      "H1",
+      "H1",
+      "H1",
+      "G18",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R13",
+      "M6",
+      "H14",
+      "H14",
+      "M6",
+      "M6",
+      "M6",
+      "R13",
+      "P2",
+      "M6",
+      "R13",
+      "G18",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R13",
+      "P2",
+      "H14",
+      "H14",
+      "R13",
+      "M6",
+      "R13",
+      "R13",
+      "M6",
+      "M6",
+      "M6",
+      "G18",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R13",
+      "P2",
+      "P2",
+      "H14",
+      "R13",
+      "R13",
+      "R13",
+      "R13",
+      "R13",
+      "M6",
+      "M6",
+      "G18",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R21",
+      "P2",
+      "P2",
+      "P2",
+      "R13",
+      "R13",
+      "R13",
+      "G18",
+      "R13",
+      "M6",
+      "M6",
+      "G13",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H1",
+      "B27",
+      "ZG3",
+      "P2",
+      "R13",
+      "R13",
+      "R13",
+      "G18",
+      "R13",
+      "G12",
+      "B27",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H1",
+      "H1",
+      "G11",
+      "B27",
+      "G18",
+      "R13",
+      "R13",
+      "G18",
+      "B27",
+      "B27",
+      "H1",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      "H1",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "H1",
+      "H1",
+      "H1",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      "H1",
+      "B27",
+      "R21",
+      "H1",
+      "H1",
+      "H1",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      "G13",
+      "G13",
+      "H1",
+      "H1",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "R13",
+      "name": "深灰色",
+      "rgb": [
+        85,
+        81,
+        76
+      ],
+      "count": 34,
+      "pct": 25.4
+    },
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 32,
+      "pct": 23.9
+    },
+    {
+      "code": "M6",
+      "name": "暖灰棕",
+      "rgb": [
+        108,
+        132,
+        138
+      ],
+      "count": 17,
+      "pct": 12.7
+    },
+    {
+      "code": "P2",
+      "name": "浅灰色",
+      "rgb": [
+        176,
+        169,
+        172
+      ],
+      "count": 17,
+      "pct": 12.7
+    },
+    {
+      "code": "G18",
+      "name": "淡肤米色",
+      "rgb": [
+        69,
+        68,
+        59
+      ],
+      "count": 12,
+      "pct": 9.0
+    },
+    {
+      "code": "H14",
+      "name": "灰绿色",
+      "rgb": [
+        168,
+        186,
+        185
+      ],
+      "count": 8,
+      "pct": 6.0
+    },
+    {
+      "code": "B27",
+      "name": "浅苹果绿",
+      "rgb": [
+        164,
+        155,
+        69
+      ],
+      "count": 6,
+      "pct": 4.5
+    },
+    {
+      "code": "G13",
+      "name": "赤陶棕",
+      "rgb": [
+        138,
+        93,
+        60
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "R21",
+      "name": "棕色",
+      "rgb": [
+        173,
+        111,
+        60
+      ],
+      "count": 2,
+      "pct": 1.5
+    },
+    {
+      "code": "ZG3",
+      "name": "珠光橄榄",
+      "rgb": [
+        193,
+        189,
+        141
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "G12",
+      "name": "浅橙肤色",
+      "rgb": [
+        199,
+        158,
+        115
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "G11",
+      "name": "卡其米色",
+      "rgb": [
+        216,
+        209,
+        157
+      ],
+      "count": 1,
+      "pct": 0.7
+    }
+  ]
+}

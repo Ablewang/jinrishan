@@ -1,0 +1,454 @@
+{
+  "name": "end_portal_frame",
+  "display_name": "末地传送门框架",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 154,
+  "color_count": 14,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R17",
+      "B24",
+      "B24",
+      "R17",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "R17",
+      "ZG3",
+      "R17",
+      "G11",
+      "G11",
+      "ZG3",
+      "P3",
+      "R17",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R17",
+      "B24",
+      "R17",
+      "B24",
+      "R17",
+      "H1",
+      "H1",
+      "B24",
+      "H12",
+      "ZG3",
+      "B24",
+      "R17",
+      null,
+      null
+    ],
+    [
+      null,
+      "R17",
+      "B24",
+      "ZG3",
+      "G11",
+      "R17",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "B24",
+      "G11",
+      "ZG3",
+      "B24",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "H20",
+      "B24",
+      "R17",
+      "P3",
+      "ZG3",
+      "H12",
+      "R17",
+      "B24",
+      "B24",
+      "ZG3",
+      "ZG3",
+      "H1",
+      "H1",
+      "B24",
+      null
+    ],
+    [
+      null,
+      "H1",
+      "G14",
+      "H1",
+      "B24",
+      "R17",
+      "B24",
+      "ZG3",
+      "ZG3",
+      "B24",
+      "H1",
+      "H1",
+      "H1",
+      "G18",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "H1",
+      "P15",
+      "P15",
+      "G14",
+      "H1",
+      "B24",
+      "R17",
+      "H1",
+      "H1",
+      "H1",
+      "G18",
+      "G18",
+      "G18",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "H20",
+      "H1",
+      "B24",
+      "H18",
+      "P15",
+      "G14",
+      "H20",
+      "B24",
+      "G18",
+      "G18",
+      "R13",
+      "H1",
+      "H1",
+      "G18",
+      null
+    ],
+    [
+      null,
+      "H20",
+      "ZG3",
+      "G14",
+      "H1",
+      "B24",
+      "H20",
+      "H10",
+      "H1",
+      "G18",
+      "H1",
+      "H1",
+      "G18",
+      "R13",
+      "R13",
+      null
+    ],
+    [
+      null,
+      "P15",
+      "P15",
+      "ZG3",
+      "H20",
+      "G14",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "G18",
+      "G18",
+      "R13",
+      "G18",
+      "G18",
+      null
+    ],
+    [
+      null,
+      "ZG3",
+      "P15",
+      "H18",
+      "H18",
+      "ZG3",
+      "H18",
+      "H20",
+      "G18",
+      "R13",
+      "R13",
+      "R13",
+      "G18",
+      "G18",
+      "G18",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H20",
+      "ZG3",
+      "P15",
+      "H20",
+      "H18",
+      "G18",
+      "G18",
+      "G18",
+      "R13",
+      "R13",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H18",
+      "P15",
+      "ZG3",
+      "G18",
+      "G18",
+      "G18",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H20",
+      "R13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 32,
+      "pct": 20.8
+    },
+    {
+      "code": "G18",
+      "name": "淡肤米色",
+      "rgb": [
+        69,
+        68,
+        59
+      ],
+      "count": 23,
+      "pct": 14.9
+    },
+    {
+      "code": "B24",
+      "name": "浅柠檬绿",
+      "rgb": [
+        39,
+        58,
+        40
+      ],
+      "count": 20,
+      "pct": 13.0
+    },
+    {
+      "code": "ZG3",
+      "name": "珠光橄榄",
+      "rgb": [
+        193,
+        189,
+        141
+      ],
+      "count": 16,
+      "pct": 10.4
+    },
+    {
+      "code": "R17",
+      "name": "深绿",
+      "rgb": [
+        74,
+        134,
+        122
+      ],
+      "count": 15,
+      "pct": 9.7
+    },
+    {
+      "code": "H20",
+      "name": "钢灰色",
+      "rgb": [
+        108,
+        150,
+        120
+      ],
+      "count": 10,
+      "pct": 6.5
+    },
+    {
+      "code": "R13",
+      "name": "深灰色",
+      "rgb": [
+        85,
+        81,
+        76
+      ],
+      "count": 10,
+      "pct": 6.5
+    },
+    {
+      "code": "P15",
+      "name": "灰绿色",
+      "rgb": [
+        102,
+        133,
+        117
+      ],
+      "count": 8,
+      "pct": 5.2
+    },
+    {
+      "code": "H18",
+      "name": "奶油白",
+      "rgb": [
+        142,
+        174,
+        143
+      ],
+      "count": 6,
+      "pct": 3.9
+    },
+    {
+      "code": "G14",
+      "name": "灰咖棕",
+      "rgb": [
+        117,
+        86,
+        67
+      ],
+      "count": 5,
+      "pct": 3.2
+    },
+    {
+      "code": "G11",
+      "name": "卡其米色",
+      "rgb": [
+        216,
+        209,
+        157
+      ],
+      "count": 4,
+      "pct": 2.6
+    },
+    {
+      "code": "P3",
+      "name": "浅苹果绿",
+      "rgb": [
+        175,
+        220,
+        171
+      ],
+      "count": 2,
+      "pct": 1.3
+    },
+    {
+      "code": "H12",
+      "name": "米白色",
+      "rgb": [
+        247,
+        250,
+        199
+      ],
+      "count": 2,
+      "pct": 1.3
+    },
+    {
+      "code": "H10",
+      "name": "珍珠灰",
+      "rgb": [
+        40,
+        50,
+        58
+      ],
+      "count": 1,
+      "pct": 0.6
+    }
+  ]
+}

@@ -1,0 +1,443 @@
+{
+  "name": "birch_sign",
+  "display_name": "白桦木告示牌",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 132,
+  "color_count": 13,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "G11",
+      "G11",
+      "G11",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "G11",
+      "G11",
+      "G11",
+      "G11",
+      "ZG3",
+      "G12",
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "G9",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "H1",
+      "G9",
+      "ZG3",
+      "G9",
+      "ZG3",
+      "G12",
+      null
+    ],
+    [
+      null,
+      null,
+      "ZG3",
+      "H1",
+      "H1",
+      "ZG3",
+      "H1",
+      "G9",
+      "ZG3",
+      "H1",
+      "H1",
+      "G9",
+      "H1",
+      "ZG3",
+      "G12",
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "ZG3",
+      "G9",
+      "ZG3",
+      "G9",
+      "G9",
+      "ZG3",
+      "ZG3",
+      "G9",
+      "ZG3",
+      "G9",
+      "ZG3",
+      "G12",
+      null
+    ],
+    [
+      null,
+      null,
+      "ZG3",
+      "H1",
+      "H1",
+      "ZG3",
+      "H1",
+      "H1",
+      "G9",
+      "H1",
+      "H1",
+      "ZG3",
+      "H1",
+      "ZG3",
+      "G12",
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      "ZG3",
+      null
+    ],
+    [
+      null,
+      null,
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      null
+    ],
+    [
+      null,
+      null,
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "P12",
+      "P9",
+      "H22",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "T1",
+      "R13",
+      "G18",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "T1",
+      "H3",
+      "R13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "T1",
+      "H3",
+      "H22",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R13",
+      "H22",
+      "H22",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "ZG3",
+      "name": "珠光橄榄",
+      "rgb": [
+        193,
+        189,
+        141
+      ],
+      "count": 49,
+      "pct": 37.1
+    },
+    {
+      "code": "G12",
+      "name": "浅橙肤色",
+      "rgb": [
+        199,
+        158,
+        115
+      ],
+      "count": 18,
+      "pct": 13.6
+    },
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 14,
+      "pct": 10.6
+    },
+    {
+      "code": "G13",
+      "name": "赤陶棕",
+      "rgb": [
+        138,
+        93,
+        60
+      ],
+      "count": 13,
+      "pct": 9.8
+    },
+    {
+      "code": "G11",
+      "name": "卡其米色",
+      "rgb": [
+        216,
+        209,
+        157
+      ],
+      "count": 12,
+      "pct": 9.1
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 11,
+      "pct": 8.3
+    },
+    {
+      "code": "H22",
+      "name": "浅冷灰",
+      "rgb": [
+        209,
+        202,
+        188
+      ],
+      "count": 4,
+      "pct": 3.0
+    },
+    {
+      "code": "T1",
+      "name": "透明白",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "count": 3,
+      "pct": 2.3
+    },
+    {
+      "code": "R13",
+      "name": "深灰色",
+      "rgb": [
+        85,
+        81,
+        76
+      ],
+      "count": 3,
+      "pct": 2.3
+    },
+    {
+      "code": "H3",
+      "name": "浅灰紫",
+      "rgb": [
+        230,
+        240,
+        232
+      ],
+      "count": 2,
+      "pct": 1.5
+    },
+    {
+      "code": "P12",
+      "name": "浅蓝灰",
+      "rgb": [
+        230,
+        238,
+        242
+      ],
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "code": "P9",
+      "name": "浅灰色",
+      "rgb": [
+        217,
+        217,
+        217
+      ],
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "code": "G18",
+      "name": "淡肤米色",
+      "rgb": [
+        69,
+        68,
+        59
+      ],
+      "count": 1,
+      "pct": 0.8
+    }
+  ]
+}

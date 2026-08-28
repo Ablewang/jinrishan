@@ -1,0 +1,487 @@
+{
+  "name": "pufferfish_spawn_egg",
+  "display_name": "河豚刷怪蛋",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 145,
+  "color_count": 17,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "A9",
+      null,
+      "A9",
+      null,
+      null,
+      "A9",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "A9",
+      null,
+      "B27",
+      "R21",
+      "B27",
+      "R21",
+      "A9",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R21",
+      "G10",
+      "P17",
+      "P17",
+      "G10",
+      "R21",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "A9",
+      "B27",
+      "G10",
+      "A5",
+      "P17",
+      "G10",
+      "P17",
+      "G10",
+      "B27",
+      "A9",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "R21",
+      "A5",
+      "A5",
+      "P17",
+      "P17",
+      "P17",
+      "G10",
+      "G13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "A9",
+      "B27",
+      "G10",
+      "A5",
+      "G10",
+      "P17",
+      "G10",
+      "P17",
+      "G10",
+      "G10",
+      "B27",
+      "A9",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "P14",
+      "P14",
+      "P17",
+      "P17",
+      "P17",
+      "P17",
+      "P17",
+      "P17",
+      "G10",
+      "G10",
+      "P14",
+      "P14",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "P14",
+      "M11",
+      "G10",
+      "P17",
+      "A21",
+      "H8",
+      "H8",
+      "A21",
+      "G10",
+      "G10",
+      "M11",
+      "P14",
+      null,
+      null
+    ],
+    [
+      null,
+      "P14",
+      "M11",
+      "P14",
+      "P17",
+      "H8",
+      "H8",
+      "H8",
+      "H8",
+      "ZG2",
+      "ZG2",
+      "G10",
+      "P14",
+      "M11",
+      "P14",
+      null
+    ],
+    [
+      null,
+      "P14",
+      "H21",
+      "P14",
+      "ZG2",
+      "H8",
+      "H8",
+      "H8",
+      "ZG2",
+      "ZG2",
+      "ZG2",
+      "G12",
+      "P14",
+      "H21",
+      "P14",
+      null
+    ],
+    [
+      null,
+      "P14",
+      "P14",
+      "C18",
+      "G13",
+      "G12",
+      "ZG2",
+      "ZG2",
+      "ZG2",
+      "ZG2",
+      "G12",
+      "G13",
+      "C18",
+      "P14",
+      "P14",
+      null
+    ],
+    [
+      null,
+      null,
+      "C18",
+      "R7",
+      "R7",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "C18",
+      "C18",
+      "C18",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "C18",
+      "C18",
+      "R7",
+      "Y4",
+      "Y4",
+      "R7",
+      "Y4",
+      "R7",
+      "R7",
+      "R7",
+      "C18",
+      "C18",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "C18",
+      "C18",
+      "C18",
+      "C18",
+      "C18",
+      "C18",
+      "C18",
+      "C18",
+      "C18",
+      "C18",
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "C18",
+      "name": "暗海军蓝",
+      "rgb": [
+        39,
+        71,
+        126
+      ],
+      "count": 20,
+      "pct": 13.8
+    },
+    {
+      "code": "P14",
+      "name": "深青色",
+      "rgb": [
+        51,
+        118,
+        128
+      ],
+      "count": 18,
+      "pct": 12.4
+    },
+    {
+      "code": "G10",
+      "name": "栗子棕",
+      "rgb": [
+        205,
+        145,
+        56
+      ],
+      "count": 17,
+      "pct": 11.7
+    },
+    {
+      "code": "P17",
+      "name": "浅橙黄",
+      "rgb": [
+        254,
+        163,
+        36
+      ],
+      "count": 17,
+      "pct": 11.7
+    },
+    {
+      "code": "ZG2",
+      "name": "珠光驼色",
+      "rgb": [
+        214,
+        170,
+        135
+      ],
+      "count": 10,
+      "pct": 6.9
+    },
+    {
+      "code": "A9",
+      "name": "杏橙色",
+      "rgb": [
+        219,
+        201,
+        36
+      ],
+      "count": 9,
+      "pct": 6.2
+    },
+    {
+      "code": "G13",
+      "name": "赤陶棕",
+      "rgb": [
+        138,
+        93,
+        60
+      ],
+      "count": 9,
+      "pct": 6.2
+    },
+    {
+      "code": "H8",
+      "name": "浅灰粉",
+      "rgb": [
+        252,
+        232,
+        200
+      ],
+      "count": 9,
+      "pct": 6.2
+    },
+    {
+      "code": "R7",
+      "name": "深蓝色",
+      "rgb": [
+        25,
+        119,
+        157
+      ],
+      "count": 7,
+      "pct": 4.8
+    },
+    {
+      "code": "B27",
+      "name": "浅苹果绿",
+      "rgb": [
+        164,
+        155,
+        69
+      ],
+      "count": 6,
+      "pct": 4.1
+    },
+    {
+      "code": "R21",
+      "name": "棕色",
+      "rgb": [
+        173,
+        111,
+        60
+      ],
+      "count": 5,
+      "pct": 3.4
+    },
+    {
+      "code": "A5",
+      "name": "向日葵黄",
+      "rgb": [
+        239,
+        184,
+        30
+      ],
+      "count": 4,
+      "pct": 2.8
+    },
+    {
+      "code": "M11",
+      "name": "紫灰色",
+      "rgb": [
+        141,
+        172,
+        166
+      ],
+      "count": 4,
+      "pct": 2.8
+    },
+    {
+      "code": "G12",
+      "name": "浅橙肤色",
+      "rgb": [
+        199,
+        158,
+        115
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "Y4",
+      "name": "夜光蓝",
+      "rgb": [
+        139,
+        219,
+        250
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "A21",
+      "name": "香草黄",
+      "rgb": [
+        249,
+        192,
+        95
+      ],
+      "count": 2,
+      "pct": 1.4
+    },
+    {
+      "code": "H21",
+      "name": "浅奶黄",
+      "rgb": [
+        90,
+        126,
+        144
+      ],
+      "count": 2,
+      "pct": 1.4
+    }
+  ]
+}

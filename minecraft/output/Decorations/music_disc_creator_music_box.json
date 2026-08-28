@@ -1,0 +1,421 @@
+{
+  "name": "music_disc_creator_music_box",
+  "display_name": "唱片 Creator Music Box",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 118,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R22",
+      "R22",
+      "R22",
+      "R22",
+      "R22",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "R22",
+      "R22",
+      "R22",
+      "R25",
+      "R25",
+      "R25",
+      "R25",
+      "R25",
+      "R22",
+      "R22",
+      "R22",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "R22",
+      "R25",
+      "R25",
+      "P7",
+      "P7",
+      "G5",
+      "P7",
+      "G5",
+      "G5",
+      "P7",
+      "R25",
+      "R25",
+      "R22",
+      null,
+      null
+    ],
+    [
+      "R22",
+      "R25",
+      "P7",
+      "G5",
+      "P7",
+      "Y2",
+      "A21",
+      "A21",
+      "A21",
+      "Y2",
+      "R25",
+      "G5",
+      "P7",
+      "R25",
+      "R22",
+      null
+    ],
+    [
+      "R22",
+      "R25",
+      "G5",
+      "R25",
+      "R25",
+      "A21",
+      "A11",
+      "A13",
+      "A11",
+      "A21",
+      "R25",
+      "R25",
+      "G5",
+      "R25",
+      "R22",
+      null
+    ],
+    [
+      "R22",
+      "R25",
+      "P7",
+      "G5",
+      "R25",
+      "Y2",
+      "P11",
+      "P11",
+      "A21",
+      "Y2",
+      "G5",
+      "G5",
+      "P7",
+      "R25",
+      "R22",
+      null
+    ],
+    [
+      "R22",
+      "G8",
+      "R25",
+      "R25",
+      "P7",
+      "G5",
+      "G5",
+      "P7",
+      "G5",
+      "P7",
+      "P7",
+      "R25",
+      "R25",
+      "G8",
+      "R22",
+      null
+    ],
+    [
+      null,
+      "G9",
+      "R22",
+      "G8",
+      "G8",
+      "R25",
+      "R25",
+      "R25",
+      "R25",
+      "R25",
+      "G8",
+      "G8",
+      "R22",
+      "G9",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G9",
+      "G9",
+      "G9",
+      "R22",
+      "G8",
+      "G8",
+      "R22",
+      "R22",
+      "G9",
+      "G9",
+      "G9",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G9",
+      "G9",
+      "G9",
+      "G9",
+      "G9",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "R25",
+      "name": "浅珊瑚",
+      "rgb": [
+        201,
+        103,
+        94
+      ],
+      "count": 30,
+      "pct": 25.4
+    },
+    {
+      "code": "R22",
+      "name": "深棕色",
+      "rgb": [
+        108,
+        55,
+        47
+      ],
+      "count": 26,
+      "pct": 22.0
+    },
+    {
+      "code": "P7",
+      "name": "浅杏橙",
+      "rgb": [
+        235,
+        146,
+        112
+      ],
+      "count": 13,
+      "pct": 11.0
+    },
+    {
+      "code": "G5",
+      "name": "焦糖色",
+      "rgb": [
+        239,
+        138,
+        115
+      ],
+      "count": 13,
+      "pct": 11.0
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 13,
+      "pct": 11.0
+    },
+    {
+      "code": "G8",
+      "name": "巧克力棕",
+      "rgb": [
+        142,
+        71,
+        47
+      ],
+      "count": 8,
+      "pct": 6.8
+    },
+    {
+      "code": "A21",
+      "name": "香草黄",
+      "rgb": [
+        249,
+        192,
+        95
+      ],
+      "count": 6,
+      "pct": 5.1
+    },
+    {
+      "code": "Y2",
+      "name": "夜光橙",
+      "rgb": [
+        254,
+        180,
+        129
+      ],
+      "count": 4,
+      "pct": 3.4
+    },
+    {
+      "code": "A11",
+      "name": "淡肤橙",
+      "rgb": [
+        253,
+        201,
+        143
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "P11",
+      "name": "浅米黄",
+      "rgb": [
+        243,
+        236,
+        201
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "A13",
+      "name": "杏桃色",
+      "rgb": [
+        247,
+        154,
+        51
+      ],
+      "count": 1,
+      "pct": 0.8
+    }
+  ]
+}
