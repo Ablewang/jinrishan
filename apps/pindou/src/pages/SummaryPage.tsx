@@ -18,11 +18,10 @@ const CAT_ZH: Record<string, string> = {
 }
 
 interface Props {
-  onNavigate: (hash: string) => void
   onBack: () => void
 }
 
-export function SummaryPage({ onNavigate, onBack }: Props) {
+export function SummaryPage({ onBack }: Props) {
   const { summary } = useData()
   const [curTab, setCur] = useState(0)
   const tabBarRef = useRef<HTMLDivElement>(null)

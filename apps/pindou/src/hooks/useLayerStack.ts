@@ -27,6 +27,10 @@ export function useLayerStack() {
   const [stack, setStack] = useState<LayerEntry[]>(() =>
     getInitialStack(location.hash || '#/')
   )
+  // 始终持有最新 stack，让 push/pop 不需要依赖项
+  const stackRef = useRef(stack)
+  stackRef.current = stack
+
   const layerRefs  = useRef<Map<number, HTMLDivElement>>(new Map())
   const transitioning = useRef(false)
 
@@ -34,44 +38,52 @@ export function useLayerStack() {
 
   const push = useCallback((hash: string) => {
     if (transitioning.current) return
-    setStack(prev => {
-      if (prev[prev.length - 1].hash === hash) return prev
-      history.pushState(null, '', hash)
-      return [...prev, { id: nextId++, hash, animate: true }]
-    })
+    const prev = stackRef.current
+    if (prev[prev.length - 1]?.hash === hash) return
+    history.pushState(null, '', hash)
+    setStack([...prev, { id: nextId++, hash, animate: true }])
   }, [])
 
   const pop = useCallback((startDx = 0, gestureActive = false) => {
-    setStack(prev => {
-      if (prev.length <= 1) return prev
-      const top   = prev[prev.length - 1]
-      const below = prev[prev.length - 2]
-      const topEl   = getEl(top.id)
-      const belowEl = getEl(below.id)
+    const prev = stackRef.current
+    if (prev.length <= 1) return
 
-      if (!topEl) return prev.slice(0, -1)
+    const top   = prev[prev.length - 1]
+    const below = prev[prev.length - 2]
+    const topEl   = getEl(top.id)
+    const belowEl = getEl(below.id)
 
-      transitioning.current = true
-      const w   = topEl.offsetWidth || window.innerWidth
-      const rem = w - startDx
-      const dur = Math.round(Math.min(280, Math.max(120, rem * 0.65)))
+    // 没有 DOM 元素时直接移除（初始化场景）
+    if (!topEl) {
+      setStack(s => s.slice(0, -1))
+      return
+    }
 
-      topEl.animate(
-        [{ transform: `translateX(${startDx}px)` }, { transform: `translateX(${w}px)` }],
-        { duration: dur, easing: EASE, fill: 'forwards' }
-      ).onfinish = () => { transitioning.current = false }
+    transitioning.current = true
+    const w   = topEl.offsetWidth || window.innerWidth
+    const rem = w - startDx
+    const dur = Math.round(Math.min(280, Math.max(120, rem * 0.65)))
 
-      if (belowEl) {
-        const fromT = gestureActive ? (belowEl.style.transform || 'translateX(-30%)') : 'translateX(-30%)'
-        belowEl.style.transform = ''
-        belowEl.animate(
-          [{ transform: fromT }, { transform: 'translateX(0)' }],
-          { duration: dur, easing: EASE }
-        )
-      }
+    // 顶层：从当前位置滑出到右边
+    topEl.animate(
+      [{ transform: `translateX(${startDx}px)` }, { transform: `translateX(${w}px)` }],
+      { duration: dur, easing: EASE, fill: 'forwards' }
+    ).onfinish = () => {
+      transitioning.current = false
+      setStack(s => s.filter(e => e.id !== top.id))
+    }
 
-      return prev.slice(0, -1)
-    })
+    // 父层：视差效果，从左侧偏移滑回中心
+    if (belowEl) {
+      const fromT = gestureActive
+        ? (belowEl.style.transform || 'translateX(-30%)')
+        : 'translateX(-30%)'
+      belowEl.style.transform = ''
+      belowEl.animate(
+        [{ transform: fromT }, { transform: 'translateX(0)' }],
+        { duration: dur, easing: EASE }
+      )
+    }
   }, [])
 
   const animateIn = useCallback((el: HTMLDivElement) => {

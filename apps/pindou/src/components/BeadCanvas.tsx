@@ -148,11 +148,6 @@ export function BeadCanvas({ item, activeCode, onCellClick, showOriginal, origin
     ctx.globalAlpha = 1
   }, [board_size, grid_size, off])
 
-  const redraw = useCallback(() => {
-    if (showOriginal) drawOriginal(csRef.current)
-    else drawBead(csRef.current, activeCode)
-  }, [showOriginal, drawOriginal, drawBead, activeCode])
-
   const setup = useCallback(() => {
     const section = sectionRef.current
     const canvas  = canvasRef.current

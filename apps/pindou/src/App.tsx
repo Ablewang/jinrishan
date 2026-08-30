@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { DataProvider } from './hooks/useData'
 import { useLayerStack } from './hooks/useLayerStack'
 import { useSwipeBack } from './hooks/useSwipeBack'
@@ -41,7 +41,7 @@ function PageContent({
   if (parsed.type === 'item')
     return <DetailPage cat={parsed.cat} name={parsed.name} onBack={onBack} />
   if (parsed.type === 'summary')
-    return <SummaryPage onNavigate={onNavigate} onBack={onBack} />
+    return <SummaryPage onBack={onBack} />
   return <HomePage onNavigate={onNavigate} />
 }
 
@@ -55,6 +55,7 @@ const LAYER_STYLE: React.CSSProperties = {
 
 export default function App() {
   const { stack, push, pop, animateIn, layerRefs, transitioning } = useLayerStack()
+  const animatedIds = useRef<Set<number>>(new Set())
 
   const getTopEl = useCallback(() => {
     if (stack.length < 1) return null
@@ -69,9 +70,10 @@ export default function App() {
   const canPop = useCallback(() => stack.length > 1, [stack])
 
   const handleCommit = useCallback((dx: number) => {
-    history.back()
+    const belowHash = stack.length >= 2 ? stack[stack.length - 2].hash : null
     pop(dx, true)
-  }, [pop])
+    if (belowHash) history.replaceState(null, '', belowHash)
+  }, [pop, stack])
 
   useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: handleCommit, transitioning })
 
@@ -82,9 +84,10 @@ export default function App() {
   }, [pop])
 
   const handleBack = useCallback(() => {
-    history.back()
+    const belowHash = stack.length >= 2 ? stack[stack.length - 2].hash : null
     pop()
-  }, [pop])
+    if (belowHash) history.replaceState(null, '', belowHash)
+  }, [pop, stack])
 
   return (
     <DataProvider>
@@ -95,7 +98,10 @@ export default function App() {
           ref={el => {
             if (el) {
               layerRefs.current.set(entry.id, el)
-              if (entry.animate) animateIn(el)
+              if (entry.animate && !animatedIds.current.has(entry.id)) {
+                animatedIds.current.add(entry.id)
+                animateIn(el)
+              }
             } else {
               layerRefs.current.delete(entry.id)
             }
