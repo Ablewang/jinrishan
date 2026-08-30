@@ -19,10 +19,15 @@ let summary  = null;
 
 async function init() {
   try {
-    [manifest, summary] = await Promise.all([
-      fetch('./output/manifest.json').then(r => { if (!r.ok) throw r; return r.json(); }),
-      fetch('./output/summary.json').then(r  => { if (!r.ok) throw r; return r.json(); }),
-    ]);
+    if (typeof MC_MANIFEST !== 'undefined' && typeof MC_SUMMARY !== 'undefined') {
+      manifest = MC_MANIFEST;
+      summary  = MC_SUMMARY;
+    } else {
+      [manifest, summary] = await Promise.all([
+        fetch('./output/manifest.json').then(r => { if (!r.ok) throw r; return r.json(); }),
+        fetch('./output/summary.json').then(r  => { if (!r.ok) throw r; return r.json(); }),
+      ]);
+    }
   } catch (e) {
     document.getElementById('app').innerHTML =
       '<div class="err-state">数据加载失败' +
@@ -113,7 +118,17 @@ let transitioning  = false;
 let pageHTMLStack  = [];
 let persistedEl    = null;
 
-const SNAP_CSS = 'position:fixed;inset:0;max-width:768px;width:100%;margin:0 auto;overflow:hidden;pointer-events:none;background:#f5f4f0;will-change:transform;';
+// 两个固定裁剪容器，防止快照在桌面宽屏下超出 app 范围
+const CLIP_CSS = 'position:fixed;inset:0;max-width:768px;width:100%;margin:0 auto;overflow:hidden;pointer-events:none;';
+const snapBgEl = document.createElement('div');  // z=0, 位于 #app 之下
+const snapFgEl = document.createElement('div');  // z=2, 位于 #app 之上
+snapBgEl.style.cssText = CLIP_CSS + 'z-index:0;';
+snapFgEl.style.cssText = CLIP_CSS + 'z-index:2;';
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.append(snapBgEl, snapFgEl);
+}, { once: true });
+
+const SNAP_CSS = 'position:absolute;inset:0;background:#f5f4f0;will-change:transform;';
 
 function snapHTML(app) {
   app.querySelectorAll('canvas').forEach(c => {
@@ -127,22 +142,22 @@ function snapHTML(app) {
   return app.innerHTML;
 }
 
-function makeEl(html, scrollY, zIndex, transformX) {
+function makeEl(html, scrollY, fg, transformX) {
   if (!html) return null;
   const el = document.createElement('div');
-  el.style.cssText = `${SNAP_CSS}z-index:${zIndex};transform:translateX(${transformX});`;
+  el.style.cssText = `${SNAP_CSS}transform:translateX(${transformX});`;
   const inner = document.createElement('div');
   inner.style.transform = `translateY(-${scrollY || 0}px)`;
   inner.innerHTML = html;
   el.appendChild(inner);
-  document.body.appendChild(el);
+  (fg ? snapFgEl : snapBgEl).appendChild(el);
   return el;
 }
 
 function refreshPersistedEl() {
   persistedEl?.remove(); persistedEl = null;
   const entry = pageHTMLStack[pageHTMLStack.length - 1];
-  if (entry) persistedEl = makeEl(entry.html, entry.scrollY, 0, '-30%');
+  if (entry) persistedEl = makeEl(entry.html, entry.scrollY, false, '-30%');
 }
 
 function pushPage(html, scrollY) { pageHTMLStack.push({ html, scrollY: scrollY || 0 }); refreshPersistedEl(); }
@@ -151,11 +166,10 @@ function popPage()                { pageHTMLStack.pop(); refreshPersistedEl(); }
 function takeCurrentSnap(app) {
   if (!app.firstElementChild || app.querySelector('.splash')) return null;
   const el = document.createElement('div');
-  el.style.cssText = `${SNAP_CSS}z-index:500;transform:translateX(0);`;
+  el.style.cssText = `${SNAP_CSS}transform:translateX(0);`;
   const inner = document.createElement('div');
   inner.style.transform = `translateY(-${window.scrollY}px)`;
   const clone = app.cloneNode(true);
-  // 复制内部可滚动容器的 scrollTop
   const origEls  = [...app.querySelectorAll('*')];
   const cloneEls = [...clone.querySelectorAll('*')];
   origEls.forEach((orig, i) => {
@@ -164,7 +178,6 @@ function takeCurrentSnap(app) {
       cloneEls[i].scrollLeft = orig.scrollLeft;
     }
   });
-  // canvas → img
   const canvases = app.querySelectorAll('canvas');
   clone.querySelectorAll('canvas').forEach((cc, i) => {
     try {
@@ -178,7 +191,7 @@ function takeCurrentSnap(app) {
   });
   inner.appendChild(clone);
   el.appendChild(inner);
-  document.body.appendChild(el);
+  snapFgEl.appendChild(el);
   return el;
 }
 
@@ -214,7 +227,6 @@ function runBackTransition(curSnap, startDx) {
   };
 
   if (curSnap) {
-    curSnap.style.zIndex = '500';
     curSnap.animate(
       [{ transform: `translateX(${startDx || 0}px)` }, { transform: `translateX(${w}px)` }],
       { duration: dur, easing: ease, fill: 'forwards' }
@@ -224,7 +236,6 @@ function runBackTransition(curSnap, startDx) {
   }
 
   if (persistedEl) {
-    persistedEl.style.zIndex = '2';
     const fromT = persistedEl.style.transform || 'translateX(-30%)';
     persistedEl.animate(
       [{ transform: fromT }, { transform: 'translateX(0)' }],
@@ -445,10 +456,15 @@ async function renderItem(app, cat, name) {
 
   let item;
   try {
-    item = await fetch(`./output/${enc(cat)}/${name}.json`).then(r => {
-      if (!r.ok) throw r;
-      return r.json();
-    });
+    const key = `${cat}/${name}`;
+    if (typeof MC_ITEMS !== 'undefined' && MC_ITEMS[key]) {
+      item = MC_ITEMS[key];
+    } else {
+      item = await fetch(`./output/${enc(cat)}/${name}.json`).then(r => {
+        if (!r.ok) throw r;
+        return r.json();
+      });
+    }
   } catch (e) {
     app.innerHTML = `
       <div class="page">
