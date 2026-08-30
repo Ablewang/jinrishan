@@ -1,0 +1,597 @@
+{
+  "name": "experience_bottle",
+  "display_name": "附魔之瓶",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 113,
+  "color_count": 27,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "A2",
+      "A2",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "A25",
+      "R22",
+      "F11",
+      "R22",
+      "A2",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "A25",
+      "R22",
+      "R22",
+      "F11",
+      "F11",
+      "F11",
+      "H12",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "Q2",
+      "R22",
+      "R22",
+      "F11",
+      "C13",
+      "C13",
+      "H8",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "A2",
+      "F11",
+      "P11",
+      "R9",
+      "H8",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "P19",
+      "F11",
+      "H12",
+      "F11",
+      "H8",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H13",
+      "R22",
+      "B25",
+      "H18",
+      "P3",
+      "F11",
+      "A2",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "P19",
+      "R22",
+      "Y3",
+      "C2",
+      "R18",
+      "M12",
+      "H12",
+      "R22",
+      "Q2",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H12",
+      "F11",
+      "Y3",
+      "B25",
+      "R18",
+      "H20",
+      "B26",
+      "H18",
+      "A2",
+      "R22",
+      "Q2",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "A25",
+      "G14",
+      "Y3",
+      "B25",
+      "H20",
+      "R17",
+      "H20",
+      "R18",
+      "B25",
+      "M3",
+      "Q2",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "Q2",
+      "R22",
+      "Y3",
+      "M12",
+      "H20",
+      "R17",
+      "H20",
+      "B20",
+      "B25",
+      "M3",
+      "Q2",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "Q2",
+      "G14",
+      "Y3",
+      "M12",
+      "M12",
+      "H20",
+      "M12",
+      "B25",
+      "B25",
+      "F11",
+      "Q2",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "Q2",
+      "G14",
+      "Y3",
+      "B32",
+      "B32",
+      "B25",
+      "Y3",
+      "M3",
+      "H12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "Q2",
+      "R22",
+      "G14",
+      "G9",
+      "G9",
+      "G9",
+      "H12",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "Q2",
+      "Q2",
+      "A25",
+      "A25",
+      "A25",
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "R22",
+      "name": "深棕色",
+      "rgb": [
+        108,
+        55,
+        47
+      ],
+      "count": 12,
+      "pct": 10.6
+    },
+    {
+      "code": "Q2",
+      "name": "浅黄绿",
+      "rgb": [
+        233,
+        236,
+        145
+      ],
+      "count": 12,
+      "pct": 10.6
+    },
+    {
+      "code": "F11",
+      "name": "暗红棕",
+      "rgb": [
+        88,
+        25,
+        60
+      ],
+      "count": 11,
+      "pct": 9.7
+    },
+    {
+      "code": "B25",
+      "name": "灰蓝绿",
+      "rgb": [
+        219,
+        252,
+        172
+      ],
+      "count": 8,
+      "pct": 7.1
+    },
+    {
+      "code": "H12",
+      "name": "米白色",
+      "rgb": [
+        247,
+        250,
+        199
+      ],
+      "count": 7,
+      "pct": 6.2
+    },
+    {
+      "code": "Y3",
+      "name": "夜光绿",
+      "rgb": [
+        215,
+        250,
+        160
+      ],
+      "count": 7,
+      "pct": 6.2
+    },
+    {
+      "code": "A2",
+      "name": "象牙黄",
+      "rgb": [
+        240,
+        246,
+        167
+      ],
+      "count": 6,
+      "pct": 5.3
+    },
+    {
+      "code": "A25",
+      "name": "杏仁黄",
+      "rgb": [
+        245,
+        249,
+        168
+      ],
+      "count": 6,
+      "pct": 5.3
+    },
+    {
+      "code": "H20",
+      "name": "钢灰色",
+      "rgb": [
+        108,
+        150,
+        120
+      ],
+      "count": 6,
+      "pct": 5.3
+    },
+    {
+      "code": "M12",
+      "name": "深暗紫",
+      "rgb": [
+        105,
+        193,
+        113
+      ],
+      "count": 5,
+      "pct": 4.4
+    },
+    {
+      "code": "G14",
+      "name": "灰咖棕",
+      "rgb": [
+        117,
+        86,
+        67
+      ],
+      "count": 4,
+      "pct": 3.5
+    },
+    {
+      "code": "H8",
+      "name": "浅灰粉",
+      "rgb": [
+        252,
+        232,
+        200
+      ],
+      "count": 3,
+      "pct": 2.7
+    },
+    {
+      "code": "R18",
+      "name": "浅绿色",
+      "rgb": [
+        127,
+        205,
+        157
+      ],
+      "count": 3,
+      "pct": 2.7
+    },
+    {
+      "code": "M3",
+      "name": "蓝灰色",
+      "rgb": [
+        66,
+        57,
+        72
+      ],
+      "count": 3,
+      "pct": 2.7
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 3,
+      "pct": 2.7
+    },
+    {
+      "code": "C13",
+      "name": "浅粉蓝",
+      "rgb": [
+        32,
+        52,
+        111
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "P19",
+      "name": "奶油白",
+      "rgb": [
+        255,
+        254,
+        236
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "H18",
+      "name": "奶油白",
+      "rgb": [
+        142,
+        174,
+        143
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "R17",
+      "name": "深绿",
+      "rgb": [
+        74,
+        134,
+        122
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "B32",
+      "name": "灰橄榄绿",
+      "rgb": [
+        123,
+        169,
+        48
+      ],
+      "count": 2,
+      "pct": 1.8
+    },
+    {
+      "code": "P11",
+      "name": "浅米黄",
+      "rgb": [
+        243,
+        236,
+        201
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "R9",
+      "name": "紫色",
+      "rgb": [
+        154,
+        86,
+        180
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "H13",
+      "name": "浅米色",
+      "rgb": [
+        234,
+        245,
+        207
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "P3",
+      "name": "浅苹果绿",
+      "rgb": [
+        175,
+        220,
+        171
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "C2",
+      "name": "浅青色",
+      "rgb": [
+        218,
+        255,
+        204
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "B26",
+      "name": "暗黄绿",
+      "rgb": [
+        109,
+        183,
+        162
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "B20",
+      "name": "浅薄荷绿",
+      "rgb": [
+        199,
+        255,
+        203
+      ],
+      "count": 1,
+      "pct": 0.9
+    }
+  ]
+}

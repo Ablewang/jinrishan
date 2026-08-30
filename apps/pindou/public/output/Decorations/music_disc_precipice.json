@@ -1,0 +1,432 @@
+{
+  "name": "music_disc_precipice",
+  "display_name": "唱片 Precipice",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 118,
+  "color_count": 12,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G18",
+      "G18",
+      "G18",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "G18",
+      "G18",
+      "G18",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "G18",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "G18",
+      null,
+      null
+    ],
+    [
+      "G18",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "G5",
+      "M4",
+      "B26",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "G18",
+      null
+    ],
+    [
+      "G18",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "G5",
+      "R25",
+      "G18",
+      "R17",
+      "R18",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "G18",
+      null
+    ],
+    [
+      "G9",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M4",
+      "B26",
+      "R18",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "B24",
+      null
+    ],
+    [
+      "G9",
+      "R25",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "R17",
+      "B24",
+      null
+    ],
+    [
+      null,
+      "G9",
+      "P7",
+      "G5",
+      "M4",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "M6",
+      "B26",
+      "R18",
+      "B26",
+      "B24",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G9",
+      "G18",
+      "G18",
+      "M4",
+      "M4",
+      "H18",
+      "B26",
+      "B26",
+      "B24",
+      "B24",
+      "B24",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G18",
+      "G18",
+      "G18",
+      "B24",
+      "B24",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "M6",
+      "name": "暖灰棕",
+      "rgb": [
+        108,
+        132,
+        138
+      ],
+      "count": 60,
+      "pct": 50.8
+    },
+    {
+      "code": "G18",
+      "name": "淡肤米色",
+      "rgb": [
+        69,
+        68,
+        59
+      ],
+      "count": 23,
+      "pct": 19.5
+    },
+    {
+      "code": "B24",
+      "name": "浅柠檬绿",
+      "rgb": [
+        39,
+        58,
+        40
+      ],
+      "count": 8,
+      "pct": 6.8
+    },
+    {
+      "code": "B26",
+      "name": "暗黄绿",
+      "rgb": [
+        109,
+        183,
+        162
+      ],
+      "count": 6,
+      "pct": 5.1
+    },
+    {
+      "code": "M4",
+      "name": "浅米色",
+      "rgb": [
+        215,
+        131,
+        128
+      ],
+      "count": 5,
+      "pct": 4.2
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 4,
+      "pct": 3.4
+    },
+    {
+      "code": "G5",
+      "name": "焦糖色",
+      "rgb": [
+        239,
+        138,
+        115
+      ],
+      "count": 3,
+      "pct": 2.5
+    },
+    {
+      "code": "R18",
+      "name": "浅绿色",
+      "rgb": [
+        127,
+        205,
+        157
+      ],
+      "count": 3,
+      "pct": 2.5
+    },
+    {
+      "code": "R25",
+      "name": "浅珊瑚",
+      "rgb": [
+        201,
+        103,
+        94
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "R17",
+      "name": "深绿",
+      "rgb": [
+        74,
+        134,
+        122
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "P7",
+      "name": "浅杏橙",
+      "rgb": [
+        235,
+        146,
+        112
+      ],
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "code": "H18",
+      "name": "奶油白",
+      "rgb": [
+        142,
+        174,
+        143
+      ],
+      "count": 1,
+      "pct": 0.8
+    }
+  ]
+}

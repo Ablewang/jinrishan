@@ -1,0 +1,498 @@
+{
+  "name": "nether_star",
+  "display_name": "下界之星",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 81,
+  "color_count": 18,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "ZG5",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "ZG5",
+      "M2",
+      "H21",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "ZG5",
+      "M2",
+      "D9",
+      "M2",
+      "H21",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "ZG5",
+      "D12",
+      "H12",
+      "D23",
+      "H21",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "M2",
+      "ZG5",
+      "ZG5",
+      "D9",
+      "H12",
+      "D9",
+      "M2",
+      "H21",
+      "M2",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "D1",
+      "D1",
+      "D12",
+      "D9",
+      "D9",
+      "H13",
+      "D9",
+      "D9",
+      "D12",
+      "M2",
+      "M2",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "D24",
+      "D1",
+      "H2",
+      "P19",
+      "H12",
+      "H12",
+      "A9",
+      "G11",
+      "P19",
+      "P19",
+      "D12",
+      "D1",
+      "R28",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "D24",
+      "D1",
+      "D12",
+      "D9",
+      "D12",
+      "H8",
+      "E24",
+      "E24",
+      "D1",
+      "D1",
+      "R28",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "R28",
+      "R28",
+      "D1",
+      "D9",
+      "T1",
+      "E24",
+      "D24",
+      "R28",
+      "R28",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R28",
+      "E24",
+      "T1",
+      "D24",
+      "R28",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "R28",
+      "D1",
+      "D9",
+      "D1",
+      "M2",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M2",
+      "M2",
+      "H21",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "M2",
+      "name": "灰绿色",
+      "rgb": [
+        153,
+        144,
+        186
+      ],
+      "count": 11,
+      "pct": 13.6
+    },
+    {
+      "code": "D9",
+      "name": "淡紫色",
+      "rgb": [
+        219,
+        218,
+        255
+      ],
+      "count": 10,
+      "pct": 12.3
+    },
+    {
+      "code": "D1",
+      "name": "浅薰衣草",
+      "rgb": [
+        168,
+        186,
+        255
+      ],
+      "count": 10,
+      "pct": 12.3
+    },
+    {
+      "code": "R28",
+      "name": "浅蓝紫",
+      "rgb": [
+        156,
+        135,
+        214
+      ],
+      "count": 9,
+      "pct": 11.1
+    },
+    {
+      "code": "ZG5",
+      "name": "珠光蓝灰",
+      "rgb": [
+        132,
+        144,
+        166
+      ],
+      "count": 6,
+      "pct": 7.4
+    },
+    {
+      "code": "H21",
+      "name": "浅奶黄",
+      "rgb": [
+        90,
+        126,
+        144
+      ],
+      "count": 6,
+      "pct": 7.4
+    },
+    {
+      "code": "D12",
+      "name": "浅紫粉",
+      "rgb": [
+        201,
+        207,
+        255
+      ],
+      "count": 6,
+      "pct": 7.4
+    },
+    {
+      "code": "H12",
+      "name": "米白色",
+      "rgb": [
+        247,
+        250,
+        199
+      ],
+      "count": 4,
+      "pct": 4.9
+    },
+    {
+      "code": "D24",
+      "name": "中蓝紫",
+      "rgb": [
+        135,
+        163,
+        255
+      ],
+      "count": 4,
+      "pct": 4.9
+    },
+    {
+      "code": "E24",
+      "name": "浅紫粉",
+      "rgb": [
+        218,
+        198,
+        250
+      ],
+      "count": 4,
+      "pct": 4.9
+    },
+    {
+      "code": "P19",
+      "name": "奶油白",
+      "rgb": [
+        255,
+        254,
+        236
+      ],
+      "count": 3,
+      "pct": 3.7
+    },
+    {
+      "code": "T1",
+      "name": "透明白",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "count": 2,
+      "pct": 2.5
+    },
+    {
+      "code": "D23",
+      "name": "浅粉紫",
+      "rgb": [
+        209,
+        217,
+        255
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "H13",
+      "name": "浅米色",
+      "rgb": [
+        234,
+        245,
+        207
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "H2",
+      "name": "纯白",
+      "rgb": [
+        241,
+        217,
+        241
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "A9",
+      "name": "杏橙色",
+      "rgb": [
+        219,
+        201,
+        36
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "G11",
+      "name": "卡其米色",
+      "rgb": [
+        216,
+        209,
+        157
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "H8",
+      "name": "浅灰粉",
+      "rgb": [
+        252,
+        232,
+        200
+      ],
+      "count": 1,
+      "pct": 1.2
+    }
+  ]
+}

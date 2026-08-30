@@ -1,0 +1,476 @@
+{
+  "name": "wandering_trader_spawn_egg",
+  "display_name": "流浪商人刷怪蛋",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 134,
+  "color_count": 16,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H10",
+      "H10",
+      "H10",
+      "H10",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H10",
+      "C18",
+      "C18",
+      "C18",
+      "H10",
+      "H10",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "G10",
+      "A5",
+      "A5",
+      "G10",
+      "R21",
+      "R21",
+      "F10",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "F10",
+      "R21",
+      "F6",
+      "F6",
+      "F6",
+      "F7",
+      "F10",
+      "F10",
+      "R21",
+      "F10",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "F10",
+      "F6",
+      "G9",
+      "R13",
+      "R13",
+      "R13",
+      "G9",
+      "G9",
+      "F10",
+      "R22",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "F10",
+      "G10",
+      "F6",
+      "G12",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G12",
+      "F10",
+      "R21",
+      "R22",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "F10",
+      "A5",
+      "F6",
+      "ZG2",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "G13",
+      "F10",
+      "R21",
+      "R22",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H10",
+      "G10",
+      "F7",
+      "G12",
+      "R22",
+      "R22",
+      "R22",
+      "R22",
+      "G13",
+      "F10",
+      "F10",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H10",
+      "C18",
+      "G10",
+      "F7",
+      "R22",
+      "R22",
+      "R22",
+      "R22",
+      "F10",
+      "F10",
+      "H10",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H10",
+      "C18",
+      "C18",
+      "F10",
+      "R22",
+      "R22",
+      "R22",
+      "R22",
+      "F10",
+      "H10",
+      "H10",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H10",
+      "C18",
+      "C18",
+      "B24",
+      "R22",
+      "R22",
+      "R22",
+      "R22",
+      "B24",
+      "H10",
+      "R21",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H10",
+      "C18",
+      "B24",
+      "R22",
+      "R22",
+      "R22",
+      "R22",
+      "B24",
+      "F10",
+      "H1",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H10",
+      "B24",
+      "B24",
+      "B24",
+      "B24",
+      "B24",
+      "B24",
+      "H1",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "R22",
+      "name": "深棕色",
+      "rgb": [
+        108,
+        55,
+        47
+      ],
+      "count": 23,
+      "pct": 17.2
+    },
+    {
+      "code": "F10",
+      "name": "红棕色",
+      "rgb": [
+        115,
+        44,
+        2
+      ],
+      "count": 19,
+      "pct": 14.2
+    },
+    {
+      "code": "H10",
+      "name": "珍珠灰",
+      "rgb": [
+        40,
+        50,
+        58
+      ],
+      "count": 17,
+      "pct": 12.7
+    },
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 12,
+      "pct": 9.0
+    },
+    {
+      "code": "G13",
+      "name": "赤陶棕",
+      "rgb": [
+        138,
+        93,
+        60
+      ],
+      "count": 10,
+      "pct": 7.5
+    },
+    {
+      "code": "B24",
+      "name": "浅柠檬绿",
+      "rgb": [
+        39,
+        58,
+        40
+      ],
+      "count": 10,
+      "pct": 7.5
+    },
+    {
+      "code": "C18",
+      "name": "暗海军蓝",
+      "rgb": [
+        39,
+        71,
+        126
+      ],
+      "count": 9,
+      "pct": 6.7
+    },
+    {
+      "code": "R21",
+      "name": "棕色",
+      "rgb": [
+        173,
+        111,
+        60
+      ],
+      "count": 7,
+      "pct": 5.2
+    },
+    {
+      "code": "F6",
+      "name": "深红褐",
+      "rgb": [
+        186,
+        2,
+        3
+      ],
+      "count": 6,
+      "pct": 4.5
+    },
+    {
+      "code": "G10",
+      "name": "栗子棕",
+      "rgb": [
+        205,
+        145,
+        56
+      ],
+      "count": 5,
+      "pct": 3.7
+    },
+    {
+      "code": "A5",
+      "name": "向日葵黄",
+      "rgb": [
+        239,
+        184,
+        30
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "F7",
+      "name": "暗血红",
+      "rgb": [
+        147,
+        35,
+        36
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "R13",
+      "name": "深灰色",
+      "rgb": [
+        85,
+        81,
+        76
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "G12",
+      "name": "浅橙肤色",
+      "rgb": [
+        199,
+        158,
+        115
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "ZG2",
+      "name": "珠光驼色",
+      "rgb": [
+        214,
+        170,
+        135
+      ],
+      "count": 1,
+      "pct": 0.7
+    }
+  ]
+}

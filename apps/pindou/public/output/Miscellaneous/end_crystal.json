@@ -1,0 +1,564 @@
+{
+  "name": "end_crystal",
+  "display_name": "末地水晶",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 144,
+  "color_count": 24,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "P13",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      "T1",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      null,
+      null,
+      null,
+      null,
+      "E10",
+      null,
+      null,
+      null,
+      null,
+      null,
+      "D1",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      null,
+      null,
+      null,
+      "E10",
+      "D20",
+      "D5",
+      null,
+      null,
+      null,
+      null,
+      "D10",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      "E7",
+      "R9",
+      "E10",
+      "D26",
+      "D20",
+      "D19",
+      "D5",
+      "E7",
+      "E7",
+      null,
+      "D1",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      "E7",
+      "D5",
+      "D26",
+      "D19",
+      "E3",
+      "D19",
+      "D19",
+      "D5",
+      "E7",
+      null,
+      "D23",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      "D5",
+      "D19",
+      "D19",
+      "E3",
+      "F12",
+      "E3",
+      "D26",
+      "D26",
+      "E10",
+      null,
+      "D23",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      "E10",
+      "D19",
+      "D19",
+      "E3",
+      "F3",
+      "F19",
+      "E3",
+      "E3",
+      "D26",
+      "D19",
+      "R9",
+      "P13",
+      null
+    ],
+    [
+      null,
+      null,
+      "D17",
+      "D19",
+      "E21",
+      "D20",
+      "F3",
+      "F13",
+      "D19",
+      "F13",
+      "F4",
+      "E3",
+      "E3",
+      "E10",
+      "R9",
+      null
+    ],
+    [
+      null,
+      null,
+      "D1",
+      "D5",
+      "D26",
+      "D26",
+      "D10",
+      "D19",
+      "D19",
+      "D19",
+      "D10",
+      "D26",
+      "E10",
+      "R9",
+      "ZG6",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      "E10",
+      "D19",
+      "D26",
+      "D10",
+      "F13",
+      "F13",
+      "D19",
+      "E9",
+      "E9",
+      null,
+      "P13",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      "E7",
+      "E10",
+      "E10",
+      "D19",
+      "D10",
+      "E23",
+      "R9",
+      "R9",
+      "R9",
+      null,
+      "P13",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      "E7",
+      "R9",
+      "R9",
+      "E9",
+      "E24",
+      "R9",
+      "R9",
+      "R9",
+      "R9",
+      null,
+      "P13",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      null,
+      null,
+      null,
+      null,
+      "R9",
+      "R9",
+      "R9",
+      null,
+      null,
+      null,
+      null,
+      "D23",
+      null
+    ],
+    [
+      null,
+      null,
+      "T1",
+      "ZG6",
+      "P13",
+      "D23",
+      "P13",
+      "P13",
+      "ZG6",
+      "ZG6",
+      "P13",
+      "P13",
+      "P13",
+      "P13",
+      "P13",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "T1",
+      "name": "透明白",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "count": 23,
+      "pct": 16.0
+    },
+    {
+      "code": "D19",
+      "name": "灰紫粉",
+      "rgb": [
+        218,
+        157,
+        255
+      ],
+      "count": 17,
+      "pct": 11.8
+    },
+    {
+      "code": "R9",
+      "name": "紫色",
+      "rgb": [
+        154,
+        86,
+        180
+      ],
+      "count": 16,
+      "pct": 11.1
+    },
+    {
+      "code": "P13",
+      "name": "浅天蓝",
+      "rgb": [
+        170,
+        203,
+        239
+      ],
+      "count": 13,
+      "pct": 9.0
+    },
+    {
+      "code": "E10",
+      "name": "深洋红",
+      "rgb": [
+        222,
+        107,
+        255
+      ],
+      "count": 10,
+      "pct": 6.9
+    },
+    {
+      "code": "D26",
+      "name": "淡粉紫",
+      "rgb": [
+        208,
+        151,
+        255
+      ],
+      "count": 9,
+      "pct": 6.2
+    },
+    {
+      "code": "E3",
+      "name": "亮粉色",
+      "rgb": [
+        254,
+        188,
+        255
+      ],
+      "count": 8,
+      "pct": 5.6
+    },
+    {
+      "code": "E7",
+      "name": "暗玫瑰",
+      "rgb": [
+        158,
+        10,
+        192
+      ],
+      "count": 7,
+      "pct": 4.9
+    },
+    {
+      "code": "D5",
+      "name": "亮紫色",
+      "rgb": [
+        136,
+        72,
+        255
+      ],
+      "count": 6,
+      "pct": 4.2
+    },
+    {
+      "code": "D10",
+      "name": "深紫黑",
+      "rgb": [
+        203,
+        192,
+        255
+      ],
+      "count": 5,
+      "pct": 3.5
+    },
+    {
+      "code": "D23",
+      "name": "浅粉紫",
+      "rgb": [
+        209,
+        217,
+        255
+      ],
+      "count": 4,
+      "pct": 2.8
+    },
+    {
+      "code": "F13",
+      "name": "珊瑚红",
+      "rgb": [
+        237,
+        51,
+        75
+      ],
+      "count": 4,
+      "pct": 2.8
+    },
+    {
+      "code": "ZG6",
+      "name": "珠光浅蓝",
+      "rgb": [
+        148,
+        191,
+        226
+      ],
+      "count": 4,
+      "pct": 2.8
+    },
+    {
+      "code": "D1",
+      "name": "浅薰衣草",
+      "rgb": [
+        168,
+        186,
+        255
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "D20",
+      "name": "深洋红",
+      "rgb": [
+        236,
+        203,
+        255
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "E9",
+      "name": "浅洋红",
+      "rgb": [
+        222,
+        111,
+        243
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "F3",
+      "name": "鲜红色",
+      "rgb": [
+        255,
+        57,
+        112
+      ],
+      "count": 2,
+      "pct": 1.4
+    },
+    {
+      "code": "F12",
+      "name": "亮粉红",
+      "rgb": [
+        255,
+        49,
+        128
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "F19",
+      "name": "深玫瑰红",
+      "rgb": [
+        170,
+        39,
+        88
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "D17",
+      "name": "浅蓝紫",
+      "rgb": [
+        213,
+        220,
+        255
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "E21",
+      "name": "灰玫瑰",
+      "rgb": [
+        246,
+        199,
+        251
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "F4",
+      "name": "深红色",
+      "rgb": [
+        252,
+        36,
+        73
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "E23",
+      "name": "暗灰紫",
+      "rgb": [
+        179,
+        121,
+        197
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "E24",
+      "name": "浅紫粉",
+      "rgb": [
+        218,
+        198,
+        250
+      ],
+      "count": 1,
+      "pct": 0.7
+    }
+  ]
+}

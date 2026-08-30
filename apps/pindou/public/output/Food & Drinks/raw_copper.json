@@ -1,0 +1,432 @@
+{
+  "name": "raw_copper",
+  "display_name": "粗铜",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 166,
+  "color_count": 12,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "B24",
+      "B24",
+      "B24",
+      null,
+      null,
+      null,
+      "B24",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "B24",
+      "R17",
+      "R17",
+      "R17",
+      "B24",
+      "B24",
+      "B24",
+      "G13",
+      "M14",
+      "G5",
+      "G5",
+      "G7",
+      "G8",
+      null
+    ],
+    [
+      null,
+      "B24",
+      "P6",
+      "P6",
+      "R17",
+      "P6",
+      "R17",
+      "R17",
+      "G13",
+      "M14",
+      "G5",
+      "G2",
+      "G5",
+      "M14",
+      "R22",
+      null
+    ],
+    [
+      null,
+      "B24",
+      "P6",
+      "C22",
+      "P6",
+      "P6",
+      "P6",
+      "G13",
+      "G13",
+      "G7",
+      "G7",
+      "M14",
+      "G7",
+      "G8",
+      "R22",
+      null
+    ],
+    [
+      "G8",
+      "R17",
+      "G13",
+      "P6",
+      "R17",
+      "R17",
+      "R17",
+      "G13",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "G7",
+      "R22",
+      null,
+      null
+    ],
+    [
+      "G8",
+      "G5",
+      "M14",
+      "R17",
+      "G13",
+      "R17",
+      "G13",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "R22",
+      null,
+      null
+    ],
+    [
+      "G8",
+      "G5",
+      "G5",
+      "M14",
+      "G7",
+      "G13",
+      "G7",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "R22",
+      "R22",
+      "R22",
+      null
+    ],
+    [
+      "R22",
+      "M14",
+      "G5",
+      "G7",
+      "M14",
+      "G7",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "G5",
+      "G7",
+      "M14",
+      "G8",
+      "G8",
+      "R22"
+    ],
+    [
+      null,
+      "R22",
+      "M14",
+      "G7",
+      "G7",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "G5",
+      "G2",
+      "M14",
+      "G7",
+      "G8",
+      "G14",
+      "B24"
+    ],
+    [
+      null,
+      "B24",
+      "G14",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "G8",
+      "R22",
+      "M14",
+      "G5",
+      "G5",
+      "G8",
+      "G14",
+      "R17",
+      "B24"
+    ],
+    [
+      null,
+      "B24",
+      "R17",
+      "R17",
+      "G14",
+      "G8",
+      "R22",
+      "R22",
+      "R22",
+      "G7",
+      "G7",
+      "G8",
+      "G8",
+      "R17",
+      "R17",
+      "B24"
+    ],
+    [
+      null,
+      null,
+      "B24",
+      "B24",
+      "B24",
+      "R22",
+      null,
+      null,
+      null,
+      "R22",
+      "G7",
+      "G8",
+      "G8",
+      "B24",
+      "B24",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B24",
+      "B24",
+      "B24",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "G8",
+      "name": "巧克力棕",
+      "rgb": [
+        142,
+        71,
+        47
+      ],
+      "count": 46,
+      "pct": 27.7
+    },
+    {
+      "code": "B24",
+      "name": "浅柠檬绿",
+      "rgb": [
+        39,
+        58,
+        40
+      ],
+      "count": 23,
+      "pct": 13.9
+    },
+    {
+      "code": "R17",
+      "name": "深绿",
+      "rgb": [
+        74,
+        134,
+        122
+      ],
+      "count": 17,
+      "pct": 10.2
+    },
+    {
+      "code": "G7",
+      "name": "深棕色",
+      "rgb": [
+        216,
+        95,
+        75
+      ],
+      "count": 16,
+      "pct": 9.6
+    },
+    {
+      "code": "R22",
+      "name": "深棕色",
+      "rgb": [
+        108,
+        55,
+        47
+      ],
+      "count": 16,
+      "pct": 9.6
+    },
+    {
+      "code": "M14",
+      "name": "赤陶色",
+      "rgb": [
+        228,
+        115,
+        57
+      ],
+      "count": 12,
+      "pct": 7.2
+    },
+    {
+      "code": "G5",
+      "name": "焦糖色",
+      "rgb": [
+        239,
+        138,
+        115
+      ],
+      "count": 12,
+      "pct": 7.2
+    },
+    {
+      "code": "G13",
+      "name": "赤陶棕",
+      "rgb": [
+        138,
+        93,
+        60
+      ],
+      "count": 9,
+      "pct": 5.4
+    },
+    {
+      "code": "P6",
+      "name": "浅薄荷绿",
+      "rgb": [
+        95,
+        208,
+        167
+      ],
+      "count": 8,
+      "pct": 4.8
+    },
+    {
+      "code": "G14",
+      "name": "灰咖棕",
+      "rgb": [
+        117,
+        86,
+        67
+      ],
+      "count": 4,
+      "pct": 2.4
+    },
+    {
+      "code": "G2",
+      "name": "浅肤棕",
+      "rgb": [
+        255,
+        192,
+        170
+      ],
+      "count": 2,
+      "pct": 1.2
+    },
+    {
+      "code": "C22",
+      "name": "灰蓝绿",
+      "rgb": [
+        212,
+        246,
+        232
+      ],
+      "count": 1,
+      "pct": 0.6
+    }
+  ]
+}

@@ -1,0 +1,421 @@
+{
+  "name": "tnt_minecart",
+  "display_name": "TNT矿车",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 159,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G9",
+      "G9",
+      "G9",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G9",
+      "G9",
+      "A8",
+      "M4",
+      "F7",
+      "G9",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G9",
+      "G9",
+      "A8",
+      "M4",
+      "H10",
+      "H10",
+      "M4",
+      "A8",
+      "G9",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G9",
+      "A8",
+      "M4",
+      "F7",
+      "G4",
+      "M4",
+      "A8",
+      "H10",
+      "M4",
+      "F7",
+      "G9",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G9",
+      "A8",
+      "G4",
+      "M4",
+      "H10",
+      "H10",
+      "M4",
+      "H10",
+      "H10",
+      "M4",
+      "A8",
+      "G9",
+      null,
+      null
+    ],
+    [
+      null,
+      "G18",
+      "G9",
+      "A8",
+      "F7",
+      "A8",
+      "M4",
+      "H10",
+      "H10",
+      "M4",
+      "A8",
+      "F7",
+      "F10",
+      "F10",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "G18",
+      "G18",
+      "A8",
+      "F7",
+      "A8",
+      "G4",
+      "M4",
+      "A8",
+      "F7",
+      "F10",
+      "F7",
+      "F10",
+      "H1",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "G18",
+      "P2",
+      "G18",
+      "F10",
+      "A8",
+      "F7",
+      "F10",
+      "F10",
+      "F7",
+      "F10",
+      "H1",
+      "H1",
+      "M6",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "G18",
+      "M6",
+      "P2",
+      "G18",
+      "A8",
+      "F7",
+      "F10",
+      "F10",
+      "H1",
+      "H1",
+      "M6",
+      "P2",
+      "M6",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "G18",
+      "P2",
+      "M6",
+      "P2",
+      "G18",
+      "F10",
+      "H1",
+      "H1",
+      "P2",
+      "M6",
+      "P2",
+      "M6",
+      "M6",
+      "H1",
+      null
+    ],
+    [
+      null,
+      "H1",
+      "M6",
+      "P2",
+      "M6",
+      "P2",
+      "G18",
+      "M6",
+      "P2",
+      "M6",
+      "P2",
+      "M6",
+      "M6",
+      "M6",
+      "H1",
+      null
+    ],
+    [
+      null,
+      null,
+      "H1",
+      "M6",
+      "P2",
+      "M6",
+      "H1",
+      "P2",
+      "M6",
+      "P2",
+      "M6",
+      "M6",
+      "G18",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H1",
+      "M6",
+      "P2",
+      "H1",
+      "M6",
+      "M6",
+      "M6",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H1",
+      "M6",
+      "H1",
+      "M6",
+      "G18",
+      "H1",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      "H1",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "H1",
+      "name": "暖白",
+      "rgb": [
+        39,
+        41,
+        43
+      ],
+      "count": 31,
+      "pct": 19.5
+    },
+    {
+      "code": "M6",
+      "name": "暖灰棕",
+      "rgb": [
+        108,
+        132,
+        138
+      ],
+      "count": 26,
+      "pct": 16.4
+    },
+    {
+      "code": "A8",
+      "name": "金黄色",
+      "rgb": [
+        255,
+        82,
+        31
+      ],
+      "count": 15,
+      "pct": 9.4
+    },
+    {
+      "code": "P2",
+      "name": "浅灰色",
+      "rgb": [
+        176,
+        169,
+        172
+      ],
+      "count": 15,
+      "pct": 9.4
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 14,
+      "pct": 8.8
+    },
+    {
+      "code": "M4",
+      "name": "浅米色",
+      "rgb": [
+        215,
+        131,
+        128
+      ],
+      "count": 12,
+      "pct": 7.5
+    },
+    {
+      "code": "G18",
+      "name": "淡肤米色",
+      "rgb": [
+        69,
+        68,
+        59
+      ],
+      "count": 12,
+      "pct": 7.5
+    },
+    {
+      "code": "F7",
+      "name": "暗血红",
+      "rgb": [
+        147,
+        35,
+        36
+      ],
+      "count": 11,
+      "pct": 6.9
+    },
+    {
+      "code": "F10",
+      "name": "红棕色",
+      "rgb": [
+        115,
+        44,
+        2
+      ],
+      "count": 11,
+      "pct": 6.9
+    },
+    {
+      "code": "H10",
+      "name": "珍珠灰",
+      "rgb": [
+        40,
+        50,
+        58
+      ],
+      "count": 9,
+      "pct": 5.7
+    },
+    {
+      "code": "G4",
+      "name": "浅驼色",
+      "rgb": [
+        218,
+        162,
+        147
+      ],
+      "count": 3,
+      "pct": 1.9
+    }
+  ]
+}

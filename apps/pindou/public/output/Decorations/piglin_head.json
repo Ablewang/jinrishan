@@ -1,0 +1,432 @@
+{
+  "name": "piglin_head",
+  "display_name": "猪灵头颅",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 132,
+  "color_count": 12,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "P7",
+      "P7",
+      "P7",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "P7",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "P7",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "A11",
+      "P7",
+      "P7",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "P7",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G4",
+      "A11",
+      "A11",
+      "A11",
+      "P7",
+      "A11",
+      "A11",
+      "A11",
+      "P7",
+      "A11",
+      "G14",
+      "G14",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G14",
+      "G14",
+      "P7",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "A11",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      null
+    ],
+    [
+      null,
+      null,
+      "G14",
+      "G14",
+      "G13",
+      "G13",
+      "P7",
+      "A11",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      null
+    ],
+    [
+      null,
+      null,
+      "P7",
+      "R21",
+      "R21",
+      "G13",
+      "G13",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "R13",
+      "G14",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G12",
+      "G4",
+      "R21",
+      "G9",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "A11",
+      "A11",
+      "G9",
+      null,
+      null
+    ],
+    [
+      null,
+      "G12",
+      "P7",
+      "G4",
+      "P7",
+      "R22",
+      "R22",
+      "G14",
+      "G9",
+      "A11",
+      "A11",
+      "G14",
+      "G14",
+      "G9",
+      null,
+      null
+    ],
+    [
+      null,
+      "G12",
+      "G4",
+      "P7",
+      "G14",
+      "R22",
+      "R22",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G14",
+      "G9",
+      "G14",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "P7",
+      "P7",
+      "G14",
+      "G14",
+      "G14",
+      "G18",
+      "G9",
+      "A2",
+      "G9",
+      "G14",
+      "G18",
+      "G18",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "R22",
+      "R22",
+      "G14",
+      "G9",
+      "G9",
+      "G14",
+      "G18",
+      "G9",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G14",
+      "G9",
+      null,
+      "G18",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "G14",
+      "name": "灰咖棕",
+      "rgb": [
+        117,
+        86,
+        67
+      ],
+      "count": 46,
+      "pct": 34.8
+    },
+    {
+      "code": "A11",
+      "name": "淡肤橙",
+      "rgb": [
+        253,
+        201,
+        143
+      ],
+      "count": 30,
+      "pct": 22.7
+    },
+    {
+      "code": "P7",
+      "name": "浅杏橙",
+      "rgb": [
+        235,
+        146,
+        112
+      ],
+      "count": 18,
+      "pct": 13.6
+    },
+    {
+      "code": "G9",
+      "name": "肉桂棕",
+      "rgb": [
+        67,
+        31,
+        30
+      ],
+      "count": 11,
+      "pct": 8.3
+    },
+    {
+      "code": "R22",
+      "name": "深棕色",
+      "rgb": [
+        108,
+        55,
+        47
+      ],
+      "count": 6,
+      "pct": 4.5
+    },
+    {
+      "code": "G18",
+      "name": "淡肤米色",
+      "rgb": [
+        69,
+        68,
+        59
+      ],
+      "count": 5,
+      "pct": 3.8
+    },
+    {
+      "code": "G4",
+      "name": "浅驼色",
+      "rgb": [
+        218,
+        162,
+        147
+      ],
+      "count": 4,
+      "pct": 3.0
+    },
+    {
+      "code": "G13",
+      "name": "赤陶棕",
+      "rgb": [
+        138,
+        93,
+        60
+      ],
+      "count": 4,
+      "pct": 3.0
+    },
+    {
+      "code": "R21",
+      "name": "棕色",
+      "rgb": [
+        173,
+        111,
+        60
+      ],
+      "count": 3,
+      "pct": 2.3
+    },
+    {
+      "code": "G12",
+      "name": "浅橙肤色",
+      "rgb": [
+        199,
+        158,
+        115
+      ],
+      "count": 3,
+      "pct": 2.3
+    },
+    {
+      "code": "R13",
+      "name": "深灰色",
+      "rgb": [
+        85,
+        81,
+        76
+      ],
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "code": "A2",
+      "name": "象牙黄",
+      "rgb": [
+        240,
+        246,
+        167
+      ],
+      "count": 1,
+      "pct": 0.8
+    }
+  ]
+}
