@@ -382,6 +382,7 @@ async function renderItem(app, cat, name) {
       <header class="header">
         <a href="#/category/${enc(cat)}" class="h-back">${BACK_SVG}</a>
         <span class="h-title">${item.display_name} 拼豆预览 (${item.board_size}×${item.board_size})</span>
+        <button class="h-logo" id="viewToggle">查看原图</button>
       </header>
       <div class="detail-body">
         <div class="bead-section" id="beadSection">
@@ -397,15 +398,16 @@ async function renderItem(app, cat, name) {
       </div>
     </div>`;
 
-  initBeadCanvas(item, app);
+  initBeadCanvas(item, app, gImg(cat, item.name));
 }
 
-function initBeadCanvas(item, app) {
-  const section = app.querySelector('#beadSection');
-  const canvas  = app.querySelector('#beadCanvas');
-  const mats    = app.querySelector('#mats');
-  const ctx     = canvas.getContext('2d');
-  const dpr     = window.devicePixelRatio || 1;
+function initBeadCanvas(item, app, gallerySrc) {
+  const section    = app.querySelector('#beadSection');
+  const canvas     = app.querySelector('#beadCanvas');
+  const mats       = app.querySelector('#mats');
+  const toggleBtn  = app.querySelector('#viewToggle');
+  const ctx        = canvas.getContext('2d');
+  const dpr        = window.devicePixelRatio || 1;
 
   const { grid, materials, board_size, grid_size } = item;
   const off = (board_size - grid_size) / 2;
@@ -418,18 +420,28 @@ function initBeadCanvas(item, app) {
   const GAP  = 2;
 
   let cs = 16;
-  let activeCode = null;
+  let activeCode  = null;
+  let showOriginal = false;
+  let cachedImg   = null;
+
+  // preload gallery image
+  const img = new Image();
+  img.onload = () => { cachedImg = img; if (showOriginal) drawOriginal(); };
+  img.src = gallerySrc;
 
   function setup() {
     const availW = section.clientWidth - PAD * 2;
     cs = Math.max(10, Math.floor((availW - NUMW - GAP) / board_size));
     const W = PAD + NUMW + GAP + board_size * cs + PAD;
-    const H = PAD + NUMW + GAP + board_size * cs + PAD;
     canvas.width  = W * dpr;
-    canvas.height = H * dpr;
+    canvas.height = W * dpr;
     canvas.style.width  = W + 'px';
-    canvas.style.height = H + 'px';
+    canvas.style.height = W + 'px';
     ctx.scale(dpr, dpr);
+  }
+
+  function redraw() {
+    if (showOriginal) drawOriginal(); else draw();
   }
 
   function txtColor(r, g, b) {
@@ -501,9 +513,50 @@ function initBeadCanvas(item, app) {
       ctx.fillText(c + 1, PAD + NUMW + GAP + c * cs + cs / 2, PAD + NUMW / 2);
   }
 
-  requestAnimationFrame(() => { setup(); draw(); });
+  function drawOriginal() {
+    const W = PAD + NUMW + GAP + board_size * cs + PAD;
+    ctx.clearRect(0, 0, W, W);
+    ctx.fillStyle = '#eeecea';
+    ctx.fillRect(0, 0, W, W);
+
+    for (let r = 0; r < board_size; r++) {
+      for (let c = 0; c < board_size; c++) {
+        const x = PAD + NUMW + GAP + c * cs;
+        const y = PAD + NUMW + GAP + r * cs;
+        const gr = r - off, gc = c - off;
+        const inGrid = gr >= 0 && gr < grid_size && gc >= 0 && gc < grid_size;
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = inGrid ? '#e8e6e2' : '#dddbd7';
+        ctx.fillRect(x, y, cs, cs);
+      }
+    }
+
+    if (cachedImg) {
+      const gx = PAD + NUMW + GAP + off * cs;
+      const gy = PAD + NUMW + GAP + off * cs;
+      const gw = grid_size * cs;
+      ctx.imageSmoothingEnabled = false;
+      ctx.globalAlpha = 1;
+      ctx.drawImage(cachedImg, gx, gy, gw, gw);
+    }
+
+    for (let r = 0; r < board_size; r++) {
+      for (let c = 0; c < board_size; c++) {
+        const x = PAD + NUMW + GAP + c * cs;
+        const y = PAD + NUMW + GAP + r * cs;
+        ctx.globalAlpha = 0.15;
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(x, y, cs, cs);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  requestAnimationFrame(() => { setup(); redraw(); });
 
   canvas.addEventListener('click', e => {
+    if (showOriginal) return;
     const rect = canvas.getBoundingClientRect();
     const col  = Math.floor((e.clientX - rect.left - PAD - NUMW) / cs);
     const row  = Math.floor((e.clientY - rect.top  - PAD - NUMW) / cs);
@@ -523,6 +576,7 @@ function initBeadCanvas(item, app) {
 
   if (mats) {
     mats.addEventListener('click', e => {
+      if (showOriginal) return;
       const row = e.target.closest('.mat-row[data-code]');
       if (!row) return;
       const code = row.dataset.code;
@@ -533,8 +587,18 @@ function initBeadCanvas(item, app) {
     });
   }
 
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      showOriginal = !showOriginal;
+      toggleBtn.textContent = showOriginal ? '查看拼豆' : '查看原图';
+      toggleBtn.classList.toggle('active', showOriginal);
+      if (showOriginal) { activeCode = null; clearMatHL(mats); drawOriginal(); }
+      else draw();
+    });
+  }
+
   if (window.ResizeObserver) {
-    const ro = new ResizeObserver(() => { setup(); draw(); });
+    const ro = new ResizeObserver(() => { setup(); redraw(); });
     ro.observe(section);
   }
 }

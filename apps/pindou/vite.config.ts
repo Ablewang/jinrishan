@@ -8,10 +8,7 @@ export default defineConfig({
   },
   server: {
     fs: {
-      allow: [
-        '/Users/wangyong/yong/jinrishan',
-        '/Users/wangyong/yong/assistant-web/apps/minecraft/output',
-      ],
+      allow: ['/home/jeffrey/yong/jinrishan'],
     },
   },
 })

@@ -1,0 +1,18 @@
+.list { padding-bottom: 20px; }
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 9px 14px;
+  gap: 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.row.active { background: var(--ac3); }
+
+.swatch { width: 22px; height: 22px; border-radius: 4px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
+.code   { font-family: monospace; font-size: 11px; color: var(--text2); min-width: 34px; flex-shrink: 0; }
+.name   { flex: 1; font-size: 13px; color: var(--text); min-width: 0; }
+.count  { font-weight: 700; font-size: 14px; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 38px; text-align: right; flex-shrink: 0; }
+.pct    { font-size: 11px; color: var(--text3); min-width: 44px; text-align: right; flex-shrink: 0; }

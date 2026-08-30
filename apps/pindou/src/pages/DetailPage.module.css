@@ -1,0 +1,66 @@
+.page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.matSection {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.matHeader {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--br);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.matSummary {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text2);
+}
+
+.matScroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.loading, .err {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text3);
+  font-size: 14px;
+}
+
+.viewBtn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1.5px solid var(--ac2);
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--ac3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}

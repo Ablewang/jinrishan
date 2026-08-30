@@ -1,0 +1,58 @@
+.page {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.catBtn {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text2);
+  border: 1.5px solid rgba(0,0,0,0.15);
+  padding: 5px 12px;
+  border-radius: 8px;
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1.5px solid rgba(0,0,0,0.15);
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: var(--ac3);
+  border-color: var(--ac2);
+}
+
+.tabBar {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-bottom: 1px solid var(--br);
+  user-select: none;
+  cursor: grab;
+  position: sticky;
+  top: 56px;
+  z-index: 90;
+  background: rgba(245, 244, 240, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.tabBar::-webkit-scrollbar { display: none; }
+.tabBar.grabbing { cursor: grabbing; }
+
+.tab {
+  flex-shrink: 0;
+  padding: 13px 14px;
+  font-size: 13px;
+  color: var(--text2);
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.content {
+  padding-bottom: 60px;
+}

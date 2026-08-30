@@ -1,0 +1,31 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  background: rgba(245, 244, 240, 0.94);
+  border-bottom: 1px solid var(--br);
+  height: 56px;
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.back {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spacer { flex: 1; }
