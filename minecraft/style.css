@@ -34,7 +34,15 @@ a { color: inherit; text-decoration: none; }
 button { background: none; border: none; cursor: pointer; color: inherit; font: inherit; padding: 0; }
 img { display: block; }
 
-#app { position: relative; z-index: 1; background: var(--bg); overflow: hidden; }
+#app {
+  position: fixed;
+  inset: 0;
+  max-width: 768px;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--bg);
+}
 
 /* ── Page ── */
 .page {
@@ -179,6 +187,23 @@ img { display: block; }
 }
 .search-input::placeholder { color: var(--text3); }
 .search-input:focus { border-color: var(--accent); }
+
+/* ── Category Page ── */
+.cat-page {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cat-page > .header { position: static; flex-shrink: 0; }
+.cat-page > .search-wrap { flex-shrink: 0; }
+.item-list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0 20px;
+}
 
 /* ── Item List ── */
 .item-list { padding: 4px 0 60px; }

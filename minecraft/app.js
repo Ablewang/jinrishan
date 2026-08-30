@@ -1,4 +1,5 @@
 'use strict';
+/* global MC_MANIFEST, MC_SUMMARY, MC_ITEMS */
 
 const CAT_ZH = {
   'Building Blocks': '建筑方块',
@@ -15,232 +16,80 @@ const CAT_ZH = {
 let manifest = null;
 let summary  = null;
 
-// ─── Init ───────────────────────────────────────────────────────────────────
+// ─── Layer Stack ─────────────────────────────────────────────────────────────
 
-async function init() {
-  try {
-    if (typeof MC_MANIFEST !== 'undefined' && typeof MC_SUMMARY !== 'undefined') {
-      manifest = MC_MANIFEST;
-      summary  = MC_SUMMARY;
-    } else {
-      [manifest, summary] = await Promise.all([
-        fetch('./output/manifest.json').then(r => { if (!r.ok) throw r; return r.json(); }),
-        fetch('./output/summary.json').then(r  => { if (!r.ok) throw r; return r.json(); }),
-      ]);
-    }
-  } catch (e) {
-    document.getElementById('app').innerHTML =
-      '<div class="err-state">数据加载失败' +
-      '<div class="err-hint">请通过 HTTP 服务器访问<br>python3 -m http.server 8080</div></div>';
-    return;
+const EASE       = 'cubic-bezier(0.4,0,0.2,1)';
+const LAYER_CSS  = 'position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#f5f4f0;will-change:transform;';
+
+let stackEl       = null;
+let layerStack    = [];   // [{ el, hash }]
+let transitioning = false;
+
+const topLayer   = () => layerStack[layerStack.length - 1];
+const belowLayer = () => layerStack[layerStack.length - 2];
+
+function pushLayer(hash, animate = true) {
+  const el = document.createElement('div');
+  el.style.cssText = LAYER_CSS + `z-index:${layerStack.length + 1};`;
+  const w = stackEl.offsetWidth || window.innerWidth;
+  if (animate) el.style.transform = `translateX(${w}px)`;
+  stackEl.appendChild(el);
+  layerStack.push({ el, hash });
+  renderHash(hash, el);
+  if (animate) {
+    transitioning = true;
+    el.animate(
+      [{ transform: `translateX(${w}px)` }, { transform: 'translateX(0)' }],
+      { duration: 280, easing: EASE }
+    ).onfinish = () => { el.style.transform = ''; transitioning = false; };
   }
-  initGesture();
-  document.addEventListener('click', e => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    e.preventDefault();
-    navigate(a.getAttribute('href'), !!a.closest('.h-back'));
-  });
-  window.addEventListener('popstate', () => {
-    _isBack = true;
-    _preSnap = takeCurrentSnap(document.getElementById('app'));
-    route();
-  });
-  route();
 }
 
-// ─── Router ─────────────────────────────────────────────────────────────────
+function popLayer(startDx = 0, gestureActive = false) {
+  if (layerStack.length <= 1) return;
+  transitioning = true;
+  const { el } = layerStack.pop();
+  const w   = stackEl.offsetWidth || window.innerWidth;
+  const rem = w - startDx;
+  const dur = Math.round(Math.min(280, Math.max(120, rem * 0.65)));
 
-const scrollCache  = {};
-let _isBack        = false;
-let prevHash       = location.hash || '#/';
-let _gestureSnap   = null;
-let _gestureSnapDx = 0;
-let _preSnap       = null;
+  el.animate(
+    [{ transform: `translateX(${startDx}px)` }, { transform: `translateX(${w}px)` }],
+    { duration: dur, easing: EASE, fill: 'forwards' }
+  ).onfinish = () => { el.remove(); transitioning = false; };
 
-function navigate(hash, back = false) {
-  if (hash === (location.hash || '#/')) return;
-  _isBack = back;
-  if (!_gestureSnap) {
-    _preSnap = takeCurrentSnap(document.getElementById('app'));
+  const below = topLayer();
+  if (below) {
+    const fromT = gestureActive ? (below.el.style.transform || 'translateX(-30%)') : 'translateX(-30%)';
+    below.el.style.transform = '';
+    below.el.animate(
+      [{ transform: fromT }, { transform: 'translateX(0)' }],
+      { duration: dur, easing: EASE }
+    );
   }
+}
+
+function navigate(hash, back = false, gestureDx = 0) {
+  if (!back && topLayer()?.hash === hash) return;
   history.pushState(null, '', hash);
-  route();
+  if (back) popLayer(gestureDx, gestureDx > 0);
+  else      pushLayer(hash);
 }
 
-function render(hash, app) {
+function renderHash(fullHash, el) {
+  const hash = fullHash.slice(1) || '/';
   if (hash === '/' || hash === '') {
-    renderHome(app);
+    renderHome(el);
   } else if (hash.startsWith('/category/')) {
-    renderCategory(app, decodeURIComponent(hash.slice('/category/'.length)));
+    renderCategory(el, decodeURIComponent(hash.slice('/category/'.length)));
   } else if (hash.startsWith('/item/')) {
     const rest = hash.slice('/item/'.length);
     const i    = rest.indexOf('/');
-    renderItem(app, decodeURIComponent(rest.slice(0, i)), decodeURIComponent(rest.slice(i + 1)));
+    renderItem(el, decodeURIComponent(rest.slice(0, i)), decodeURIComponent(rest.slice(i + 1)));
   } else if (hash === '/summary') {
-    renderSummary(app);
+    renderSummary(el);
   } else {
-    renderHome(app);
-  }
-}
-
-function route() {
-  const fullHash = location.hash || '#/';
-  const hash     = fullHash.slice(1) || '/';
-  const app      = document.getElementById('app');
-  const isBack   = _isBack;
-  _isBack = false;
-
-  scrollCache[prevHash] = window.scrollY;
-  prevHash = fullHash;
-
-  const curSnap = _gestureSnap || _preSnap || null;
-  const snapDx  = _gestureSnapDx;
-  _gestureSnap = _preSnap = null;
-  _gestureSnapDx = 0;
-
-  if (!isBack && app.firstElementChild && !app.querySelector('.splash')) {
-    pushPage(snapHTML(app), window.scrollY);
-  }
-
-  render(hash, app);
-
-  if (isBack) runBackTransition(curSnap, snapDx);
-  else        runForwardTransition(curSnap);
-
-  const saved = isBack ? (scrollCache[fullHash] || 0) : 0;
-  requestAnimationFrame(() => window.scrollTo(0, saved));
-}
-
-// ─── Transition ──────────────────────────────────────────────────────────────
-
-let transitioning  = false;
-let pageHTMLStack  = [];
-let persistedEl    = null;
-
-// 两个固定裁剪容器，防止快照在桌面宽屏下超出 app 范围
-const CLIP_CSS = 'position:fixed;inset:0;max-width:768px;width:100%;margin:0 auto;overflow:hidden;pointer-events:none;';
-const snapBgEl = document.createElement('div');  // z=0, 位于 #app 之下
-const snapFgEl = document.createElement('div');  // z=2, 位于 #app 之上
-snapBgEl.style.cssText = CLIP_CSS + 'z-index:0;';
-snapFgEl.style.cssText = CLIP_CSS + 'z-index:2;';
-document.addEventListener('DOMContentLoaded', () => {
-  document.body.append(snapBgEl, snapFgEl);
-}, { once: true });
-
-const SNAP_CSS = 'position:absolute;inset:0;background:#f5f4f0;will-change:transform;';
-
-function snapHTML(app) {
-  app.querySelectorAll('canvas').forEach(c => {
-    try {
-      const img = new Image();
-      img.src = c.toDataURL();
-      img.style.cssText = `width:${c.offsetWidth}px;height:${c.offsetHeight}px;display:block;`;
-      c.replaceWith(img);
-    } catch (_) {}
-  });
-  return app.innerHTML;
-}
-
-function makeEl(html, scrollY, fg, transformX) {
-  if (!html) return null;
-  const el = document.createElement('div');
-  el.style.cssText = `${SNAP_CSS}transform:translateX(${transformX});`;
-  const inner = document.createElement('div');
-  inner.style.transform = `translateY(-${scrollY || 0}px)`;
-  inner.innerHTML = html;
-  el.appendChild(inner);
-  (fg ? snapFgEl : snapBgEl).appendChild(el);
-  return el;
-}
-
-function refreshPersistedEl() {
-  persistedEl?.remove(); persistedEl = null;
-  const entry = pageHTMLStack[pageHTMLStack.length - 1];
-  if (entry) persistedEl = makeEl(entry.html, entry.scrollY, false, '-30%');
-}
-
-function pushPage(html, scrollY) { pageHTMLStack.push({ html, scrollY: scrollY || 0 }); refreshPersistedEl(); }
-function popPage()                { pageHTMLStack.pop(); refreshPersistedEl(); }
-
-function takeCurrentSnap(app) {
-  if (!app.firstElementChild || app.querySelector('.splash')) return null;
-  const el = document.createElement('div');
-  el.style.cssText = `${SNAP_CSS}transform:translateX(0);`;
-  const inner = document.createElement('div');
-  inner.style.transform = `translateY(-${window.scrollY}px)`;
-  const clone = app.cloneNode(true);
-  const origEls  = [...app.querySelectorAll('*')];
-  const cloneEls = [...clone.querySelectorAll('*')];
-  origEls.forEach((orig, i) => {
-    if (orig.scrollTop || orig.scrollLeft) {
-      cloneEls[i].scrollTop  = orig.scrollTop;
-      cloneEls[i].scrollLeft = orig.scrollLeft;
-    }
-  });
-  const canvases = app.querySelectorAll('canvas');
-  clone.querySelectorAll('canvas').forEach((cc, i) => {
-    try {
-      const src = canvases[i]?.toDataURL();
-      if (!src) return;
-      const img = new Image();
-      img.src = src;
-      img.style.cssText = `width:${canvases[i].offsetWidth}px;height:${canvases[i].offsetHeight}px;display:block;`;
-      cc.replaceWith(img);
-    } catch (_) {}
-  });
-  inner.appendChild(clone);
-  el.appendChild(inner);
-  snapFgEl.appendChild(el);
-  return el;
-}
-
-function runForwardTransition(curSnap) {
-  curSnap?.remove();
-  if (!persistedEl) return;
-  transitioning = true;
-  const app  = document.getElementById('app');
-  const w    = app.offsetWidth || window.innerWidth;
-  const page = app.firstElementChild;
-  const done = () => { transitioning = false; };
-  if (page) page.animate(
-    [{ transform: `translateX(${w}px)` }, { transform: 'translateX(0)' }],
-    { duration: 280, easing: 'cubic-bezier(0.4,0,0.2,1)' }
-  ).onfinish = done;
-  else done();
-}
-
-function runBackTransition(curSnap, startDx) {
-  if (!curSnap && !persistedEl) { transitioning = false; return; }
-  transitioning = true;
-  const app  = document.getElementById('app');
-  const w    = app.offsetWidth || window.innerWidth;
-  const rem  = w - (startDx || 0);
-  const dur  = Math.round(Math.min(280, Math.max(120, rem * 0.65)));
-  const ease = 'cubic-bezier(0.4,0,0.2,1)';
-
-  const done = () => {
-    curSnap?.remove();
-    if (persistedEl) { persistedEl.remove(); persistedEl = null; }
-    transitioning = false;
-    popPage();
-  };
-
-  if (curSnap) {
-    curSnap.animate(
-      [{ transform: `translateX(${startDx || 0}px)` }, { transform: `translateX(${w}px)` }],
-      { duration: dur, easing: ease, fill: 'forwards' }
-    ).onfinish = done;
-  } else {
-    done();
-  }
-
-  if (persistedEl) {
-    const fromT = persistedEl.style.transform || 'translateX(-30%)';
-    persistedEl.animate(
-      [{ transform: fromT }, { transform: 'translateX(0)' }],
-      { duration: dur, easing: ease }
-    );
+    renderHome(el);
   }
 }
 
@@ -273,49 +122,96 @@ function initGesture() {
       if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
       sw.decided = true;
       const target = backTarget();
-      if (dx <= 0 || Math.abs(dy) > Math.abs(dx) || !target || !persistedEl) { sw = null; return; }
-      sw.active  = true;
-      sw.target  = target;
-      sw.app     = document.getElementById('app');
+      if (dx <= 0 || Math.abs(dy) > Math.abs(dx) || !target || layerStack.length < 2) { sw = null; return; }
+      sw.active = true;
+      sw.target = target;
     }
 
     if (!sw?.active) return;
     e.preventDefault();
-    const d = Math.max(0, dx);
-    const w = window.innerWidth;
-    sw.app.style.transform = `translateX(${d}px)`;
-    if (persistedEl) persistedEl.style.transform = `translateX(${-30 + (d / w) * 30}%)`;
+    const d = Math.max(0, dx), w = window.innerWidth;
+    const top   = topLayer();
+    const below = belowLayer();
+    if (top)   top.el.style.transform   = `translateX(${d}px)`;
+    if (below) below.el.style.transform = `translateX(${-30 + (d / w) * 30}%)`;
   }, { passive: false });
 
   function onEnd(e) {
     if (!sw?.active) { sw = null; return; }
-    const dx  = (e.changedTouches?.[0]?.clientX ?? sw.x0) - sw.x0;
-    const { app, target } = sw;
+    const dx = (e.changedTouches?.[0]?.clientX ?? sw.x0) - sw.x0;
+    const { target } = sw;
     sw = null;
 
-    const w = app.offsetWidth || window.innerWidth;
+    const top = topLayer();
+    const w   = top ? (top.el.offsetWidth || window.innerWidth) : window.innerWidth;
+
     if (dx > w * 0.3) {
-      const curSnap = takeCurrentSnap(app);
-      if (curSnap) curSnap.style.transform = `translateX(${dx}px)`;
-      app.style.transform = '';
-      _gestureSnap   = curSnap;
-      _gestureSnapDx = curSnap ? dx : 0;
-      navigate(target, true);
+      navigate(target, true, dx);
     } else {
-      const fromT = app.style.transform;
-      app.animate(
-        [{ transform: fromT }, { transform: 'translateX(0)' }],
+      if (top) top.el.animate(
+        [{ transform: top.el.style.transform }, { transform: 'translateX(0)' }],
         { duration: 200, easing: 'ease-out' }
-      ).onfinish = () => { app.style.transform = ''; };
-      if (persistedEl) persistedEl.animate(
-        [{ transform: persistedEl.style.transform }, { transform: 'translateX(-30%)' }],
+      ).onfinish = () => { top.el.style.transform = ''; };
+
+      const below = belowLayer();
+      if (below) below.el.animate(
+        [{ transform: below.el.style.transform }, { transform: 'translateX(0)' }],
         { duration: 200, easing: 'ease-out' }
-      ).onfinish = () => { if (persistedEl) persistedEl.style.transform = 'translateX(-30%)'; };
+      ).onfinish = () => { below.el.style.transform = ''; };
     }
   }
 
   document.addEventListener('touchend',    onEnd, { passive: true });
   document.addEventListener('touchcancel', onEnd, { passive: true });
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+
+async function init() {
+  try {
+    if (typeof MC_MANIFEST !== 'undefined' && typeof MC_SUMMARY !== 'undefined') {
+      manifest = MC_MANIFEST;
+      summary  = MC_SUMMARY;
+    } else {
+      [manifest, summary] = await Promise.all([
+        fetch('./output/manifest.json').then(r => { if (!r.ok) throw r; return r.json(); }),
+        fetch('./output/summary.json').then(r  => { if (!r.ok) throw r; return r.json(); }),
+      ]);
+    }
+  } catch (e) {
+    document.getElementById('app').innerHTML =
+      '<div class="err-state">数据加载失败' +
+      '<div class="err-hint">请通过 HTTP 服务器访问<br>python3 -m http.server 8080</div></div>';
+    return;
+  }
+
+  stackEl = document.getElementById('app');
+  stackEl.innerHTML = '';
+
+  // 构建初始层栈（无动画）
+  const initHash = location.hash || '#/';
+  pushLayer('#/', false);
+  if (initHash !== '#/' && initHash !== '#') {
+    const h = initHash.slice(1);
+    if (h.startsWith('/item/')) {
+      const rest = h.slice(6);
+      pushLayer(`#/category/${rest.slice(0, rest.indexOf('/'))}`, false);
+    }
+    pushLayer(initHash, false);
+  }
+
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    navigate(a.getAttribute('href'), !!a.closest('.h-back'));
+  });
+
+  window.addEventListener('popstate', () => {
+    if (layerStack.length > 1) popLayer();
+  });
+
+  initGesture();
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -385,7 +281,7 @@ function renderCategory(app, cat) {
   if (!data) { renderHome(app); return; }
 
   app.innerHTML = `
-    <div class="page">
+    <div class="page cat-page">
       ${header(
         `<a href="#/" class="h-back">${BACK_SVG}</a><span class="h-title">${zh(cat)}</span>`,
         `<a href="#/summary" class="h-link">清单汇总</a>`
@@ -393,7 +289,7 @@ function renderCategory(app, cat) {
       <div class="search-wrap">
         <input class="search-input" id="q" type="text" placeholder="搜索物品名称...">
       </div>
-      <div class="item-list" id="list">${itemListHtml(cat, data.items)}</div>
+      <div class="item-list-scroll" id="list">${itemListHtml(cat, data.items)}</div>
     </div>`;
 
   const input = app.querySelector('#q');
@@ -521,7 +417,7 @@ function initBeadCanvas(item, app) {
   const NUMW = 20;
   const GAP  = 2;
 
-  let cs = 16;          // cell size in CSS px, updated in setup()
+  let cs = 16;
   let activeCode = null;
 
   function setup() {
@@ -545,7 +441,6 @@ function initBeadCanvas(item, app) {
     const H = W;
     ctx.clearRect(0, 0, W, H);
 
-    // Board background
     ctx.fillStyle = '#eeecea';
     ctx.fillRect(0, 0, W, H);
 
@@ -563,14 +458,12 @@ function initBeadCanvas(item, app) {
         const inGrid = gr >= 0 && gr < grid_size && gc >= 0 && gc < grid_size;
         const code = inGrid ? grid[gr][gc] : null;
 
-        // Fill
         if (code && cmap[code]) {
           const [rv, gv, bv] = cmap[code];
           ctx.globalAlpha = (activeCode && activeCode !== code) ? 0.18 : 1;
           ctx.fillStyle = `rgb(${rv},${gv},${bv})`;
           ctx.fillRect(x, y, cs, cs);
 
-          // Color code label
           if (cs >= 11) {
             ctx.globalAlpha = (activeCode && activeCode !== code) ? 0.18 : 1;
             ctx.fillStyle = txtColor(rv, gv, bv);
@@ -582,7 +475,6 @@ function initBeadCanvas(item, app) {
           ctx.fillRect(x, y, cs, cs);
         }
 
-        // Highlight border
         if (activeCode && code === activeCode) {
           ctx.globalAlpha = 1;
           ctx.strokeStyle = '#1a7a5e';
@@ -590,7 +482,6 @@ function initBeadCanvas(item, app) {
           ctx.strokeRect(x + 1, y + 1, cs - 2, cs - 2);
         }
 
-        // Cell grid lines
         ctx.globalAlpha = 0.15;
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 0.5;
@@ -612,11 +503,10 @@ function initBeadCanvas(item, app) {
 
   requestAnimationFrame(() => { setup(); draw(); });
 
-  // Click
   canvas.addEventListener('click', e => {
     const rect = canvas.getBoundingClientRect();
-    const col  = Math.floor((e.clientX - rect.left  - PAD - NUMW) / cs);
-    const row  = Math.floor((e.clientY - rect.top - PAD - NUMW) / cs);
+    const col  = Math.floor((e.clientX - rect.left - PAD - NUMW) / cs);
+    const row  = Math.floor((e.clientY - rect.top  - PAD - NUMW) / cs);
 
     if (col < 0 || col >= board_size || row < 0 || row >= board_size) {
       activeCode = null; draw(); clearMatHL(mats); return;
@@ -631,7 +521,6 @@ function initBeadCanvas(item, app) {
     else clearMatHL(mats);
   });
 
-  // Mat list click → canvas highlight
   if (mats) {
     mats.addEventListener('click', e => {
       const row = e.target.closest('.mat-row[data-code]');
@@ -644,7 +533,6 @@ function initBeadCanvas(item, app) {
     });
   }
 
-  // Auto-resize
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => { setup(); draw(); });
     ro.observe(section);
@@ -713,7 +601,7 @@ function renderSummary(app) {
       <div class="sum-list" id="sumContent">${contentHtml()}</div>
     </div>`;
 
-  const tabBar = app.querySelector('#tabs');
+  const tabBar  = app.querySelector('#tabs');
   const content = app.querySelector('#sumContent');
 
   tabBar.addEventListener('click', e => {
@@ -722,7 +610,7 @@ function renderSummary(app) {
     cur = +btn.dataset.i;
     tabBar.innerHTML = tabHtml();
     content.innerHTML = contentHtml();
-    window.scrollTo(0, 0);
+    app.scrollTo(0, 0);
   });
 
   tabBar.addEventListener('keydown', e => {
@@ -730,7 +618,6 @@ function renderSummary(app) {
     if (e.key === 'ArrowRight') { cur = Math.min(tabs.length - 1, cur + 1); tabBar.innerHTML = tabHtml(); content.innerHTML = contentHtml(); }
   });
 
-  // Tab drag
   let drag = false, sx = 0, sl = 0;
   tabBar.addEventListener('mousedown', e => { drag = true; sx = e.pageX; sl = tabBar.scrollLeft; tabBar.classList.add('grabbing'); });
   tabBar.addEventListener('mouseleave', () => { drag = false; tabBar.classList.remove('grabbing'); });
