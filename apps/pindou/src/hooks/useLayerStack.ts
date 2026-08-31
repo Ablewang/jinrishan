@@ -65,10 +65,13 @@ export function useLayerStack() {
     const dur = Math.round(Math.min(280, Math.max(120, rem * 0.65)))
 
     // 顶层：从当前位置滑出到右边
-    topEl.animate(
+    const topAnim = topEl.animate(
       [{ transform: `translateX(${startDx}px)` }, { transform: `translateX(${w}px)` }],
-      { duration: dur, easing: EASE, fill: 'forwards' }
-    ).onfinish = () => {
+      { duration: dur, easing: EASE }
+    )
+    topAnim.onfinish = () => {
+      // 用 style 固定位置，防止 React 重渲染前元素闪回原位
+      topEl.style.transform = `translateX(${w}px)`
       transitioning.current = false
       setStack(s => s.filter(e => e.id !== top.id))
     }
@@ -78,11 +81,10 @@ export function useLayerStack() {
       const fromT = gestureActive
         ? (belowEl.style.transform || 'translateX(-30%)')
         : 'translateX(-30%)'
-      belowEl.style.transform = ''
       belowEl.animate(
         [{ transform: fromT }, { transform: 'translateX(0)' }],
-        { duration: dur, easing: EASE }
-      )
+        { duration: dur, easing: EASE, fill: 'forwards' }
+      ).onfinish = () => { belowEl.style.transform = '' }
     }
   }, [])
 
