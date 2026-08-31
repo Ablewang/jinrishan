@@ -65,10 +65,9 @@ export function useLayerStack() {
 
     const topAnim = topEl.animate(
       [{ transform: `translateX(${startDx}px)` }, { transform: `translateX(${w}px)` }],
-      { duration: dur, easing: EASE }
+      { duration: dur, easing: EASE, fill: 'forwards' }
     )
     topAnim.onfinish = () => {
-      topEl.style.display = 'none'
       transitioning.current = false
       setStack(s => s.filter(e => e.id !== top.id))
     }
