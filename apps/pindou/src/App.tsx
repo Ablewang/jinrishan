@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { DataProvider } from './hooks/useData'
 import { useLayerStack } from './hooks/useLayerStack'
+import { useMemoizedFn } from './hooks/useMemoizedFn'
 import { useSwipeBack } from './hooks/useSwipeBack'
 import { CategoryPage } from './pages/CategoryPage'
 import { DetailPage } from './pages/DetailPage'
@@ -56,24 +57,29 @@ const LAYER_STYLE: React.CSSProperties = {
 export default function App() {
   const { stack, push, pop, animateIn, layerRefs, transitioning } = useLayerStack()
   const animatedIds = useRef<Set<number>>(new Set())
+  const stackRef = useRef(stack)
+  stackRef.current = stack
 
-  const getTopEl = useCallback(() => {
-    if (stack.length < 1) return null
-    return layerRefs.current.get(stack[stack.length - 1].id) ?? null
-  }, [stack, layerRefs])
+  const getTopEl = useMemoizedFn(() => {
+    const s = stackRef.current
+    if (s.length < 1) return null
+    return layerRefs.current.get(s[s.length - 1].id) ?? null
+  })
 
-  const getBelowEl = useCallback(() => {
-    if (stack.length < 2) return null
-    return layerRefs.current.get(stack[stack.length - 2].id) ?? null
-  }, [stack, layerRefs])
+  const getBelowEl = useMemoizedFn(() => {
+    const s = stackRef.current
+    if (s.length < 2) return null
+    return layerRefs.current.get(s[s.length - 2].id) ?? null
+  })
 
-  const canPop = useCallback(() => stack.length > 1, [stack])
+  const canPop = useMemoizedFn(() => stackRef.current.length > 1)
 
-  const handleCommit = useCallback((dx: number) => {
-    const belowHash = stack.length >= 2 ? stack[stack.length - 2].hash : null
+  const handleCommit = useMemoizedFn((dx: number) => {
+    const s = stackRef.current
+    const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
     pop(dx, true)
     if (belowHash) history.replaceState(null, '', belowHash)
-  }, [pop, stack])
+  })
 
   useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: handleCommit, transitioning })
 
@@ -83,11 +89,12 @@ export default function App() {
     return () => window.removeEventListener('popstate', handler)
   }, [pop])
 
-  const handleBack = useCallback(() => {
-    const belowHash = stack.length >= 2 ? stack[stack.length - 2].hash : null
+  const handleBack = useMemoizedFn(() => {
+    const s = stackRef.current
+    const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
     pop()
     if (belowHash) history.replaceState(null, '', belowHash)
-  }, [pop, stack])
+  })
 
   return (
     <DataProvider>
