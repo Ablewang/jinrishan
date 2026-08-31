@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
+import { LayerRenderer } from './components/LayerRenderer'
 import { DataProvider } from './hooks/useData'
+import type { LayerEntry } from './hooks/useLayerStack'
 import { useLayerStack } from './hooks/useLayerStack'
 import { useMemoizedFn } from './hooks/useMemoizedFn'
 import { useSwipeBack } from './hooks/useSwipeBack'
@@ -27,64 +29,41 @@ function parseHash(hash: string) {
   return { type: 'home' as const }
 }
 
-function PageContent({
-  hash,
-  onNavigate,
-  onBack,
-}: {
-  hash: string
-  onNavigate: (h: string) => void
-  onBack: () => void
-}) {
-  const parsed = parseHash(hash)
-  if (parsed.type === 'category')
-    return <CategoryPage cat={parsed.cat} onNavigate={onNavigate} onBack={onBack} />
-  if (parsed.type === 'item')
-    return <DetailPage cat={parsed.cat} name={parsed.name} onBack={onBack} />
-  if (parsed.type === 'summary')
-    return <SummaryPage onBack={onBack} />
-  return <HomePage onNavigate={onNavigate} />
-}
-
-const LAYER_STYLE: React.CSSProperties = {
-  position: 'absolute',
-  inset: 0,
-  overflowY: 'auto',
-  background: 'var(--bg)',
-  willChange: 'transform',
-}
-
 export default function App() {
-  const { stack, push, pop, animateIn, layerRefs, transitioning } = useLayerStack()
-  const animatedIds = useRef<Set<number>>(new Set())
-  const stackRef = useRef(stack)
+  const { stack, push, pop, remove, canPop } = useLayerStack()
+  const layerRefs = useRef<Map<number, HTMLDivElement>>(new Map())
+  const stackRef  = useRef(stack)
   stackRef.current = stack
 
-  const getTopEl = useMemoizedFn(() => {
+  const getTopEl   = useMemoizedFn(() => {
     const s = stackRef.current
-    if (s.length < 1) return null
-    return layerRefs.current.get(s[s.length - 1].id) ?? null
+    return layerRefs.current.get(s[s.length - 1]?.id) ?? null
   })
-
   const getBelowEl = useMemoizedFn(() => {
     const s = stackRef.current
-    if (s.length < 2) return null
-    return layerRefs.current.get(s[s.length - 2].id) ?? null
+    return layerRefs.current.get(s[s.length - 2]?.id) ?? null
   })
 
-  const canPop = useMemoizedFn(() => stackRef.current.length > 1)
-
-  const handleCommit = useMemoizedFn((dx: number) => {
+  const handleCommit = useMemoizedFn((_dx: number) => {
     const s = stackRef.current
     const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
-    pop(dx, true)
+    pop()
     if (belowHash) history.replaceState(null, '', belowHash)
   })
 
-  useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: handleCommit, transitioning })
+  const handleCancel = useMemoizedFn(() => {
+    // 手势取消，below 已由 useSwipeBack 回弹，无需额外处理
+  })
+
+  useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: handleCommit, onCancel: handleCancel })
 
   useEffect(() => {
-    const handler = () => { pop() }
+    const handler = () => {
+      const s = stackRef.current
+      const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
+      pop()
+      if (belowHash) history.replaceState(null, '', belowHash)
+    }
     window.addEventListener('popstate', handler)
     return () => window.removeEventListener('popstate', handler)
   }, [pop])
@@ -96,31 +75,25 @@ export default function App() {
     if (belowHash) history.replaceState(null, '', belowHash)
   })
 
+  const renderContent = useMemoizedFn((entry: LayerEntry) => {
+    const parsed = parseHash(entry.hash)
+    if (parsed.type === 'category')
+      return <CategoryPage cat={parsed.cat} onNavigate={push} onBack={handleBack} />
+    if (parsed.type === 'item')
+      return <DetailPage cat={parsed.cat} name={parsed.name} onBack={handleBack} />
+    if (parsed.type === 'summary')
+      return <SummaryPage onBack={handleBack} />
+    return <HomePage onNavigate={push} />
+  })
+
   return (
     <DataProvider>
-      {stack.map((entry, idx) => (
-        <div
-          key={entry.id}
-          style={{ ...LAYER_STYLE, zIndex: idx + 1 }}
-          ref={el => {
-            if (el) {
-              layerRefs.current.set(entry.id, el)
-              if (entry.animate && !animatedIds.current.has(entry.id)) {
-                animatedIds.current.add(entry.id)
-                animateIn(el)
-              }
-            } else {
-              layerRefs.current.delete(entry.id)
-            }
-          }}
-        >
-          <PageContent
-            hash={entry.hash}
-            onNavigate={push}
-            onBack={handleBack}
-          />
-        </div>
-      ))}
+      <LayerRenderer
+        stack={stack}
+        onRemove={remove}
+        renderContent={renderContent}
+        layerRefs={layerRefs}
+      />
     </DataProvider>
   )
 }

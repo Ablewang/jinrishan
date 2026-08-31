@@ -1,62 +1,63 @@
 import { useEffect, useRef } from 'react'
+import { useMemoizedFn } from './useMemoizedFn'
 
-const EASE = 'ease-out'
-
-function backHashFor(hash: string): string | null {
-  if (hash.startsWith('#/item/')) {
-    const rest = hash.slice('#/item/'.length)
-    return `#/category/${rest.slice(0, rest.indexOf('/'))}`
-  }
-  if (hash.startsWith('#/category/') || hash === '#/summary') return '#/'
-  return null
-}
-
-interface GestureOptions {
-  getTopEl: () => HTMLDivElement | null
-  getBelowEl: () => HTMLDivElement | null
+interface SwipeBackOptions {
+  getTopEl: () => HTMLElement | null
+  getBelowEl: () => HTMLElement | null
   canPop: () => boolean
-  onCommit: (dx: number) => void
-  transitioning: React.MutableRefObject<boolean>
+  onCommit: (dx: number) => void  // 达到阈值，通知外部执行 pop
+  onCancel: () => void            // 未达到阈值，通知外部重置状态
 }
 
-export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitioning }: GestureOptions) {
-  // 用 ref 稳定回调，避免 effect 因依赖变化重新注册导致进行中的手势被中断
-  const getTopElRef  = useRef(getTopEl)
+const THRESHOLD = 0.3  // 触发 pop 的比例阈值
+
+export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, onCancel }: SwipeBackOptions) {
+  const getTopElRef   = useRef(getTopEl)
   const getBelowElRef = useRef(getBelowEl)
-  const canPopRef    = useRef(canPop)
-  const onCommitRef  = useRef(onCommit)
-  getTopElRef.current  = getTopEl
+  const canPopRef     = useRef(canPop)
+  const onCommitRef   = useRef(onCommit)
+  const onCancelRef   = useRef(onCancel)
+  getTopElRef.current   = getTopEl
   getBelowElRef.current = getBelowEl
-  canPopRef.current    = canPop
-  onCommitRef.current  = onCommit
+  canPopRef.current     = canPop
+  onCommitRef.current   = onCommit
+  onCancelRef.current   = onCancel
+
+  const activeRef = useRef(false)
+
+  const reset = useMemoizedFn(() => {
+    const top   = getTopElRef.current()
+    const below = getBelowElRef.current()
+    if (top)   { top.style.transition = '';   top.style.transform = '' }
+    if (below) { below.style.transition = ''; below.style.transform = '' }
+    activeRef.current = false
+  })
 
   useEffect(() => {
-    let sw: { x0: number; y0: number; decided: boolean; active: boolean; target: string } | null = null
+    let x0 = 0, y0 = 0, decided = false, tracking = false
 
     function onStart(e: TouchEvent) {
-      if (transitioning.current) return
-      sw = { x0: e.touches[0].clientX, y0: e.touches[0].clientY, decided: false, active: false, target: '' }
+      if (activeRef.current || !canPopRef.current()) return
+      x0 = e.touches[0].clientX
+      y0 = e.touches[0].clientY
+      decided = false
+      tracking = false
     }
 
     function onMove(e: TouchEvent) {
-      if (!sw) return
-      const dx = e.touches[0].clientX - sw.x0
-      const dy = e.touches[0].clientY - sw.y0
+      const dx = e.touches[0].clientX - x0
+      const dy = e.touches[0].clientY - y0
 
-      if (!sw.decided) {
+      if (!decided) {
         if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return
-        sw.decided = true
-        const target = backHashFor(location.hash)
-        if (dx <= 0 || Math.abs(dy) > Math.abs(dx) || !target || !canPopRef.current()) {
-          sw = null
-          return
-        }
-        sw.active = true
-        sw.target = target
+        decided = true
+        if (dx <= 0 || Math.abs(dy) > Math.abs(dx) || !canPopRef.current()) return
+        tracking = true
       }
 
-      if (!sw?.active) return
+      if (!tracking) return
       e.preventDefault()
+
       const d = Math.max(0, dx)
       const w = window.innerWidth
       const top   = getTopElRef.current()
@@ -66,38 +67,50 @@ export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitio
     }
 
     function onEnd(e: TouchEvent) {
-      if (!sw?.active) { sw = null; return }
-      const dx = (e.changedTouches[0]?.clientX ?? sw.x0) - sw.x0
-      sw = null
+      if (!tracking) { decided = false; tracking = false; return }
+      const dx = (e.changedTouches[0]?.clientX ?? x0) - x0
+      decided = false
+      tracking = false
 
       const top   = getTopElRef.current()
       const below = getBelowElRef.current()
-      const w = top?.offsetWidth ?? window.innerWidth
+      const w     = top?.offsetWidth ?? window.innerWidth
 
-      if (dx > w * 0.3) {
+      if (dx > w * THRESHOLD) {
         onCommitRef.current(dx)
       } else {
-        if (top) top.animate(
-          [{ transform: top.style.transform }, { transform: 'translateX(0)' }],
-          { duration: 200, easing: EASE }
-        ).onfinish = () => { top.style.transform = '' }
-        if (below) below.animate(
-          [{ transform: below.style.transform }, { transform: 'translateX(-30%)' }],
-          { duration: 200, easing: EASE }
-        ).onfinish = () => { below.style.transform = 'translateX(-30%)' }
+        // CSS transition 回弹
+        const dur = '200ms'
+        if (top) {
+          top.style.transition = `transform ${dur} ease-out`
+          top.style.transform  = 'translateX(0)'
+          top.addEventListener('transitionend', () => {
+            top.style.transition = ''
+            onCancelRef.current()
+          }, { once: true })
+        }
+        if (below) {
+          below.style.transition = `transform ${dur} ease-out`
+          below.style.transform  = 'translateX(-30%)'
+          below.addEventListener('transitionend', () => {
+            below.style.transition = ''
+          }, { once: true })
+        }
       }
     }
 
     document.addEventListener('touchstart', onStart, { passive: true })
-    document.addEventListener('touchmove', onMove, { passive: false })
-    document.addEventListener('touchend', onEnd, { passive: true })
-    document.addEventListener('touchcancel', onEnd, { passive: true })
+    document.addEventListener('touchmove',  onMove,  { passive: false })
+    document.addEventListener('touchend',   onEnd,   { passive: true })
+    document.addEventListener('touchcancel',onEnd,   { passive: true })
 
     return () => {
       document.removeEventListener('touchstart', onStart)
-      document.removeEventListener('touchmove', onMove)
-      document.removeEventListener('touchend', onEnd)
-      document.removeEventListener('touchcancel', onEnd)
+      document.removeEventListener('touchmove',  onMove)
+      document.removeEventListener('touchend',   onEnd)
+      document.removeEventListener('touchcancel',onEnd)
     }
   }, [])
+
+  return { reset }
 }
