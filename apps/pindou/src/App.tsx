@@ -30,59 +30,40 @@ function parseHash(hash: string) {
 }
 
 export default function App() {
-  const { stack, push, pop, remove, canPop } = useLayerStack()
-  const layerRefs = useRef<Map<number, HTMLDivElement>>(new Map())
-  const stackRef  = useRef(stack)
+  const { stack, push, pop, canPop, layerRefs } = useLayerStack()
+  const stackRef = useRef(stack)
   stackRef.current = stack
 
-  const getTopEl   = useMemoizedFn(() => {
-    const s = stackRef.current
-    return layerRefs.current.get(s[s.length - 1]?.id) ?? null
-  })
-  const getBelowEl = useMemoizedFn(() => {
-    const s = stackRef.current
-    return layerRefs.current.get(s[s.length - 2]?.id) ?? null
-  })
+  const getTopEl = useMemoizedFn(() =>
+    layerRefs.current.get(stackRef.current[stackRef.current.length - 1]?.id) ?? null
+  )
+  const getBelowEl = useMemoizedFn(() =>
+    layerRefs.current.get(stackRef.current[stackRef.current.length - 2]?.id) ?? null
+  )
 
-  const handleCommit = useMemoizedFn((_dx: number) => {
+  const doPop = useMemoizedFn((dx = 0) => {
     const s = stackRef.current
     const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
-    pop()
+    pop(dx)
     if (belowHash) history.replaceState(null, '', belowHash)
   })
 
-  const handleCancel = useMemoizedFn(() => {
-    // 手势取消，below 已由 useSwipeBack 回弹，无需额外处理
-  })
-
-  useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: handleCommit, onCancel: handleCancel })
+  useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: doPop, onCancel: () => {} })
 
   useEffect(() => {
-    const handler = () => {
-      const s = stackRef.current
-      const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
-      pop()
-      if (belowHash) history.replaceState(null, '', belowHash)
-    }
+    const handler = () => doPop()
     window.addEventListener('popstate', handler)
     return () => window.removeEventListener('popstate', handler)
-  }, [pop])
-
-  const handleBack = useMemoizedFn(() => {
-    const s = stackRef.current
-    const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
-    pop()
-    if (belowHash) history.replaceState(null, '', belowHash)
-  })
+  }, [doPop])
 
   const renderContent = useMemoizedFn((entry: LayerEntry) => {
     const parsed = parseHash(entry.hash)
     if (parsed.type === 'category')
-      return <CategoryPage cat={parsed.cat} onNavigate={push} onBack={handleBack} />
+      return <CategoryPage cat={parsed.cat} onNavigate={push} onBack={doPop} />
     if (parsed.type === 'item')
-      return <DetailPage cat={parsed.cat} name={parsed.name} onBack={handleBack} />
+      return <DetailPage cat={parsed.cat} name={parsed.name} onBack={doPop} />
     if (parsed.type === 'summary')
-      return <SummaryPage onBack={handleBack} />
+      return <SummaryPage onBack={doPop} />
     return <HomePage onNavigate={push} />
   })
 
@@ -90,7 +71,6 @@ export default function App() {
     <DataProvider>
       <LayerRenderer
         stack={stack}
-        onRemove={remove}
         renderContent={renderContent}
         layerRefs={layerRefs}
       />
