@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 const EASE = 'ease-out'
 
@@ -20,6 +20,16 @@ interface GestureOptions {
 }
 
 export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitioning }: GestureOptions) {
+  // 用 ref 稳定回调，避免 effect 因依赖变化重新注册导致进行中的手势被中断
+  const getTopElRef  = useRef(getTopEl)
+  const getBelowElRef = useRef(getBelowEl)
+  const canPopRef    = useRef(canPop)
+  const onCommitRef  = useRef(onCommit)
+  getTopElRef.current  = getTopEl
+  getBelowElRef.current = getBelowEl
+  canPopRef.current    = canPop
+  onCommitRef.current  = onCommit
+
   useEffect(() => {
     let sw: { x0: number; y0: number; decided: boolean; active: boolean; target: string } | null = null
 
@@ -37,7 +47,7 @@ export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitio
         if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return
         sw.decided = true
         const target = backHashFor(location.hash)
-        if (dx <= 0 || Math.abs(dy) > Math.abs(dx) || !target || !canPop()) {
+        if (dx <= 0 || Math.abs(dy) > Math.abs(dx) || !target || !canPopRef.current()) {
           sw = null
           return
         }
@@ -49,8 +59,8 @@ export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitio
       e.preventDefault()
       const d = Math.max(0, dx)
       const w = window.innerWidth
-      const top   = getTopEl()
-      const below = getBelowEl()
+      const top   = getTopElRef.current()
+      const below = getBelowElRef.current()
       if (top)   top.style.transform   = `translateX(${d}px)`
       if (below) below.style.transform = `translateX(${-30 + (d / w) * 30}%)`
     }
@@ -60,12 +70,12 @@ export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitio
       const dx = (e.changedTouches[0]?.clientX ?? sw.x0) - sw.x0
       sw = null
 
-      const top   = getTopEl()
-      const below = getBelowEl()
+      const top   = getTopElRef.current()
+      const below = getBelowElRef.current()
       const w = top?.offsetWidth ?? window.innerWidth
 
       if (dx > w * 0.3) {
-        onCommit(dx)
+        onCommitRef.current(dx)
       } else {
         if (top) top.animate(
           [{ transform: top.style.transform }, { transform: 'translateX(0)' }],
@@ -89,5 +99,5 @@ export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitio
       document.removeEventListener('touchend', onEnd)
       document.removeEventListener('touchcancel', onEnd)
     }
-  }, [getTopEl, getBelowEl, canPop, onCommit, transitioning])
+  }, [])
 }
