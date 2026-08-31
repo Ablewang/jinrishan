@@ -30,7 +30,7 @@ function parseHash(hash: string) {
 }
 
 export default function App() {
-  const { stack, push, pop, canPop, layerRefs } = useLayerStack()
+  const { stack, push, pop, canPop, layerRefs, onLayerMount } = useLayerStack()
   const stackRef = useRef(stack)
   stackRef.current = stack
 
@@ -56,6 +56,10 @@ export default function App() {
     return () => window.removeEventListener('popstate', handler)
   }, [doPop])
 
+  const onLayerUnmount = useMemoizedFn((id: number) => {
+    layerRefs.current.delete(id)
+  })
+
   const renderContent = useMemoizedFn((entry: LayerEntry) => {
     const parsed = parseHash(entry.hash)
     if (parsed.type === 'category')
@@ -71,8 +75,9 @@ export default function App() {
     <DataProvider>
       <LayerRenderer
         stack={stack}
+        onLayerMount={onLayerMount}
+        onLayerUnmount={onLayerUnmount}
         renderContent={renderContent}
-        layerRefs={layerRefs}
       />
     </DataProvider>
   )

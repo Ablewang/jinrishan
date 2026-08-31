@@ -5,16 +5,18 @@ const SHELL_STYLE: React.CSSProperties = {
   inset: 0,
   background: 'var(--bg)',
   willChange: 'transform',
-  overflow: 'hidden',
+  overflowY: 'auto',
+  overflowX: 'hidden',
 }
 
 interface Props {
   stack: LayerEntry[]
+  onLayerMount: (id: number, el: HTMLDivElement, isNew: boolean) => void
+  onLayerUnmount: (id: number) => void
   renderContent: (entry: LayerEntry) => React.ReactNode
-  layerRefs: React.MutableRefObject<Map<number, HTMLDivElement>>
 }
 
-export function LayerRenderer({ stack, renderContent, layerRefs }: Props) {
+export function LayerRenderer({ stack, onLayerMount, onLayerUnmount, renderContent }: Props) {
   return (
     <>
       {stack.map((entry, idx) => (
@@ -22,11 +24,11 @@ export function LayerRenderer({ stack, renderContent, layerRefs }: Props) {
           key={entry.id}
           style={{ ...SHELL_STYLE, zIndex: idx + 1 }}
           ref={el => {
-            if (el) layerRefs.current.set(entry.id, el)
-            else    layerRefs.current.delete(entry.id)
+            if (el) onLayerMount(entry.id, el, entry.isNew)
+            else    onLayerUnmount(entry.id)
           }}
         >
-          {entry.alive ? renderContent(entry) : null}
+          {renderContent(entry)}
         </div>
       ))}
     </>
