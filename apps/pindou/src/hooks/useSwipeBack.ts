@@ -72,9 +72,9 @@ export function useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit, transitio
           { duration: 200, easing: EASE }
         ).onfinish = () => { top.style.transform = '' }
         if (below) below.animate(
-          [{ transform: below.style.transform }, { transform: 'translateX(0)' }],
+          [{ transform: below.style.transform }, { transform: 'translateX(-30%)' }],
           { duration: 200, easing: EASE }
-        ).onfinish = () => { below.style.transform = '' }
+        ).onfinish = () => { below.style.transform = 'translateX(-30%)' }
       }
     }
 
