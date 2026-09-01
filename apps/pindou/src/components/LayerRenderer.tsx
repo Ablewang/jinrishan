@@ -11,7 +11,7 @@ const SHELL_STYLE: React.CSSProperties = {
 
 interface Props {
   stack: LayerEntry[]
-  onLayerMount: (id: number, el: HTMLDivElement, isNew: boolean) => void
+  onLayerMount: (id: number, el: HTMLDivElement) => void
   onLayerUnmount: (id: number) => void
   renderContent: (entry: LayerEntry) => React.ReactNode
 }
@@ -24,7 +24,7 @@ export function LayerRenderer({ stack, onLayerMount, onLayerUnmount, renderConte
           key={entry.id}
           style={{ ...SHELL_STYLE, zIndex: idx + 1 }}
           ref={el => {
-            if (el) onLayerMount(entry.id, el, entry.isNew)
+            if (el) onLayerMount(entry.id, el)
             else    onLayerUnmount(entry.id)
           }}
         >
