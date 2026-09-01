@@ -46,9 +46,9 @@ export function useDrawerStack() {
     const durStr = `${dur}ms`
 
     const done = () => {
-      topEl.style.transition = ''
-      // 不清空 transform，让元素停在右边直到 React unmount
-      transitioning.current  = false
+      topEl.style.transition  = ''
+      topEl.style.visibility  = 'hidden'  // 立刻隐藏，防止 React unmount 前闪回原位
+      transitioning.current   = false
       animatedIds.current.delete(top.id)
       setStack(s => s.filter(e => e.id !== top.id))
     }
