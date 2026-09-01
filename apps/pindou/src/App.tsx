@@ -36,43 +36,28 @@ const DRAWER_STYLE: React.CSSProperties = {
 }
 
 export default function App() {
-  const { stack, push, pop, canPop, drawerRefs, onMount, onUnmount } = useDrawerStack()
+  const { stack, push, pop, canPop, onMount, onUnmount, drawerRefs } = useDrawerStack()
   const stackRef = useRef(stack)
   stackRef.current = stack
 
   const getTopEl = useMemoizedFn(() => {
     const s = stackRef.current
-    return drawerRefs.current.get(s[s.length - 1]?.id) ?? null
+    if (s.length === 0) return null
+    return drawerRefs.current.get(s[s.length - 1].id) ?? null
   })
+
   const getBelowEl = useMemoizedFn(() => {
     const s = stackRef.current
-    return drawerRefs.current.get(s[s.length - 2]?.id) ?? null
+    // 栈里有两层取倒数第二，只有一层则取首页(id=0)
+    const id = s.length >= 2 ? s[s.length - 2].id : s.length === 1 ? 0 : null
+    if (id === null) return null
+    return drawerRefs.current.get(id) ?? null
   })
 
   const doPop = useMemoizedFn((dx = 0) => pop(dx))
 
   useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: doPop })
 
-  // 用 ref 确保初始化只执行一次
-  const initialized = useRef(false)
-  if (!initialized.current) {
-    initialized.current = true
-    const parsed = parseHash(location.hash)
-    // 首页始终作为底层，不加入抽屉栈（直接渲染）
-    // 如果 hash 指向深层页面，把中间层也压入栈
-    if (parsed.type === 'category') {
-      setTimeout(() => push(<CategoryPage cat={parsed.cat} onNavigate={nav} onBack={doPop} />), 0)
-    } else if (parsed.type === 'item') {
-      setTimeout(() => {
-        push(<CategoryPage cat={parsed.cat} onNavigate={nav} onBack={doPop} />)
-        push(<DetailPage cat={parsed.cat} name={parsed.name} onBack={doPop} />)
-      }, 0)
-    } else if (parsed.type === 'summary') {
-      setTimeout(() => push(<SummaryPage onBack={doPop} />), 0)
-    }
-  }
-
-  // nav 函数：根据 hash 决定 push 什么
   function nav(hash: string) {
     const parsed = parseHash(hash)
     if (parsed.type === 'category')
@@ -83,10 +68,33 @@ export default function App() {
       push(<SummaryPage onBack={doPop} />)
   }
 
+  // hash 初始化，只执行一次
+  const initialized = useRef(false)
+  if (!initialized.current) {
+    initialized.current = true
+    const parsed = parseHash(location.hash)
+    if (parsed.type === 'category') {
+      setTimeout(() => nav(`#/category/${parsed.cat}`), 0)
+    } else if (parsed.type === 'item') {
+      setTimeout(() => {
+        nav(`#/category/${parsed.cat}`)
+        setTimeout(() => nav(`#/item/${parsed.cat}/${parsed.name}`), 50)
+      }, 0)
+    } else if (parsed.type === 'summary') {
+      setTimeout(() => nav('#/summary'), 0)
+    }
+  }
+
   return (
     <DataProvider>
-      {/* 首页永远在底层 */}
-      <div style={{ ...DRAWER_STYLE, zIndex: 0 }}>
+      {/* 首页永远在底层，注册为 id=0 */}
+      <div
+        style={{ ...DRAWER_STYLE, zIndex: 0 }}
+        ref={el => {
+          if (el) onMount(0, el)
+          else    onUnmount(0)
+        }}
+      >
         <HomePage onNavigate={nav} />
       </div>
       {stack.map((entry, idx) => (

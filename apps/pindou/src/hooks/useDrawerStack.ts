@@ -22,7 +22,6 @@ export function useDrawerStack() {
     if (transitioning.current) return
     const id = nextId++
     setStack(s => [...s, { id, content }])
-    // 入场动画在 onMount 里执行
   })
 
   const pop = useMemoizedFn((gestureStartDx = 0) => {
@@ -30,9 +29,10 @@ export function useDrawerStack() {
     if (s.length === 0 || transitioning.current) return
 
     const top    = s[s.length - 1]
-    const below  = s[s.length - 2]
-    const topEl  = drawerRefs.current.get(top.id) ?? null
-    const belowEl = below ? drawerRefs.current.get(below.id) ?? null : null
+    // below 是栈里的上一个，如果没有则用 id=0 的首页
+    const belowId = s.length >= 2 ? s[s.length - 2].id : 0
+    const topEl   = drawerRefs.current.get(top.id) ?? null
+    const belowEl = drawerRefs.current.get(belowId) ?? null
 
     if (!topEl) {
       setStack(s => s.slice(0, -1))
@@ -45,14 +45,19 @@ export function useDrawerStack() {
     const dur    = Math.round(Math.min(280, Math.max(120, rem * 0.65)))
     const durStr = `${dur}ms`
 
-    topEl.style.transition = `transform ${durStr} ${EASE}`
-    topEl.style.transform  = `translateX(${w}px)`
-    topEl.addEventListener('transitionend', () => {
+    const done = () => {
       topEl.style.transition = ''
+      topEl.style.transform  = ''
       transitioning.current  = false
       animatedIds.current.delete(top.id)
       setStack(s => s.filter(e => e.id !== top.id))
-    }, { once: true })
+    }
+
+    topEl.style.transition = `transform ${durStr} ${EASE}`
+    topEl.style.transform  = `translateX(${w}px)`
+    // 超时保底，防止 transitionend 不触发
+    const timer = setTimeout(done, dur + 100)
+    topEl.addEventListener('transitionend', () => { clearTimeout(timer); done() }, { once: true })
 
     if (belowEl) {
       belowEl.style.transition = `transform ${durStr} ${EASE}`
@@ -70,6 +75,8 @@ export function useDrawerStack() {
     drawerRefs.current.set(id, el)
     if (animatedIds.current.has(id)) return
     animatedIds.current.add(id)
+    // id=0 是首页，不需要入场动画
+    if (id === 0) return
     const w = el.offsetWidth || window.innerWidth
     el.style.transform = `translateX(${w}px)`
     requestAnimationFrame(() => {
