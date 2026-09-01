@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Header } from '../components/Header'
 import { ItemRow } from '../components/ItemRow'
 import { useData } from '../hooks/useData'
+import type { NavTarget } from '../App'
 import type { ManifestItem } from '../types'
 import styles from './CategoryPage.module.css'
 
@@ -19,7 +20,7 @@ const CAT_ZH: Record<string, string> = {
 
 interface Props {
   cat: string
-  onNavigate: (hash: string) => void
+  onNavigate: (target: NavTarget) => void
   onBack: () => void
 }
 
@@ -44,7 +45,7 @@ export function CategoryPage({ cat, onNavigate, onBack }: Props) {
       <Header
         onBack={onBack}
         title={CAT_ZH[cat] ?? cat}
-        right={<button className={styles.link} onClick={() => onNavigate('#/summary')}>清单汇总</button>}
+        right={<button className={styles.link} onClick={() => onNavigate({ type: 'summary' })}>清单汇总</button>}
       />
       <div className={styles.searchWrap}>
         <input
@@ -68,7 +69,7 @@ export function CategoryPage({ cat, onNavigate, onBack }: Props) {
               key={item.name}
               cat={cat}
               item={item}
-              onClick={() => onNavigate(`#/item/${encodeURIComponent(cat)}/${encodeURIComponent(item.name)}`)}
+              onClick={() => onNavigate({ type: 'item', cat, name: item.name })}
             />
           ))
         )}

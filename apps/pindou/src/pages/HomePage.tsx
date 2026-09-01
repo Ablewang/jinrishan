@@ -1,6 +1,7 @@
 import { CategoryCard } from '../components/CategoryCard'
 import { Header } from '../components/Header'
 import { useData } from '../hooks/useData'
+import type { NavTarget } from '../App'
 import styles from './HomePage.module.css'
 
 const LOGO = (
@@ -8,7 +9,7 @@ const LOGO = (
 )
 
 interface Props {
-  onNavigate: (hash: string) => void
+  onNavigate: (target: NavTarget) => void
 }
 
 export function HomePage({ onNavigate }: Props) {
@@ -36,7 +37,7 @@ export function HomePage({ onNavigate }: Props) {
     <div className={styles.page}>
       <Header
         left={LOGO}
-        right={<button className={styles.link} onClick={() => onNavigate('#/summary')}>清单汇总</button>}
+        right={<button className={styles.link} onClick={() => onNavigate({ type: 'summary' })}>清单汇总</button>}
       />
       <main className={styles.grid}>
         {Object.entries(manifest.categories).map(([cat, data]) => (
@@ -45,7 +46,7 @@ export function HomePage({ onNavigate }: Props) {
             cat={cat}
             data={data}
             sumData={summary?.categories[cat]}
-            onClick={() => onNavigate(`#/category/${encodeURIComponent(cat)}`)}
+            onClick={() => onNavigate({ type: 'category', cat })}
           />
         ))}
       </main>
