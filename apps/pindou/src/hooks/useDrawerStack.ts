@@ -53,16 +53,15 @@ export function useDrawerStack() {
       setStack(s => s.filter(e => e.id !== top.id))
     }
 
-    // offsetWidth 强制 layout，确保当前 transform 已提交到渲染树
-    void topEl.offsetWidth
     topEl.style.transition = `transform ${durStr} ${EASE}`
+    void topEl.offsetWidth  // 强制浏览器提交 transition，下一行的 transform 才会产生过渡
     topEl.style.transform  = `translateX(${w}px)`
     const timer = setTimeout(done, dur + 100)
     topEl.addEventListener('transitionend', () => { clearTimeout(timer); done() }, { once: true })
 
     if (belowEl) {
-      void belowEl.offsetWidth
       belowEl.style.transition = `transform ${durStr} ${EASE}`
+      void belowEl.offsetWidth
       belowEl.style.transform  = 'translateX(0)'
       belowEl.addEventListener('transitionend', () => {
         belowEl.style.transition = ''
