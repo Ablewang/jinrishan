@@ -43,9 +43,3 @@ export interface ItemDetail {
   grid: (string | null)[][]
   materials: Material[]
 }
-
-export type RouteHash =
-  | '#/'
-  | `#/category/${string}`
-  | `#/item/${string}/${string}`
-  | '#/summary'
