@@ -46,28 +46,24 @@ export function useDrawerStack() {
     const durStr = `${dur}ms`
 
     const done = () => {
-      topEl.style.transition  = ''
-      topEl.style.visibility  = 'hidden'  // 立刻隐藏，防止 React unmount 前闪回原位
-      transitioning.current   = false
+      // 不清 transform，保持元素在屏幕外，React 卸载时不会闪回
+      topEl.style.transition = ''
+      transitioning.current  = false
       animatedIds.current.delete(top.id)
       setStack(s => s.filter(e => e.id !== top.id))
     }
 
-    // 先强制读取 layout，再下一帧设 transition+transform，确保浏览器产生过渡
+    // offsetWidth 强制 layout，确保当前 transform 已提交到渲染树
     void topEl.offsetWidth
     topEl.style.transition = `transform ${durStr} ${EASE}`
+    topEl.style.transform  = `translateX(${w}px)`
     const timer = setTimeout(done, dur + 100)
     topEl.addEventListener('transitionend', () => { clearTimeout(timer); done() }, { once: true })
-    requestAnimationFrame(() => {
-      topEl.style.transform = `translateX(${w}px)`
-    })
 
     if (belowEl) {
       void belowEl.offsetWidth
       belowEl.style.transition = `transform ${durStr} ${EASE}`
-      requestAnimationFrame(() => {
-        belowEl.style.transform = 'translateX(0)'
-      })
+      belowEl.style.transform  = 'translateX(0)'
       belowEl.addEventListener('transitionend', () => {
         belowEl.style.transition = ''
         belowEl.style.transform  = ''
