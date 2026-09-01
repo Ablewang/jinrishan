@@ -53,15 +53,21 @@ export function useDrawerStack() {
       setStack(s => s.filter(e => e.id !== top.id))
     }
 
+    // 先强制读取 layout，再下一帧设 transition+transform，确保浏览器产生过渡
+    void topEl.offsetWidth
     topEl.style.transition = `transform ${durStr} ${EASE}`
-    topEl.style.transform  = `translateX(${w}px)`
-    // 超时保底，防止 transitionend 不触发
     const timer = setTimeout(done, dur + 100)
     topEl.addEventListener('transitionend', () => { clearTimeout(timer); done() }, { once: true })
+    requestAnimationFrame(() => {
+      topEl.style.transform = `translateX(${w}px)`
+    })
 
     if (belowEl) {
+      void belowEl.offsetWidth
       belowEl.style.transition = `transform ${durStr} ${EASE}`
-      belowEl.style.transform  = 'translateX(0)'
+      requestAnimationFrame(() => {
+        belowEl.style.transform = 'translateX(0)'
+      })
       belowEl.addEventListener('transitionend', () => {
         belowEl.style.transition = ''
         belowEl.style.transform  = ''
