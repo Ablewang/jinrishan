@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react'
-import { LayerRenderer } from './components/LayerRenderer'
+import { useRef } from 'react'
 import { DataProvider } from './hooks/useData'
-import type { LayerEntry } from './hooks/useLayerStack'
-import { useLayerStack } from './hooks/useLayerStack'
+import { useDrawerStack } from './hooks/useDrawerStack'
 import { useMemoizedFn } from './hooks/useMemoizedFn'
 import { useSwipeBack } from './hooks/useSwipeBack'
 import { CategoryPage } from './pages/CategoryPage'
@@ -13,7 +11,6 @@ import './index.css'
 
 function parseHash(hash: string) {
   const h = hash.slice(1) || '/'
-  if (h === '/' || h === '') return { type: 'home' as const }
   if (h.startsWith('/category/'))
     return { type: 'category' as const, cat: decodeURIComponent(h.slice('/category/'.length)) }
   if (h.startsWith('/item/')) {
@@ -29,56 +26,81 @@ function parseHash(hash: string) {
   return { type: 'home' as const }
 }
 
+const DRAWER_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  background: 'var(--bg)',
+  willChange: 'transform',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+}
+
 export default function App() {
-  const { stack, push, pop, canPop, layerRefs, onLayerMount } = useLayerStack()
+  const { stack, push, pop, canPop, drawerRefs, onMount, onUnmount } = useDrawerStack()
   const stackRef = useRef(stack)
   stackRef.current = stack
 
-  const getTopEl = useMemoizedFn(() =>
-    layerRefs.current.get(stackRef.current[stackRef.current.length - 1]?.id) ?? null
-  )
-  const getBelowEl = useMemoizedFn(() =>
-    layerRefs.current.get(stackRef.current[stackRef.current.length - 2]?.id) ?? null
-  )
-
-  const doPop = useMemoizedFn((dx = 0) => {
+  const getTopEl = useMemoizedFn(() => {
     const s = stackRef.current
-    const belowHash = s.length >= 2 ? s[s.length - 2].hash : null
-    pop(dx)
-    if (belowHash) history.replaceState(null, '', belowHash)
+    return drawerRefs.current.get(s[s.length - 1]?.id) ?? null
+  })
+  const getBelowEl = useMemoizedFn(() => {
+    const s = stackRef.current
+    return drawerRefs.current.get(s[s.length - 2]?.id) ?? null
   })
 
-  useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: doPop, onCancel: () => {} })
+  const doPop = useMemoizedFn((dx = 0) => pop(dx))
 
-  useEffect(() => {
-    const handler = () => doPop()
-    window.addEventListener('popstate', handler)
-    return () => window.removeEventListener('popstate', handler)
-  }, [doPop])
+  useSwipeBack({ getTopEl, getBelowEl, canPop, onCommit: doPop })
 
-  const onLayerUnmount = useMemoizedFn((id: number) => {
-    layerRefs.current.delete(id)
-  })
+  // 用 ref 确保初始化只执行一次
+  const initialized = useRef(false)
+  if (!initialized.current) {
+    initialized.current = true
+    const parsed = parseHash(location.hash)
+    // 首页始终作为底层，不加入抽屉栈（直接渲染）
+    // 如果 hash 指向深层页面，把中间层也压入栈
+    if (parsed.type === 'category') {
+      setTimeout(() => push(<CategoryPage cat={parsed.cat} onNavigate={nav} onBack={doPop} />), 0)
+    } else if (parsed.type === 'item') {
+      setTimeout(() => {
+        push(<CategoryPage cat={parsed.cat} onNavigate={nav} onBack={doPop} />)
+        push(<DetailPage cat={parsed.cat} name={parsed.name} onBack={doPop} />)
+      }, 0)
+    } else if (parsed.type === 'summary') {
+      setTimeout(() => push(<SummaryPage onBack={doPop} />), 0)
+    }
+  }
 
-  const renderContent = useMemoizedFn((entry: LayerEntry) => {
-    const parsed = parseHash(entry.hash)
+  // nav 函数：根据 hash 决定 push 什么
+  function nav(hash: string) {
+    const parsed = parseHash(hash)
     if (parsed.type === 'category')
-      return <CategoryPage cat={parsed.cat} onNavigate={push} onBack={doPop} />
-    if (parsed.type === 'item')
-      return <DetailPage cat={parsed.cat} name={parsed.name} onBack={doPop} />
-    if (parsed.type === 'summary')
-      return <SummaryPage onBack={doPop} />
-    return <HomePage onNavigate={push} />
-  })
+      push(<CategoryPage cat={parsed.cat} onNavigate={nav} onBack={doPop} />)
+    else if (parsed.type === 'item')
+      push(<DetailPage cat={parsed.cat} name={parsed.name} onBack={doPop} />)
+    else if (parsed.type === 'summary')
+      push(<SummaryPage onBack={doPop} />)
+  }
 
   return (
     <DataProvider>
-      <LayerRenderer
-        stack={stack}
-        onLayerMount={onLayerMount}
-        onLayerUnmount={onLayerUnmount}
-        renderContent={renderContent}
-      />
+      {/* 首页永远在底层 */}
+      <div style={{ ...DRAWER_STYLE, zIndex: 0 }}>
+        <HomePage onNavigate={nav} />
+      </div>
+      {stack.map((entry, idx) => (
+        <div
+          key={entry.id}
+          style={{ ...DRAWER_STYLE, zIndex: idx + 1 }}
+          ref={el => {
+            if (el) onMount(entry.id, el)
+            else    onUnmount(entry.id)
+          }}
+        >
+          {entry.content}
+        </div>
+      ))}
     </DataProvider>
   )
 }
