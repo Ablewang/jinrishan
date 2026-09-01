@@ -5,7 +5,7 @@ const CAT_ZH: Record<string, string> = {
   'Building Blocks': '建筑方块',
   'Combat':          '战斗',
   'Decorations':     '装饰',
-  'Food & Drinks':   '食物与饮料',
+  'Food and Drinks': '食物与饮料',
   'Materials':       '材料',
   'Miscellaneous':   '杂项',
   'Redstone':        '红石',

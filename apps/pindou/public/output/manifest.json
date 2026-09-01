@@ -5174,501 +5174,6 @@
         }
       ]
     },
-    "Food & Drinks": {
-      "count": 70,
-      "items": [
-        {
-          "name": "apple",
-          "display_name": "苹果",
-          "total_beads": 114,
-          "color_count": 8,
-          "has_gallery": true
-        },
-        {
-          "name": "baked_potato",
-          "display_name": "烤土豆",
-          "total_beads": 118,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "beef",
-          "display_name": "生牛肉",
-          "total_beads": 108,
-          "color_count": 8,
-          "has_gallery": true
-        },
-        {
-          "name": "beetroot",
-          "display_name": "甜菜根",
-          "total_beads": 69,
-          "color_count": 5,
-          "has_gallery": true
-        },
-        {
-          "name": "beetroot_seeds",
-          "display_name": "甜菜种子",
-          "total_beads": 66,
-          "color_count": 3,
-          "has_gallery": true
-        },
-        {
-          "name": "beetroot_soup",
-          "display_name": "甜菜汤",
-          "total_beads": 74,
-          "color_count": 5,
-          "has_gallery": true
-        },
-        {
-          "name": "bread",
-          "display_name": "面包",
-          "total_beads": 138,
-          "color_count": 5,
-          "has_gallery": true
-        },
-        {
-          "name": "cake",
-          "display_name": "蛋糕",
-          "total_beads": 196,
-          "color_count": 12,
-          "has_gallery": true
-        },
-        {
-          "name": "carrot",
-          "display_name": "胡萝卜",
-          "total_beads": 96,
-          "color_count": 9,
-          "has_gallery": true
-        },
-        {
-          "name": "carrot_on_a_stick",
-          "display_name": "胡萝卜钓竿",
-          "total_beads": 76,
-          "color_count": 14,
-          "has_gallery": true
-        },
-        {
-          "name": "chicken",
-          "display_name": "生鸡肉",
-          "total_beads": 132,
-          "color_count": 8,
-          "has_gallery": true
-        },
-        {
-          "name": "chorus_flower",
-          "display_name": "紫颂花",
-          "total_beads": 132,
-          "color_count": 9,
-          "has_gallery": true
-        },
-        {
-          "name": "chorus_fruit",
-          "display_name": "紫颂果",
-          "total_beads": 110,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "chorus_plant",
-          "display_name": "紫颂植物",
-          "total_beads": 132,
-          "color_count": 4,
-          "has_gallery": true
-        },
-        {
-          "name": "cooked_beef",
-          "display_name": "熟牛排",
-          "total_beads": 105,
-          "color_count": 4,
-          "has_gallery": true
-        },
-        {
-          "name": "cooked_chicken",
-          "display_name": "熟鸡肉",
-          "total_beads": 132,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "cooked_cod",
-          "display_name": "熟鳕鱼",
-          "total_beads": 85,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "cooked_mutton",
-          "display_name": "熟羊排",
-          "total_beads": 106,
-          "color_count": 4,
-          "has_gallery": true
-        },
-        {
-          "name": "cooked_porkchop",
-          "display_name": "熟猪排",
-          "total_beads": 102,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "cooked_rabbit",
-          "display_name": "熟兔肉",
-          "total_beads": 135,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "cooked_salmon",
-          "display_name": "熟鲑鱼",
-          "total_beads": 90,
-          "color_count": 13,
-          "has_gallery": true
-        },
-        {
-          "name": "cookie",
-          "display_name": "曲奇",
-          "total_beads": 140,
-          "color_count": 5,
-          "has_gallery": true
-        },
-        {
-          "name": "dried_ghast",
-          "display_name": "干燥恶魂",
-          "total_beads": 113,
-          "color_count": 5,
-          "has_gallery": true
-        },
-        {
-          "name": "dried_kelp",
-          "display_name": "干海带",
-          "total_beads": 150,
-          "color_count": 3,
-          "has_gallery": true
-        },
-        {
-          "name": "dried_kelp_block",
-          "display_name": "干海带块",
-          "total_beads": 176,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "enchanted_golden_apple",
-          "display_name": "附魔金苹果",
-          "total_beads": 114,
-          "color_count": 19,
-          "has_gallery": true
-        },
-        {
-          "name": "fermented_spider_eye",
-          "display_name": "发酵蜘蛛眼",
-          "total_beads": 74,
-          "color_count": 5,
-          "has_gallery": true
-        },
-        {
-          "name": "glistering_melon_slice",
-          "display_name": "闪烁西瓜片",
-          "total_beads": 106,
-          "color_count": 12,
-          "has_gallery": true
-        },
-        {
-          "name": "glow_berries",
-          "display_name": "发光浆果",
-          "total_beads": 113,
-          "color_count": 12,
-          "has_gallery": true
-        },
-        {
-          "name": "glow_ink_sac",
-          "display_name": "发光墨囊",
-          "total_beads": 63,
-          "color_count": 9,
-          "has_gallery": true
-        },
-        {
-          "name": "glow_item_frame",
-          "display_name": "发光物品展示框",
-          "total_beads": 170,
-          "color_count": 15,
-          "has_gallery": true
-        },
-        {
-          "name": "glow_lichen",
-          "display_name": "发光地衣",
-          "total_beads": 105,
-          "color_count": 3,
-          "has_gallery": true
-        },
-        {
-          "name": "golden_apple",
-          "display_name": "金苹果",
-          "total_beads": 114,
-          "color_count": 8,
-          "has_gallery": true
-        },
-        {
-          "name": "golden_carrot",
-          "display_name": "金胡萝卜",
-          "total_beads": 96,
-          "color_count": 9,
-          "has_gallery": true
-        },
-        {
-          "name": "golden_horse_armor",
-          "display_name": "金马铠",
-          "total_beads": 89,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "honey_block",
-          "display_name": "蜂蜜块",
-          "total_beads": 176,
-          "color_count": 10,
-          "has_gallery": true
-        },
-        {
-          "name": "honey_bottle",
-          "display_name": "蜂蜜瓶",
-          "total_beads": 78,
-          "color_count": 12,
-          "has_gallery": true
-        },
-        {
-          "name": "honeycomb",
-          "display_name": "蜂巢",
-          "total_beads": 138,
-          "color_count": 5,
-          "has_gallery": true
-        },
-        {
-          "name": "honeycomb_block",
-          "display_name": "蜂巢块",
-          "total_beads": 176,
-          "color_count": 12,
-          "has_gallery": true
-        },
-        {
-          "name": "kelp",
-          "display_name": "海带",
-          "total_beads": 106,
-          "color_count": 4,
-          "has_gallery": true
-        },
-        {
-          "name": "melon",
-          "display_name": "西瓜",
-          "total_beads": 176,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "melon_seeds",
-          "display_name": "西瓜种子",
-          "total_beads": 35,
-          "color_count": 3,
-          "has_gallery": true
-        },
-        {
-          "name": "melon_slice",
-          "display_name": "西瓜片",
-          "total_beads": 106,
-          "color_count": 10,
-          "has_gallery": true
-        },
-        {
-          "name": "mushroom_stew",
-          "display_name": "蘑菇汤",
-          "total_beads": 74,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "music_disc_lava_chicken",
-          "display_name": "唱片 Lava Chicken",
-          "total_beads": 118,
-          "color_count": 8,
-          "has_gallery": true
-        },
-        {
-          "name": "mutton",
-          "display_name": "生羊排",
-          "total_beads": 106,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "poisonous_potato",
-          "display_name": "毒土豆",
-          "total_beads": 108,
-          "color_count": 9,
-          "has_gallery": true
-        },
-        {
-          "name": "popped_chorus_fruit",
-          "display_name": "爆裂紫颂果",
-          "total_beads": 146,
-          "color_count": 2,
-          "has_gallery": true
-        },
-        {
-          "name": "porkchop",
-          "display_name": "生猪排",
-          "total_beads": 117,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "potato",
-          "display_name": "土豆",
-          "total_beads": 89,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "pufferfish",
-          "display_name": "河豚",
-          "total_beads": 145,
-          "color_count": 13,
-          "has_gallery": true
-        },
-        {
-          "name": "pufferfish_bucket",
-          "display_name": "桶装河豚",
-          "total_beads": 163,
-          "color_count": 16,
-          "has_gallery": true
-        },
-        {
-          "name": "pumpkin_pie",
-          "display_name": "南瓜派",
-          "total_beads": 120,
-          "color_count": 9,
-          "has_gallery": true
-        },
-        {
-          "name": "rabbit",
-          "display_name": "生兔肉",
-          "total_beads": 135,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "rabbit_foot",
-          "display_name": "兔子脚",
-          "total_beads": 82,
-          "color_count": 4,
-          "has_gallery": true
-        },
-        {
-          "name": "rabbit_hide",
-          "display_name": "兔子皮",
-          "total_beads": 110,
-          "color_count": 3,
-          "has_gallery": true
-        },
-        {
-          "name": "rabbit_stew",
-          "display_name": "兔子汤",
-          "total_beads": 76,
-          "color_count": 11,
-          "has_gallery": true
-        },
-        {
-          "name": "raw_copper",
-          "display_name": "粗铜",
-          "total_beads": 166,
-          "color_count": 12,
-          "has_gallery": true
-        },
-        {
-          "name": "raw_copper_block",
-          "display_name": "粗铜块",
-          "total_beads": 176,
-          "color_count": 17,
-          "has_gallery": true
-        },
-        {
-          "name": "raw_gold",
-          "display_name": "粗金",
-          "total_beads": 160,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "raw_gold_block",
-          "display_name": "粗金块",
-          "total_beads": 176,
-          "color_count": 11,
-          "has_gallery": true
-        },
-        {
-          "name": "raw_iron",
-          "display_name": "粗铁",
-          "total_beads": 168,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "raw_iron_block",
-          "display_name": "粗铁块",
-          "total_beads": 176,
-          "color_count": 10,
-          "has_gallery": true
-        },
-        {
-          "name": "salmon",
-          "display_name": "生鲑鱼",
-          "total_beads": 90,
-          "color_count": 11,
-          "has_gallery": true
-        },
-        {
-          "name": "salmon_bucket",
-          "display_name": "桶装鲑鱼",
-          "total_beads": 150,
-          "color_count": 15,
-          "has_gallery": true
-        },
-        {
-          "name": "spider_eye",
-          "display_name": "蜘蛛眼",
-          "total_beads": 45,
-          "color_count": 6,
-          "has_gallery": true
-        },
-        {
-          "name": "suspicious_stew",
-          "display_name": "迷之炖菜",
-          "total_beads": 74,
-          "color_count": 8,
-          "has_gallery": true
-        },
-        {
-          "name": "sweet_berries",
-          "display_name": "浆果",
-          "total_beads": 93,
-          "color_count": 7,
-          "has_gallery": true
-        },
-        {
-          "name": "tropical_fish",
-          "display_name": "热带鱼",
-          "total_beads": 94,
-          "color_count": 10,
-          "has_gallery": true
-        },
-        {
-          "name": "tropical_fish_bucket",
-          "display_name": "桶装热带鱼",
-          "total_beads": 152,
-          "color_count": 15,
-          "has_gallery": true
-        }
-      ]
-    },
     "Materials": {
       "count": 271,
       "items": [
@@ -10464,6 +9969,501 @@
           "display_name": "木铲",
           "total_beads": 53,
           "color_count": 5,
+          "has_gallery": true
+        }
+      ]
+    },
+    "Food and Drinks": {
+      "count": 70,
+      "items": [
+        {
+          "name": "apple",
+          "display_name": "苹果",
+          "total_beads": 114,
+          "color_count": 8,
+          "has_gallery": true
+        },
+        {
+          "name": "baked_potato",
+          "display_name": "烤土豆",
+          "total_beads": 118,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "beef",
+          "display_name": "生牛肉",
+          "total_beads": 108,
+          "color_count": 8,
+          "has_gallery": true
+        },
+        {
+          "name": "beetroot",
+          "display_name": "甜菜根",
+          "total_beads": 69,
+          "color_count": 5,
+          "has_gallery": true
+        },
+        {
+          "name": "beetroot_seeds",
+          "display_name": "甜菜种子",
+          "total_beads": 66,
+          "color_count": 3,
+          "has_gallery": true
+        },
+        {
+          "name": "beetroot_soup",
+          "display_name": "甜菜汤",
+          "total_beads": 74,
+          "color_count": 5,
+          "has_gallery": true
+        },
+        {
+          "name": "bread",
+          "display_name": "面包",
+          "total_beads": 138,
+          "color_count": 5,
+          "has_gallery": true
+        },
+        {
+          "name": "cake",
+          "display_name": "蛋糕",
+          "total_beads": 196,
+          "color_count": 12,
+          "has_gallery": true
+        },
+        {
+          "name": "carrot",
+          "display_name": "胡萝卜",
+          "total_beads": 96,
+          "color_count": 9,
+          "has_gallery": true
+        },
+        {
+          "name": "carrot_on_a_stick",
+          "display_name": "胡萝卜钓竿",
+          "total_beads": 76,
+          "color_count": 14,
+          "has_gallery": true
+        },
+        {
+          "name": "chicken",
+          "display_name": "生鸡肉",
+          "total_beads": 132,
+          "color_count": 8,
+          "has_gallery": true
+        },
+        {
+          "name": "chorus_flower",
+          "display_name": "紫颂花",
+          "total_beads": 132,
+          "color_count": 9,
+          "has_gallery": true
+        },
+        {
+          "name": "chorus_fruit",
+          "display_name": "紫颂果",
+          "total_beads": 110,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "chorus_plant",
+          "display_name": "紫颂植物",
+          "total_beads": 132,
+          "color_count": 4,
+          "has_gallery": true
+        },
+        {
+          "name": "cooked_beef",
+          "display_name": "熟牛排",
+          "total_beads": 105,
+          "color_count": 4,
+          "has_gallery": true
+        },
+        {
+          "name": "cooked_chicken",
+          "display_name": "熟鸡肉",
+          "total_beads": 132,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "cooked_cod",
+          "display_name": "熟鳕鱼",
+          "total_beads": 85,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "cooked_mutton",
+          "display_name": "熟羊排",
+          "total_beads": 106,
+          "color_count": 4,
+          "has_gallery": true
+        },
+        {
+          "name": "cooked_porkchop",
+          "display_name": "熟猪排",
+          "total_beads": 102,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "cooked_rabbit",
+          "display_name": "熟兔肉",
+          "total_beads": 135,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "cooked_salmon",
+          "display_name": "熟鲑鱼",
+          "total_beads": 90,
+          "color_count": 13,
+          "has_gallery": true
+        },
+        {
+          "name": "cookie",
+          "display_name": "曲奇",
+          "total_beads": 140,
+          "color_count": 5,
+          "has_gallery": true
+        },
+        {
+          "name": "dried_ghast",
+          "display_name": "干燥恶魂",
+          "total_beads": 113,
+          "color_count": 5,
+          "has_gallery": true
+        },
+        {
+          "name": "dried_kelp",
+          "display_name": "干海带",
+          "total_beads": 150,
+          "color_count": 3,
+          "has_gallery": true
+        },
+        {
+          "name": "dried_kelp_block",
+          "display_name": "干海带块",
+          "total_beads": 176,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "enchanted_golden_apple",
+          "display_name": "附魔金苹果",
+          "total_beads": 114,
+          "color_count": 19,
+          "has_gallery": true
+        },
+        {
+          "name": "fermented_spider_eye",
+          "display_name": "发酵蜘蛛眼",
+          "total_beads": 74,
+          "color_count": 5,
+          "has_gallery": true
+        },
+        {
+          "name": "glistering_melon_slice",
+          "display_name": "闪烁西瓜片",
+          "total_beads": 106,
+          "color_count": 12,
+          "has_gallery": true
+        },
+        {
+          "name": "glow_berries",
+          "display_name": "发光浆果",
+          "total_beads": 113,
+          "color_count": 12,
+          "has_gallery": true
+        },
+        {
+          "name": "glow_ink_sac",
+          "display_name": "发光墨囊",
+          "total_beads": 63,
+          "color_count": 9,
+          "has_gallery": true
+        },
+        {
+          "name": "glow_item_frame",
+          "display_name": "发光物品展示框",
+          "total_beads": 170,
+          "color_count": 15,
+          "has_gallery": true
+        },
+        {
+          "name": "glow_lichen",
+          "display_name": "发光地衣",
+          "total_beads": 105,
+          "color_count": 3,
+          "has_gallery": true
+        },
+        {
+          "name": "golden_apple",
+          "display_name": "金苹果",
+          "total_beads": 114,
+          "color_count": 8,
+          "has_gallery": true
+        },
+        {
+          "name": "golden_carrot",
+          "display_name": "金胡萝卜",
+          "total_beads": 96,
+          "color_count": 9,
+          "has_gallery": true
+        },
+        {
+          "name": "golden_horse_armor",
+          "display_name": "金马铠",
+          "total_beads": 89,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "honey_block",
+          "display_name": "蜂蜜块",
+          "total_beads": 176,
+          "color_count": 10,
+          "has_gallery": true
+        },
+        {
+          "name": "honey_bottle",
+          "display_name": "蜂蜜瓶",
+          "total_beads": 78,
+          "color_count": 12,
+          "has_gallery": true
+        },
+        {
+          "name": "honeycomb",
+          "display_name": "蜂巢",
+          "total_beads": 138,
+          "color_count": 5,
+          "has_gallery": true
+        },
+        {
+          "name": "honeycomb_block",
+          "display_name": "蜂巢块",
+          "total_beads": 176,
+          "color_count": 12,
+          "has_gallery": true
+        },
+        {
+          "name": "kelp",
+          "display_name": "海带",
+          "total_beads": 106,
+          "color_count": 4,
+          "has_gallery": true
+        },
+        {
+          "name": "melon",
+          "display_name": "西瓜",
+          "total_beads": 176,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "melon_seeds",
+          "display_name": "西瓜种子",
+          "total_beads": 35,
+          "color_count": 3,
+          "has_gallery": true
+        },
+        {
+          "name": "melon_slice",
+          "display_name": "西瓜片",
+          "total_beads": 106,
+          "color_count": 10,
+          "has_gallery": true
+        },
+        {
+          "name": "mushroom_stew",
+          "display_name": "蘑菇汤",
+          "total_beads": 74,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "music_disc_lava_chicken",
+          "display_name": "唱片 Lava Chicken",
+          "total_beads": 118,
+          "color_count": 8,
+          "has_gallery": true
+        },
+        {
+          "name": "mutton",
+          "display_name": "生羊排",
+          "total_beads": 106,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "poisonous_potato",
+          "display_name": "毒土豆",
+          "total_beads": 108,
+          "color_count": 9,
+          "has_gallery": true
+        },
+        {
+          "name": "popped_chorus_fruit",
+          "display_name": "爆裂紫颂果",
+          "total_beads": 146,
+          "color_count": 2,
+          "has_gallery": true
+        },
+        {
+          "name": "porkchop",
+          "display_name": "生猪排",
+          "total_beads": 117,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "potato",
+          "display_name": "土豆",
+          "total_beads": 89,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "pufferfish",
+          "display_name": "河豚",
+          "total_beads": 145,
+          "color_count": 13,
+          "has_gallery": true
+        },
+        {
+          "name": "pufferfish_bucket",
+          "display_name": "桶装河豚",
+          "total_beads": 163,
+          "color_count": 16,
+          "has_gallery": true
+        },
+        {
+          "name": "pumpkin_pie",
+          "display_name": "南瓜派",
+          "total_beads": 120,
+          "color_count": 9,
+          "has_gallery": true
+        },
+        {
+          "name": "rabbit",
+          "display_name": "生兔肉",
+          "total_beads": 135,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "rabbit_foot",
+          "display_name": "兔子脚",
+          "total_beads": 82,
+          "color_count": 4,
+          "has_gallery": true
+        },
+        {
+          "name": "rabbit_hide",
+          "display_name": "兔子皮",
+          "total_beads": 110,
+          "color_count": 3,
+          "has_gallery": true
+        },
+        {
+          "name": "rabbit_stew",
+          "display_name": "兔子汤",
+          "total_beads": 76,
+          "color_count": 11,
+          "has_gallery": true
+        },
+        {
+          "name": "raw_copper",
+          "display_name": "粗铜",
+          "total_beads": 166,
+          "color_count": 12,
+          "has_gallery": true
+        },
+        {
+          "name": "raw_copper_block",
+          "display_name": "粗铜块",
+          "total_beads": 176,
+          "color_count": 17,
+          "has_gallery": true
+        },
+        {
+          "name": "raw_gold",
+          "display_name": "粗金",
+          "total_beads": 160,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "raw_gold_block",
+          "display_name": "粗金块",
+          "total_beads": 176,
+          "color_count": 11,
+          "has_gallery": true
+        },
+        {
+          "name": "raw_iron",
+          "display_name": "粗铁",
+          "total_beads": 168,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "raw_iron_block",
+          "display_name": "粗铁块",
+          "total_beads": 176,
+          "color_count": 10,
+          "has_gallery": true
+        },
+        {
+          "name": "salmon",
+          "display_name": "生鲑鱼",
+          "total_beads": 90,
+          "color_count": 11,
+          "has_gallery": true
+        },
+        {
+          "name": "salmon_bucket",
+          "display_name": "桶装鲑鱼",
+          "total_beads": 150,
+          "color_count": 15,
+          "has_gallery": true
+        },
+        {
+          "name": "spider_eye",
+          "display_name": "蜘蛛眼",
+          "total_beads": 45,
+          "color_count": 6,
+          "has_gallery": true
+        },
+        {
+          "name": "suspicious_stew",
+          "display_name": "迷之炖菜",
+          "total_beads": 74,
+          "color_count": 8,
+          "has_gallery": true
+        },
+        {
+          "name": "sweet_berries",
+          "display_name": "浆果",
+          "total_beads": 93,
+          "color_count": 7,
+          "has_gallery": true
+        },
+        {
+          "name": "tropical_fish",
+          "display_name": "热带鱼",
+          "total_beads": 94,
+          "color_count": 10,
+          "has_gallery": true
+        },
+        {
+          "name": "tropical_fish_bucket",
+          "display_name": "桶装热带鱼",
+          "total_beads": 152,
+          "color_count": 15,
           "has_gallery": true
         }
       ]
