@@ -37,4 +37,5 @@ img { display: block; }
   margin: 0 auto;
   overflow: hidden;
   background: var(--bg);
+  touch-action: pan-y;
 }
