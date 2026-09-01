@@ -47,7 +47,7 @@ export function useDrawerStack() {
 
     const done = () => {
       topEl.style.transition = ''
-      topEl.style.transform  = ''
+      // 不清空 transform，让元素停在右边直到 React unmount
       transitioning.current  = false
       animatedIds.current.delete(top.id)
       setStack(s => s.filter(e => e.id !== top.id))
