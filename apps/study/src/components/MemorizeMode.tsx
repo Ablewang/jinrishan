@@ -25,7 +25,9 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const [charSize, setCharSize] = useState<number | null>(null)
   const [unlocked, setUnlocked] = useState<Set<number>>(new Set())
   const [transitioning, setTransitioning] = useState(false)
-  const [countdown, setCountdown] = useState(3)
+  const [transCountdown, setTransCountdown] = useState(5)
+  const [autoKey, setAutoKey] = useState(0)
+  const confirmedRef = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const lines = poem.lines
@@ -37,6 +39,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
   const imgSrc = imgFile ? `/images/${encodeURIComponent(imgFile)}` : null
 
+  // 思考圈解锁
   useEffect(() => {
     setUnlocked(new Set())
     const thinkTime = round === 1 ? 1500 : 2000
@@ -49,6 +52,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return () => timers.forEach(clearTimeout)
   }, [current, round])
 
+  // 动态字号
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -65,15 +69,31 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return () => ro.disconnect()
   }, [current, line.chars.length])
 
+  // 滚动到当前行
   useEffect(() => {
     const el = containerRef.current?.querySelector('.mm-line--active')
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }, [current])
 
-  // 轮间过渡倒计时
+  // 每切换行时重置确认标志和倒计时 key
+  useEffect(() => {
+    confirmedRef.current = false
+    setAutoKey(k => k + 1)
+  }, [current, round])
+
+  // 全部揭示后 3 秒自动进下一句
+  useEffect(() => {
+    if (!allRevealed) return
+    const t = setTimeout(() => {
+      if (!confirmedRef.current) confirmLine()
+    }, 3000)
+    return () => clearTimeout(t)
+  }, [allRevealed])
+
+  // 轮间过渡倒计时（5秒）
   useEffect(() => {
     if (!transitioning) return
-    if (countdown <= 0) {
+    if (transCountdown <= 0) {
       setTransitioning(false)
       setRound(2)
       setCurrent(0)
@@ -82,9 +102,9 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       setHintStage(0)
       return
     }
-    const t = setTimeout(() => setCountdown(n => n - 1), 1000)
+    const t = setTimeout(() => setTransCountdown(n => n - 1), 1000)
     return () => clearTimeout(t)
-  }, [transitioning, countdown])
+  }, [transitioning, transCountdown])
 
   function revealChar(idx: number) {
     if (charStates.size !== idx) return
@@ -100,9 +120,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     if (nextHintStage >= 2) {
       setCharStates(prev => {
         const next = new Map(prev)
-        hanziChars.forEach((_, i) => {
-          if (!next.has(i)) next.set(i, 'hinted-full')
-        })
+        hanziChars.forEach((_, i) => { if (!next.has(i)) next.set(i, 'hinted-full') })
         return next
       })
       setUnlocked(prev => {
@@ -114,6 +132,8 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   }
 
   function confirmLine() {
+    if (confirmedRef.current) return
+    confirmedRef.current = true
     setBurst(false)
     if (current < total - 1) {
       setCurrent(c => c + 1)
@@ -122,7 +142,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       setHintStage(0)
     } else {
       if (round === 1) {
-        setCountdown(3)
+        setTransCountdown(5)
         setTransitioning(true)
       } else {
         const stars = totalHints === 0 ? 3 : totalHints <= 2 ? 2 : 1
@@ -140,16 +160,51 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     else setBurst(false)
   }, [allRevealed])
 
+  // 轮间过渡屏
   if (transitioning) {
     return (
-      <div className="mm mm--transition">
-        {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
-        <div className="mm__trans-box">
-          <p className="mm__trans-badge">第一轮完成</p>
-          <p className="mm__trans-title">棒极了！</p>
-          <p className="mm__trans-sub">第二轮不显示拼音{'\n'}靠记忆背出来吧</p>
-          <div className="mm__trans-count">{countdown}</div>
+      <div className="mm mm--transition" onClick={() => {
+        setTransitioning(false)
+        setRound(2)
+        setCurrent(0)
+        setCharStates(new Map())
+        setHintUsed(false)
+        setHintStage(0)
+      }}>
+        {imgSrc && (
+          <div className="mm__trans-bg-wrap">
+            <img className="mm__trans-bg" src={imgSrc} aria-hidden />
+          </div>
+        )}
+        <div className="mm__trans-overlay" />
+
+        <div className="mm__trans-content">
+          <div className="mm__trans-top">
+            <span className="mm__trans-badge">第一轮完成</span>
+            <h2 className="mm__trans-poem-title">{poem.title}</h2>
+            <p className="mm__trans-hint">第二轮不显示拼音</p>
+          </div>
+
+          <div className="mm__trans-lines">
+            {lines.map((ln, i) => (
+              <p key={i} className="mm__trans-line" style={{ animationDelay: `${i * 0.08}s` }}>
+                {ln.text}
+              </p>
+            ))}
+          </div>
         </div>
+
+        <div className="mm__trans-footer">
+          <span className="mm__trans-skip">点击继续 · {transCountdown}s</span>
+          <div className="mm__trans-bar">
+            <div
+              className="mm__trans-bar-fill"
+              style={{ animationDuration: `${transCountdown + 0.1}s` }}
+              key={transCountdown === 5 ? 'start' : undefined}
+            />
+          </div>
+        </div>
+
         <style>{transitionStyle}</style>
       </div>
     )
@@ -176,7 +231,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
           <p className="mm__celebrate-title">背出来啦！</p>
           <p className="mm__celebrate-poem">{poem.title}</p>
           <div className="mm__stars-row">
-            {[1,2,3].map(i => (
+            {[1, 2, 3].map(i => (
               <span
                 key={i}
                 className={`mm__star-item${i <= starCount ? ' mm__star-item--on' : ''}`}
@@ -209,7 +264,11 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const showHintPinyin = hintStage >= 1 && !allRevealed
 
   return (
-    <div className="mm">
+    <div
+      className="mm"
+      onClick={allRevealed ? confirmLine : undefined}
+      style={allRevealed ? { cursor: 'pointer' } : undefined}
+    >
       {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
 
       {burst && (
@@ -217,8 +276,8 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
           {Array.from({ length: 16 }, (_, i) => {
             const angle = (i / 16) * 360
             const dist = 80 + (i % 4) * 30
-            const colors = ['#C62828','#E53935','#FFD600','#FF6F00','#C62828','#FFD600']
-            const shapes = ['●','★','●','◆','★','●']
+            const colors = ['#C62828', '#E53935', '#FFD600', '#FF6F00', '#C62828', '#FFD600']
+            const shapes = ['●', '★', '●', '◆', '★', '●']
             return (
               <span key={i} className="mm__burst-particle" style={{
                 '--angle': `${angle}deg`,
@@ -235,7 +294,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       )}
 
       <header className="mm__header">
-        <button className="mm__exit" onClick={onExit}>退出</button>
+        <button className="mm__exit" onClick={e => { e.stopPropagation(); onExit() }}>退出</button>
         <div className="mm__progress-wrap">
           <div className="mm__progress-bar">
             <div className="mm__progress-fill" style={{ width: `${(current / total) * 100}%` }} />
@@ -284,7 +343,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
                         <button
                           key={ci}
                           className={`mm-line__char-btn${isRev ? ' mm-line__char-btn--revealed' : ''}${isNext && !isRev ? ' mm-line__char-btn--next' : ''}`}
-                          onClick={() => !isRev && revealChar(idx)}
+                          onClick={e => { e.stopPropagation(); !isRev && revealChar(idx) }}
                           disabled={isRev || !isUnlocked}
                         >
                           {(round === 1 || showHintPinyin) && (
@@ -320,14 +379,14 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
         })}
       </div>
 
-      <div className="mm__footer">
+      <div className="mm__footer" onClick={e => e.stopPropagation()}>
         {allRevealed ? (
-          <button
-            className={`mm__confirm${hintUsed ? ' mm__confirm--hinted' : ''}`}
-            onClick={confirmLine}
-          >
-            {hintUsed ? '好，记住了' : '我背出来啦 ✓'}
-          </button>
+          <div className="mm__auto-wrap" key={autoKey}>
+            <span className="mm__auto-hint">点击任意位置继续</span>
+            <div className="mm__auto-bar">
+              <div className="mm__auto-fill" />
+            </div>
+          </div>
         ) : (
           hintStage < 2 && (
             <button className="mm__peek" onClick={hint}>
@@ -345,80 +404,109 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
 const transitionStyle = `
   .mm--transition {
     position: fixed; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: #fff; overflow: hidden;
+    display: flex; flex-direction: column;
+    overflow: hidden; cursor: pointer;
+    background: #1a0a0a;
   }
-  .mm__trans-box {
-    position: relative; z-index: 10;
-    text-align: center; padding: 0 24px;
-    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  .mm__trans-bg-wrap {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 0;
   }
-  @keyframes popIn {
-    from { transform: scale(0.4); opacity: 0; }
-    to   { transform: scale(1);   opacity: 1; }
+  .mm__trans-bg {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    opacity: 0.35; display: block;
   }
+  .mm__trans-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(
+      to bottom,
+      rgba(26,10,10,0.55) 0%,
+      rgba(26,10,10,0.2) 40%,
+      rgba(26,10,10,0.2) 60%,
+      rgba(26,10,10,0.75) 100%
+    );
+  }
+  .mm__trans-content {
+    position: relative; z-index: 2;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 24px; padding: 40px 32px 0;
+    overflow: hidden;
+  }
+  .mm__trans-top { text-align: center; }
   .mm__trans-badge {
     display: inline-block;
-    font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700;
-    color: #C62828; background: rgba(198,40,40,0.08);
-    border: 1px solid rgba(198,40,40,0.2);
-    border-radius: 999px; padding: 4px 14px; margin-bottom: 16px;
-    letter-spacing: 0.06em;
+    font-family: var(--font-ui); font-size: 0.72rem; font-weight: 700;
+    color: #FFF8E1; background: rgba(198,40,40,0.7);
+    border-radius: 999px; padding: 4px 14px; margin-bottom: 14px;
+    letter-spacing: 0.08em;
   }
-  .mm__trans-title {
-    font-family: var(--font-brush); font-size: 2.8rem;
-    color: #C62828; margin-bottom: 12px;
+  .mm__trans-poem-title {
+    font-family: var(--font-brush); font-size: 2.6rem;
+    color: #FFF8E1; margin-bottom: 10px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
   }
-  .mm__trans-sub {
+  .mm__trans-hint {
     font-family: var(--font-ui); font-size: var(--text-sm);
-    color: #999; line-height: 1.8; white-space: pre-line; margin-bottom: 32px;
+    color: rgba(255,248,225,0.6);
   }
-  .mm__trans-count {
-    font-family: var(--font-brush); font-size: 4rem;
-    color: #C62828; font-weight: 700;
-    animation: countPulse 1s ease-in-out infinite;
+  .mm__trans-lines {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
   }
-  @keyframes countPulse {
-    0%   { transform: scale(1);   opacity: 1; }
-    50%  { transform: scale(1.15); opacity: 0.7; }
-    100% { transform: scale(1);   opacity: 1; }
+  .mm__trans-line {
+    font-family: var(--font-brush); font-size: 1.3rem;
+    color: rgba(255,248,225,0.85);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.3);
+    animation: fadeSlideUp 0.5s ease both;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .mm__trans-footer {
+    position: relative; z-index: 2;
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom,0px));
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
+  }
+  .mm__trans-skip {
+    font-family: var(--font-ui); font-size: 0.72rem;
+    color: rgba(255,248,225,0.5);
+  }
+  .mm__trans-bar {
+    width: 100%; height: 3px;
+    background: rgba(255,248,225,0.15); border-radius: 999px; overflow: hidden;
+  }
+  .mm__trans-bar-fill {
+    height: 100%; background: rgba(255,248,225,0.6);
+    border-radius: 999px; width: 100%;
+    animation: drainBar linear forwards;
+  }
+  @keyframes drainBar {
+    from { width: 100%; }
+    to   { width: 0%; }
   }
 `
 
 const mainStyle = `
   .mm {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: #fff;
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden; background: #fff;
   }
   .mm__bg-wrap {
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 100%;
-    pointer-events: none;
-    z-index: 0;
+    position: absolute; bottom: 0; left: 0;
+    width: 100%; pointer-events: none; z-index: 0;
   }
-  .mm__bg {
-    display: block;
-    width: 100%;
-    height: auto;
-    opacity: 0.2;
-  }
+  .mm__bg { display: block; width: 100%; height: auto; opacity: 0.2; }
   .mm__burst {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; inset: 0; pointer-events: none; z-index: 20;
+    display: flex; align-items: center; justify-content: center;
   }
   .mm__burst-particle {
     position: absolute;
-    animation: burstFly 0.75s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+    animation: burstFly 0.75s cubic-bezier(0.2,0.8,0.4,1) forwards;
   }
   @keyframes burstFly {
     0%   { transform: translate(0,0) scale(1.2); opacity: 1; }
@@ -511,8 +599,7 @@ const mainStyle = `
     transition: border-color 0.2s;
   }
   .mm-line__circle--ready {
-    border-color: #C62828;
-    background: rgba(198,40,40,0.08);
+    border-color: #C62828; background: rgba(198,40,40,0.08);
   }
   .mm-line__circle--next.mm-line__circle--ready {
     box-shadow: 0 0 0 4px rgba(198,40,40,0.18);
@@ -520,12 +607,10 @@ const mainStyle = `
   .mm-line__think-arc {
     position: absolute; inset: -3px;
     width: calc(100% + 6px); height: calc(100% + 6px);
-    transform: rotate(-90deg);
-    pointer-events: none;
+    transform: rotate(-90deg); pointer-events: none;
   }
   .mm-line__think-ring {
-    animation: thinkShrink linear forwards;
-    stroke-linecap: round;
+    animation: thinkShrink linear forwards; stroke-linecap: round;
   }
   @keyframes thinkShrink {
     from { stroke-dashoffset: 0; }
@@ -551,28 +636,29 @@ const mainStyle = `
   }
   .mm__footer {
     position: relative; z-index: 10; flex-shrink: 0;
-    min-height: 64px;
-    padding: 12px 20px calc(12px + env(safe-area-inset-bottom,0px));
+    min-height: 56px;
+    padding: 10px 20px calc(10px + env(safe-area-inset-bottom,0px));
     display: flex; flex-direction: column; gap: 10px;
     background: #fff; border-top: 1px solid #f0f0f0;
   }
-  .mm__confirm {
-    width: 100%; padding: 16px 0;
-    background: #C62828; color: #FFF8E1;
-    border-radius: 999px; font-family: var(--font-brush);
-    font-size: var(--text-xl); font-weight: 700; letter-spacing: 0.05em;
-    box-shadow: 0 4px 16px rgba(198,40,40,0.3);
-    transition: transform 0.1s, opacity 0.1s;
-    animation: confirmIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  .mm__auto-wrap {
+    display: flex; flex-direction: column; gap: 6px; align-items: center;
   }
-  .mm__confirm--hinted {
-    background: #C47A0A;
-    box-shadow: 0 4px 16px rgba(196,122,10,0.3);
+  .mm__auto-hint {
+    font-family: var(--font-ui); font-size: 0.72rem; color: #bbb;
   }
-  .mm__confirm:active { transform: scale(0.97); opacity: 0.9; }
-  @keyframes confirmIn {
-    from { transform: scale(0.85) translateY(8px); opacity: 0; }
-    to   { transform: scale(1) translateY(0); opacity: 1; }
+  .mm__auto-bar {
+    width: 100%; height: 3px;
+    background: #f0f0f0; border-radius: 999px; overflow: hidden;
+  }
+  .mm__auto-fill {
+    height: 100%; background: #C62828;
+    border-radius: 999px; width: 100%;
+    animation: drainAuto 3s linear forwards;
+  }
+  @keyframes drainAuto {
+    from { width: 100%; }
+    to   { width: 0%; }
   }
   .mm__peek {
     font-family: var(--font-ui); font-size: var(--text-sm);
@@ -618,9 +704,13 @@ const celebrateStyle = `
     from { transform: scale(0.4); opacity: 0; }
     to   { transform: scale(1);   opacity: 1; }
   }
-  .mm__celebrate-stars-label {
-    font-size: 1.6rem; letter-spacing: 0.1em;
-    color: #FFD600; margin-bottom: 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  .mm__celebrate-title {
+    font-family: var(--font-brush); font-size: 2.4rem;
+    color: #C62828; margin-bottom: 4px;
+  }
+  .mm__celebrate-poem {
+    font-family: var(--font-brush); font-size: 1.1rem;
+    color: #aaa; margin-bottom: 4px;
   }
   .mm__stars-row {
     display: flex; justify-content: center; gap: 8px;
@@ -628,7 +718,6 @@ const celebrateStyle = `
   }
   .mm__star-item {
     font-size: 2.4rem; color: #e0e0e0;
-    transition: color 0.2s, transform 0.2s;
   }
   .mm__star-item--on {
     color: #FFB300;
@@ -637,14 +726,6 @@ const celebrateStyle = `
   @keyframes starPop {
     0%   { transform: scale(0.3); opacity: 0; }
     100% { transform: scale(1);   opacity: 1; }
-  }
-  .mm__celebrate-title {
-    font-family: var(--font-brush); font-size: 2.4rem;
-    color: #C62828; margin-bottom: 4px;
-  }
-  .mm__celebrate-poem {
-    font-family: var(--font-brush); font-size: 1.1rem;
-    color: #aaa; margin-bottom: 4px;
   }
   .mm__celebrate-sub {
     font-size: var(--text-sm); color: #999; margin-bottom: 24px; line-height: 1.6;
