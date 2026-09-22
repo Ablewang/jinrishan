@@ -39,10 +39,10 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
     <button
       ref={ref}
       className="poem-card"
-      style={imgSrc ? { backgroundImage: `url(${imgSrc})` } : undefined}
       onClick={() => navigate(`/poem/${poem.id}`)}
       aria-label={`${poem.title}，${dynastyLabel}`}
     >
+      {imgSrc && <img className="poem-card__bg" src={imgSrc} aria-hidden />}
       {isMemorized && (
         <span className="poem-card__badge poem-card__badge--memorized" aria-label="已背">背</span>
       )}
@@ -65,13 +65,22 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           text-align: left;
           width: 100%;
           background-color: #FFFFFF;
-          background-size: cover;
-          background-position: center right;
           border: 1.5px solid var(--border);
           transition: transform 0.15s ease, box-shadow 0.15s ease;
           -webkit-tap-highlight-color: transparent;
           overflow: hidden;
           min-height: 90px;
+        }
+        .poem-card__bg {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: auto;
+          display: block;
+          opacity: 0.22;
+          pointer-events: none;
+          z-index: 0;
         }
         .poem-card::after {
           content: '';
