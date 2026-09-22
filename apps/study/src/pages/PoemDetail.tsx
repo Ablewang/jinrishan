@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { poems } from '../data/poems'
+import { loadPoem, loadPoemIndex } from '../data/poems'
+import type { Poem, PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
 import PoemText from '../components/PoemText'
 import MemorizeMode from '../components/MemorizeMode'
@@ -13,24 +14,24 @@ interface AnnotationData {
   translation: string | null
 }
 
-let annotationsCache: AnnotationData[] | null = null
+const annoCache = new Map<number, AnnotationData>()
 
-async function loadAnnotations(): Promise<AnnotationData[]> {
-  if (annotationsCache) return annotationsCache
+async function loadAnnotation(id: number): Promise<AnnotationData | null> {
+  if (annoCache.has(id)) return annoCache.get(id)!
   try {
-    const res = await fetch('/annotations.json')
-    if (!res.ok) return []
-    const data = await res.json()
-    annotationsCache = data.poems ?? []
-    return annotationsCache!
+    const res = await fetch(`/annotations/${id}.json`)
+    if (!res.ok) return null
+    const data: AnnotationData = await res.json()
+    annoCache.set(id, data)
+    return data
   } catch {
-    return []
+    return null
   }
 }
 
 const NUMS = '①②③④⑤⑥⑦⑧⑨⑩'
 
-function getTitlePinyin(title: string, lines: { chars: { char: string; pinyin: string | null }[] }[]): string[] {
+function getTitlePinyin(title: string, lines: Poem['lines']): string[] {
   const allChars = lines.flatMap(l => l.chars)
   return title.split('').map(ch => {
     const found = allChars.find(c => c.char === ch && c.pinyin)
@@ -44,19 +45,24 @@ export default function PoemDetail() {
   const { markRead, markMemorized } = useProgress()
   const [showPinyin, setShowPinyin] = useState(true)
   const [memorizing, setMemorizing] = useState(false)
+  const [poem, setPoem] = useState<Poem | null>(null)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
+  const [index, setIndex] = useState<PoemSummary[]>([])
   const [titleHidden, setTitleHidden] = useState(false)
   const metaRef = useRef<HTMLDivElement>(null)
 
-  const poem = poems.find(p => p.id === Number(id))
-  const currentIndex = poems.findIndex(p => p.id === Number(id))
-  const prevPoem = currentIndex > 0 ? poems[currentIndex - 1] : null
-  const nextPoem = currentIndex < poems.length - 1 ? poems[currentIndex + 1] : null
+  const numId = Number(id)
+
+  useEffect(() => {
+    setPoem(null)
+    setAnnotation(null)
+    loadPoem(numId).then(setPoem)
+    loadAnnotation(numId).then(setAnnotation)
+    if (index.length === 0) loadPoemIndex().then(setIndex)
+  }, [numId])
 
   useEffect(() => { if (poem) markRead(poem.id) }, [poem?.id])
-  useEffect(() => {
-    loadAnnotations().then(list => setAnnotation(list.find(a => a.id === Number(id)) ?? null))
-  }, [id])
+
   useEffect(() => {
     const el = metaRef.current
     if (!el) return
@@ -64,6 +70,10 @@ export default function PoemDetail() {
     obs.observe(el)
     return () => obs.disconnect()
   }, [poem?.id])
+
+  const currentIndex = index.findIndex(p => p.id === numId)
+  const prevPoem = currentIndex > 0 ? index[currentIndex - 1] : null
+  const nextPoem = currentIndex < index.length - 1 ? index[currentIndex + 1] : null
 
   const handleMemorized = useCallback(() => { if (poem) markMemorized(poem.id) }, [poem?.id])
   const handleNext = useCallback(() => {
@@ -73,9 +83,8 @@ export default function PoemDetail() {
 
   if (!poem) {
     return (
-      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', height:'100vh', gap:16, color:'#666' }}>
-        <p>找不到这首诗</p>
-        <button style={{ padding:'10px 24px', background:'#C62828', color:'#FFF8E1', borderRadius:999 }} onClick={() => navigate('/')}>回首页</button>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', color:'#999' }}>
+        加载中…
       </div>
     )
   }
@@ -92,7 +101,6 @@ export default function PoemDetail() {
 
   return (
     <div className="d">
-      {/* 红色导航栏 */}
       <header className="d-nav">
         <button className="d-nav__back" onClick={() => navigate('/')}>← 返回</button>
         {titleHidden && <span className="d-nav__title">{poem.title}</span>}
@@ -105,14 +113,12 @@ export default function PoemDetail() {
       </header>
 
       <div className="d-body">
-        {/* 背景图：绝对定位底部 */}
         {imgSrc && (
           <div className="d-bg-wrap">
             <img className="d-bg" src={imgSrc} aria-hidden="true" />
           </div>
         )}
 
-        {/* 滚动内容区 */}
         <div className="d-scroll">
           <div className="d-meta" ref={metaRef}>
             <div className="d-meta__title-row">
@@ -157,7 +163,6 @@ export default function PoemDetail() {
         </div>
       </div>
 
-      {/* 红色底部栏 */}
       <div className="d-footer">
         <button className="d-footer__memorize" onClick={() => setMemorizing(true)}>背一背</button>
         <div className="d-footer__nav">

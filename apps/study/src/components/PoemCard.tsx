@@ -1,9 +1,10 @@
+import { useRef, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Poem } from '../data/poems'
+import type { PoemSummary } from '../data/poems'
 import imgMap from '../data/poem_img_map.json'
 
 interface Props {
-  poem: Poem
+  poem: PoemSummary
   isRead: boolean
   isMemorized: boolean
   colorIndex: number
@@ -11,15 +12,34 @@ interface Props {
 
 export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _colorIndex }: Props) {
   const navigate = useNavigate()
-  const firstLine = poem.lines[0]?.text ?? ''
+  const ref = useRef<HTMLButtonElement>(null)
+  const [imgSrc, setImgSrc] = useState<string | null>(null)
+
   const dynastyLabel = poem.dynasty ? `${poem.dynasty}·${poem.author}` : poem.author
-  const imgFile = (imgMap as Record<string, string>)[String(poem.id)] ?? `poem_${String(poem.id).padStart(2, '0')}.png`
-  const imgSrc = `/images/${encodeURIComponent(imgFile)}`
+  const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
+
+  useEffect(() => {
+    if (!imgFile) return
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setImgSrc(`/images/${encodeURIComponent(imgFile)}`)
+          obs.disconnect()
+        }
+      },
+      { rootMargin: '50% 0px' }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [imgFile])
 
   return (
     <button
+      ref={ref}
       className="poem-card"
-      style={{ backgroundImage: `url(${imgSrc})` }}
+      style={imgSrc ? { backgroundImage: `url(${imgSrc})` } : undefined}
       onClick={() => navigate(`/poem/${poem.id}`)}
       aria-label={`${poem.title}，${dynastyLabel}`}
     >
@@ -33,7 +53,7 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
       <div className="poem-card__text">
         <h2 className="poem-card__title">{poem.title}</h2>
         <p className="poem-card__author">{dynastyLabel}</p>
-        <p className="poem-card__line">{firstLine}</p>
+        <p className="poem-card__line">{poem.firstLine}</p>
       </div>
 
       <style>{`
@@ -53,7 +73,6 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           overflow: hidden;
           min-height: 90px;
         }
-        /* 左侧渐变遮罩，保证文字可读 */
         .poem-card::after {
           content: '';
           position: absolute;
@@ -68,7 +87,6 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           pointer-events: none;
           z-index: 0;
         }
-        /* 左侧红条 */
         .poem-card::before {
           content: '';
           position: absolute;
@@ -82,7 +100,6 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
         @media (hover: hover) {
           .poem-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
         }
-
         .poem-card__badge {
           position: absolute;
           top: 8px; right: 10px;
@@ -98,7 +115,6 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           background: var(--gold);
           display: inline-block;
         }
-
         .poem-card__text {
           position: relative;
           z-index: 1;
@@ -109,7 +125,6 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           min-width: 0;
           width: 65%;
         }
-
         .poem-card__title {
           font-family: var(--font-brush);
           font-size: var(--text-xl);
