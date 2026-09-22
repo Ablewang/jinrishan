@@ -36,7 +36,7 @@ export default function PoemText({ lines, showPinyin, compact = false }: Props) 
         }
         .poem-text__line {
           display: flex;
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
           align-items: flex-end;
           gap: 4px;
         }

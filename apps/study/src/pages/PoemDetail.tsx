@@ -246,6 +246,7 @@ export default function PoemDetail() {
         .d-split__poem {
           flex: 1;
           min-width: 0;
+          overflow-x: auto;
           background: rgba(255,255,255,0.82);
           border-radius: 18px;
           padding: 14px 10px;
