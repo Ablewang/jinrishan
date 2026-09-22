@@ -84,8 +84,8 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
           width: 60%;
           height: 100%;
           display: block;
-          object-fit: contain;
-          object-position: right center;
+          object-fit: cover;
+          object-position: center;
           opacity: 0.22;
           pointer-events: none;
           z-index: 0;
