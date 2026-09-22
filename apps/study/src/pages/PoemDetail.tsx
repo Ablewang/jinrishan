@@ -67,7 +67,7 @@ export default function PoemDetail() {
   const prevPoem = currentIndex > 0 ? index[currentIndex - 1] : null
   const nextPoem = currentIndex < index.length - 1 ? index[currentIndex + 1] : null
 
-  const handleMemorized = useCallback((stars: number) => { if (poem) markMemorized(poem.id, stars) }, [poem?.id])
+  const handleMemorized = useCallback((stars: number, charCount: number) => { if (poem) markMemorized(poem.id, stars, charCount) }, [poem?.id])
   const handleNext = useCallback(() => {
     setMemorizing(false)
     navigate(nextPoem ? `/poem/${nextPoem.id}` : '/')

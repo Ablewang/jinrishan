@@ -1,4 +1,9 @@
-import type { PoemState, StreakData } from '../hooks/useProgress'
+import type { PoemState, StreakData, MemorizeRecord } from '../hooks/useProgress'
+
+// 李白诗 id
+const LIBAI_IDS = new Set([19, 20, 21, 22, 23, 24, 25])
+// 含「月」字的诗 id（title 或 firstLine）
+const MOON_IDS = new Set([13, 18, 19, 20, 31, 35, 36, 54, 64, 68])
 
 interface Badge {
   id: string
@@ -10,50 +15,75 @@ interface Badge {
 interface Props {
   progress: Record<string, PoemState>
   streak: StreakData
-  totalMemorized: number
-  totalPerfect: number
+  totalChars: number
+  memorizeHistory: MemorizeRecord[]
 }
 
-function makeBadges(props: Props): Badge[] {
-  const { totalMemorized, totalPerfect, streak } = props
+function hasConsecutiveHighStars(history: MemorizeRecord[], n: number): boolean {
+  let count = 0
+  for (const r of history) {
+    if (r.stars >= 2) {
+      count++
+      if (count >= n) return true
+    } else {
+      count = 0
+    }
+  }
+  return false
+}
+
+function makeBadges({ progress, streak, totalChars, memorizeHistory }: Props): Badge[] {
+  const memorizedIds = new Set(
+    Object.entries(progress).filter(([, s]) => s.memorized).map(([id]) => Number(id))
+  )
+
   return [
-    {
-      id: 'first',
-      label: '初出茅庐',
-      desc: '背出第一首诗',
-      unlocked: totalMemorized >= 1,
-    },
-    {
-      id: 'ten',
-      label: '小有成就',
-      desc: '背出10首诗',
-      unlocked: totalMemorized >= 10,
-    },
-    {
-      id: 'thirty',
-      label: '博闻强识',
-      desc: '背出30首诗',
-      unlocked: totalMemorized >= 30,
-    },
-    {
-      id: 'all',
-      label: '满腹经纶',
-      desc: '背出全部70首',
-      unlocked: totalMemorized >= 70,
-    },
     {
       id: 'perfect',
       label: '一气呵成',
-      desc: '获得第一个三星',
-      unlocked: totalPerfect >= 1,
+      desc: '完成一首诗全程0次提示',
+      unlocked: Object.values(progress).some(s => s.bestStars === 3),
     },
     {
-      id: 'streak',
-      label: '持之以恒',
+      id: 'streak3',
+      label: '三连击',
+      desc: '连续3首诗★★以上',
+      unlocked: hasConsecutiveHighStars(memorizeHistory, 3),
+    },
+    {
+      id: 'moon',
+      label: '月亮诗人',
+      desc: '完成所有含「月」字的诗',
+      unlocked: [...MOON_IDS].every(id => memorizedIds.has(id)),
+    },
+    {
+      id: 'streak7',
+      label: '每日学诗',
       desc: '连续学习7天',
       unlocked: streak.count >= 7,
     },
+    {
+      id: 'chars',
+      label: '百字侠',
+      desc: '累计背出100个汉字',
+      unlocked: totalChars >= 100,
+    },
+    {
+      id: 'libai',
+      label: '小李白',
+      desc: '完成所有李白诗目',
+      unlocked: [...LIBAI_IDS].every(id => memorizedIds.has(id)),
+    },
   ]
+}
+
+const ICONS: Record<string, string> = {
+  perfect: '一',
+  streak3: '连',
+  moon:    '月',
+  streak7: '恒',
+  chars:   '百',
+  libai:   '白',
 }
 
 export default function Achievements(props: Props) {
@@ -77,15 +107,6 @@ export default function Achievements(props: Props) {
       <style>{style}</style>
     </div>
   )
-}
-
-const ICONS: Record<string, string> = {
-  first:   '卷',
-  ten:     '十',
-  thirty:  '卅',
-  all:     '满',
-  perfect: '星',
-  streak:  '连',
 }
 
 const style = `

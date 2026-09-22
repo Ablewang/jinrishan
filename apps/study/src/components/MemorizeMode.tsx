@@ -6,7 +6,7 @@ interface Props {
   poem: Poem
   onExit: () => void
   onNext: () => void
-  onMemorized: (stars: number) => void
+  onMemorized: (stars: number, charCount: number) => void
 }
 
 type Round = 1 | 2
@@ -126,9 +126,10 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
         setTransitioning(true)
       } else {
         const stars = totalHints === 0 ? 3 : totalHints <= 2 ? 2 : 1
+        const charCount = lines.reduce((sum, ln) => sum + ln.chars.filter(c => c.pinyin !== null).length, 0)
         setCelebStars(stars)
         setCelebrated(true)
-        onMemorized(stars)
+        onMemorized(stars, charCount)
       }
     }
   }

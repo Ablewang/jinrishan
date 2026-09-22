@@ -15,6 +15,8 @@ export interface StreakData {
 
 const STORAGE_KEY = 'poem_progress'
 const STREAK_KEY = 'poem_streak'
+const CHARS_KEY = 'poem_total_chars'
+const HISTORY_KEY = 'poem_memorize_history'
 
 function loadProgress(): Progress {
   try {
@@ -42,6 +44,30 @@ function saveStreak(s: StreakData) {
   try { localStorage.setItem(STREAK_KEY, JSON.stringify(s)) } catch { /* ignore */ }
 }
 
+function loadTotalChars(): number {
+  try { return Number(localStorage.getItem(CHARS_KEY) ?? 0) } catch { return 0 }
+}
+
+function saveTotalChars(n: number) {
+  try { localStorage.setItem(CHARS_KEY, String(n)) } catch { /* ignore */ }
+}
+
+// 最近背诵历史，每项 {id, stars}，最多保留 20 条
+export interface MemorizeRecord { id: number; stars: number }
+
+function loadHistory(): MemorizeRecord[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+function saveHistory(h: MemorizeRecord[]) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)) } catch { /* ignore */ }
+}
+
 function todayStr(): string {
   return new Date().toISOString().slice(0, 10)
 }
@@ -49,6 +75,8 @@ function todayStr(): string {
 export function useProgress() {
   const [progress, setProgress] = useState<Progress>(loadProgress)
   const [streak, setStreak] = useState<StreakData>(loadStreak)
+  const [totalChars, setTotalChars] = useState<number>(loadTotalChars)
+  const [memorizeHistory, setMemorizeHistory] = useState<MemorizeRecord[]>(loadHistory)
 
   const getState = useCallback((id: number): PoemState => {
     return progress[String(id)] ?? { read: false, memorized: false, bestStars: 0 }
@@ -65,10 +93,11 @@ export function useProgress() {
     })
   }, [])
 
-  const markMemorized = useCallback((id: number, stars = 0) => {
+  const markMemorized = useCallback((id: number, stars = 0, charCount = 0) => {
     setProgress(prev => {
       const key = String(id)
       const existing = prev[key] ?? { read: false, memorized: false, bestStars: 0 }
+      const isFirstTime = !existing.memorized
       const next = {
         ...prev,
         [key]: {
@@ -79,8 +108,23 @@ export function useProgress() {
         },
       }
       saveProgress(next)
+
+      // 首次背诵才累计字数
+      if (isFirstTime && charCount > 0) {
+        const newTotal = loadTotalChars() + charCount
+        saveTotalChars(newTotal)
+        setTotalChars(newTotal)
+      }
       return next
     })
+
+    // 更新背诵历史
+    setMemorizeHistory(prev => {
+      const next = [...prev.filter(r => r.id !== id), { id, stars }].slice(-20)
+      saveHistory(next)
+      return next
+    })
+
     // 更新连续学习天数
     const today = todayStr()
     const current = loadStreak()
@@ -100,5 +144,6 @@ export function useProgress() {
   const totalMemorized = Object.values(progress).filter(s => s.memorized).length
   const totalPerfect = Object.values(progress).filter(s => s.bestStars === 3).length
 
-  return { getState, markRead, markMemorized, totalMemorized, totalPerfect, streak, progress }
+  return { getState, markRead, markMemorized, totalMemorized, totalPerfect, streak, progress, totalChars, memorizeHistory }
 }
+

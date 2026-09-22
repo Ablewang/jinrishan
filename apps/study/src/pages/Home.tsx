@@ -12,7 +12,7 @@ const TOTAL = 70
 export default function Home() {
   const [filter, setFilter] = useState<Filter>('全部')
   const [poems, setPoems] = useState<PoemSummary[]>([])
-  const { getState, totalMemorized, totalPerfect, streak, progress } = useProgress()
+  const { getState, totalMemorized, streak, progress, totalChars, memorizeHistory } = useProgress()
 
   useEffect(() => { loadPoemIndex().then(setPoems) }, [])
 
@@ -53,8 +53,8 @@ export default function Home() {
       <Achievements
         progress={progress}
         streak={streak}
-        totalMemorized={totalMemorized}
-        totalPerfect={totalPerfect}
+        totalChars={totalChars}
+        memorizeHistory={memorizeHistory}
       />
 
       <div className="home__filters" role="tablist">
