@@ -364,10 +364,10 @@ const mainStyle = `
   }
   .mm-line__chars {
     display: flex;
-    gap: 4px;
+    gap: 4px 6px;
     align-items: flex-end;
     justify-content: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
   }
   .mm-line__char-btn {
     display: flex;
