@@ -167,14 +167,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   // 轮间过渡屏
   if (transitioning) {
     return (
-      <div className="mm mm--transition" onClick={() => {
-        setTransitioning(false)
-        setRound(2)
-        setCurrent(0)
-        setCharStates(new Map())
-        setHintUsed(false)
-        setHintStage(0)
-      }}>
+      <div className="mm mm--transition">
         {imgSrc && (
           <div className="mm__trans-bg-wrap">
             <img className="mm__trans-bg" src={imgSrc} aria-hidden />
@@ -199,8 +192,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
         </div>
 
         <div className="mm__trans-footer">
-          <span className="mm__trans-skip">点击继续 · {transCountdown}s</span>
-          <div className="mm__trans-bar">
+<div className="mm__trans-bar">
             <div
               className="mm__trans-bar-fill"
               style={{ animationDuration: `${transCountdown + 0.1}s` }}
