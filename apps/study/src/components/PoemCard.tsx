@@ -7,10 +7,11 @@ interface Props {
   poem: PoemSummary
   isRead: boolean
   isMemorized: boolean
+  bestStars?: number
   colorIndex: number
 }
 
-export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _colorIndex }: Props) {
+export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, colorIndex: _colorIndex }: Props) {
   const navigate = useNavigate()
   const ref = useRef<HTMLButtonElement>(null)
   const [imgSrc, setImgSrc] = useState<string | null>(null)
@@ -43,7 +44,12 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
       aria-label={`${poem.title}，${dynastyLabel}`}
     >
       {imgSrc && <img className="poem-card__bg" src={imgSrc} aria-hidden />}
-      {isMemorized && (
+      {isMemorized && bestStars > 0 && (
+        <span className="poem-card__badge poem-card__badge--stars" aria-label={`${bestStars}星`}>
+          {'★'.repeat(bestStars)}{'☆'.repeat(3 - bestStars)}
+        </span>
+      )}
+      {isMemorized && bestStars === 0 && (
         <span className="poem-card__badge poem-card__badge--memorized" aria-label="已背">背</span>
       )}
       {isRead && !isMemorized && (
@@ -116,6 +122,11 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           font-weight: 700;
           line-height: 1;
           z-index: 2;
+        }
+        .poem-card__badge--stars {
+          color: #FFB300;
+          font-size: 0.65rem;
+          letter-spacing: 0.02em;
         }
         .poem-card__badge--memorized { color: var(--green); }
         .poem-card__badge--read {

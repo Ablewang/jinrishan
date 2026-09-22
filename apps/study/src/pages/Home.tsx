@@ -11,7 +11,7 @@ const TOTAL = 70
 export default function Home() {
   const [filter, setFilter] = useState<Filter>('全部')
   const [poems, setPoems] = useState<PoemSummary[]>([])
-  const { getState, totalMemorized } = useProgress()
+  const { getState, totalMemorized, streak } = useProgress()
 
   useEffect(() => { loadPoemIndex().then(setPoems) }, [])
 
@@ -28,6 +28,11 @@ export default function Home() {
       <header className="home__navbar">
         <span className="home__logo">古诗小课堂</span>
         <span className="home__subtitle">小学必背70首</span>
+        {streak.count > 0 && (
+          <span className="home__streak" title={`连续学习${streak.count}天`}>
+            {'🔥'}{streak.count}
+          </span>
+        )}
       </header>
 
       <div className="home__progress">
@@ -67,6 +72,7 @@ export default function Home() {
               poem={poem}
               isRead={state.read}
               isMemorized={state.memorized}
+              bestStars={state.bestStars}
               colorIndex={poem.id - 1}
             />
           )
@@ -80,6 +86,17 @@ export default function Home() {
           min-height: 100vh;
           padding-bottom: 32px;
           background: var(--bg);
+        }
+        .home__streak {
+          margin-left: auto;
+          font-family: var(--font-ui);
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: #FFF8E1;
+          background: rgba(255,255,255,0.15);
+          border-radius: 999px;
+          padding: 4px 10px;
+          letter-spacing: 0.02em;
         }
         .home__navbar {
           position: sticky;

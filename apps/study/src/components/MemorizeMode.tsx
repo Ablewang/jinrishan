@@ -6,30 +6,26 @@ interface Props {
   poem: Poem
   onExit: () => void
   onNext: () => void
-  onMemorized: () => void
+  onMemorized: (stars: number) => void
 }
 
 type Round = 1 | 2
-
-// 每个汉字的揭示状态
 type CharState = 'hidden' | 'hinted-pinyin' | 'hinted-full' | 'self'
 
 export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Props) {
   const [round, setRound] = useState<Round>(1)
   const [current, setCurrent] = useState(0)
-  // charStates: index → CharState，只记录已揭示的字
   const [charStates, setCharStates] = useState<Map<number, CharState>>(new Map())
-  // 本句是否用过提示（至少一次 hinted-pinyin 或 hinted-full）
   const [hintUsed, setHintUsed] = useState(false)
-  // 提示阶段：0=未触发，1=仅拼音，2=全字
   const [hintStage, setHintStage] = useState(0)
   const [celebrated, setCelebrated] = useState(false)
-  const [celebStars, setCelebStars] = useState(0) // 0=未计算，1/2/3星
-  const [totalHints, setTotalHints] = useState(0) // 全诗累计提示次数
+  const [celebStars, setCelebStars] = useState(0)
+  const [totalHints, setTotalHints] = useState(0)
   const [burst, setBurst] = useState(false)
   const [charSize, setCharSize] = useState<number | null>(null)
-  // 每个圆圈的思考计时：index → 是否已解锁（可点击）
   const [unlocked, setUnlocked] = useState<Set<number>>(new Set())
+  const [transitioning, setTransitioning] = useState(false)
+  const [countdown, setCountdown] = useState(3)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const lines = poem.lines
@@ -41,7 +37,6 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
   const imgSrc = imgFile ? `/images/${encodeURIComponent(imgFile)}` : null
 
-  // 思考圈解锁计时：切换到新行时逐个解锁
   useEffect(() => {
     setUnlocked(new Set())
     const thinkTime = round === 1 ? 1500 : 2000
@@ -54,7 +49,6 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return () => timers.forEach(clearTimeout)
   }, [current, round])
 
-  // 动态计算每格尺寸
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -71,30 +65,39 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return () => ro.disconnect()
   }, [current, line.chars.length])
 
-  // 切换行时滚动
   useEffect(() => {
     const el = containerRef.current?.querySelector('.mm-line--active')
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }, [current])
 
-  // 顺序揭示：只允许点击下一个未揭示的字
+  // 轮间过渡倒计时
+  useEffect(() => {
+    if (!transitioning) return
+    if (countdown <= 0) {
+      setTransitioning(false)
+      setRound(2)
+      setCurrent(0)
+      setCharStates(new Map())
+      setHintUsed(false)
+      setHintStage(0)
+      return
+    }
+    const t = setTimeout(() => setCountdown(n => n - 1), 1000)
+    return () => clearTimeout(t)
+  }, [transitioning, countdown])
+
   function revealChar(idx: number) {
-    if (charStates.size !== idx) return // 不是下一个，不允许
-    if (!unlocked.has(idx)) return // 思考圈未解锁
+    if (charStates.size !== idx) return
+    if (!unlocked.has(idx)) return
     setCharStates(prev => new Map([...prev, [idx, 'self']]))
   }
 
-  // 提示一下：第一阶显示拼音，第二阶显示全字
   function hint() {
     const nextHintStage = hintStage + 1
     setHintStage(nextHintStage)
     setHintUsed(true)
     setTotalHints(n => n + 1)
-
-    if (nextHintStage === 1) {
-      // 第一阶：只显示拼音提示，不揭示字
-    } else {
-      // 第二阶：把所有未揭示的字标为 hinted-full
+    if (nextHintStage >= 2) {
       setCharStates(prev => {
         const next = new Map(prev)
         hanziChars.forEach((_, i) => {
@@ -119,32 +122,53 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       setHintStage(0)
     } else {
       if (round === 1) {
-        setRound(2)
-        setCurrent(0)
-        setCharStates(new Map())
-        setHintUsed(false)
-        setHintStage(0)
+        setCountdown(3)
+        setTransitioning(true)
       } else {
-        // 计算星级：0提示=3星，1-2次=2星，3+次=1星
         const stars = totalHints === 0 ? 3 : totalHints <= 2 ? 2 : 1
         setCelebStars(stars)
         setCelebrated(true)
-        onMemorized()
+        onMemorized(stars)
       }
     }
   }
 
-  // allRevealed 时礼花（自己答出才有）
   useEffect(() => {
     if (!allRevealed) return
     if (!hintUsed) setBurst(true)
     else setBurst(false)
   }, [allRevealed])
 
+  async function share() {
+    const starStr = ['', '★☆☆', '★★☆', '★★★'][celebStars] ?? ''
+    const text = `我用「古诗小课堂」背出了《${poem.title}》${starStr}，快来挑战！`
+    try {
+      await navigator.share({ text })
+    } catch {
+      // user cancelled or API unavailable
+    }
+  }
+
+  // 轮间过渡屏
+  if (transitioning) {
+    return (
+      <div className="mm mm--transition">
+        {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
+        <div className="mm__trans-box">
+          <p className="mm__trans-badge">第一轮完成</p>
+          <p className="mm__trans-title">棒极了！</p>
+          <p className="mm__trans-sub">第二轮不显示拼音{'\n'}靠记忆背出来吧</p>
+          <div className="mm__trans-count">{countdown}</div>
+        </div>
+        <style>{transitionStyle}</style>
+      </div>
+    )
+  }
+
   if (celebrated) {
     const starCount = celebStars
     const titles = ['', '这首诗稍难，多背几次就会了！', '背得很好！下次试试不用提示', '完美通关！一个提示都没用！']
-    const subtitles = ['', `★☆☆`, `★★☆`, `★★★`]
+    const subtitles = ['', '★☆☆', '★★☆', '★★★']
     return (
       <div className="mm mm--celebrate">
         {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
@@ -166,6 +190,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
           <p className="mm__celebrate-sub">{titles[starCount]}</p>
           <div className="mm__celebrate-btns">
             <button className="mm__btn mm__btn--primary" onClick={onNext}>下一首 →</button>
+            <button className="mm__btn mm__btn--share" onClick={share}>发给爸妈看</button>
             <button className="mm__btn mm__btn--ghost" onClick={() => {
               setCelebrated(false)
               setRound(1)
@@ -266,7 +291,6 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
                           onClick={() => !isRev && revealChar(idx)}
                           disabled={isRev || !isUnlocked}
                         >
-                          {/* 拼音行：第一轮显示，或提示第一阶显示 */}
                           {(round === 1 || showHintPinyin) && (
                             <span className={`mm-line__pinyin${showHintPinyin && round !== 1 ? ' mm-line__pinyin--hint' : ''}`}>
                               {c.pinyin}
@@ -321,6 +345,49 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     </div>
   )
 }
+
+const transitionStyle = `
+  .mm--transition {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; overflow: hidden;
+  }
+  .mm__trans-box {
+    position: relative; z-index: 10;
+    text-align: center; padding: 0 24px;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.4); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .mm__trans-badge {
+    display: inline-block;
+    font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700;
+    color: #C62828; background: rgba(198,40,40,0.08);
+    border: 1px solid rgba(198,40,40,0.2);
+    border-radius: 999px; padding: 4px 14px; margin-bottom: 16px;
+    letter-spacing: 0.06em;
+  }
+  .mm__trans-title {
+    font-family: var(--font-brush); font-size: 2.8rem;
+    color: #C62828; margin-bottom: 12px;
+  }
+  .mm__trans-sub {
+    font-family: var(--font-ui); font-size: var(--text-sm);
+    color: #999; line-height: 1.8; white-space: pre-line; margin-bottom: 32px;
+  }
+  .mm__trans-count {
+    font-family: var(--font-brush); font-size: 4rem;
+    color: #C62828; font-weight: 700;
+    animation: countPulse 1s ease-in-out infinite;
+  }
+  @keyframes countPulse {
+    0%   { transform: scale(1);   opacity: 1; }
+    50%  { transform: scale(1.15); opacity: 0.7; }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+`
 
 const mainStyle = `
   .mm {
@@ -580,6 +647,11 @@ const celebrateStyle = `
   .mm__btn--primary {
     background: #C62828; color: #fff;
     box-shadow: 0 4px 16px rgba(198,40,40,0.3);
+  }
+  .mm__btn--share {
+    background: transparent;
+    border: 1.5px solid #C62828;
+    color: #C62828;
   }
   .mm__btn--ghost {
     background: transparent; border: 1.5px solid #e0e0e0; color: #999;
