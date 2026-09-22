@@ -192,9 +192,8 @@
   padding: 8px 16px calc(12px + env(safe-area-inset-bottom, 0px));
   background: transparent;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
 }
 .d-footer__memorize {
   position: fixed;
