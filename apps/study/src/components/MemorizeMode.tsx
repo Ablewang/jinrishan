@@ -382,7 +382,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       <div className="mm__footer">
         {allRevealed ? (
           <button className="mm__confirm" key={autoKey} onClick={confirmLine}>
-            <span className="mm__confirm-text">我背出来啦</span>
+            <span className="mm__confirm-text">{hintUsed ? '好，记住了 ✓' : '我背出来啦 ✓'}</span>
             <span className="mm__confirm-count">{autoCountdown > 0 ? autoCountdown : ''}</span>
             <span className="mm__confirm-bar"><span className="mm__confirm-fill" /></span>
           </button>
