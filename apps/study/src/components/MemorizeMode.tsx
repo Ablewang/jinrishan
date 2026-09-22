@@ -182,7 +182,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
             <p className="mm__trans-hint">第二轮不显示拼音</p>
           </div>
 
-          <div className="mm__trans-lines">
+          <div className="mm__trans-lines" style={{ textAlign: 'center' }}>
             {lines.map((ln, i) => (
               <p key={i} className="mm__trans-line" style={{ animationDelay: `${i * 0.08}s` }}>
                 {ln.text}
