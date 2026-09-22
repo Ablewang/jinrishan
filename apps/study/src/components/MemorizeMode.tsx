@@ -478,6 +478,8 @@ const mainStyle = `
   .mm-line__hanzi {
     font-family: var(--font-brush); font-size: var(--fs, 2.2rem);
     color: #1a1a1a; line-height: 1;
+    height: var(--cs, 2.2rem);
+    display: flex; align-items: center; justify-content: center;
   }
   .mm-line__hanzi--hinted { color: #C47A0A; }
   .mm-line__punct {
