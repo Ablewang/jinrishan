@@ -32,6 +32,8 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const [circleFade, setCircleFade] = useState(false)
   const confirmedRef = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const rafRef = useRef<number>(0)
 
   const lines = poem.lines
   const total = lines.length
@@ -184,6 +186,84 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     else setBurst(false)
   }, [allRevealed])
 
+  // 撒花动画
+  useEffect(() => {
+    if (!celebrated) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const W = canvas.width = window.innerWidth
+    const H = canvas.height = window.innerHeight
+
+    const count = celebStars === 3 ? 120 : celebStars === 2 ? 80 : 50
+    const colors = ['#C62828', '#E53935', '#FFB300', '#FF6F00', '#43A047', '#1E88E5', '#8E24AA', '#FFD600']
+
+    type Particle = {
+      x: number; y: number; vx: number; vy: number
+      color: string; size: number; rot: number; rotV: number
+      shape: 'rect' | 'circle' | 'star'; opacity: number
+    }
+
+    const particles: Particle[] = Array.from({ length: count }, () => ({
+      x: W * 0.2 + Math.random() * W * 0.6,
+      y: H * 0.3 + Math.random() * H * 0.2,
+      vx: (Math.random() - 0.5) * 10,
+      vy: -(4 + Math.random() * 8),
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: 6 + Math.random() * 8,
+      rot: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.2,
+      shape: (['rect', 'circle', 'star'] as const)[Math.floor(Math.random() * 3)],
+      opacity: 1,
+    }))
+
+    let alive = true
+    function draw() {
+      if (!alive || !ctx) return
+      ctx.clearRect(0, 0, W, H)
+      let any = false
+      for (const p of particles) {
+        p.vy += 0.25
+        p.x += p.vx
+        p.y += p.vy
+        p.rot += p.rotV
+        if (p.y > H + 20) continue
+        if (p.y > H * 0.7) p.opacity = Math.max(0, p.opacity - 0.02)
+        any = true
+        ctx.save()
+        ctx.globalAlpha = p.opacity
+        ctx.translate(p.x, p.y)
+        ctx.rotate(p.rot)
+        ctx.fillStyle = p.color
+        if (p.shape === 'rect') {
+          ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2)
+        } else if (p.shape === 'circle') {
+          ctx.beginPath()
+          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2)
+          ctx.fill()
+        } else {
+          ctx.beginPath()
+          for (let i = 0; i < 5; i++) {
+            const a = (i * 4 * Math.PI) / 5 - Math.PI / 2
+            const r = i % 2 === 0 ? p.size / 2 : p.size / 4
+            i === 0 ? ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r) : ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r)
+          }
+          ctx.closePath()
+          ctx.fill()
+        }
+        ctx.restore()
+      }
+      if (any) rafRef.current = requestAnimationFrame(draw)
+    }
+    rafRef.current = requestAnimationFrame(draw)
+    return () => {
+      alive = false
+      cancelAnimationFrame(rafRef.current)
+    }
+  }, [celebrated, celebStars])
+
   // 轮间过渡屏
   if (transitioning) {
     return (
@@ -236,17 +316,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return (
       <div className="mm mm--celebrate">
         {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
-        {starCount === 3 && (
-          <div className="mm__celebrate-stars">
-            {Array.from({ length: 24 }, (_, i) => (
-              <span key={i} className="mm__star" style={{
-                left: `${5 + (i * 3.8) % 90}%`,
-                animationDelay: `${i * 0.06}s`,
-                fontSize: `${0.8 + (i % 3) * 0.4}rem`,
-              }}>★</span>
-            ))}
-          </div>
-        )}
+        <canvas ref={canvasRef} className="mm__confetti-canvas" aria-hidden />
         <div className="mm__celebrate-box">
           <p className="mm__celebrate-title">背出来啦！</p>
           <p className="mm__celebrate-poem">{poem.title}</p>
@@ -747,17 +817,10 @@ const celebrateStyle = `
     width: 100%; pointer-events: none; z-index: 0;
   }
   .mm__bg { display: block; width: 100%; height: auto; opacity: 0.2; }
-  .mm__celebrate-stars {
-    position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  }
-  .mm__star {
-    position: absolute; top: -2rem;
-    animation: fallStar 1.6s ease-in forwards; color: #C62828;
-  }
-  @keyframes fallStar {
-    0%   { top: -2rem; opacity: 1; transform: rotate(0deg) scale(1); }
-    80%  { opacity: 1; }
-    100% { top: 110vh; opacity: 0; transform: rotate(540deg) scale(0.5); }
+  .mm__confetti-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 1;
   }
   .mm__celebrate-box {
     position: relative; z-index: 10;
