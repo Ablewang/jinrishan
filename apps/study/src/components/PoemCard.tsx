@@ -1,0 +1,136 @@
+import { useNavigate } from 'react-router-dom'
+import type { Poem } from '../data/poems'
+import imgMap from '../data/poem_img_map.json'
+
+interface Props {
+  poem: Poem
+  isRead: boolean
+  isMemorized: boolean
+  colorIndex: number
+}
+
+export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _colorIndex }: Props) {
+  const navigate = useNavigate()
+  const firstLine = poem.lines[0]?.text ?? ''
+  const dynastyLabel = poem.dynasty ? `${poem.dynasty}·${poem.author}` : poem.author
+  const imgFile = (imgMap as Record<string, string>)[String(poem.id)] ?? `poem_${String(poem.id).padStart(2, '0')}.png`
+  const imgSrc = `/images/${encodeURIComponent(imgFile)}`
+
+  return (
+    <button
+      className="poem-card"
+      style={{ backgroundImage: `url(${imgSrc})` }}
+      onClick={() => navigate(`/poem/${poem.id}`)}
+      aria-label={`${poem.title}，${dynastyLabel}`}
+    >
+      {isMemorized && (
+        <span className="poem-card__badge poem-card__badge--memorized" aria-label="已背">背</span>
+      )}
+      {isRead && !isMemorized && (
+        <span className="poem-card__badge poem-card__badge--read" aria-label="已读" />
+      )}
+
+      <div className="poem-card__text">
+        <h2 className="poem-card__title">{poem.title}</h2>
+        <p className="poem-card__author">{dynastyLabel}</p>
+        <p className="poem-card__line">{firstLine}</p>
+      </div>
+
+      <style>{`
+        .poem-card {
+          position: relative;
+          padding: 0;
+          border-radius: var(--radius-card);
+          box-shadow: var(--shadow-card);
+          text-align: left;
+          width: 100%;
+          background-color: #FFFFFF;
+          background-size: cover;
+          background-position: center right;
+          border: 1.5px solid var(--border);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+          -webkit-tap-highlight-color: transparent;
+          overflow: hidden;
+          min-height: 90px;
+        }
+        /* 左侧渐变遮罩，保证文字可读 */
+        .poem-card::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to right,
+            rgba(255,255,255,0.97) 0%,
+            rgba(255,255,255,0.92) 45%,
+            rgba(255,255,255,0.5) 70%,
+            rgba(255,255,255,0) 100%
+          );
+          border-radius: var(--radius-card);
+          pointer-events: none;
+          z-index: 0;
+        }
+        /* 左侧红条 */
+        .poem-card::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 5px;
+          background: #C62828;
+          border-radius: var(--radius-card) 0 0 var(--radius-card);
+          z-index: 1;
+        }
+        .poem-card:active { transform: scale(0.96); box-shadow: none; }
+        @media (hover: hover) {
+          .poem-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
+        }
+
+        .poem-card__badge {
+          position: absolute;
+          top: 8px; right: 10px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          line-height: 1;
+          z-index: 2;
+        }
+        .poem-card__badge--memorized { color: var(--green); }
+        .poem-card__badge--read {
+          width: 7px; height: 7px;
+          border-radius: 50%;
+          background: var(--gold);
+          display: inline-block;
+        }
+
+        .poem-card__text {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          padding: 14px 10px 14px 18px;
+          min-width: 0;
+          width: 65%;
+        }
+
+        .poem-card__title {
+          font-family: var(--font-brush);
+          font-size: var(--text-xl);
+          color: #C62828;
+          line-height: 1.2;
+        }
+        .poem-card__author {
+          font-family: var(--font-ui);
+          font-size: var(--text-xs);
+          color: var(--ink-light);
+        }
+        .poem-card__line {
+          font-family: var(--font-serif);
+          font-size: var(--text-xs);
+          color: var(--ink-light);
+          margin-top: 2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      `}</style>
+    </button>
+  )
+}

@@ -24,3 +24,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+apps/study/*.PDF
+apps/study/*.pdf
+apps/study/pdf_images/

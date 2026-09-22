@@ -1,0 +1,114 @@
+/* ===== 全局 CSS 变量（仅亮色，儿童学习应用不需要深色模式） ===== */
+:root {
+  --bg: #FFFDF8;
+  --surface: #FFFFFF;
+  --ink: #18120A;
+  --ink-light: #8C7A60;
+  --accent: #E53935;
+  --gold: #F59E0B;
+  --green: #10B981;
+  --border: #EDE8DF;
+
+  /* 统一卡片色系 —— 米白底，左侧红条 */
+  --card-bg: #FFFFFF;
+  --card-left: #C62828;
+  --card-text: #18120A;
+
+  --font-brush: 'Ma Shan Zheng', cursive;
+  --font-serif: 'Noto Serif SC', serif;
+  --font-ui: 'ZCOOL KuaiLe', sans-serif;
+
+  --text-xs: 0.72rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-poem: 1.75rem;
+
+  --radius-card: 14px;
+  --shadow-card: 0 2px 12px rgba(150, 80, 30, 0.08);
+  --shadow-card-hover: 0 6px 24px rgba(150, 80, 30, 0.16);
+
+  --navbar-height: 56px;
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100%;
+  overflow-x: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  color: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
