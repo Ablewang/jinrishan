@@ -139,6 +139,9 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           font-size: var(--text-xl);
           color: #C62828;
           line-height: 1.2;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .poem-card__author {
           font-family: var(--font-ui);
