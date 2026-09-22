@@ -86,7 +86,7 @@ export default function Home() {
           top: env(safe-area-inset-top, 0px);
           z-index: 20;
           display: flex;
-          align-items: baseline;
+          align-items: center;
           gap: 10px;
           padding: 0 18px;
           height: var(--navbar-height);
