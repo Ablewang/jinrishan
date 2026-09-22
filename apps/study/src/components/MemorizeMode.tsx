@@ -28,6 +28,8 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const [transCountdown, setTransCountdown] = useState(3)
   const [autoCountdown, setAutoCountdown] = useState(3)
   const [autoKey, setAutoKey] = useState(0)
+  const [circleText, setCircleText] = useState('✓')
+  const [circleFade, setCircleFade] = useState(false)
   const confirmedRef = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -94,7 +96,22 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return () => clearTimeout(t)
   }, [allRevealed, autoCountdown])
 
-  // 轮间过渡倒计时（5秒）
+  // 轮间过渡倒计时（3秒）
+  useEffect(() => {
+    if (!transitioning) return
+    setCircleText('✓')
+    setCircleFade(false)
+    // 1秒后开始切换数字
+    const t0 = setTimeout(() => {
+      setCircleFade(true)
+      setTimeout(() => { setCircleText('3'); setCircleFade(false) }, 200)
+    }, 1000)
+    const t1 = setTimeout(() => { setCircleFade(true); setTimeout(() => { setCircleText('2'); setCircleFade(false) }, 200) }, 2000)
+    const t2 = setTimeout(() => { setCircleFade(true); setTimeout(() => { setCircleText('1'); setCircleFade(false) }, 200) }, 3000)
+    const t3 = setTimeout(() => { setCircleFade(true); setTimeout(() => { setCircleText('👍🏻'); setCircleFade(false) }, 200) }, 4000)
+    return () => [t0, t1, t2, t3].forEach(clearTimeout)
+  }, [transitioning])
+
   useEffect(() => {
     if (!transitioning) return
     if (transCountdown <= 0) {
@@ -169,36 +186,39 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return (
       <div className="mm mm--transition">
         {imgSrc && (
-          <div className="mm__trans-bg-wrap">
-            <img className="mm__trans-bg" src={imgSrc} aria-hidden />
-          </div>
+          <img className="mm__trans-bg" src={imgSrc} aria-hidden />
         )}
-        <div className="mm__trans-overlay" />
 
-        <div className="mm__trans-content">
-          <div className="mm__trans-top">
-            <span className="mm__trans-badge">第一轮完成</span>
-            <h2 className="mm__trans-poem-title">{poem.title}</h2>
-            <p className="mm__trans-hint">第二轮不显示拼音</p>
+        <div className="mm__trans-top">
+          <div className={`mm__trans-circle${circleFade ? ' mm__trans-circle--fade' : ''}`}>
+            <span className="mm__trans-circle-inner">{circleText}</span>
           </div>
+          <p className="mm__trans-label">第一关完成</p>
+          <p className="mm__trans-bravo">太棒了！</p>
+        </div>
+        <svg className="mm__trans-arch" viewBox="0 0 390 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0,0 L390,0 L390,60 Q195,0 0,60 Z" fill="#C62828"/>
+        </svg>
 
-          <div className="mm__trans-lines" style={{ textAlign: 'center' }}>
+        <div className="mm__trans-body">
+          <h2 className="mm__trans-poem-title">{poem.title}</h2>
+          <div className="mm__trans-lines">
             {lines.map((ln, i) => (
-              <p key={i} className="mm__trans-line" style={{ animationDelay: `${i * 0.08}s` }}>
+              <p key={i} className="mm__trans-line" style={{ animationDelay: `${0.4 + i * 0.08}s` }}>
                 {ln.text}
               </p>
             ))}
           </div>
+          <div className="mm__trans-next-badge">
+            <div className="mm__trans-next-icon">2</div>
+            <span className="mm__trans-next-text">第二关：不看拼音背诵</span>
+          </div>
         </div>
 
         <div className="mm__trans-footer">
-          <span className="mm__trans-count">{transCountdown}</span>
+          <p className="mm__trans-countdown-text">{transCountdown > 0 ? `${transCountdown} 秒后自动进入第二关` : '即将进入第二关...'}</p>
           <div className="mm__trans-bar">
-            <div
-              className="mm__trans-bar-fill"
-              style={{ animationDuration: `${transCountdown + 0.1}s` }}
-              key={transCountdown === 5 ? 'start' : undefined}
-            />
+            <div className="mm__trans-bar-fill" key="trans-bar" />
           </div>
         </div>
 
@@ -397,83 +417,124 @@ const transitionStyle = `
   .mm--transition {
     position: fixed; inset: 0;
     display: flex; flex-direction: column;
-    overflow: hidden; cursor: pointer;
-    background: #1a0a0a;
-  }
-  .mm__trans-bg-wrap {
-    position: absolute; inset: 0;
-    pointer-events: none; z-index: 0;
+    overflow: hidden;
+    background: #fff;
   }
   .mm__trans-bg {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
-    opacity: 0.35; display: block;
+    position: absolute;
+    top: 220px; left: 0; right: 0; bottom: 0;
+    width: 100%; height: calc(100% - 220px);
+    object-fit: cover; object-position: center top;
+    opacity: 0.3; pointer-events: none; z-index: 0;
   }
-  .mm__trans-overlay {
-    position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(
-      to bottom,
-      rgba(26,10,10,0.55) 0%,
-      rgba(26,10,10,0.2) 40%,
-      rgba(26,10,10,0.2) 60%,
-      rgba(26,10,10,0.75) 100%
-    );
-  }
-  .mm__trans-content {
+  .mm__trans-top {
+    width: 100%;
+    background: #C62828;
+    padding: 48px 28px 0;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+    text-align: center;
     position: relative; z-index: 2;
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 24px; padding: 40px 32px 0;
-    overflow: hidden;
+    flex-shrink: 0;
   }
-  .mm__trans-top { text-align: center; }
-  .mm__trans-badge {
-    display: inline-block;
-    font-family: var(--font-ui); font-size: 0.72rem; font-weight: 700;
-    color: #FFF8E1; background: rgba(198,40,40,0.7);
-    border-radius: 999px; padding: 4px 14px; margin-bottom: 14px;
-    letter-spacing: 0.08em;
+  .mm__trans-circle {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 2.5px solid rgba(255,255,255,0.7);
+    display: flex; align-items: center; justify-content: center;
+    animation: transPopIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    transition: opacity 0.2s;
+  }
+  .mm__trans-circle--fade { opacity: 0; }
+  .mm__trans-circle-inner {
+    font-family: var(--font-brush); font-size: 2rem;
+    color: #fff; line-height: 1;
+  }
+  .mm__trans-label {
+    font-size: 0.72rem; color: rgba(255,255,255,0.75);
+    letter-spacing: 0.15em; font-weight: 600;
+    font-family: var(--font-ui);
+    animation: transFadeDown 0.4s 0.2s ease both;
+  }
+  .mm__trans-bravo {
+    font-family: var(--font-brush); font-size: 2.2rem;
+    color: #fff;
+    animation: transFadeDown 0.4s 0.3s ease both;
+    padding-bottom: 8px;
+  }
+  .mm__trans-arch {
+    width: 100%; display: block;
+    position: relative; z-index: 2;
+    margin-top: -1px; flex-shrink: 0;
+  }
+  .mm__trans-body {
+    flex: 1; position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 8px 32px 0;
+    text-align: center;
   }
   .mm__trans-poem-title {
-    font-family: var(--font-brush); font-size: 2.6rem;
-    color: #FFF8E1; margin-bottom: 10px;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
-  }
-  .mm__trans-hint {
-    font-family: var(--font-ui); font-size: var(--text-sm);
-    color: rgba(255,248,225,0.6);
+    font-family: var(--font-brush); font-size: 2.8rem;
+    color: #C62828;
+    animation: transFadeUp 0.4s 0.4s ease both;
   }
   .mm__trans-lines {
     display: flex; flex-direction: column;
-    align-items: center; gap: 10px;
+    align-items: center; gap: 8px;
+    animation: transFadeUp 0.4s 0.5s ease both;
   }
   .mm__trans-line {
-    font-family: var(--font-brush); font-size: 1.3rem;
-    color: rgba(255,248,225,0.85);
-    text-shadow: 0 1px 6px rgba(0,0,0,0.3);
-    animation: fadeSlideUp 0.5s ease both;
+    font-family: var(--font-brush); font-size: 1.1rem;
+    color: #444; text-align: center;
   }
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .mm__trans-next-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 14px;
+    background: #FFEBEE;
+    animation: transFadeUp 0.4s 0.6s ease both;
+  }
+  .mm__trans-next-icon {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #C62828;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; color: #fff; font-weight: 700;
+    font-family: var(--font-ui);
+  }
+  .mm__trans-next-text {
+    font-size: 0.78rem; color: #C62828;
+    font-weight: 600; font-family: var(--font-ui);
   }
   .mm__trans-footer {
-    position: relative; z-index: 2;
-    padding: 16px 24px calc(16px + env(safe-area-inset-bottom,0px));
-    display: flex; flex-direction: column; gap: 8px; align-items: center;
+    position: relative; z-index: 2; flex-shrink: 0;
+    padding: 16px 28px calc(16px + env(safe-area-inset-bottom,0px));
+    display: flex; flex-direction: column; gap: 6px; align-items: center;
   }
-  .mm__trans-count {
-    font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700;
-    color: rgba(255,248,225,0.6); line-height: 1;
+  .mm__trans-countdown-text {
+    font-size: 0.72rem; color: #C62828;
+    font-weight: 600; font-family: var(--font-ui);
   }
   .mm__trans-bar {
-    width: 100%; height: 3px;
-    background: rgba(255,248,225,0.15); border-radius: 999px; overflow: hidden;
+    width: 100%; height: 4px;
+    background: #F5EDE8; border-radius: 999px; overflow: hidden;
   }
   .mm__trans-bar-fill {
-    height: 100%; background: rgba(255,248,225,0.6);
+    height: 100%; background: #C62828;
     border-radius: 999px; width: 100%;
-    animation: drainBar linear forwards;
+    animation: drainBar 3s linear forwards;
+    animation-delay: 1s;
+  }
+  @keyframes transPopIn {
+    from { transform: scale(0.2); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  @keyframes transFadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes transFadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   @keyframes drainBar {
     from { width: 100%; }
