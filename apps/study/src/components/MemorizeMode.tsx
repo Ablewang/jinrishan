@@ -10,14 +10,14 @@ interface Props {
 }
 
 type Round = 1 | 2
-type LineState = 'hidden' | 'active' | 'done'
 
 export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Props) {
   const [round, setRound] = useState<Round>(1)
   const [current, setCurrent] = useState(0)
   const [revealed, setRevealed] = useState<Set<number>>(new Set())
   const [celebrated, setCelebrated] = useState(false)
-  const [peeked, setPeeked] = useState(false) // 本句是否点了看答案
+  const [peeked, setPeeked] = useState(false)
+  const [burst, setBurst] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const lines = poem.lines
@@ -44,13 +44,14 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       setCurrent(c => c + 1)
       setRevealed(new Set())
       setPeeked(false)
+      setBurst(false)
     } else {
-      // 本轮结束
       if (round === 1) {
         setRound(2)
         setCurrent(0)
         setRevealed(new Set())
         setPeeked(false)
+        setBurst(false)
       } else {
         setCelebrated(true)
         onMemorized()
@@ -58,13 +59,17 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     }
   }
 
-  function lineState(i: number): LineState {
-    if (i < current) return 'done'
-    if (i === current) return 'active'
-    return 'hidden'
-  }
+  // 全部揭示后自动前进：自己答出来有礼花延迟900ms，看答案直接600ms
+  useEffect(() => {
+    if (!allRevealed) return
+    if (!peeked) setBurst(true)
+    const delay = peeked ? 600 : 900
+    const t = setTimeout(nextLine, delay)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allRevealed])
 
-  // 自动滚动到活动行
+  // 切换行时滚动到活动行
   useEffect(() => {
     const el = containerRef.current?.querySelector('.mm-line--active')
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -73,19 +78,21 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   if (celebrated) {
     return (
       <div className="mm mm--celebrate">
-        {imgSrc && <img className="mm__bg" src={imgSrc} aria-hidden />}
-        <div className="mm__celebrate-overlay" />
-        <div className="mm__celebrate-box">
-          <div className="mm__celebrate-stars">
-            {Array.from({ length: 20 }, (_, i) => (
-              <span key={i} className="mm__star" style={{
-                left: `${Math.random() * 90 + 5}%`,
-                animationDelay: `${i * 0.06}s`,
-                fontSize: `${Math.random() * 1.2 + 0.8}rem`,
-              }}>{'★'}</span>
-            ))}
+        {imgSrc && (
+          <div className="mm__bg-wrap">
+            <img className="mm__bg" src={imgSrc} aria-hidden />
           </div>
-          <p className="mm__celebrate-emoji">🎉</p>
+        )}
+        <div className="mm__celebrate-stars">
+          {Array.from({ length: 20 }, (_, i) => (
+            <span key={i} className="mm__star" style={{
+              left: `${5 + (i * 4.5) % 90}%`,
+              animationDelay: `${i * 0.07}s`,
+              fontSize: `${0.8 + (i % 3) * 0.4}rem`,
+            }}>★</span>
+          ))}
+        </div>
+        <div className="mm__celebrate-box">
           <p className="mm__celebrate-title">背出来啦！</p>
           <p className="mm__celebrate-poem">{poem.title}</p>
           <p className="mm__celebrate-sub">太棒了，继续加油！</p>
@@ -97,6 +104,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
               setCurrent(0)
               setRevealed(new Set())
               setPeeked(false)
+              setBurst(false)
             }}>再背一遍</button>
           </div>
         </div>
@@ -109,8 +117,25 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
 
   return (
     <div className="mm">
-      {imgSrc && <img className="mm__bg" src={imgSrc} aria-hidden />}
-      <div className="mm__overlay" />
+      {/* 背景图：贴底，和详情页一致 */}
+      {imgSrc && (
+        <div className="mm__bg-wrap">
+          <img className="mm__bg" src={imgSrc} aria-hidden />
+        </div>
+      )}
+
+      {/* 礼花层 */}
+      {burst && (
+        <div className="mm__burst" aria-hidden>
+          {Array.from({ length: 12 }, (_, i) => (
+            <span key={i} className="mm__burst-star" style={{
+              left: `${10 + (i * 7) % 80}%`,
+              top: `${20 + (i * 11) % 40}%`,
+              animationDelay: `${i * 0.04}s`,
+            }}>★</span>
+          ))}
+        </div>
+      )}
 
       {/* 顶部 */}
       <header className="mm__header">
@@ -130,14 +155,13 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       {/* 诗句区 */}
       <div className="mm__lines" ref={containerRef}>
         {lines.map((ln, li) => {
-          const state = lineState(li)
+          const state = li < current ? 'done' : li === current ? 'active' : 'hidden'
           const isActive = state === 'active'
 
           return (
             <div key={li} className={`mm-line mm-line--${state}`}>
               {isActive ? (
                 <div className="mm-line__active-content">
-                  {/* 每个字一列：拼音+圆圈 */}
                   <div className="mm-line__chars">
                     {ln.chars.map((c, ci) => {
                       if (c.pinyin === null) {
@@ -160,11 +184,10 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
                           {round === 1 && (
                             <span className="mm-line__pinyin">{c.pinyin}</span>
                           )}
-                          {isRev ? (
-                            <span className="mm-line__hanzi">{c.char}</span>
-                          ) : (
-                            <span className="mm-line__circle" />
-                          )}
+                          {isRev
+                            ? <span className="mm-line__hanzi">{c.char}</span>
+                            : <span className="mm-line__circle" />
+                          }
                         </button>
                       )
                     })}
@@ -178,20 +201,10 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
         })}
       </div>
 
-      {/* 底部操作 */}
+      {/* 底部：只有"看答案"，全部揭示后自动前进不显示按钮 */}
       <div className="mm__footer">
         {!allRevealed && (
           <button className="mm__peek" onClick={peekAll}>看答案</button>
-        )}
-        {allRevealed && (
-          <button
-            className={`mm__next-btn${peeked ? ' mm__next-btn--peeked' : ''}`}
-            onClick={nextLine}
-          >
-            {current < total - 1
-              ? (peeked ? '下一句（已看答案）' : '背出来了 →')
-              : (round === 1 ? '进入第二轮 →' : '完成！')}
-          </button>
         )}
       </div>
 
@@ -209,18 +222,36 @@ const mainStyle = `
     overflow: hidden;
     background: #fff;
   }
-  .mm__bg {
+  .mm__bg-wrap {
     position: absolute;
-    inset: 0;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.08;
     pointer-events: none;
     z-index: 0;
   }
-  .mm__overlay {
-    display: none;
+  .mm__bg {
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0.2;
+  }
+  .mm__burst {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .mm__burst-star {
+    position: absolute;
+    color: #C62828;
+    animation: burstPop 0.7s ease-out forwards;
+    font-size: 1.2rem;
+  }
+  @keyframes burstPop {
+    0%   { transform: scale(0) rotate(0deg);   opacity: 1; }
+    60%  { transform: scale(1.6) rotate(180deg); opacity: 1; }
+    100% { transform: scale(0.3) rotate(360deg); opacity: 0; }
   }
   .mm__header {
     position: relative;
@@ -298,9 +329,7 @@ const mainStyle = `
     gap: 8px;
   }
   .mm-line--hidden { display: none; }
-  .mm-line--done {
-    opacity: 0.3;
-  }
+  .mm-line--done { opacity: 0.3; }
   .mm-line__done-text {
     font-family: var(--font-brush);
     font-size: 1.3rem;
@@ -369,8 +398,8 @@ const mainStyle = `
     animation: popChar 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
   }
   @keyframes popChar {
-    0% { transform: scale(0.3); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    0%   { transform: scale(0.3); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
   }
   .mm-line__hanzi {
     font-family: var(--font-brush);
@@ -387,6 +416,7 @@ const mainStyle = `
     position: relative;
     z-index: 10;
     flex-shrink: 0;
+    min-height: 64px;
     padding: 12px 20px calc(12px + env(safe-area-inset-bottom,0px));
     display: flex;
     flex-direction: column;
@@ -404,24 +434,6 @@ const mainStyle = `
     background: transparent;
   }
   .mm__peek:active { background: #f5f5f5; }
-  .mm__next-btn {
-    width: 100%;
-    padding: 16px 0;
-    background: #C62828;
-    color: #FFF8E1;
-    border-radius: 999px;
-    font-family: var(--font-brush);
-    font-size: var(--text-xl);
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    transition: transform 0.1s, opacity 0.1s;
-    box-shadow: 0 4px 16px rgba(198,40,40,0.3);
-  }
-  .mm__next-btn--peeked {
-    background: #e57373;
-    font-size: var(--text-base);
-  }
-  .mm__next-btn:active { transform: scale(0.97); opacity: 0.9; }
 `
 
 const celebrateStyle = `
@@ -434,64 +446,65 @@ const celebrateStyle = `
     background: #fff;
     overflow: hidden;
   }
-  .mm__bg {
+  .mm__bg-wrap {
     position: absolute;
-    inset: 0;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.08;
     pointer-events: none;
     z-index: 0;
   }
-  .mm__celebrate-overlay {
-    display: none;
+  .mm__bg {
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0.2;
   }
   .mm__celebrate-stars {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    z-index: 1;
   }
   .mm__star {
     position: absolute;
     top: -2rem;
-    animation: fallStar 1.4s ease-in forwards;
+    animation: fallStar 1.6s ease-in forwards;
     color: #C62828;
   }
   @keyframes fallStar {
-    0% { top: -2rem; opacity: 1; transform: rotate(0deg) scale(1); }
-    80% { opacity: 1; }
-    100% { top: 110vh; opacity: 0; transform: rotate(540deg) scale(0.5); }
+    0%   { top: -2rem; opacity: 1; transform: rotate(0deg) scale(1); }
+    80%  { opacity: 1; }
+    100% { top: 110vh;  opacity: 0; transform: rotate(540deg) scale(0.5); }
   }
   .mm__celebrate-box {
     position: relative;
     z-index: 10;
-    background: #fff;
+    background: rgba(255,255,255,0.92);
     border-radius: 24px;
     padding: 36px 28px 28px;
     text-align: center;
     max-width: 300px;
     width: 90%;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.1);
     border: 1.5px solid rgba(198,40,40,0.12);
     animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
   }
   @keyframes popIn {
     from { transform: scale(0.4); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    to   { transform: scale(1);   opacity: 1; }
   }
-  .mm__celebrate-emoji { font-size: 2.8rem; margin-bottom: 8px; }
   .mm__celebrate-title {
     font-family: var(--font-brush);
-    font-size: 2.2rem;
+    font-size: 2.4rem;
     color: #C62828;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .mm__celebrate-poem {
     font-family: var(--font-brush);
     font-size: 1.1rem;
     color: #aaa;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
   .mm__celebrate-sub {
     font-size: var(--text-sm);
