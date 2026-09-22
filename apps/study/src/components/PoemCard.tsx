@@ -45,8 +45,8 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
     >
       {imgSrc && <img className="poem-card__bg" src={imgSrc} aria-hidden />}
       {isMemorized && bestStars > 0 && (
-        <span className="poem-card__badge poem-card__badge--stars" aria-label={`${bestStars}星`}>
-          {'★'.repeat(bestStars)}{'☆'.repeat(3 - bestStars)}
+        <span className={`poem-card__badge poem-card__badge--result${bestStars === 3 ? ' poem-card__badge--perfect' : ''}`}>
+          {bestStars === 3 ? '一气呵成' : '需要提示'}
         </span>
       )}
       {isMemorized && bestStars === 0 && (
@@ -125,10 +125,13 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
           line-height: 1;
           z-index: 2;
         }
-        .poem-card__badge--stars {
-          color: #FFB300;
-          font-size: 0.65rem;
-          letter-spacing: 0.02em;
+        .poem-card__badge--result {
+          font-size: 0.6rem;
+          font-family: var(--font-ui);
+          color: #999;
+        }
+        .poem-card__badge--perfect {
+          color: #C62828;
         }
         .poem-card__badge--memorized { color: var(--green); }
         .poem-card__badge--read {
