@@ -176,16 +176,11 @@
 .d-split--col .d-ring {
   width: 13px;
   height: 20px;
+  border-bottom-color: #C62828;
+  border-right-color: transparent;
 }
-.d-split--col .d-ring::before {
-  top: 50%;
-  left: 2px;
-  transform: translateY(-50%);
-  width: 35%;
-  height: 55%;
-  border-top: none;
-  border-left: 1.5px solid rgba(255, 180, 180, 0.7);
-}
+
+.d-badge {
   align-self: flex-start;
   font-family: var(--font-ui);
   font-size: 0.78rem;
@@ -357,19 +352,9 @@
   height: 13px;
   border-radius: 50%;
   border: 2.5px solid #C62828;
-  opacity: 0.6;
+  border-bottom-color: transparent;
+  opacity: 0.7;
   position: relative;
   flex-shrink: 0;
   background: transparent;
-}
-.d-ring::before {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 55%;
-  height: 35%;
-  border-radius: 50%;
-  border-top: 1.5px solid rgba(255, 180, 180, 0.7);
 }
