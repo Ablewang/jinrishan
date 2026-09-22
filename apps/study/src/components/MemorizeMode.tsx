@@ -124,16 +124,26 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
         </div>
       )}
 
-      {/* 礼花层 */}
+      {/* 礼花层：从中心向四周爆开 */}
       {burst && (
         <div className="mm__burst" aria-hidden>
-          {Array.from({ length: 12 }, (_, i) => (
-            <span key={i} className="mm__burst-star" style={{
-              left: `${10 + (i * 7) % 80}%`,
-              top: `${20 + (i * 11) % 40}%`,
-              animationDelay: `${i * 0.04}s`,
-            }}>★</span>
-          ))}
+          {Array.from({ length: 16 }, (_, i) => {
+            const angle = (i / 16) * 360
+            const dist = 80 + (i % 4) * 30
+            const colors = ['#C62828','#E53935','#FFD600','#FF6F00','#C62828','#FFD600']
+            const shapes = ['●','★','●','◆','★','●']
+            return (
+              <span key={i} className="mm__burst-particle" style={{
+                '--angle': `${angle}deg`,
+                '--dist': `${dist}px`,
+                color: colors[i % colors.length],
+                animationDelay: `${(i % 4) * 0.05}s`,
+                fontSize: `${0.6 + (i % 3) * 0.25}rem`,
+              } as React.CSSProperties}>
+                {shapes[i % shapes.length]}
+              </span>
+            )
+          })}
         </div>
       )}
 
@@ -241,17 +251,24 @@ const mainStyle = `
     inset: 0;
     pointer-events: none;
     z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .mm__burst-star {
+  .mm__burst-particle {
     position: absolute;
-    color: #C62828;
-    animation: burstPop 0.7s ease-out forwards;
-    font-size: 1.2rem;
+    animation: burstFly 0.75s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
   }
-  @keyframes burstPop {
-    0%   { transform: scale(0) rotate(0deg);   opacity: 1; }
-    60%  { transform: scale(1.6) rotate(180deg); opacity: 1; }
-    100% { transform: scale(0.3) rotate(360deg); opacity: 0; }
+  @keyframes burstFly {
+    0%   { transform: translate(0,0) scale(1.2); opacity: 1; }
+    70%  { opacity: 1; }
+    100% {
+      transform:
+        rotate(var(--angle))
+        translateY(calc(var(--dist) * -1))
+        scale(0.4);
+      opacity: 0;
+    }
   }
   .mm__header {
     position: relative;
@@ -387,8 +404,8 @@ const mainStyle = `
     display: block;
   }
   .mm-line__circle {
-    width: 2rem;
-    height: 2rem;
+    width: 2.2rem;
+    height: 2.2rem;
     border-radius: 50%;
     border: 2.5px solid #C62828;
     background: rgba(198,40,40,0.08);
