@@ -132,16 +132,13 @@ export default function PoemCard({ poem, isRead, isMemorized, colorIndex: _color
           gap: 5px;
           padding: 14px 10px 14px 18px;
           min-width: 0;
-          width: 65%;
+          flex: 1;
         }
         .poem-card__title {
           font-family: var(--font-brush);
           font-size: var(--text-xl);
           color: #C62828;
           line-height: 1.2;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
         }
         .poem-card__author {
           font-family: var(--font-ui);
