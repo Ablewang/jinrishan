@@ -192,7 +192,8 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
         </div>
 
         <div className="mm__trans-footer">
-<div className="mm__trans-bar">
+          <span className="mm__trans-count">{transCountdown}</span>
+          <div className="mm__trans-bar">
             <div
               className="mm__trans-bar-fill"
               style={{ animationDuration: `${transCountdown + 0.1}s` }}
@@ -461,9 +462,9 @@ const transitionStyle = `
     padding: 16px 24px calc(16px + env(safe-area-inset-bottom,0px));
     display: flex; flex-direction: column; gap: 8px; align-items: center;
   }
-  .mm__trans-skip {
-    font-family: var(--font-ui); font-size: 0.72rem;
-    color: rgba(255,248,225,0.5);
+  .mm__trans-count {
+    font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700;
+    color: rgba(255,248,225,0.6); line-height: 1;
   }
   .mm__trans-bar {
     width: 100%; height: 3px;
