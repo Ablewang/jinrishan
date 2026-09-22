@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: '古诗小课堂',
         short_name: '古诗',
