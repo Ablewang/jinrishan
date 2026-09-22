@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { poems } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
 import PoemText from '../components/PoemText'
 import MemorizeMode from '../components/MemorizeMode'
+import imgMap from '../data/poem_img_map.json'
 
 interface AnnotationData {
   id: number
@@ -43,6 +44,8 @@ export default function PoemDetail() {
   const [showPinyin, setShowPinyin] = useState(true)
   const [memorizing, setMemorizing] = useState(false)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
+  const [titleHidden, setTitleHidden] = useState(false)
+  const metaRef = useRef<HTMLDivElement>(null)
 
   const poem = poems.find(p => p.id === Number(id))
   const currentIndex = poems.findIndex(p => p.id === Number(id))
@@ -53,6 +56,13 @@ export default function PoemDetail() {
   useEffect(() => {
     loadAnnotations().then(list => setAnnotation(list.find(a => a.id === Number(id)) ?? null))
   }, [id])
+  useEffect(() => {
+    const el = metaRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => setTitleHidden(!e.isIntersecting), { threshold: 0 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [poem?.id])
 
   const handleMemorized = useCallback(() => { if (poem) markMemorized(poem.id) }, [poem?.id])
   const handleNext = useCallback(() => {
@@ -76,12 +86,18 @@ export default function PoemDetail() {
   const dynastyLabel = poem.dynasty ? `[${poem.dynasty}] ${poem.author}` : poem.author
   const hasNotes = !!(annotation?.notes && annotation.notes.length > 0)
   const titlePinyins = getTitlePinyin(poem.title, poem.lines)
+  const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
+  const imgSrc = imgFile ? `/images/${encodeURIComponent(imgFile)}` : null
 
   return (
     <div className="d">
+      {/* 背景图固定层 */}
+      {imgSrc && <div className="d-bg" style={{ backgroundImage: `url(${imgSrc})` }} />}
+
       {/* 红色导航栏 */}
       <header className="d-nav">
         <button className="d-nav__back" onClick={() => navigate('/')}>← 返回</button>
+        {titleHidden && <span className="d-nav__title">{poem.title}</span>}
         <button
           className={`d-nav__toggle${showPinyin ? ' d-nav__toggle--on' : ''}`}
           onClick={() => setShowPinyin(v => !v)}
@@ -90,10 +106,9 @@ export default function PoemDetail() {
         </button>
       </header>
 
-
       <div className="d-body">
         {/* 标题 */}
-        <div className="d-meta">
+        <div className="d-meta" ref={metaRef}>
           <div className="d-meta__title-row">
             {poem.title.split('').map((ch, i) => (
               <span key={i} className="d-meta__title-char">
@@ -153,7 +168,21 @@ export default function PoemDetail() {
           position: relative;
         }
 
-        /* 背景图：固定在内容区，四边渐变淡出 */
+        /* 背景图固定层 */
+        .d-bg {
+          position: fixed;
+          top: 0; bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          background-size: cover;
+          background-position: center top;
+          background-repeat: no-repeat;
+          z-index: 0;
+          opacity: 0.25;
+          pointer-events: none;
+        }
 
         /* 红色导航栏 */
         .d-nav {
@@ -177,6 +206,14 @@ export default function PoemDetail() {
           transition: background 0.15s;
         }
         .d-nav__back:active { background: rgba(255,255,255,0.3); }
+        .d-nav__title {
+          font-family: var(--font-brush);
+          font-size: 1.2rem;
+          color: #FFF8E1;
+          letter-spacing: 0.1em;
+          flex: 1;
+          text-align: center;
+        }
         .d-nav__toggle {
           font-family: var(--font-ui);
           font-size: var(--text-xs);
