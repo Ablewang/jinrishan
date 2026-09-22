@@ -46,7 +46,65 @@ export default function PoemDetail() {
   const numId = Number(id)
   const fabRef = useRef<HTMLButtonElement>(null)
   const dragState = useRef<{ startX: number; startY: number; initX: number; initY: number; moved: boolean } | null>(null)
-  const fabPos = useRef<{ x: number; y: number } | null>(null)
+
+  // 用原生事件绑定，passive:false 才能 preventDefault
+  useEffect(() => {
+    const el = fabRef.current
+    if (!el) return
+
+    function onTouchStart(e: TouchEvent) {
+      const t = e.touches[0]
+      const rect = el!.getBoundingClientRect()
+      dragState.current = { startX: t.clientX, startY: t.clientY, initX: rect.left, initY: rect.top, moved: false }
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      if (!dragState.current) return
+      const t = e.touches[0]
+      const dx = t.clientX - dragState.current.startX
+      const dy = t.clientY - dragState.current.startY
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragState.current.moved = true
+      if (!dragState.current.moved) return
+      e.preventDefault()
+      const size = el!.offsetWidth
+      const header = document.querySelector('.d-nav')
+      const footer = document.querySelector('.d-footer')
+      const minY = header ? header.getBoundingClientRect().bottom + 8 : 8
+      const maxY = footer ? footer.getBoundingClientRect().top - size - 8 : window.innerHeight - size - 8
+      const maxX = window.innerWidth - size - 8
+      const x = Math.min(Math.max(dragState.current.initX + dx, 8), maxX)
+      const y = Math.min(Math.max(dragState.current.initY + dy, minY), maxY)
+      el!.style.right = 'auto'
+      el!.style.bottom = 'auto'
+      el!.style.left = `${x}px`
+      el!.style.top = `${y}px`
+    }
+
+    function onTouchEnd() {
+      if (!dragState.current?.moved) { dragState.current = null; return }
+      dragState.current = null
+      const size = el!.offsetWidth
+      const currentX = parseFloat(el!.style.left) || (window.innerWidth - size - 20)
+      const snapToLeft = currentX + size / 2 < window.innerWidth / 2
+      const x = snapToLeft ? 8 : window.innerWidth - size - 8
+      el!.style.left = `${x}px`
+      el!.style.transition = 'left 0.25s cubic-bezier(0.34,1.56,0.64,1)'
+      setTimeout(() => { if (el) el.style.transition = '' }, 300)
+    }
+
+    function onTouchCancel() { dragState.current = null }
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    el.addEventListener('touchcancel', onTouchCancel, { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
+      el.removeEventListener('touchcancel', onTouchCancel)
+    }
+  }, [poem?.id])
 
   useEffect(() => {
     setPoem(null)
@@ -75,55 +133,6 @@ export default function PoemDetail() {
     setMemorizing(false)
     navigate(nextPoem ? `/poem/${nextPoem.id}` : '/')
   }, [nextPoem, navigate])
-
-  function onFabTouchStart(e: React.TouchEvent<HTMLButtonElement>) {
-    const t = e.touches[0]
-    const el = fabRef.current!
-    const rect = el.getBoundingClientRect()
-    dragState.current = { startX: t.clientX, startY: t.clientY, initX: rect.left, initY: rect.top, moved: false }
-  }
-
-  function onFabTouchMove(e: React.TouchEvent<HTMLButtonElement>) {
-    if (!dragState.current) return
-    const t = e.touches[0]
-    const dx = t.clientX - dragState.current.startX
-    const dy = t.clientY - dragState.current.startY
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragState.current.moved = true
-    if (!dragState.current.moved) return
-    e.preventDefault()
-    const el = fabRef.current!
-    const size = el.offsetWidth
-    const header = document.querySelector('.d-nav')
-    const footer = document.querySelector('.d-footer')
-    const minY = header ? header.getBoundingClientRect().bottom + 8 : 8
-    const maxY = footer ? footer.getBoundingClientRect().top - size - 8 : window.innerHeight - size - 8
-    const maxX = window.innerWidth - size - 8
-    const x = Math.min(Math.max(dragState.current.initX + dx, 8), maxX)
-    const y = Math.min(Math.max(dragState.current.initY + dy, minY), maxY)
-    fabPos.current = { x, y }
-    el.style.right = 'auto'
-    el.style.bottom = 'auto'
-    el.style.left = `${x}px`
-    el.style.top = `${y}px`
-  }
-
-  function onFabTouchEnd(e: React.TouchEvent<HTMLButtonElement>) {
-    if (!dragState.current?.moved) { dragState.current = null; return }
-    e.preventDefault()
-    dragState.current = null
-    const el = fabRef.current!
-    const size = el.offsetWidth
-    const currentX = parseFloat(el.style.left) || (window.innerWidth - size - 20)
-    const snapToLeft = currentX + size / 2 < window.innerWidth / 2
-    const x = snapToLeft ? 8 : window.innerWidth - size - 8
-    el.style.left = `${x}px`
-    el.style.transition = 'left 0.25s cubic-bezier(0.34,1.56,0.64,1)'
-    setTimeout(() => { el.style.transition = '' }, 300)
-  }
-
-  function onFabTouchCancel() {
-    dragState.current = null
-  }
 
   if (!poem) {
     return (
@@ -212,10 +221,6 @@ export default function PoemDetail() {
           ref={fabRef}
           className="d-footer__memorize"
           onClick={() => { if (!dragState.current?.moved) setMemorizing(true) }}
-          onTouchStart={onFabTouchStart}
-          onTouchMove={onFabTouchMove}
-          onTouchEnd={onFabTouchEnd}
-          onTouchCancel={onFabTouchCancel}
         >背一背</button>
         <div className="d-footer__nav">
           <button className="d-footer__nav-btn" onClick={() => prevPoem && navigate(`/poem/${prevPoem.id}`)} disabled={!prevPoem}>
