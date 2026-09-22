@@ -5,8 +5,8 @@ import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import Achievements from '../components/Achievements'
 
-type StarFilter = '全部' | '一气呵成' | '需要提示'
-const STAR_FILTERS: StarFilter[] = ['全部', '一气呵成', '需要提示']
+type StarFilter = '全部' | '无提示' | '少量提示' | '多次提示'
+const STAR_FILTERS: StarFilter[] = ['全部', '无提示', '少量提示', '多次提示']
 const TOTAL = 70
 
 export default function ProgressPage() {
@@ -28,11 +28,12 @@ export default function ProgressPage() {
 
   const filtered = useMemo(() => {
     if (filter === '全部') return memorizedPoems
-    if (filter === '一气呵成') return memorizedPoems.filter(p => p.bestStars === 3)
-    if (filter === '需要提示') return memorizedPoems.filter(p => p.bestStars < 3 && p.bestStars > 0)
+    if (filter === '无提示') return memorizedPoems.filter(p => p.bestStars === 3)
+    if (filter === '少量提示') return memorizedPoems.filter(p => p.bestStars === 2)
+    if (filter === '多次提示') return memorizedPoems.filter(p => p.bestStars === 1)
   }, [memorizedPoems, filter])
 
-  const RESULT_LABEL = (stars: number) => stars === 3 ? '一气呵成' : stars > 0 ? '需要提示' : ''
+  const RESULT_LABEL = (stars: number) => stars === 3 ? '无提示' : stars === 2 ? '少量提示' : stars === 1 ? '多次提示' : ''
 
   return (
     <div className="pg">
@@ -49,7 +50,7 @@ export default function ProgressPage() {
         </div>
         <div className="pg__stat">
           <span className="pg__stat-num">{totalPerfect}</span>
-          <span className="pg__stat-label">三星通关</span>
+          <span className="pg__stat-label">无提示背出</span>
         </div>
         <div className="pg__stat">
           <span className="pg__stat-num">{totalChars}</span>
@@ -112,7 +113,7 @@ export default function ProgressPage() {
                     {p.dynasty ? `${p.dynasty}·${p.author}` : p.author}
                   </span>
                 </div>
-                <span className={`pg__item-stars${p.bestStars === 3 ? ' pg__item-stars--perfect' : ' pg__item-stars--hint'}`}>
+                <span className={`pg__item-stars${p.bestStars === 3 ? ' pg__item-stars--perfect' : p.bestStars === 2 ? ' pg__item-stars--mid' : ' pg__item-stars--low'}`}>
                   {RESULT_LABEL(p.bestStars)}
                 </span>
               </button>
@@ -314,5 +315,6 @@ const style = `
     margin-left: 12px;
   }
   .pg__item-stars--perfect { color: #C62828; }
-  .pg__item-stars--hint { color: #999; }
+  .pg__item-stars--mid { color: #999; }
+  .pg__item-stars--low { color: #bbb; }
 `
