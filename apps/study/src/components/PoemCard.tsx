@@ -79,11 +79,13 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
         }
         .poem-card__bg {
           position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: auto;
+          top: 0;
+          right: 0;
+          width: 60%;
+          height: 100%;
           display: block;
+          object-fit: contain;
+          object-position: right center;
           opacity: 0.22;
           pointer-events: none;
           z-index: 0;
