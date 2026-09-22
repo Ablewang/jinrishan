@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { loadPoem, loadPoemIndex } from '../data/poems'
 import type { Poem, PoemSummary } from '../data/poems'
@@ -41,7 +41,9 @@ export default function PoemDetail() {
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
   const [index, setIndex] = useState<PoemSummary[]>([])
   const [titleHidden, setTitleHidden] = useState(false)
+  const [splitColumn, setSplitColumn] = useState(false)
   const metaRef = useRef<HTMLDivElement>(null)
+  const notesWrapRef = useRef<HTMLDivElement>(null)
 
   const numId = Number(id)
   const fabRef = useRef<HTMLButtonElement>(null)
@@ -114,7 +116,25 @@ export default function PoemDetail() {
     if (index.length === 0) loadPoemIndex().then(setIndex)
   }, [numId])
 
+  // 相邻诗预加载
+  useEffect(() => {
+    if (index.length === 0) return
+    const cur = index.findIndex(p => p.id === numId)
+    if (cur > 0) loadPoem(index[cur - 1].id)
+    if (cur < index.length - 1) loadPoem(index[cur + 1].id)
+  }, [numId, index])
+
   useEffect(() => { if (poem) markRead(poem.id) }, [poem?.id])
+
+  useLayoutEffect(() => {
+    setSplitColumn(false)
+    const wrap = notesWrapRef.current
+    if (!wrap) return
+    const raf = requestAnimationFrame(() => {
+      setSplitColumn(wrap.getBoundingClientRect().width < 120)
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [poem?.id, annotation])
 
   useEffect(() => {
     const el = metaRef.current
@@ -136,8 +156,21 @@ export default function PoemDetail() {
 
   if (!poem) {
     return (
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', color:'#999' }}>
-        加载中…
+      <div className="d-loading">
+        <header className="d-nav">
+          <button className="d-nav__back" onClick={() => navigate('/')}>← 返回</button>
+        </header>
+        <div className="d-loading__body">
+          <div className="d-loading__lines">
+            <div className="d-loading__line d-loading__line--title" />
+            <div className="d-loading__line d-loading__line--author" />
+            <div className="d-loading__line" />
+            <div className="d-loading__line" />
+            <div className="d-loading__line d-loading__line--short" />
+            <div className="d-loading__line" />
+            <div className="d-loading__line d-loading__line--short" />
+          </div>
+        </div>
       </div>
     )
   }
@@ -185,21 +218,29 @@ export default function PoemDetail() {
             <p className="d-meta__author">{dynastyLabel}</p>
           </div>
 
-          <div className="d-split">
+          <div className={`d-split${splitColumn ? ' d-split--col' : ''}`}>
             <div className="d-split__poem">
               <PoemText lines={poem.lines} showPinyin={showPinyin} compact />
             </div>
             {hasNotes && (
-              <div className="d-split__notes">
-                <div className="d-badge">注释</div>
-                <div className="d-notes-list">
-                  {annotation!.notes!.map((n, i) => (
-                    <p key={i} className="d-note">
-                      <span className="d-note__num">{NUMS[i] ?? ''}</span>
-                      <span className="d-note__word">{n.word}：</span>
-                      {n.meaning}
-                    </p>
-                  ))}
+              <div className="d-split__notes-wrap" ref={notesWrapRef}>
+                <div className="d-split-rings">
+                  <div className="d-ring" />
+                  <div className="d-ring" />
+                  <div className="d-ring" />
+                  <div className="d-ring" />
+                </div>
+                <div className="d-split__notes">
+                  <div className="d-badge">注释</div>
+                  <div className="d-notes-list">
+                    {annotation!.notes!.map((n, i) => (
+                      <p key={i} className="d-note">
+                        <span className="d-note__num">{NUMS[i] ?? ''}</span>
+                        <span className="d-note__word">{n.word}：</span>
+                        {n.meaning}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
