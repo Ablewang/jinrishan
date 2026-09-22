@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
@@ -10,6 +11,7 @@ const FILTERS: Filter[] = ['全部', '唐', '宋', '汉乐府', '元', '明']
 const TOTAL = 70
 
 export default function Home() {
+  const navigate = useNavigate()
   const [filter, setFilter] = useState<Filter>('全部')
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const { getState, totalMemorized, streak, progress, totalChars, memorizeHistory } = useProgress()
@@ -36,7 +38,7 @@ export default function Home() {
         )}
       </header>
 
-      <div className="home__progress">
+      <div className="home__progress" onClick={() => navigate('/progress')} role="button" style={{ cursor: 'pointer' }}>
         <div className="home__progress-row">
           <span className="home__progress-label">已背诵</span>
           <span className="home__progress-nums">
