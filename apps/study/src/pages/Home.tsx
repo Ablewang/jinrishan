@@ -3,6 +3,7 @@ import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
 import PoemCard from '../components/PoemCard'
+import Achievements from '../components/Achievements'
 
 type Filter = '全部' | '唐' | '宋' | '汉乐府' | '元' | '明'
 const FILTERS: Filter[] = ['全部', '唐', '宋', '汉乐府', '元', '明']
@@ -11,7 +12,7 @@ const TOTAL = 70
 export default function Home() {
   const [filter, setFilter] = useState<Filter>('全部')
   const [poems, setPoems] = useState<PoemSummary[]>([])
-  const { getState, totalMemorized, streak } = useProgress()
+  const { getState, totalMemorized, totalPerfect, streak, progress } = useProgress()
 
   useEffect(() => { loadPoemIndex().then(setPoems) }, [])
 
@@ -30,7 +31,7 @@ export default function Home() {
         <span className="home__subtitle">小学必背70首</span>
         {streak.count > 0 && (
           <span className="home__streak" title={`连续学习${streak.count}天`}>
-            {'🔥'}{streak.count}
+            {streak.count}天连读
           </span>
         )}
       </header>
@@ -48,6 +49,13 @@ export default function Home() {
           <div className="home__progress-fill" style={{ width: `${pct}%` }} />
         </div>
       </div>
+
+      <Achievements
+        progress={progress}
+        streak={streak}
+        totalMemorized={totalMemorized}
+        totalPerfect={totalPerfect}
+      />
 
       <div className="home__filters" role="tablist">
         {FILTERS.map(f => (

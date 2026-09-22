@@ -100,5 +100,5 @@ export function useProgress() {
   const totalMemorized = Object.values(progress).filter(s => s.memorized).length
   const totalPerfect = Object.values(progress).filter(s => s.bestStars === 3).length
 
-  return { getState, markRead, markMemorized, totalMemorized, totalPerfect, streak }
+  return { getState, markRead, markMemorized, totalMemorized, totalPerfect, streak, progress }
 }
