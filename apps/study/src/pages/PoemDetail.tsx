@@ -161,14 +161,11 @@ export default function PoemDetail() {
           <button className="d-nav__back" onClick={() => navigate('/')}>← 返回</button>
         </header>
         <div className="d-loading__body">
-          <div className="d-loading__lines">
-            <div className="d-loading__line d-loading__line--title" />
-            <div className="d-loading__line d-loading__line--author" />
-            <div className="d-loading__line" />
-            <div className="d-loading__line" />
-            <div className="d-loading__line d-loading__line--short" />
-            <div className="d-loading__line" />
-            <div className="d-loading__line d-loading__line--short" />
+          <img className="d-loading__icon" src="/icon.png" alt="" />
+          <div className="d-loading__text">
+            {'诗来啦～'.split('').map((ch, i) => (
+              <span key={i} className="d-loading__char" style={{ animationDelay: `${i * 0.12}s` }}>{ch}</span>
+            ))}
           </div>
         </div>
       </div>
