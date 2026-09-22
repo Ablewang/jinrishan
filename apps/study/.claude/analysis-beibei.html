@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<title>背一背 · 儿童认知心理学分析</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #F7F5F2;
+    --surface: #FFFFFF;
+    --ink: #1A1920;
+    --ink-mid: #50505E;
+    --ink-soft: #8C8A9A;
+    --red: #C42525;
+    --red-mid: #D94040;
+    --red-pale: #FEF3F3;
+    --gold: #9E7620;
+    --gold-pale: #FAF4E6;
+    --border: #E0DCD7;
+    --radius: 6px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E0D12;
+      --surface: #17161E;
+      --ink: #E2DFD9;
+      --ink-mid: #9694A4;
+      --ink-soft: #57556A;
+      --red: #D94040;
+      --red-mid: #E86060;
+      --red-pale: #1E1015;
+      --gold: #C09B35;
+      --gold-pale: #191408;
+      --border: #2A2833;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0E0D12;
+    --surface: #17161E;
+    --ink: #E2DFD9;
+    --ink-mid: #9694A4;
+    --ink-soft: #57556A;
+    --red: #D94040;
+    --red-mid: #E86060;
+    --red-pale: #1E1015;
+    --gold: #C09B35;
+    --gold-pale: #191408;
+    --border: #2A2833;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding-inline: 24px;
+    padding-block: 0 80px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Serif SC', 'Noto Serif CJK SC', serif;
+    font-size: 15px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    padding-block: 48px 36px;
+    border-bottom: 2px solid var(--red);
+    margin-bottom: 44px;
+  }
+
+  .doc-eyebrow {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .doc-title {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-size: clamp(26px, 5vw, 38px);
+    line-height: 1.25;
+    color: var(--ink);
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+
+  .doc-subtitle {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    color: var(--ink-mid);
+    line-height: 1.75;
+    max-width: 640px;
+    margin: 0;
+  }
+
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .meta-item {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .meta-item strong {
+    color: var(--ink-mid);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+
+  /* ── Executive Summary ── */
+  .exec-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    margin-bottom: 56px;
+  }
+
+  .summary-eyebrow {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+  }
+
+  .summary-col-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 10px;
+  }
+
+  .summary-list {
+    margin: 0;
+    padding-left: 16px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px;
+    color: var(--ink-mid);
+    line-height: 1.9;
+  }
+
+  .summary-list li + li { margin-top: 2px; }
+
+  /* ── Framework Sections ── */
+  .framework {
+    margin-bottom: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .framework:last-of-type { border-bottom: none; }
+
+  .fw-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .fw-num {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    background: var(--red);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 19px;
+    margin-top: 2px;
+  }
+
+  .fw-title-group { flex: 1; min-width: 0; }
+
+  .fw-eyebrow {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    margin-bottom: 5px;
+  }
+
+  .fw-title {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-size: clamp(18px, 3.5vw, 23px);
+    line-height: 1.35;
+    color: var(--ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  /* ── Key Insight ── */
+  .key-insight {
+    background: var(--red-pale);
+    border-left: 3px solid var(--red);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .ki-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--red);
+    margin-bottom: 7px;
+  }
+
+  .ki-text {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* ── Analysis Body ── */
+  .analysis p {
+    margin: 0 0 18px;
+    color: var(--ink-mid);
+  }
+
+  .analysis p:last-child { margin-bottom: 0; }
+
+  .analysis strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ── Recommendations ── */
+  .recommendations {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--red);
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 20px 24px;
+    margin-top: 28px;
+  }
+
+  .rec-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    margin-bottom: 14px;
+  }
+
+  .rec-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .rec-list li {
+    display: flex;
+    gap: 10px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink-mid);
+  }
+
+  .rec-list li::before {
+    content: '→';
+    color: var(--red);
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .rec-list strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ── Conclusion ── */
+  .conclusion-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px 32px;
+    margin-top: 56px;
+  }
+
+  .conclusion-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 22px;
+    color: var(--ink);
+    margin: 0 0 18px;
+  }
+
+  .conclusion-block p {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    color: var(--ink-mid);
+    line-height: 1.85;
+    margin: 0 0 14px;
+  }
+
+  .conclusion-block p:last-of-type { margin-bottom: 0; }
+
+  .priority-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .priority-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+
+  .priority-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 3px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-bottom: 9px;
+  }
+
+  .badge-high { background: var(--red-pale); color: var(--red); }
+  .badge-mid  { background: var(--gold-pale); color: var(--gold); }
+  .badge-low  {
+    background: #EDEDF2;
+    color: var(--ink-soft);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .badge-low { background: #22212A; }
+  }
+  :root[data-theme="dark"] .badge-low { background: #22212A; }
+
+  .priority-desc {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 12px;
+    color: var(--ink-mid);
+    line-height: 1.65;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    body { padding-inline: 16px; }
+    .doc-title { font-size: 24px; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .priority-grid { grid-template-columns: 1fr; }
+    .fw-title { font-size: 18px; }
+    .exec-summary { padding: 20px 18px; }
+    .recommendations { padding: 16px 18px; }
+    .conclusion-block { padding: 22px 20px; }
+  }
+</style>
+
+<div class="page">
+
+  <!-- ── Header ── -->
+  <header class="doc-header">
+    <div class="doc-eyebrow">产品心理学分析报告</div>
+    <h1 class="doc-title">「背一背」功能的儿童认知心理学分析</h1>
+    <p class="doc-subtitle">
+      面向7岁一年级儿童的古诗背诵应用，从皮亚杰认知发展、自我决定理论等七个框架进行系统性评估，提供可落地的产品设计建议。
+    </p>
+    <div class="doc-meta">
+      <span class="meta-item"><strong>目标用户</strong>7岁一年级，小学必背古诗70首</span>
+      <span class="meta-item"><strong>分析视角</strong>儿童认知心理学 / 学习动机理论</span>
+      <span class="meta-item"><strong>参考框架</strong>Piaget · Deci &amp; Ryan · Bandura · Csikszentmihalyi</span>
+    </div>
+  </header>
+
+  <!-- ── Executive Summary ── -->
+  <section class="exec-summary">
+    <div class="summary-eyebrow">整体评估</div>
+    <div class="summary-grid">
+      <div>
+        <div class="summary-col-label">核心优势</div>
+        <ul class="summary-list">
+          <li>逐字揭示与具体运算阶段高度匹配</li>
+          <li>爆开动效提供即时正向反馈</li>
+          <li>两轮制初步实现难度分层</li>
+          <li>庆祝页面满足完成感心理需求</li>
+        </ul>
+      </div>
+      <div>
+        <div class="summary-col-label">待优化问题</div>
+        <ul class="summary-list">
+          <li>自主感严重不足，自动跳转剥夺控制权</li>
+          <li>无复习调度，违背遗忘曲线规律</li>
+          <li>「看答案」缺乏脚手架支撑，损伤效能感</li>
+          <li>归属感与故事叙事层完全缺失</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Framework 1: Piaget ── -->
+  <section class="framework">
+    <div class="fw-header">
+      <div class="fw-num">一</div>
+      <div class="fw-title-group">
+        <div class="fw-eyebrow">皮亚杰认知发展理论 / Piaget</div>
+        <h2 class="fw-title">7岁处于具体运算阶段，需要可触摸的感知锚点</h2>
+      </div>
+    </div>
+
+    <div class="key-insight">
+      <div class="ki-label">核心洞察</div>
+      <p class="ki-text">7岁儿童刚进入具体运算阶段，思维必须依托可感知的具体操作。「点击圆圈揭开汉字」恰好是这个阶段最理想的认知脚手架，但诗意本身的抽象性需要额外的情境补偿。</p>
+    </div>
+
+    <div class="analysis">
+      <p>根据皮亚杰（Piaget, 1952）的认知发展理论，7岁儿童正处于<strong>具体运算阶段（Concrete Operational Stage, 7–11岁）</strong>的起始期。这一阶段的核心特征是：儿童能够对具体事物进行逻辑思考，理解序列、守恒和可逆性，但抽象推理能力尚未成熟。</p>
+
+      <p>「背一背」的核心交互——用红色圆圈占位汉字、点击后爆开揭示——是一个出色的具体操作隐喻，等同于「打开礼物盒」或「翻转卡片」的具体动作，完全符合该阶段儿童的认知方式。圆圈的数量提供视觉化进度感，序列性的句子展示符合具体运算对顺序性的理解。</p>
+
+      <p>然而，古诗本身的意象性和抽象性构成挑战。「床前明月光」对7岁儿童而言，如果没有视觉情境的辅助，很可能只是语音序列的机械记忆，而非有意义的语义编码。研究显示，有意义编码（meaningful encoding）的记忆持久度远高于机械重复（Craik &amp; Lockhart, 1972）。</p>
+    </div>
+
+    <div class="recommendations">
+      <div class="rec-label">设计建议</div>
+      <ul class="rec-list">
+        <li>为每首诗配一张简洁的场景插图（诗人写诗时的具体情境），作为进入背诵前的「情境锚点」，帮助儿童将抽象语言与具体画面连接</li>
+        <li>揭字后可短暂显示该字的简单字义提示（如「霜：像盐巴一样白的冰晶」），加强语义编码深度</li>
+        <li>在第一轮之前增加「听一遍」环节，由真实人声朗读带情感的完整诗句，为语义理解建立听觉基础</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Framework 2: SDT ── -->
+  <section class="framework">
+    <div class="fw-header">
+      <div class="fw-num">二</div>
+      <div class="fw-title-group">
+        <div class="fw-eyebrow">自我决定理论 / Deci &amp; Ryan SDT</div>
+        <h2 class="fw-title">三大基本心理需求：自主感缺失是当前最大短板</h2>
+      </div>
+    </div>
+
+    <div class="key-insight">
+      <div class="ki-label">核心洞察</div>
+      <p class="ki-text">自我决定理论指出儿童学习动机的根基是三个基本心理需求的满足。当前设计在「能力感」上表现尚可，但「自主感」严重不足——自动前进机制让孩子成为被动接受者而非主动学习者，「归属感」几乎完全缺失。</p>
+    </div>
+
+    <div class="analysis">
+      <p>Deci 与 Ryan（2000）的自我决定理论（SDT）提出人有三项基本心理需求：<strong>自主感（Autonomy）</strong>——感到自己是行动主体；<strong>能力感（Competence）</strong>——感到自己能胜任；<strong>归属感（Relatedness）</strong>——感到与他人有真实连接。三者获充分满足时，内在动机最为旺盛。</p>
+
+      <p><strong>自主感（评估：较弱）</strong>：全部揭示后自动跳转（900ms/600ms）的设计，实际上剥夺了儿童的时间控制权。7岁儿童的信息处理速度存在显著个体差异，自动跳转让孩子处于被动跟随状态，与内在动机所需的主体感相悖。</p>
+
+      <p><strong>能力感（评估：较好）</strong>：逐字揭示的爆开动效提供了即时正向反馈，圆圈的逐一消除提供了可见进度感。但当孩子需要「看答案」时，缺乏过渡性支撑，能力感可能骤然崩塌。</p>
+
+      <p><strong>归属感（评估：缺失）</strong>：应用当前是完全孤立的个人体验，无任何社交或家庭共学元素。对7岁儿童而言，与父母或同伴共享学习成就是一个重要的动机来源，目前完全缺失。</p>
+    </div>
+
+    <div class="recommendations">
+      <div class="rec-label">设计建议</div>
+      <ul class="rec-list">
+        <li><strong>自主感：</strong>移除强制自动前进，改为「点击任意处继续」；增加节奏控制选项（慢速 / 快速），让孩子感到自己主导节奏</li>
+        <li><strong>自主感：</strong>允许孩子自主决定是否进入第二轮——「我还没记住，再来一遍」vs「我已经会了，跳过拼音轮」</li>
+        <li><strong>归属感：</strong>增加「给爸爸妈妈表演」模式——孩子完成后生成一张「表演卡」，家长扫码可看到孩子的学习轨迹和朗读录音</li>
+        <li><strong>归属感：</strong>添加家庭共学动态，如「妈妈今天也在背《静夜思》」的温馨提示，强化共学氛围</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Framework 3: Motivation ── -->
+  <section class="framework">
+    <div class="fw-header">
+      <div class="fw-num">三</div>
+      <div class="fw-title-group">
+        <div class="fw-eyebrow">内在动机与外在动机 / Intrinsic vs Extrinsic Motivation</div>
+        <h2 class="fw-title">礼花奖励需区分「信息型反馈」与「控制型奖励」</h2>
+      </div>
+    </div>
+
+    <div class="key-insight">
+      <div class="ki-label">核心洞察</div>
+      <p class="ki-text">Deci 等人的认知评估理论（CET）指出，奖励本身不自动削弱内在动机——关键在于奖励传递的信息。「你背出来了！」（信息型）强化能力感；「完成任务得奖励」（控制型）侵蚀之。当前礼花设计属于中性，有优化空间。</p>
+    </div>
+
+    <div class="analysis">
+      <p>1970年代以来，「过度辩护效应」（Overjustification Effect）的研究曾让人担心外在奖励会削弱内在动机（Lepper et al., 1973）。但 Deci, Koestner 和 Ryan（1999）的元分析进行了重要修正：<strong>意外性奖励</strong>（unexpected rewards）和<strong>信息型反馈</strong>对内在动机的负面影响极小，甚至有正向促进作用。</p>
+
+      <p>真正有害的是<strong>控制型奖励</strong>（controlling rewards）：「完成5首诗获得一个奖章」这类以行为控制为目的的机制，会将儿童的学习动机从「我喜欢背诗」转向「我要拿奖章」，一旦奖章停止，动机随之消失。</p>
+
+      <p>当前「背一背」的礼花+庆祝页面属于完成事件的庆祝性反馈，更接近信息型（「你成功了」）而非控制型，本质上没有问题。但如果庆祝页面以视觉听觉刺激为主、缺乏与诗歌内容的连接，可能将注意焦点从「我背出了这首诗」偏移到「我得到了烟花」。</p>
+    </div>
+
+    <div class="recommendations">
+      <div class="rec-label">设计建议</div>
+      <ul class="rec-list">
+        <li>庆祝页面加入与诗歌内容相关的反馈，如「你背出了《静夜思》，李白写这首诗时也在异乡想家」，将奖励体验与学习内容本身连接</li>
+        <li>减少纯视觉轰炸型奖励（连续礼花），改为一个有意义的解锁时刻（如一幅简洁的水墨插图「点亮」）——稀缺感使奖励更有意义</li>
+        <li>增加进步型能力感反馈：「这是你第3次背这首诗，比上次少看了2次答案」——这类进步性反馈比通关烟花更能强化内在动机（Hattie &amp; Timperley, 2007）</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Framework 4: Memory Curve ── -->
+  <section class="framework">
+    <div class="fw-header">
+      <div class="fw-num">四</div>
+      <div class="fw-title-group">
+        <div class="fw-eyebrow">记忆曲线与间隔重复 / Ebbinghaus &amp; Spaced Repetition</div>
+        <h2 class="fw-title">当前设计缺乏科学的复习机制，记忆留存率极低</h2>
+      </div>
+    </div>
+
+    <div class="key-insight">
+      <div class="ki-label">核心洞察</div>
+      <p class="ki-text">艾宾浩斯遗忘曲线表明，单次学习后24小时内遗忘约56%、一周后遗忘约77%。「背一背」目前没有任何复习调度，孩子可能连续背10首新诗，而第一首已经在记忆中悄然消失。</p>
+    </div>
+
+    <div class="analysis">
+      <p>艾宾浩斯（Ebbinghaus, 1885）的遗忘曲线是学习科学中最被广泛验证的发现之一：记忆在首次学习后快速下降，经过恰当的间隔重复（Spaced Repetition），长期记忆得以高效建立。Cepeda 等人（2006）的元分析确认，间隔重复的记忆效率是集中学习的1.5–3倍。</p>
+
+      <p>当前「背一背」是<strong>线性推进</strong>模式：背完一首前进下一首，完全没有基于遗忘曲线的复习调度。这意味着：一个孩子连续三天各背10首新诗，第一天背的诗到第四天可能已忘却近半，却没有任何系统提醒他回头复习。</p>
+
+      <p>对7岁儿童，精密的SRS算法（如SuperMemo、Anki）并不适合，但一个简化版的复习逻辑完全可行。研究显示（Kornell &amp; Bjork, 2008），即使粗粒度的间隔（如「今天 → 3天后 → 一周后」）也能大幅改善长期记忆留存率。</p>
+    </div>
+
+    <div class="recommendations">
+      <div class="rec-label">设计建议</div>
+      <ul class="rec-list">
+        <li>引入「今日复习」入口：首页显示「3首诗在等你复习」，优先级高于学新诗，附简短提示（「上次背了《春晓》，现在还记得吗？」）</li>
+        <li>简化版三桶复习系统：首次背完 → 次日复习；通过 → 3天后；再次通过 → 7天后；对应「新认识」「老朋友」「已掌握」三种可见状态</li>
+        <li>为每首诗显示「记忆强度」进度条，让孩子和家长直观看到哪首诗正在「淡忘」，强化主动复习的意识</li>
+        <li>控制每日新诗数量上限（建议2–3首），系统自动引导先复习旧诗再接触新诗</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Framework 5: Flow ── -->
+  <section class="framework">
+    <div class="fw-header">
+      <div class="fw-num">五</div>
+      <div class="fw-title-group">
+        <div class="fw-eyebrow">心流理论 / Csikszentmihalyi Flow Theory</div>
+        <h2 class="fw-title">难度曲线断层与控制感缺失，心流状态难以维持</h2>
+      </div>
+    </div>
+
+    <div class="key-insight">
+      <div class="ki-label">核心洞察</div>
+      <p class="ki-text">心流的触发条件是技能与挑战精准匹配、即时反馈、明确目标、充分控制感。当前两轮制的难度跨度过大，自动跳转机制破坏了儿童的控制感——这两点恰好是心流的主要障碍。</p>
+    </div>
+
+    <div class="analysis">
+      <p>Csikszentmihalyi（1990）的心流理论指出，当一个人处于技能与挑战高度匹配的状态，并获得即时反馈和充分控制感时，会进入全神贯注、浑然忘我的「心流」状态——这是最优学习体验的标志。</p>
+
+      <p>「背一背」存在一个<strong>明显的难度断层</strong>：第一轮（有拼音辅助）→ 第二轮（纯默写）。对于不同程度的7岁儿童，这个跨度差异极大。对较熟悉古诗的孩子，第一轮过于简单（产生无聊）；对刚接触的孩子，第二轮突然没有任何提示，可能直接坠入焦虑区，心流无从产生。</p>
+
+      <p>心流的另一要件是<strong>控制感</strong>。自动前进的900ms节奏实际上将控制权从儿童手中收走，孩子成为被动跟随者。Csikszentmihalyi 明确指出，对体验的直接控制感是心流的先决条件，而非锦上添花。</p>
+    </div>
+
+    <div class="recommendations">
+      <div class="rec-label">设计建议</div>
+      <ul class="rec-list">
+        <li>将两轮制扩展为渐进三轮：①完整诗句+拼音（理解层）→ ②隐去汉字保留拼音（提示层）→ ③全部隐去（挑战层），孩子熟悉后可自主从第二轮开始</li>
+        <li>设计「我会了」快速通道：第一轮结束时询问「你已经会了吗？」，允许直接跳入挑战层，满足进阶孩子的心流需要</li>
+        <li>揭字节奏交由孩子控制：每句揭完后暂停等待点击；可保留「快速模式」选项，给偏好快节奏的孩子选择权</li>
+        <li>增加「再来一次」按钮：允许在句子结束时重试，让处于挑战区的孩子获得多次尝试机会，而非被强制推向下一句</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Framework 6: Self-Efficacy ── -->
+  <section class="framework">
+    <div class="fw-header">
+      <div class="fw-num">六</div>
+      <div class="fw-title-group">
+        <div class="fw-eyebrow">挫败感管理与自我效能 / Bandura Self-Efficacy</div>
+        <h2 class="fw-title">「看答案」设计损伤了脆弱的自我效能感建立</h2>
+      </div>
+    </div>
+
+    <div class="key-insight">
+      <div class="ki-label">核心洞察</div>
+      <p class="ki-text">Bandura 指出，自我效能感（对自己能否完成任务的信念）是学业坚持的核心预测变量，7岁儿童的自我效能感尤为脆弱。当前「看答案」直接暴露全部答案、缺乏脚手架支撑，可能强化「我背不出来」的无能感。</p>
+    </div>
+
+    <div class="analysis">
+      <p>Bandura（1977）的自我效能理论指出，儿童对自己能力的信念深刻影响其学习坚持性、努力投入和应对困难的方式。自我效能感低的儿童倾向于将困难归因于能力不足，更容易在遭遇挫折时放弃。</p>
+
+      <p>7岁正是自我效能感快速形成的关键期，学校生活的早期体验对其长期塑造至关重要（Eccles et al., 1993）。如果一个孩子反复经历「背不出来 → 点看答案 → 整排字一次暴露」的循环，这一体验很可能强化「背诗很难，我不行」的信念。</p>
+
+      <p>维果茨基（Vygotsky, 1978）的<strong>脚手架理论</strong>（Scaffolding）提供了更好的方向：支持应当在儿童需要时精准提供，并随能力增长逐步撤除，目标是让孩子最终能在无支持下完成。「看答案」直接跳跃到最终状态，跳过了脚手架的全部中间层级。</p>
+    </div>
+
+    <div class="recommendations">
+      <div class="rec-label">设计建议</div>
+      <ul class="rec-list">
+        <li>将「看答案」改为三阶脚手架：第一阶「给个提示」（只露出该字拼音）→ 第二阶「再提示」（露出首笔或部首）→ 第三阶「看答案」（完整汉字），让求助本身也成为有层次的体验</li>
+        <li>改变求助的话语框架：将按钮文案改为「提示一下」，点击后显示「这个字的拼音是……」，使求助感觉像「获得线索」而非「承认失败」</li>
+        <li>增加归因引导文案：当孩子需要多次提示时，显示「这首诗有点难，多背几次就会啦」——将困难归因于任务难度而非个人能力，保护自我效能感</li>
+        <li>记录并展示进步轨迹：「上次背这首诗你看了3次答案，这次只看了1次！」——以过去的自己为基准，而非与他人比较</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Framework 7: Age-specific ── -->
+  <section class="framework">
+    <div class="fw-header">
+      <div class="fw-num">七</div>
+      <div class="fw-title-group">
+        <div class="fw-eyebrow">7岁特有的心理特征 / Age-Specific Psychology</div>
+        <h2 class="fw-title">角色叙事、故事性与具体成就是这个年龄段的设计语言</h2>
+      </div>
+    </div>
+
+    <div class="key-insight">
+      <div class="ki-label">核心洞察</div>
+      <p class="ki-text">7岁儿童对角色扮演和故事叙事有强烈偏好，社会比较意识开始萌发，奖励偏好从纯感官刺激转向有「意义感」的具体成就。这些鲜明的年龄特征在当前设计中几乎没有得到利用。</p>
+    </div>
+
+    <div class="analysis">
+      <p><strong>叙事与角色偏好</strong>：6–8岁儿童处于想象性游戏向规则游戏过渡的阶段（Piaget, 1962），对「扮演某个角色」有强烈的内在吸引力。将「背诗」包装为「成为一名小诗人学徒」的叙事，或引入一个陪伴学习的古代书童角色，能大幅提升任务的内在意义感。</p>
+
+      <p><strong>具体性与情境性思维</strong>：7岁儿童更容易理解和记住嵌入具体故事中的知识，纯抽象的诗句对他们而言更像声音序列。研究显示，故事化内容比纯说明性内容在该年龄段的记忆留存率高出约40%（Egan, 1989）。</p>
+
+      <p><strong>社会比较意识萌发</strong>：7岁是儿童开始进行有意识社会比较的年龄（Ruble, 1983）。他们开始关心「我和别人相比做得怎样」。这既是风险（容易产生挫败感）也是机会——适当的家庭共学社交能激励持续投入。</p>
+
+      <p><strong>有意义的成就感</strong>：该年龄段儿童对有「故事意义」的奖励更有持续反应，而非单纯的视觉刺激。「解锁了诗人李白的故事」比「获得100颗星星」更能激发持续动机（Stipek, 1996）。</p>
+    </div>
+
+    <div class="recommendations">
+      <div class="rec-label">设计建议</div>
+      <ul class="rec-list">
+        <li>引入「小诗人」成长叙事：将70首诗的旅程设计为「从私塾学童成长为小诗人」的故事线，每背会一首解锁关于该诗人的微型故事或漫画</li>
+        <li>设计一个陪伴角色（如小书童「墨墨」），在学习过程中给予情境化鼓励（「这首诗李白是在月圆夜写的，你来试试？」），而非通用的「加油！」</li>
+        <li>「诗集册」成就系统：将70首诗设计为一本可翻阅的古诗集册，背会的诗页从水墨淡影变为彩色全图，提供具体的积累感和视觉进度</li>
+        <li>家庭挑战模式：「今天和爸爸比赛，看谁先背出《悯农》」，利用萌发的社会比较意识，将竞争转化为家庭互动动力</li>
+        <li>避免纯数字奖励系统（积分、星星）；改用具有故事意义的解锁内容——每首诗对应一位诗人，背完解锁其「诗人印章」，70首集齐即完成「传世诗集」</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Conclusion ── -->
+  <section class="conclusion-block">
+    <h2 class="conclusion-title">综合设计优先级建议</h2>
+    <p>「背一背」的核心交互逻辑——具体操作与即时反馈的组合——从认知发展角度是扎实的，这一判断基于皮亚杰理论有充分的学术支撑。现阶段最关键的三个优化方向是：恢复儿童的自主感（移除强制跳转）、引入间隔重复复习机制（避免遗忘曲线失效）、将「看答案」升级为多阶脚手架（保护自我效能感）。这三项改动可在不改变整体架构的前提下，显著提升学习效果与持续使用意愿。</p>
+    <p>中期值得投入的是叙事层面的升级：为每首诗配备情境化内容（故事、插图），引入成长叙事和陪伴角色。这不仅解决了皮亚杰所指出的抽象性认知瓶颈，也将单次背诗行为纳入更宏观的意义框架，从根本上强化内在动机。</p>
+    <div class="priority-grid">
+      <div class="priority-item">
+        <div class="priority-badge badge-high">立即优化</div>
+        <div class="priority-desc">移除强制自动跳转，恢复孩子对节奏的控制权；将「看答案」升级为三阶提示脚手架</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-badge badge-mid">短期规划</div>
+        <div class="priority-desc">引入简化版间隔复习系统（今日复习模块）；增加进步轨迹展示与能力感型反馈</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-badge badge-low">中期投入</div>
+        <div class="priority-desc">叙事层升级：诗人故事、陪伴角色、成长叙事与诗集册成就系统</div>
+      </div>
+    </div>
+  </section>
+
+</div>
