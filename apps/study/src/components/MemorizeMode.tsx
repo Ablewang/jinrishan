@@ -25,7 +25,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const [charSize, setCharSize] = useState<number | null>(null)
   const [unlocked, setUnlocked] = useState<Set<number>>(new Set())
   const [transitioning, setTransitioning] = useState(false)
-  const [transCountdown, setTransCountdown] = useState(5)
+  const [transCountdown, setTransCountdown] = useState(3)
   const [autoCountdown, setAutoCountdown] = useState(3)
   const [autoKey, setAutoKey] = useState(0)
   const confirmedRef = useRef(false)
@@ -146,7 +146,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
       setHintStage(0)
     } else {
       if (round === 1) {
-        setTransCountdown(5)
+        setTransCountdown(3)
         setTransitioning(true)
       } else {
         const stars = totalHints === 0 ? 3 : totalHints <= 2 ? 2 : 1
