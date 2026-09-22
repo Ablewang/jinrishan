@@ -10,7 +10,7 @@ export default defineConfig({
       includeAssets: ['apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: '古诗小课堂',
-        short_name: '古诗',
+        short_name: '古诗小课堂',
         description: '小学生必背古诗70首，趣味闯关学古诗',
         theme_color: '#C62828',
         background_color: '#ffffff',
