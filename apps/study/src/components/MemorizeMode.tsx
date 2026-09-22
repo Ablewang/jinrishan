@@ -137,23 +137,16 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
             <div key={li} className={`mm-line mm-line--${state}`}>
               {isActive ? (
                 <div className="mm-line__active-content">
-                  {/* 拼音行 */}
-                  {round === 1 && (
-                    <div className="mm-line__pinyins">
-                      {ln.chars.map((c, ci) => (
-                        <span key={ci} className="mm-line__pinyin-slot">
-                          {c.pinyin ? (
-                            <span className="mm-line__pinyin">{c.pinyin}</span>
-                          ) : null}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {/* 汉字行 */}
+                  {/* 每个字一列：拼音+圆圈 */}
                   <div className="mm-line__chars">
                     {ln.chars.map((c, ci) => {
                       if (c.pinyin === null) {
-                        return <span key={ci} className="mm-line__punct">{c.char}</span>
+                        return (
+                          <span key={ci} className="mm-line__punct-col">
+                            {round === 1 && <span className="mm-line__pinyin-slot" />}
+                            <span className="mm-line__punct">{c.char}</span>
+                          </span>
+                        )
                       }
                       const idx = charIdx++
                       const isRev = revealed.has(idx)
@@ -164,6 +157,9 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
                           onClick={() => !isRev && revealChar(idx)}
                           disabled={isRev}
                         >
+                          {round === 1 && (
+                            <span className="mm-line__pinyin">{c.pinyin}</span>
+                          )}
                           {isRev ? (
                             <span className="mm-line__hanzi">{c.char}</span>
                           ) : (
@@ -320,44 +316,46 @@ const mainStyle = `
     gap: 6px;
     padding: 16px 0 8px;
   }
-  .mm-line__pinyins {
+  .mm-line__chars {
     display: flex;
     gap: 4px;
     align-items: flex-end;
     justify-content: center;
-    min-height: 1.4em;
-  }
-  .mm-line__pinyin-slot {
-    display: flex;
-    justify-content: center;
-    min-width: 2.4rem;
-  }
-  .mm-line__pinyin {
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-    color: #C62828;
-    white-space: nowrap;
-    font-style: italic;
-  }
-  .mm-line__chars {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    justify-content: center;
     flex-wrap: nowrap;
   }
   .mm-line__char-btn {
-    width: 2.4rem;
-    height: 2.8rem;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 4px;
+    padding: 4px 2px;
     border-radius: 8px;
     background: transparent;
     transition: transform 0.1s;
+    min-width: 2.4rem;
   }
   .mm-line__char-btn:not(.mm-line__char-btn--revealed):active {
     transform: scale(0.88);
+  }
+  .mm-line__punct-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 1rem;
+  }
+  .mm-line__pinyin-slot {
+    height: 1.2em;
+    display: block;
+  }
+  .mm-line__pinyin {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: #C62828;
+    white-space: nowrap;
+    font-style: italic;
+    line-height: 1.2;
+    display: block;
   }
   .mm-line__circle {
     width: 2rem;
