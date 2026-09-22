@@ -91,8 +91,8 @@ export default function PoemDetail() {
 
   return (
     <div className="d">
-      {/* 背景图固定层 */}
-      {imgSrc && <div className="d-bg" style={{ backgroundImage: `url(${imgSrc})` }} />}
+      {/* 背景图层 */}
+      {imgSrc && <img className="d-bg" src={imgSrc} aria-hidden="true" />}
 
       {/* 红色导航栏 */}
       <header className="d-nav">
@@ -168,20 +168,17 @@ export default function PoemDetail() {
           position: relative;
         }
 
-        /* 背景图固定层 */
+        /* 背景图层 */
         .d-bg {
-          position: fixed;
-          top: 0; bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
-          max-width: 480px;
-          background-size: cover;
-          background-position: center top;
-          background-repeat: no-repeat;
+          height: auto;
           z-index: 0;
           opacity: 0.25;
           pointer-events: none;
+          display: block;
         }
 
         /* 红色导航栏 */
