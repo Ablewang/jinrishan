@@ -78,6 +78,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 14px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .d-meta {

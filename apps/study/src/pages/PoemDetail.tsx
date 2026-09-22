@@ -114,12 +114,15 @@ export default function PoemDetail() {
     const el = fabRef.current!
     const size = el.offsetWidth
     const currentX = parseFloat(el.style.left) || (window.innerWidth - size - 20)
-    // 吸附到左边或右边
     const snapToLeft = currentX + size / 2 < window.innerWidth / 2
     const x = snapToLeft ? 8 : window.innerWidth - size - 8
     el.style.left = `${x}px`
     el.style.transition = 'left 0.25s cubic-bezier(0.34,1.56,0.64,1)'
     setTimeout(() => { el.style.transition = '' }, 300)
+  }
+
+  function onFabTouchCancel() {
+    dragState.current = null
   }
 
   if (!poem) {
@@ -212,6 +215,7 @@ export default function PoemDetail() {
           onTouchStart={onFabTouchStart}
           onTouchMove={onFabTouchMove}
           onTouchEnd={onFabTouchEnd}
+          onTouchCancel={onFabTouchCancel}
         >背一背</button>
         <div className="d-footer__nav">
           <button className="d-footer__nav-btn" onClick={() => prevPoem && navigate(`/poem/${prevPoem.id}`)} disabled={!prevPoem}>
