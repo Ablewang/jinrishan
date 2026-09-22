@@ -18,6 +18,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const [celebrated, setCelebrated] = useState(false)
   const [peeked, setPeeked] = useState(false)
   const [burst, setBurst] = useState(false)
+  const [charSize, setCharSize] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const lines = poem.lines
@@ -68,6 +69,23 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allRevealed])
+
+  // 根据容器宽度 + 当前行字数动态算每格尺寸
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const measure = () => {
+      const width = el.clientWidth - 40 // mm__lines 有 20px 左右 padding
+      const total = line.chars.length
+      const gap = 4
+      const size = (width - gap * (total - 1)) / total
+      setCharSize(Math.min(Math.max(size, 18), 38))
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [current, line.chars.length])
 
   // 切换行时滚动到活动行
   useEffect(() => {
@@ -172,7 +190,14 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
             <div key={li} className={`mm-line mm-line--${state}`}>
               {isActive ? (
                 <div className="mm-line__active-content">
-                  <div className="mm-line__chars">
+                  <div
+                    className="mm-line__chars"
+                    style={charSize ? {
+                      '--cs': `${charSize}px`,
+                      '--fs': `${charSize * 0.85}px`,
+                      '--py': `${charSize * 0.35}px`,
+                    } as React.CSSProperties : undefined}
+                  >
                     {ln.chars.map((c, ci) => {
                       if (c.pinyin === null) {
                         return (
@@ -364,10 +389,10 @@ const mainStyle = `
   }
   .mm-line__chars {
     display: flex;
-    gap: 4px 6px;
+    gap: 4px;
     align-items: flex-end;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
   .mm-line__char-btn {
     display: flex;
@@ -378,7 +403,9 @@ const mainStyle = `
     border-radius: 8px;
     background: transparent;
     transition: transform 0.1s;
-    min-width: 2.4rem;
+    min-width: var(--cs, 2.4rem);
+    width: var(--cs, 2.4rem);
+    flex-shrink: 0;
   }
   .mm-line__char-btn:not(.mm-line__char-btn--revealed):active {
     transform: scale(0.88);
@@ -388,7 +415,8 @@ const mainStyle = `
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    min-width: 1rem;
+    min-width: calc(var(--cs, 2.4rem) * 0.5);
+    flex-shrink: 0;
   }
   .mm-line__pinyin-slot {
     height: 1.2em;
@@ -396,7 +424,7 @@ const mainStyle = `
   }
   .mm-line__pinyin {
     font-family: var(--font-ui);
-    font-size: 0.75rem;
+    font-size: var(--py, 0.75rem);
     color: #C62828;
     white-space: nowrap;
     font-style: italic;
@@ -404,8 +432,8 @@ const mainStyle = `
     display: block;
   }
   .mm-line__circle {
-    width: 2.2rem;
-    height: 2.2rem;
+    width: var(--cs, 2.2rem);
+    height: var(--cs, 2.2rem);
     border-radius: 50%;
     border: 2.5px solid #C62828;
     background: rgba(198,40,40,0.08);
@@ -420,13 +448,13 @@ const mainStyle = `
   }
   .mm-line__hanzi {
     font-family: var(--font-brush);
-    font-size: 2.2rem;
+    font-size: var(--fs, 2.2rem);
     color: #1a1a1a;
     line-height: 1;
   }
   .mm-line__punct {
     font-family: var(--font-brush);
-    font-size: 1.4rem;
+    font-size: calc(var(--fs, 2.2rem) * 0.7);
     color: #aaa;
   }
   .mm__footer {
