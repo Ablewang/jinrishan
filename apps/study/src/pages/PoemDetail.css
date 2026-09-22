@@ -118,6 +118,7 @@
 
 .d-split {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: stretch;
   margin-bottom: 14px;
@@ -132,8 +133,8 @@
   backdrop-filter: blur(4px);
 }
 .d-split__notes {
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 1 1 120px;
+  min-width: 120px;
   background: rgba(255,255,255,0.6);
   border-radius: 18px;
   padding: 12px 10px;
