@@ -375,7 +375,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
                                 <svg className="mm-line__think-arc" viewBox="0 0 40 40">
                                   <circle cx="20" cy="20" r="17" fill="none" stroke="#C62828" strokeWidth="3"
                                     strokeDasharray="107" strokeDashoffset="0"
-                                    style={{ animationDuration: round === 1 ? '1.5s' : '2s' }}
+                                    style={{ animationDuration: round === 1 ? '0.8s' : '1s' }}
                                     className="mm-line__think-ring"
                                   />
                                 </svg>
