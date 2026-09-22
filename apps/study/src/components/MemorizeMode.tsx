@@ -158,7 +158,6 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   if (celebrated) {
     const starCount = celebStars
     const titles = ['', '这首诗稍难，多背几次就会了！', '背得很好！下次试试不用提示', '完美通关！一个提示都没用！']
-    const subtitles = ['', '★☆☆', '★★☆', '★★★']
     return (
       <div className="mm mm--celebrate">
         {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
@@ -174,9 +173,17 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
           </div>
         )}
         <div className="mm__celebrate-box">
-          <p className="mm__celebrate-stars-label">{subtitles[starCount]}</p>
           <p className="mm__celebrate-title">背出来啦！</p>
           <p className="mm__celebrate-poem">{poem.title}</p>
+          <div className="mm__stars-row">
+            {[1,2,3].map(i => (
+              <span
+                key={i}
+                className={`mm__star-item${i <= starCount ? ' mm__star-item--on' : ''}`}
+                style={{ animationDelay: `${(i - 1) * 0.15}s` }}
+              >★</span>
+            ))}
+          </div>
           <p className="mm__celebrate-sub">{titles[starCount]}</p>
           <div className="mm__celebrate-btns">
             <button className="mm__btn mm__btn--primary" onClick={onNext}>下一首 →</button>
@@ -614,6 +621,22 @@ const celebrateStyle = `
   .mm__celebrate-stars-label {
     font-size: 1.6rem; letter-spacing: 0.1em;
     color: #FFD600; margin-bottom: 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  .mm__stars-row {
+    display: flex; justify-content: center; gap: 8px;
+    margin: 12px 0 8px;
+  }
+  .mm__star-item {
+    font-size: 2.4rem; color: #e0e0e0;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .mm__star-item--on {
+    color: #FFB300;
+    animation: starPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes starPop {
+    0%   { transform: scale(0.3); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
   }
   .mm__celebrate-title {
     font-family: var(--font-brush); font-size: 2.4rem;

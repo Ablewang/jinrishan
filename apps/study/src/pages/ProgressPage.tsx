@@ -4,7 +4,6 @@ import { useProgress } from '../hooks/useProgress'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import Achievements from '../components/Achievements'
-
 type StarFilter = '全部' | '无提示' | '少量提示' | '多次提示'
 const STAR_FILTERS: StarFilter[] = ['全部', '无提示', '少量提示', '多次提示']
 const TOTAL = 70
@@ -71,12 +70,15 @@ export default function ProgressPage() {
       </div>
 
       {/* 成就 */}
-      <Achievements
-        progress={progress}
-        streak={streak}
-        totalChars={totalChars}
-        memorizeHistory={memorizeHistory}
-      />
+      <div className="pg__ach-row">
+        <Achievements
+          progress={progress}
+          streak={streak}
+          totalChars={totalChars}
+          memorizeHistory={memorizeHistory}
+        />
+        <button className="pg__ach-link" onClick={() => navigate('/achievements')}>查看全部成就 →</button>
+      </div>
 
       {/* 已背诗目 */}
       <div className="pg__section">
@@ -218,6 +220,19 @@ const style = `
     color: var(--ink-light);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+  }
+  .pg__ach-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .pg__ach-link {
+    text-align: right;
+    padding: 0 16px;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: #C62828;
+    background: transparent;
   }
   .pg__section {
     margin: 12px 16px 0;
