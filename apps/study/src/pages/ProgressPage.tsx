@@ -5,8 +5,8 @@ import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import Achievements from '../components/Achievements'
 
-type StarFilter = '全部' | '★★★' | '★★☆' | '★☆☆'
-const STAR_FILTERS: StarFilter[] = ['全部', '★★★', '★★☆', '★☆☆']
+type StarFilter = '全部' | '一气呵成' | '需要提示'
+const STAR_FILTERS: StarFilter[] = ['全部', '一气呵成', '需要提示']
 const TOTAL = 70
 
 export default function ProgressPage() {
@@ -28,11 +28,11 @@ export default function ProgressPage() {
 
   const filtered = useMemo(() => {
     if (filter === '全部') return memorizedPoems
-    const s = filter === '★★★' ? 3 : filter === '★★☆' ? 2 : 1
-    return memorizedPoems.filter(p => p.bestStars === s)
+    if (filter === '一气呵成') return memorizedPoems.filter(p => p.bestStars === 3)
+    if (filter === '需要提示') return memorizedPoems.filter(p => p.bestStars < 3 && p.bestStars > 0)
   }, [memorizedPoems, filter])
 
-  const STAR_LABEL = ['', '★☆☆', '★★☆', '★★★']
+  const RESULT_LABEL = (stars: number) => stars === 3 ? '一气呵成' : stars > 0 ? '需要提示' : ''
 
   return (
     <div className="pg">
@@ -112,8 +112,8 @@ export default function ProgressPage() {
                     {p.dynasty ? `${p.dynasty}·${p.author}` : p.author}
                   </span>
                 </div>
-                <span className={`pg__item-stars pg__item-stars--${p.bestStars}`}>
-                  {STAR_LABEL[p.bestStars]}
+                <span className={`pg__item-stars${p.bestStars === 3 ? ' pg__item-stars--perfect' : ' pg__item-stars--hint'}`}>
+                  {RESULT_LABEL(p.bestStars)}
                 </span>
               </button>
             ))}
@@ -308,12 +308,11 @@ const style = `
     color: var(--ink-light);
   }
   .pg__item-stars {
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
     flex-shrink: 0;
     margin-left: 12px;
   }
-  .pg__item-stars--3 { color: #FFB300; }
-  .pg__item-stars--2 { color: #FFB300; }
-  .pg__item-stars--1 { color: #ccc; }
+  .pg__item-stars--perfect { color: #C62828; }
+  .pg__item-stars--hint { color: #999; }
 `
