@@ -26,6 +26,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const [unlocked, setUnlocked] = useState<Set<number>>(new Set())
   const [transitioning, setTransitioning] = useState(false)
   const [transCountdown, setTransCountdown] = useState(5)
+  const [autoCountdown, setAutoCountdown] = useState(3)
   const [autoKey, setAutoKey] = useState(0)
   const confirmedRef = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -78,17 +79,20 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   // 每切换行时重置确认标志和倒计时 key
   useEffect(() => {
     confirmedRef.current = false
+    setAutoCountdown(3)
     setAutoKey(k => k + 1)
   }, [current, round])
 
-  // 全部揭示后 3 秒自动进下一句
+  // 全部揭示后 3 秒倒计时，每秒更新数字，到 0 自动推进
   useEffect(() => {
     if (!allRevealed) return
-    const t = setTimeout(() => {
+    if (autoCountdown <= 0) {
       if (!confirmedRef.current) confirmLine()
-    }, 3000)
+      return
+    }
+    const t = setTimeout(() => setAutoCountdown(n => n - 1), 1000)
     return () => clearTimeout(t)
-  }, [allRevealed])
+  }, [allRevealed, autoCountdown])
 
   // 轮间过渡倒计时（5秒）
   useEffect(() => {
@@ -264,11 +268,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const showHintPinyin = hintStage >= 1 && !allRevealed
 
   return (
-    <div
-      className="mm"
-      onClick={allRevealed ? confirmLine : undefined}
-      style={allRevealed ? { cursor: 'pointer' } : undefined}
-    >
+    <div className="mm">
       {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
 
       {burst && (
@@ -379,14 +379,13 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
         })}
       </div>
 
-      <div className="mm__footer" onClick={e => e.stopPropagation()}>
+      <div className="mm__footer">
         {allRevealed ? (
-          <div className="mm__auto-wrap" key={autoKey}>
-            <span className="mm__auto-hint">点击任意位置继续</span>
-            <div className="mm__auto-bar">
-              <div className="mm__auto-fill" />
-            </div>
-          </div>
+          <button className="mm__confirm" key={autoKey} onClick={confirmLine}>
+            <span className="mm__confirm-text">我背出来啦</span>
+            <span className="mm__confirm-count">{autoCountdown > 0 ? autoCountdown : ''}</span>
+            <span className="mm__confirm-bar"><span className="mm__confirm-fill" /></span>
+          </button>
         ) : (
           hintStage < 2 && (
             <button className="mm__peek" onClick={hint}>
@@ -641,22 +640,34 @@ const mainStyle = `
     display: flex; flex-direction: column; gap: 10px;
     background: #fff; border-top: 1px solid #f0f0f0;
   }
-  .mm__auto-wrap {
-    display: flex; flex-direction: column; gap: 6px; align-items: center;
+  .mm__confirm {
+    position: relative; overflow: hidden;
+    width: 100%; padding: 14px 0;
+    border-radius: 999px; background: #C62828;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(198,40,40,0.3);
+    transition: transform 0.1s, opacity 0.1s;
   }
-  .mm__auto-hint {
-    font-family: var(--font-ui); font-size: 0.72rem; color: #bbb;
+  .mm__confirm:active { transform: scale(0.97); opacity: 0.85; }
+  .mm__confirm-text {
+    font-family: var(--font-ui); font-size: var(--text-base);
+    font-weight: 700; color: #fff; line-height: 1;
   }
-  .mm__auto-bar {
-    width: 100%; height: 3px;
-    background: #f0f0f0; border-radius: 999px; overflow: hidden;
+  .mm__confirm-count {
+    font-family: var(--font-ui); font-size: var(--text-base);
+    font-weight: 700; color: rgba(255,255,255,0.7);
+    line-height: 1; min-width: 1em; text-align: left;
   }
-  .mm__auto-fill {
-    height: 100%; background: #C62828;
+  .mm__confirm-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: rgba(255,255,255,0.2);
+  }
+  .mm__confirm-fill {
+    display: block; height: 100%; background: rgba(255,255,255,0.6);
     border-radius: 999px; width: 100%;
-    animation: drainAuto 3s linear forwards;
+    animation: drainConfirm 3s linear forwards;
   }
-  @keyframes drainAuto {
+  @keyframes drainConfirm {
     from { width: 100%; }
     to   { width: 0%; }
   }
