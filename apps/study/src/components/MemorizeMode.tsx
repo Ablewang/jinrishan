@@ -42,18 +42,21 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
   const imgSrc = imgFile ? `/images/${encodeURIComponent(imgFile)}` : null
 
-  // 思考圈解锁
+  // 切换行/轮时重置解锁状态
   useEffect(() => {
     setUnlocked(new Set())
-    const thinkTime = round === 1 ? 1500 : 2000
-    const timers: ReturnType<typeof setTimeout>[] = []
-    hanziChars.forEach((_, i) => {
-      timers.push(setTimeout(() => {
-        setUnlocked(prev => new Set([...prev, i]))
-      }, thinkTime + i * 80))
-    })
-    return () => timers.forEach(clearTimeout)
   }, [current, round])
+
+  // 每揭示一个字后，为下一个字启动思考倒计时
+  useEffect(() => {
+    const nextIdx = charStates.size
+    if (nextIdx >= hanziChars.length) return
+    const thinkTime = round === 1 ? 800 : 1000
+    const t = setTimeout(() => {
+      setUnlocked(prev => new Set([...prev, nextIdx]))
+    }, thinkTime)
+    return () => clearTimeout(t)
+  }, [charStates.size, current, round])
 
   // 动态字号
   useEffect(() => {
