@@ -123,9 +123,8 @@
   margin-bottom: 14px;
 }
 .d-split__poem {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
-  overflow-x: auto;
   background: rgba(255,255,255,0.6);
   border-radius: 18px;
   padding: 14px 10px;
