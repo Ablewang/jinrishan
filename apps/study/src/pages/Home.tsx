@@ -52,12 +52,14 @@ export default function Home() {
         </div>
       </div>
 
-      <Achievements
-        progress={progress}
-        streak={streak}
-        totalChars={totalChars}
-        memorizeHistory={memorizeHistory}
-      />
+      <div onClick={() => navigate('/achievements')} style={{ cursor: 'pointer' }}>
+        <Achievements
+          progress={progress}
+          streak={streak}
+          totalChars={totalChars}
+          memorizeHistory={memorizeHistory}
+        />
+      </div>
 
       <div className="home__filters" role="tablist">
         {FILTERS.map(f => (
