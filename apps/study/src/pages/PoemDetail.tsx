@@ -31,14 +31,6 @@ async function loadAnnotation(id: number): Promise<AnnotationData | null> {
 
 const NUMS = '①②③④⑤⑥⑦⑧⑨⑩'
 
-function getTitlePinyin(title: string, lines: Poem['lines']): string[] {
-  const allChars = lines.flatMap(l => l.chars)
-  return title.split('').map(ch => {
-    const found = allChars.find(c => c.char === ch && c.pinyin)
-    return found?.pinyin ?? ''
-  })
-}
-
 export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -95,7 +87,7 @@ export default function PoemDetail() {
 
   const dynastyLabel = poem.dynasty ? `[${poem.dynasty}] ${poem.author}` : poem.author
   const hasNotes = !!(annotation?.notes && annotation.notes.length > 0)
-  const titlePinyins = getTitlePinyin(poem.title, poem.lines)
+  const titlePinyins = poem.titlePinyin ?? poem.title.split('').map(() => '')
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
   const imgSrc = imgFile ? `/images/${encodeURIComponent(imgFile)}` : null
 

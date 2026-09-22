@@ -24,6 +24,7 @@ export interface Poem {
   dynasty: string | null
   author: string
   lines: Line[]
+  titlePinyin: string[]
 }
 
 let summaryCache: PoemSummary[] | null = null
