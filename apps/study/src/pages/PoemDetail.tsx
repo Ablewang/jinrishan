@@ -156,9 +156,9 @@ export default function PoemDetail() {
       </div>
 
       <div className="d-footer">
-        <button className="d-footer__memorize" onClick={() => setMemorizing(true)}>背一背</button>
-        <div className="d-footer__nav">
+        <div className="d-footer__row">
           <button className="d-footer__nav-btn" onClick={() => prevPoem && navigate(`/poem/${prevPoem.id}`)} disabled={!prevPoem}>← 上一首</button>
+          <button className="d-footer__memorize" onClick={() => setMemorizing(true)}>背一背</button>
           <button className="d-footer__nav-btn" onClick={() => nextPoem && navigate(`/poem/${nextPoem.id}`)} disabled={!nextPoem}>下一首 →</button>
         </div>
       </div>

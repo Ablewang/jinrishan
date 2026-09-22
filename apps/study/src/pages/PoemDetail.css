@@ -186,16 +186,18 @@
 
 .d-footer {
   flex-shrink: 0;
-  padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
   background: #C62828;
   z-index: 10;
 }
+.d-footer__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .d-footer__memorize {
-  width: 100%;
-  padding: 11px 0;
+  flex: 1.4;
+  padding: 12px 0;
   background: #FFF8E1;
   color: #C62828;
   border-radius: 999px;
@@ -206,10 +208,9 @@
   transition: transform 0.1s, opacity 0.1s;
 }
 .d-footer__memorize:active { transform: scale(0.97); opacity: 0.9; }
-.d-footer__nav { display: flex; gap: 8px; }
 .d-footer__nav-btn {
   flex: 1;
-  padding: 8px 0;
+  padding: 12px 0;
   border-radius: 999px;
   border: 1.5px solid rgba(255,248,225,0.5);
   background: transparent;
@@ -217,6 +218,11 @@
   font-size: var(--text-sm);
   color: #FFF8E1;
   transition: all 0.15s;
+}
+.d-footer__nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.d-footer__nav-btn:not(:disabled):active {
+  background: rgba(255,255,255,0.15);
+  border-color: #FFF8E1;
 }
 .d-footer__nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .d-footer__nav-btn:not(:disabled):active {
