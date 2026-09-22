@@ -139,17 +139,6 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     else setBurst(false)
   }, [allRevealed])
 
-  async function share() {
-    const starStr = ['', '★☆☆', '★★☆', '★★★'][celebStars] ?? ''
-    const text = `我用「古诗小课堂」背出了《${poem.title}》${starStr}，快来挑战！`
-    try {
-      await navigator.share({ text })
-    } catch {
-      // user cancelled or API unavailable
-    }
-  }
-
-  // 轮间过渡屏
   if (transitioning) {
     return (
       <div className="mm mm--transition">
@@ -190,7 +179,6 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
           <p className="mm__celebrate-sub">{titles[starCount]}</p>
           <div className="mm__celebrate-btns">
             <button className="mm__btn mm__btn--primary" onClick={onNext}>下一首 →</button>
-            <button className="mm__btn mm__btn--share" onClick={share}>发给爸妈看</button>
             <button className="mm__btn mm__btn--ghost" onClick={() => {
               setCelebrated(false)
               setRound(1)
@@ -647,11 +635,6 @@ const celebrateStyle = `
   .mm__btn--primary {
     background: #C62828; color: #fff;
     box-shadow: 0 4px 16px rgba(198,40,40,0.3);
-  }
-  .mm__btn--share {
-    background: transparent;
-    border: 1.5px solid #C62828;
-    color: #C62828;
   }
   .mm__btn--ghost {
     background: transparent; border: 1.5px solid #e0e0e0; color: #999;
