@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { loadPoem, loadPoemIndex } from '../data/poems'
 import type { Poem, PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
+import { useQueue } from '../hooks/useQueue'
 import PoemText from '../components/PoemText'
 import MemorizeMode from '../components/MemorizeMode'
 import imgMap from '../data/poem_img_map.json'
@@ -34,9 +35,11 @@ const NUMS = '①②③④⑤⑥⑦⑧⑨⑩'
 export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { markRead, markMemorized } = useProgress()
+  const { queue, completePoem } = useQueue()
   const [showPinyin, setShowPinyin] = useState(true)
-  const [memorizing, setMemorizing] = useState(false)
+  const [memorizing, setMemorizing] = useState(() => searchParams.get('autoMem') === '1')
   const [poem, setPoem] = useState<Poem | null>(null)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
   const [index, setIndex] = useState<PoemSummary[]>([])
@@ -148,11 +151,22 @@ export default function PoemDetail() {
   const prevPoem = currentIndex > 0 ? index[currentIndex - 1] : null
   const nextPoem = currentIndex < index.length - 1 ? index[currentIndex + 1] : null
 
-  const handleMemorized = useCallback((stars: number, charCount: number) => { if (poem) markMemorized(poem.id, stars, charCount) }, [poem?.id])
+  const handleMemorized = useCallback((stars: number, charCount: number) => {
+    if (!poem) return
+    markMemorized(poem.id, stars, charCount)
+    completePoem(poem.id)
+  }, [poem?.id, markMemorized, completePoem])
+
   const handleNext = useCallback(() => {
     setMemorizing(false)
-    navigate(nextPoem ? `/poem/${nextPoem.id}` : '/')
-  }, [nextPoem, navigate])
+    // 队列里下一首
+    const nextInQueue = queue[0]
+    if (nextInQueue) {
+      navigate(`/poem/${nextInQueue}?autoMem=1`)
+    } else {
+      navigate('/queue')
+    }
+  }, [queue, navigate])
 
   if (!poem) {
     return (
