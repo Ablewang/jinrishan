@@ -17,9 +17,9 @@ export default function App() {
         <Route path="/achievements" element={<AchievementsPage />} />
         <Route path="/progress" element={<ProgressPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/queue" element={<QueueScreen />} />
       </Route>
       <Route path="/poem/:id" element={<PoemDetail />} />
-      <Route path="/queue" element={<QueueScreen />} />
     </Routes>
   )
 }
