@@ -180,26 +180,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* 底部 Tab */}
-      <nav className="tab-bar">
-        <button className="tab-bar__item tab-bar__item--active">
-          <span className="tab-bar__icon">🏠</span>
-          <span>首页</span>
-        </button>
-        <button className="tab-bar__item" onClick={() => navigate('/poems')}>
-          <span className="tab-bar__icon">📚</span>
-          <span>诗集</span>
-        </button>
-        <button className="tab-bar__item" onClick={() => navigate('/achievements')}>
-          <span className="tab-bar__icon">🏆</span>
-          <span>成就</span>
-        </button>
-        <button className="tab-bar__item" onClick={() => navigate('/progress')}>
-          <span className="tab-bar__icon">📊</span>
-          <span>进度</span>
-        </button>
-      </nav>
-
       <style>{styles}</style>
     </div>
   )
@@ -587,33 +567,4 @@ const styles = `
     line-height: 1.7;
   }
   .queue-empty-text strong { color: var(--ink); font-weight: 600; }
-
-  /* ── 底部 Tab ── */
-  .tab-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    max-width: 480px;
-    margin: 0 auto;
-    display: flex;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    z-index: 100;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
-  }
-  .tab-bar__item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    padding: 8px 0;
-    font-size: 10px;
-    color: var(--ink-light);
-    transition: color 0.15s;
-  }
-  .tab-bar__item--active { color: #C62828; }
-  .tab-bar__item:active { opacity: 0.7; }
-  .tab-bar__icon { font-size: 20px; line-height: 1; }
 `
