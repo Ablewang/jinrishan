@@ -175,6 +175,7 @@ const styles = `
     display: flex;
     align-items: center;
     gap: 8px;
+    height: 28px;
   }
   .qs__clear-btn {
     margin-left: auto;
