@@ -43,7 +43,11 @@ const TABS = [
   { path: '/profile',     label: '我的', Icon: IconUser },
 ]
 
-export default function TabBar() {
+interface Props {
+  onProfileClick?: () => void
+}
+
+export default function TabBar({ onProfileClick }: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -55,7 +59,13 @@ export default function TabBar() {
           <button
             key={path}
             className={`tab-bar__item${active ? ' tab-bar__item--active' : ''}`}
-            onClick={() => navigate(path)}
+            onClick={() => {
+              if (path === '/profile') {
+                onProfileClick?.()
+              } else {
+                navigate(path)
+              }
+            }}
             aria-current={active ? 'page' : undefined}
           >
             <Icon active={active} />
