@@ -85,6 +85,11 @@ export default function ProfileSheet({ onClose }: Props) {
         .ps-overlay__backdrop {
           position: absolute; inset: 0;
           background: rgba(0,0,0,0.35);
+          animation: psBackdropIn 0.28s ease both;
+        }
+        @keyframes psBackdropIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
         .ps-overlay__sheet {
           position: relative; z-index: 1;
@@ -92,7 +97,8 @@ export default function ProfileSheet({ onClose }: Props) {
           border-radius: 24px 24px 0 0;
           padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px));
           max-width: 480px; width: 100%; margin: 0 auto;
-          animation: psSlideUp 0.28s cubic-bezier(0.32,0.72,0,1) both;
+          will-change: transform;
+          animation: psSlideUp 0.32s cubic-bezier(0.32,0.72,0,1) both;
         }
         @keyframes psSlideUp {
           from { transform: translateY(100%); }
