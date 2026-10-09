@@ -53,9 +53,11 @@ export default function QueueScreen() {
         </div>
 
         {queuePoems.length === 0 ? (
-          <div className="qs__queue-empty">还没有诗，从下方选择吧</div>
+          <div className="qs__queue-container">
+            <div className="qs__queue-empty">还没有诗，从下方选择吧</div>
+          </div>
         ) : (
-          <div className="qs__queue-list">
+          <div className="qs__queue-container qs__queue-list">
             {queuePoems.map((p, idx) => (
               <div key={p.id} className="qs__queue-item">
                 <div className="qs__queue-index">{idx === 0 ? '今' : idx + 1}</div>
@@ -188,9 +190,22 @@ const styles = `
     padding: 20px;
     font-size: var(--text-sm);
     color: var(--ink-light);
+  }
+  .qs__queue-container {
+    min-height: 68px;
     background: var(--surface);
     border-radius: 12px;
     border: 1.5px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .qs__queue-container.qs__queue-list {
+    border-style: solid;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
   }
   .qs__queue-list {
     display: flex;
