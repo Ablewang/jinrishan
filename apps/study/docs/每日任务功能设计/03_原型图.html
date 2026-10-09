@@ -1,0 +1,1252 @@
+<meta charset="utf-8">
+<title>每日任务系统原型</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@400;700&display=swap">
+
+<style>
+  /* ── 设计令牌 ── */
+  :root {
+    --red:        #C62828;
+    --red-light:  #FFEBEE;
+    --orange:     #E65100;
+    --orange-bg:  #FFF3E0;
+    --orange-mid: #FF8F00;
+    --green:      #2E7D32;
+    --green-bg:   #E8F5E9;
+    --gold:       #F9A825;
+    --ink:        #1A1A1A;
+    --ink-mid:    #555;
+    --ink-light:  #999;
+    --border:     #E8E0D8;
+    --bg:         #FAF7F4;
+    --surface:    #FFFFFF;
+    --shadow:     0 2px 12px rgba(0,0,0,0.08);
+
+    --font-brush: 'ZCOOL KuaiLe', 'Noto Serif SC', serif;
+    --font-ui:    -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink:       #F0EAE2;
+      --ink-mid:   #B8AFA6;
+      --ink-light: #7A7068;
+      --border:    #3A3530;
+      --bg:        #1A1714;
+      --surface:   #242018;
+      --red-light: #3B1010;
+      --orange-bg: #2A1E0A;
+      --green-bg:  #0D2010;
+      --shadow:    0 2px 12px rgba(0,0,0,0.3);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink:       #F0EAE2;
+    --ink-mid:   #B8AFA6;
+    --ink-light: #7A7068;
+    --border:    #3A3530;
+    --bg:        #1A1714;
+    --surface:   #242018;
+    --red-light: #3B1010;
+    --orange-bg: #2A1E0A;
+    --green-bg:  #0D2010;
+    --shadow:    0 2px 12px rgba(0,0,0,0.3);
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── 页面布局 ── */
+  .page-header {
+    background: var(--red);
+    color: #FFF8E1;
+    padding: 20px 20px 16px;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-family: var(--font-brush);
+    font-size: 1.4rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .page-header p {
+    font-size: 0.78rem;
+    opacity: 0.75;
+  }
+
+  /* ── 屏幕导航标签 ── */
+  .screen-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1.5px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .screen-tabs::-webkit-scrollbar { display: none; }
+  .screen-tab {
+    flex-shrink: 0;
+    padding: 12px 18px;
+    font-size: 0.82rem;
+    font-family: var(--font-ui);
+    color: var(--ink-light);
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .screen-tab.active {
+    color: var(--red);
+    border-bottom-color: var(--red);
+    font-weight: 600;
+  }
+
+  /* ── 手机框 ── */
+  .screens-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 40px;
+  }
+  .phone-frame {
+    width: 375px;
+    max-width: 100%;
+    background: var(--bg);
+    border-radius: 36px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 0 0 1.5px var(--border);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── 屏幕切换 ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── 通用 navbar ── */
+  .navbar {
+    background: var(--red);
+    padding: 14px 18px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .navbar-logo {
+    font-family: var(--font-brush);
+    font-size: 1.4rem;
+    color: #FFF8E1;
+    letter-spacing: 0.06em;
+  }
+  .navbar-sub {
+    font-size: 0.72rem;
+    color: rgba(255,248,225,0.7);
+  }
+  .navbar-back {
+    font-size: 0.82rem;
+    color: rgba(255,248,225,0.9);
+    background: rgba(255,255,255,0.15);
+    border-radius: 999px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  .navbar-title {
+    font-family: var(--font-brush);
+    font-size: 1.15rem;
+    color: #FFF8E1;
+  }
+
+  /* ══════════════════════════════
+     屏幕 1：首页 · 今日任务未完成
+  ══════════════════════════════ */
+  .task-banner {
+    margin: 14px 14px 0;
+    border-radius: 18px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .task-banner--pending {
+    background: var(--orange-bg);
+    border: 1.5px solid rgba(230,81,0,0.2);
+  }
+  .task-banner--done {
+    background: var(--green-bg);
+    border: 1.5px solid rgba(46,125,50,0.2);
+  }
+  .task-banner--setup {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+  }
+  .task-banner__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  .task-banner--pending .task-banner__label { color: var(--orange); }
+  .task-banner--done .task-banner__label { color: var(--green); }
+  .task-banner--setup .task-banner__label { color: var(--ink-light); }
+
+  .task-banner__title {
+    font-family: var(--font-brush);
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+  .task-banner--pending .task-banner__title { color: var(--orange); }
+  .task-banner--done .task-banner__title { color: var(--green); }
+  .task-banner--setup .task-banner__title { color: var(--ink-mid); }
+
+  .task-banner__poems {
+    font-size: 0.82rem;
+    color: var(--ink-mid);
+    margin-bottom: 12px;
+  }
+  .task-banner__poem-tag {
+    display: inline-block;
+    background: rgba(0,0,0,0.06);
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin-right: 6px;
+    font-family: var(--font-brush);
+    font-size: 0.85rem;
+  }
+
+  .week-dots {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  .week-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    color: var(--ink-light);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+  }
+  .week-dot--done {
+    background: var(--red);
+    border-color: var(--red);
+    color: #FFF8E1;
+  }
+  .week-dot--today {
+    border-color: var(--orange-mid);
+    color: var(--orange-mid);
+    font-weight: 700;
+  }
+  .week-dot--done-today {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+
+  .task-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: var(--font-brush);
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .task-btn:active { opacity: 0.85; transform: scale(0.98); }
+  .task-btn--primary {
+    background: var(--orange);
+    color: #FFF8E1;
+    box-shadow: 0 3px 10px rgba(230,81,0,0.3);
+  }
+  .task-btn--secondary {
+    background: transparent;
+    border: 1.5px solid var(--green);
+    color: var(--green);
+  }
+  .task-btn--setup {
+    background: var(--red);
+    color: #FFF8E1;
+    box-shadow: 0 3px 10px rgba(198,40,40,0.25);
+  }
+
+  .done-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .done-stat { display: flex; flex-direction: column; }
+  .done-stat__num {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .done-stat__label { font-size: 0.65rem; color: var(--ink-light); margin-top: 2px; }
+
+  /* 进度条 */
+  .progress-card {
+    margin: 10px 14px 0;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--border);
+  }
+  .progress-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .progress-label { font-size: 0.75rem; color: var(--ink-light); }
+  .progress-num { font-size: 1.05rem; font-weight: 700; color: var(--red); font-variant-numeric: tabular-nums; }
+  .progress-total { font-size: 0.75rem; color: var(--ink-light); }
+  .progress-pct { margin-left: auto; font-size: 0.75rem; font-weight: 700; color: var(--red); }
+  .progress-bar {
+    height: 7px;
+    background: #F5EDE8;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), #F59E0B);
+    border-radius: 999px;
+  }
+
+  /* 诗词网格 */
+  .section-head {
+    padding: 14px 14px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-head__title {
+    font-family: var(--font-brush);
+    font-size: 1rem;
+    color: var(--ink);
+  }
+  .section-head__filters {
+    display: flex;
+    gap: 6px;
+  }
+  .filter-pill {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    border: 1.5px solid var(--border);
+    color: var(--ink-light);
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .filter-pill--active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #FFF8E1;
+  }
+  .poem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 14px 20px;
+  }
+  .poem-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .poem-card:active { transform: scale(0.97); }
+  .poem-card--memorized { border-left: 3px solid var(--red); }
+  .poem-card__title {
+    font-family: var(--font-brush);
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .poem-card__author {
+    font-size: 0.65rem;
+    color: var(--ink-light);
+    margin-bottom: 8px;
+  }
+  .poem-card__line {
+    font-size: 0.72rem;
+    color: var(--ink-mid);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .poem-card__badge {
+    margin-top: 8px;
+    display: inline-block;
+    font-size: 0.6rem;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--red-light);
+    color: var(--red);
+  }
+
+  /* ══════════════════════════════
+     屏幕 4：里程碑奖励卡
+  ══════════════════════════════ */
+  .milestone-overlay {
+    background: linear-gradient(160deg, #1A0A0A 0%, #2D1010 100%);
+    min-height: 680px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 18px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .milestone-confetti {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    border-radius: 2px;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(700px) rotate(720deg); opacity: 0; }
+  }
+  .milestone-badge {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #F9D171, #E8A000);
+    box-shadow: 0 0 40px rgba(249,209,113,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    margin-bottom: 16px;
+    margin-top: 20px;
+    animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes badgePop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .milestone-congrats {
+    font-family: var(--font-brush);
+    font-size: 1.6rem;
+    color: #F9D171;
+    text-align: center;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(249,209,113,0.3);
+  }
+  .milestone-sub {
+    font-size: 0.82rem;
+    color: rgba(255,248,225,0.7);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .poet-card {
+    background: #FFF8F0;
+    border-radius: 20px;
+    overflow: hidden;
+    width: 100%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .poet-card__header {
+    background: var(--red);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .poet-card__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,248,225,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+  .poet-card__name {
+    font-family: var(--font-brush);
+    font-size: 1.5rem;
+    color: #FFF8E1;
+    margin-bottom: 2px;
+  }
+  .poet-card__era {
+    font-size: 0.72rem;
+    color: rgba(255,248,225,0.75);
+  }
+  .poet-card__body {
+    padding: 16px 18px;
+  }
+  .poet-card__text {
+    font-size: 0.88rem;
+    color: #3A2010;
+    line-height: 1.8;
+  }
+  .poet-card__poems {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .poet-card__poem-tag {
+    background: var(--red-light);
+    color: var(--red);
+    font-family: var(--font-brush);
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .milestone-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 18px;
+  }
+  .milestone-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: 12px;
+    font-family: var(--font-brush);
+    font-size: 0.95rem;
+    text-align: center;
+    cursor: pointer;
+  }
+  .milestone-btn--save {
+    background: #F9D171;
+    color: #3A2010;
+  }
+  .milestone-btn--continue {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,248,225,0.9);
+    border: 1.5px solid rgba(255,248,225,0.25);
+  }
+
+  /* ══════════════════════════════
+     屏幕 5：进度页（带里程碑预览）
+  ══════════════════════════════ */
+  .milestone-track {
+    margin: 12px 14px 0;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .milestone-track__title {
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    margin-bottom: 12px;
+  }
+  .milestone-steps {
+    position: relative;
+    padding: 0 4px;
+  }
+  .milestone-line {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    right: 18px;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .milestone-line__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), #F59E0B);
+    width: 22%;
+  }
+  .milestone-nodes {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+  .milestone-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+  }
+  .milestone-node__dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+  .milestone-node--done .milestone-node__dot {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+  .milestone-node--next .milestone-node__dot {
+    border-color: var(--orange-mid);
+    color: var(--orange-mid);
+  }
+  .milestone-node__num {
+    font-size: 0.6rem;
+    color: var(--ink-light);
+    font-variant-numeric: tabular-nums;
+  }
+  .milestone-node__label {
+    font-size: 0.6rem;
+    color: var(--ink-light);
+    text-align: center;
+    max-width: 50px;
+  }
+  .milestone-node--done .milestone-node__label { color: var(--red); }
+  .milestone-next-hint {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--orange);
+  }
+
+  /* ══ 注释标注 ══ */
+  .annotation {
+    background: #FFF9C4;
+    border-left: 3px solid #F9A825;
+    border-radius: 0 8px 8px 0;
+    padding: 8px 12px;
+    margin: 10px 14px 0;
+    font-size: 0.72rem;
+    color: #5D4037;
+    line-height: 1.5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .annotation {
+      background: #2A2000;
+      color: #D4C060;
+      border-left-color: #F9A825;
+    }
+  }
+  :root[data-theme="dark"] .annotation {
+    background: #2A2000;
+    color: #D4C060;
+    border-left-color: #F9A825;
+  }
+
+  /* ══ 说明区 ══ */
+  .desc-section {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 0 16px 48px;
+  }
+  .desc-section h2 {
+    font-family: var(--font-brush);
+    font-size: 1.1rem;
+    color: var(--red);
+    margin: 28px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .spec-table th {
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--red-light);
+    color: var(--red);
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+  .spec-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-mid);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+  .tag--orange { background: var(--orange-bg); color: var(--orange); }
+  .tag--green { background: var(--green-bg); color: var(--green); }
+  .tag--red { background: var(--red-light); color: var(--red); }
+  .tag--gray { background: var(--border); color: var(--ink-light); }
+</style>
+
+<!-- ── 页面标题 ── -->
+<header class="page-header">
+  <h1>每日任务系统 · 交互原型</h1>
+  <p>古诗小课堂 P1 功能 · 设计评审稿 · 2026-10-08</p>
+</header>
+
+<!-- ── 屏幕标签导航 ── -->
+<nav class="screen-tabs" role="tablist">
+  <button class="screen-tab active" onclick="showScreen(0)" role="tab">① 首页·有诗未背</button>
+  <button class="screen-tab" onclick="showScreen(1)" role="tab">② 首页·今日已完成</button>
+  <button class="screen-tab" onclick="showScreen(2)" role="tab">③ 首页·队列为空</button>
+  <button class="screen-tab" onclick="showScreen(3)" role="tab">④ 队列管理页</button>
+  <button class="screen-tab" onclick="showScreen(4)" role="tab">⑤ 里程碑奖励卡</button>
+  <button class="screen-tab" onclick="showScreen(5)" role="tab">⑥ 进度页</button>
+</nav>
+
+<!-- ── 手机原型框 ── -->
+<div class="screens-wrap">
+  <div class="phone-frame">
+
+    <!-- 屏幕1：首页·有诗未背（状态A） -->
+    <div class="screen active" id="screen-0">
+      <div class="navbar">
+        <span class="navbar-logo">古诗小课堂</span>
+        <span class="navbar-sub">小学必背70首</span>
+        <span style="margin-left:auto;font-size:0.75rem;color:rgba(255,248,225,0.9);background:rgba(255,255,255,0.18);border-radius:999px;padding:4px 10px;cursor:pointer">管理</span>
+      </div>
+
+      <!-- 今日任务卡·状态A：队列有诗，今日未完成 -->
+      <div class="task-banner task-banner--pending">
+        <div class="task-banner__label">今日待背</div>
+        <div class="task-banner__title" style="font-size:1.5rem">《静夜思》</div>
+        <div class="task-banner__poems" style="margin-bottom:4px">唐 · 李白</div>
+        <div style="font-size:0.75rem;color:var(--ink-mid);margin-bottom:12px">📋 队列还有 3 首</div>
+        <button class="task-btn task-btn--primary">开始背诵 →</button>
+      </div>
+
+      <div class="annotation">设计注释：队首诗名大字展示，队列剩余数量让家长对进度有感知。点击直接进入背一背，不经过详情页。</div>
+
+      <!-- 累计进度 -->
+      <div class="progress-card">
+        <div class="progress-row">
+          <span class="progress-label">已背诵</span>
+          <span class="progress-num">23</span>
+          <span class="progress-total"> / 70 首</span>
+          <span class="progress-pct">33%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:33%"></div>
+        </div>
+      </div>
+
+      <!-- 诗词列表 -->
+      <div class="section-head">
+        <span class="section-head__title">全部古诗</span>
+        <div class="section-head__filters">
+          <span class="filter-pill filter-pill--active">全部</span>
+          <span class="filter-pill">唐</span>
+          <span class="filter-pill">宋</span>
+        </div>
+      </div>
+      <div class="poem-grid">
+        <div class="poem-card poem-card--memorized">
+          <div class="poem-card__title">静夜思</div>
+          <div class="poem-card__author">唐·李白</div>
+          <div class="poem-card__line">床前明月光，疑是地上霜</div>
+          <div class="poem-card__badge">已背诵</div>
+        </div>
+        <div class="poem-card poem-card--memorized">
+          <div class="poem-card__title">春晓</div>
+          <div class="poem-card__author">唐·孟浩然</div>
+          <div class="poem-card__line">春眠不觉晓，处处闻啼鸟</div>
+          <div class="poem-card__badge">今日任务</div>
+        </div>
+        <div class="poem-card">
+          <div class="poem-card__title">登鹳雀楼</div>
+          <div class="poem-card__author">唐·王之涣</div>
+          <div class="poem-card__line">白日依山尽，黄河入海流</div>
+        </div>
+        <div class="poem-card">
+          <div class="poem-card__title">咏鹅</div>
+          <div class="poem-card__author">唐·骆宾王</div>
+          <div class="poem-card__line">鹅鹅鹅，曲项向天歌</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 屏幕2：首页·已完成 -->
+    <div class="screen" id="screen-1">
+      <div class="navbar">
+        <span class="navbar-logo">古诗小课堂</span>
+        <span class="navbar-sub">小学必背70首</span>
+      </div>
+
+      <div class="task-banner task-banner--done">
+        <div class="task-banner__label">✓ 今天已背诵</div>
+        <div class="task-banner__title" style="font-size:1.3rem">《静夜思》背完了</div>
+        <div class="done-stats" style="margin-bottom:12px">
+          <div class="done-stat">
+            <span class="done-stat__num">24</span>
+            <span class="done-stat__label">累计已背</span>
+          </div>
+          <div class="done-stat">
+            <span class="done-stat__num">12</span>
+            <span class="done-stat__label">已坚持天数</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="task-btn task-btn--secondary" style="flex:1">继续背下一首</button>
+          <button class="task-btn" style="flex:1;background:transparent;border:1.5px solid var(--green);color:var(--green)">去看诗词列表</button>
+        </div>
+      </div>
+
+      <div class="annotation">设计注释：完成后卡片变绿，显示刚背完的诗名。「继续背下一首」为主引导，「去看诗词列表」为次要出口，不锁死用户。</div>
+
+      <div class="progress-card">
+        <div class="progress-row">
+          <span class="progress-label">已背诵</span>
+          <span class="progress-num">24</span>
+          <span class="progress-total"> / 70 首</span>
+          <span class="progress-pct">34%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:34%"></div>
+        </div>
+      </div>
+
+      <div class="poem-grid" style="margin-top:12px">
+        <div class="poem-card poem-card--memorized">
+          <div class="poem-card__title">静夜思</div>
+          <div class="poem-card__author">唐·李白</div>
+          <div class="poem-card__line">床前明月光，疑是地上霜</div>
+          <div class="poem-card__badge">已背诵</div>
+        </div>
+        <div class="poem-card poem-card--memorized">
+          <div class="poem-card__title">春晓</div>
+          <div class="poem-card__author">唐·孟浩然</div>
+          <div class="poem-card__line">春眠不觉晓，处处闻啼鸟</div>
+          <div class="poem-card__badge">已背诵</div>
+        </div>
+        <div class="poem-card">
+          <div class="poem-card__title">登鹳雀楼</div>
+          <div class="poem-card__author">唐·王之涣</div>
+          <div class="poem-card__line">白日依山尽，黄河入海流</div>
+        </div>
+        <div class="poem-card">
+          <div class="poem-card__title">咏鹅</div>
+          <div class="poem-card__author">唐·骆宾王</div>
+          <div class="poem-card__line">鹅鹅鹅，曲项向天歌</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 屏幕3：首页·队列为空（状态C） -->
+    <div class="screen" id="screen-2">
+      <div class="navbar">
+        <span class="navbar-logo">古诗小课堂</span>
+        <span class="navbar-sub">小学必背70首</span>
+        <span style="margin-left:auto;font-size:0.75rem;color:rgba(255,248,225,0.9);background:rgba(255,255,255,0.18);border-radius:999px;padding:4px 10px;cursor:pointer">管理</span>
+      </div>
+
+      <!-- 今日任务卡·状态C：队列为空 -->
+      <div class="task-banner task-banner--setup" style="border-style:dashed">
+        <div class="task-banner__label" style="color:var(--ink-light)">待背队列</div>
+        <div class="task-banner__title" style="color:var(--ink-mid);font-size:1rem;margin-bottom:6px">队列里还没有诗</div>
+        <div class="task-banner__poems" style="margin-bottom:12px">去挑几首，明天就能开始了</div>
+        <button class="task-btn task-btn--setup">去挑诗 →</button>
+      </div>
+
+      <div class="annotation">设计注释：队列为空时，卡片用虚线边框、中性色，弱提示而非强警告。语气轻松引导，不造成压迫感。</div>
+
+      <div class="progress-card">
+        <div class="progress-row">
+          <span class="progress-label">已背诵</span>
+          <span class="progress-num">3</span>
+          <span class="progress-total"> / 70 首</span>
+          <span class="progress-pct">4%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:4%"></div>
+        </div>
+      </div>
+
+      <div class="poem-grid" style="margin-top:12px">
+        <div class="poem-card poem-card--memorized">
+          <div class="poem-card__title">静夜思</div>
+          <div class="poem-card__author">唐·李白</div>
+          <div class="poem-card__line">床前明月光，疑是地上霜</div>
+          <div class="poem-card__badge">已背诵</div>
+        </div>
+        <div class="poem-card">
+          <div class="poem-card__title">春晓</div>
+          <div class="poem-card__author">唐·孟浩然</div>
+          <div class="poem-card__line">春眠不觉晓，处处闻啼鸟</div>
+        </div>
+        <div class="poem-card">
+          <div class="poem-card__title">登鹳雀楼</div>
+          <div class="poem-card__author">唐·王之涣</div>
+          <div class="poem-card__line">白日依山尽，黄河入海流</div>
+        </div>
+        <div class="poem-card">
+          <div class="poem-card__title">咏鹅</div>
+          <div class="poem-card__author">唐·骆宾王</div>
+          <div class="poem-card__line">鹅鹅鹅，曲项向天歌</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 屏幕4：队列管理页 -->
+    <div class="screen" id="screen-3">
+      <div class="navbar">
+        <span class="navbar-back">← 返回</span>
+        <span class="navbar-title">待背队列</span>
+      </div>
+
+      <div style="padding:12px 14px 0">
+        <!-- 当前队列 -->
+        <div style="font-size:0.72rem;color:var(--ink-light);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
+          <span>当前队列（3 首）</span>
+          <span style="color:var(--ink-light);font-size:0.68rem;cursor:pointer">清空队列</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+          <!-- 今日项 -->
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--red-light);border:1.5px solid var(--red);border-radius:10px">
+            <span style="color:var(--ink-light);font-size:1rem;cursor:grab">=</span>
+            <div style="flex:1">
+              <div style="font-family:var(--font-brush);font-size:0.95rem;color:var(--ink)">《静夜思》</div>
+              <div style="font-size:0.68rem;color:var(--ink-light);margin-top:1px">唐·李白</div>
+            </div>
+            <span style="font-size:0.65rem;background:var(--red);color:#FFF8E1;padding:2px 8px;border-radius:999px">今日</span>
+            <span style="color:var(--ink-light);cursor:pointer;font-size:1rem">✕</span>
+          </div>
+          <!-- 其他项 -->
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+            <span style="color:var(--ink-light);font-size:1rem;cursor:grab">=</span>
+            <div style="flex:1">
+              <div style="font-family:var(--font-brush);font-size:0.95rem;color:var(--ink)">《春晓》</div>
+              <div style="font-size:0.68rem;color:var(--ink-light);margin-top:1px">唐·孟浩然</div>
+            </div>
+            <span style="color:var(--ink-light);cursor:pointer;font-size:1rem">✕</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+            <span style="color:var(--ink-light);font-size:1rem;cursor:grab">=</span>
+            <div style="flex:1">
+              <div style="font-family:var(--font-brush);font-size:0.95rem;color:var(--ink)">《相思》</div>
+              <div style="font-size:0.68rem;color:var(--ink-light);margin-top:1px">唐·王维</div>
+            </div>
+            <span style="color:var(--ink-light);cursor:pointer;font-size:1rem">✕</span>
+          </div>
+        </div>
+
+        <!-- 搜索 + 添加 -->
+        <div style="font-size:0.72rem;color:var(--ink-light);margin-bottom:8px">添加到队列</div>
+        <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:0 12px;margin-bottom:10px">
+          <span style="font-size:0.85rem;color:var(--ink-light)">🔍</span>
+          <div style="flex:1;padding:9px 0;font-size:0.82rem;color:var(--ink-light)">搜索诗名或作者...</div>
+        </div>
+
+        <!-- 未背诵/已背诵 tab -->
+        <div style="display:flex;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px">
+          <div style="flex:1;padding:7px;text-align:center;background:var(--red);color:#FFF8E1;font-size:0.8rem">未背诵</div>
+          <div style="flex:1;padding:7px;text-align:center;background:transparent;color:var(--ink-light);font-size:0.8rem;cursor:pointer">已背诵</div>
+        </div>
+
+        <!-- 可添加诗列表 -->
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+            <div style="flex:1">
+              <div style="font-family:var(--font-brush);font-size:0.95rem;color:var(--ink)">《登鹳雀楼》</div>
+              <div style="font-size:0.68rem;color:var(--ink-light);margin-top:1px">唐·王之涣</div>
+            </div>
+            <span style="background:var(--red);color:#FFF8E1;border-radius:999px;padding:4px 12px;font-size:0.72rem;cursor:pointer">加入</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+            <div style="flex:1">
+              <div style="font-family:var(--font-brush);font-size:0.95rem;color:var(--ink)">《相思》</div>
+              <div style="font-size:0.68rem;color:var(--ink-light);margin-top:1px">唐·王维</div>
+            </div>
+            <span style="background:var(--surface);color:var(--ink-light);border-radius:999px;padding:4px 12px;font-size:0.72rem;border:1px solid var(--border)">已在队列</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+            <div style="flex:1">
+              <div style="font-family:var(--font-brush);font-size:0.95rem;color:var(--ink)">《江南》</div>
+              <div style="font-size:0.68rem;color:var(--ink-light);margin-top:1px">汉·乐府</div>
+            </div>
+            <span style="background:var(--red);color:#FFF8E1;border-radius:999px;padding:4px 12px;font-size:0.72rem;cursor:pointer">加入</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+            <div style="flex:1">
+              <div style="font-family:var(--font-brush);font-size:0.95rem;color:var(--ink)">《风》</div>
+              <div style="font-size:0.68rem;color:var(--ink-light);margin-top:1px">唐·李峤</div>
+            </div>
+            <span style="background:var(--red);color:#FFF8E1;border-radius:999px;padding:4px 12px;font-size:0.72rem;cursor:pointer">加入</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation" style="margin-top:12px">设计注释：未背诵/已背诵 tab 分栏，列表原始顺序不变。搜索框监听 compositionend 事件，中文输入法确认后再过滤，避免拼音阶段乱跳。已在队列的诗「加入」按钮变灰禁用。</div>
+    </div>
+
+    <!-- 屏幕5：里程碑奖励卡 -->
+    <div class="screen" id="screen-4">
+      <div class="milestone-overlay">
+        <!-- 彩色纸屑 -->
+        <div class="milestone-confetti" id="confetti"></div>
+
+        <div class="milestone-badge">🎖️</div>
+        <div class="milestone-congrats">解锁诗人故事！</div>
+        <div class="milestone-sub">你已经背了 5 首诗，太棒了！</div>
+
+        <div class="poet-card">
+          <div class="poet-card__header">
+            <div class="poet-card__avatar">🧙</div>
+            <div>
+              <div class="poet-card__name">李白</div>
+              <div class="poet-card__era">唐代 · 诗仙</div>
+            </div>
+          </div>
+          <div class="poet-card__body">
+            <div class="poet-card__text">
+              李白是唐朝最有名的诗人，人们叫他"诗仙"。他从小就爱读书，五岁就能背很多古诗。长大后，他喜欢到处旅行，爬高山、看大江，把看到的美丽景色写成了一首首诗。他写的诗想象力特别丰富，比如说月亮是他的好朋友，说瀑布像从天上掉下来的银河。他一生写了超过一千首诗，直到今天我们还在背呢！
+            </div>
+            <div class="poet-card__poems">
+              <span class="poet-card__poem-tag">静夜思</span>
+              <span class="poet-card__poem-tag">望庐山瀑布</span>
+              <span class="poet-card__poem-tag">赠汪伦</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="milestone-actions">
+          <button class="milestone-btn milestone-btn--save">保存故事卡</button>
+          <button class="milestone-btn milestone-btn--continue">继续背诗</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 屏幕6：进度页（里程碑轨道） -->
+    <div class="screen" id="screen-5">
+      <div class="navbar">
+        <span class="navbar-back">← 返回</span>
+        <span class="navbar-title">学习记录</span>
+      </div>
+
+      <!-- 四格统计 -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 14px 0;background:var(--surface);border-radius:14px;padding:14px 10px;border:1.5px solid var(--border);box-shadow:var(--shadow)">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:1.4rem;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums">23</span>
+          <span style="font-size:0.62rem;color:var(--ink-light);text-align:center">已背诵</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:1.4rem;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums">8</span>
+          <span style="font-size:0.62rem;color:var(--ink-light);text-align:center">无提示</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:1.4rem;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums">462</span>
+          <span style="font-size:0.62rem;color:var(--ink-light);text-align:center">累计字数</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:1.4rem;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums">3</span>
+          <span style="font-size:0.62rem;color:var(--ink-light);text-align:center">本周天数</span>
+        </div>
+      </div>
+
+      <div class="annotation">设计注释：统计格第四项从「连续天数」改为「本周天数」——同样的数字但语义不同，不会因为周一开始就归零。</div>
+
+      <!-- 里程碑轨道 -->
+      <div class="milestone-track">
+        <div class="milestone-track__title">解锁进度 · 诗人故事卡</div>
+        <div class="milestone-steps">
+          <div class="milestone-line">
+            <div class="milestone-line__fill"></div>
+          </div>
+          <div class="milestone-nodes">
+            <div class="milestone-node milestone-node--done">
+              <div class="milestone-node__dot">✓</div>
+              <div class="milestone-node__num">5首</div>
+              <div class="milestone-node__label">李白</div>
+            </div>
+            <div class="milestone-node milestone-node--next">
+              <div class="milestone-node__dot">→</div>
+              <div class="milestone-node__num">10首</div>
+              <div class="milestone-node__label">杜甫</div>
+            </div>
+            <div class="milestone-node">
+              <div class="milestone-node__dot">🔒</div>
+              <div class="milestone-node__num">20首</div>
+              <div class="milestone-node__label">苏轼</div>
+            </div>
+            <div class="milestone-node">
+              <div class="milestone-node__dot">🔒</div>
+              <div class="milestone-node__num">50首</div>
+              <div class="milestone-node__label">成就卡</div>
+            </div>
+          </div>
+        </div>
+        <div class="milestone-next-hint">还差 <strong>2 首</strong> 就能解锁「杜甫的故事」</div>
+      </div>
+
+      <div class="annotation">设计注释：里程碑轨道让孩子在背诗之前就知道下一个奖励在哪，维持向前动力。「还差X首」的计算提示很关键。</div>
+
+      <!-- 进度条 -->
+      <div class="progress-card">
+        <div class="progress-row">
+          <span class="progress-label">总进度</span>
+          <span class="progress-num">23</span>
+          <span class="progress-total"> / 70 首</span>
+          <span class="progress-pct">33%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:33%"></div>
+        </div>
+      </div>
+
+      <div style="height:28px"></div>
+    </div>
+
+  </div><!-- /phone-frame -->
+</div><!-- /screens-wrap -->
+
+<!-- ══ 设计说明 ══ -->
+<div class="desc-section">
+  <h2>关键设计决策说明</h2>
+  <div style="overflow-x:auto">
+    <table class="spec-table">
+      <thead>
+        <tr>
+          <th>决策点</th>
+          <th>方案</th>
+          <th>理由</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>激励主指标</td>
+          <td><span class="tag tag--red">累计首数</span></td>
+          <td>永远只增不减，断天数不影响，无归零压力</td>
+        </tr>
+        <tr>
+          <td>周维度辅助</td>
+          <td><span class="tag tag--orange">本周天数 7格</span></td>
+          <td>有连续感但每周重置，失败代价低</td>
+        </tr>
+        <tr>
+          <td>任务卡片颜色</td>
+          <td><span class="tag tag--orange">暖橙（未完成）</span> <span class="tag tag--green">暖绿（已完成）</span></td>
+          <td>橙色传达邀请感而非紧迫感；绿色是成就而非打卡</td>
+        </tr>
+        <tr>
+          <td>推荐来源</td>
+          <td><span class="tag tag--red">家长队列</span></td>
+          <td>家长自主添加，适配老师布置内容；系统不自动推荐</td>
+        </tr>
+        <tr>
+          <td>里程碑内容</td>
+          <td><span class="tag tag--red">诗人故事卡</span></td>
+          <td>奖励在「诗」的世界里，强化「背诗是有意思的」</td>
+        </tr>
+        <tr>
+          <td>里程碑可预期</td>
+          <td><span class="tag tag--orange">「还差X首」提示</span></td>
+          <td>让孩子提前知道下一个奖励，维持向前动力</td>
+        </tr>
+        <tr>
+          <td>断天数处理</td>
+          <td><span class="tag tag--green">温暖文案，不惩罚</span></td>
+          <td>横幅语气不变，不显示「昨天你没来」，降低流失</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>屏幕索引</h2>
+  <div style="overflow-x:auto">
+    <table class="spec-table">
+      <thead>
+        <tr><th>屏幕</th><th>场景</th><th>核心设计要点</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>①</td><td>首页·有诗未背</td><td>队首诗名大字、队列剩余数量感知、「开始背诵」主按钮</td></tr>
+        <tr><td>②</td><td>首页·今日已完成</td><td>暖绿卡片、「继续背下一首」次要按钮、不锁死</td></tr>
+        <tr><td>③</td><td>首页·队列为空</td><td>虚线边框弱提示、「去挑诗」引导，不阻断自由浏览</td></tr>
+        <tr><td>④</td><td>队列管理页</td><td>当前队列可删除、未背诵/已背诵 tab、搜索 IME 处理、已在队列禁用加入</td></tr>
+        <tr><td>⑤</td><td>里程碑奖励卡</td><td>全屏弹出，诗人故事图文卡，可保存重读</td></tr>
+        <tr><td>⑥</td><td>进度页</td><td>里程碑轨道、「还差X首」、本周天数替代连续天数</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>未完成内容（待配合内容团队）</h2>
+  <div style="overflow-x:auto">
+    <table class="spec-table">
+      <thead>
+        <tr><th>内容</th><th>规格</th><th>优先级</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>李白故事卡文案</td><td>300-400字，适合6-8岁，水墨风插图</td><td><span class="tag tag--red">P0</span></td></tr>
+        <tr><td>杜甫故事卡文案</td><td>同上</td><td><span class="tag tag--orange">P1</span></td></tr>
+        <tr><td>苏轼故事卡文案</td><td>同上</td><td><span class="tag tag--orange">P1</span></td></tr>
+        <tr><td>队列拖拽排序</td><td>长按拖拽调整队列顺序</td><td><span class="tag tag--orange">P1</span></td></tr>
+        <tr><td>久违回访文案</td><td>≤20字，温暖语气，4秒消失</td><td><span class="tag tag--orange">P1</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // 标签切换
+  function showScreen(idx) {
+    document.querySelectorAll('.screen').forEach((s, i) => {
+      s.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.screen-tab').forEach((t, i) => {
+      t.classList.toggle('active', i === idx);
+    });
+    // 里程碑屏幕生成纸屑
+    if (idx === 4) generateConfetti();
+  }
+
+  // 彩色纸屑
+  function generateConfetti() {
+    const container = document.getElementById('confetti');
+    container.innerHTML = '';
+    const colors = ['#C62828','#F9D171','#FF8F00','#2E7D32','#FFF8E1','#E91E63'];
+    for (let i = 0; i < 40; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const size = Math.random() * 6 + 4;
+      piece.style.cssText = `
+        width: ${size}px;
+        height: ${size * (Math.random() * 2 + 1)}px;
+        left: ${Math.random() * 100}%;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        animation-duration: ${Math.random() * 2 + 2}s;
+        animation-delay: ${Math.random() * 2}s;
+        opacity: ${Math.random() * 0.7 + 0.3};
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      `;
+      container.appendChild(piece);
+    }
+  }
+</script>

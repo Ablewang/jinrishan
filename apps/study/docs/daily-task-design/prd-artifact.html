@@ -1,0 +1,1009 @@
+<meta charset="utf-8">
+<title>每日任务系统 PRD</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@400;600;700&display=swap">
+
+<style>
+/* ── 设计令牌（宣纸·朱砂红主题，单列文档布局） ─────────────────── */
+:root {
+  --bg:          #FDFAF3;
+  --bg-surface:  #F7F2E5;
+  --bg-code:     #F0EBD8;
+  --ink:         #1E140A;
+  --ink-mid:     #5A3F28;
+  --ink-muted:   #9A7A56;
+  --border:      #DDD3BC;
+  --border-soft: #EDE7D5;
+  --accent:      #C43C1E;
+  --accent-soft: #FAE9E4;
+  --accent-dim:  #A03016;
+  --gold:        #C8890E;
+  --gold-soft:   #FDF6E0;
+  --green:       #3A7D52;
+  --green-soft:  #E5F2EB;
+  --tag-p0-bg:   #FAE9E4;
+  --tag-p0-fg:   #C43C1E;
+  --tag-p1-bg:   #FDF6E0;
+  --tag-p1-fg:   #C8890E;
+  --tag-p2-bg:   #EEF2FF;
+  --tag-p2-fg:   #4B5EAA;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:          #160E06;
+    --bg-surface:  #1F1509;
+    --bg-code:     #2A1C0C;
+    --ink:         #F2E8D4;
+    --ink-mid:     #BFA080;
+    --ink-muted:   #7A6040;
+    --border:      #3A2A18;
+    --border-soft: #2E2010;
+    --accent:      #D94F2B;
+    --accent-soft: #2A1005;
+    --accent-dim:  #E05A34;
+    --gold:        #D4981A;
+    --gold-soft:   #221800;
+    --green:       #4E9E6B;
+    --green-soft:  #0A1F12;
+    --tag-p0-bg:   #2A1005;
+    --tag-p0-fg:   #E0724F;
+    --tag-p1-bg:   #221800;
+    --tag-p1-fg:   #D4981A;
+    --tag-p2-bg:   #0C1030;
+    --tag-p2-fg:   #8090E0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:          #160E06;
+  --bg-surface:  #1F1509;
+  --bg-code:     #2A1C0C;
+  --ink:         #F2E8D4;
+  --ink-mid:     #BFA080;
+  --ink-muted:   #7A6040;
+  --border:      #3A2A18;
+  --border-soft: #2E2010;
+  --accent:      #D94F2B;
+  --accent-soft: #2A1005;
+  --accent-dim:  #E05A34;
+  --gold:        #D4981A;
+  --gold-soft:   #221800;
+  --green:       #4E9E6B;
+  --green-soft:  #0A1F12;
+  --tag-p0-bg:   #2A1005;
+  --tag-p0-fg:   #E0724F;
+  --tag-p1-bg:   #221800;
+  --tag-p1-fg:   #D4981A;
+  --tag-p2-bg:   #0C1030;
+  --tag-p2-fg:   #8090E0;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Serif SC', 'PingFang SC', 'Hiragino Mincho ProN', serif;
+  font-size: 15px;
+  line-height: 1.85;
+  padding-inline: 0;
+  padding-block: 0;
+}
+
+/* ── 顶部横幅 ─────────────────────────────────────────────── */
+.banner {
+  background: var(--accent);
+  color: white;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+}
+.banner-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.15rem;
+  letter-spacing: .06em;
+}
+.banner-meta {
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .78rem;
+  opacity: .75;
+  margin-left: auto;
+}
+
+/* ── 导航侧边栏 + 主内容布局 ─────────────────────────────── */
+.layout {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 32px;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sidebar-label {
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .72rem;
+  color: var(--ink-muted);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  padding-left: 10px;
+}
+.nav-link {
+  display: block;
+  padding: 5px 10px;
+  font-size: .82rem;
+  color: var(--ink-mid);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  transition: color .15s, border-color .15s, background .15s;
+  line-height: 1.4;
+}
+.nav-link:hover { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
+.nav-link.active { color: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+/* ── 主内容 ─────────────────────────────────────────────── */
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* ── 文档头 ─────────────────────────────────────────────── */
+.doc-head {
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 24px;
+}
+.doc-eyebrow {
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .78rem;
+  color: var(--accent);
+  letter-spacing: .1em;
+  margin-bottom: 8px;
+}
+.doc-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 2.2rem;
+  color: var(--ink);
+  text-wrap: balance;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.doc-meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font-size: .82rem;
+  color: var(--ink-muted);
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+}
+.doc-meta-grid strong { color: var(--ink-mid); }
+
+/* ── 章节 ─────────────────────────────────────────────── */
+.section { display: flex; flex-direction: column; gap: 20px; }
+.section-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.5rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 1.3em;
+  background: var(--accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.section-num {
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .72rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: .05em;
+}
+
+h3 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: -4px;
+}
+
+p {
+  color: var(--ink-mid);
+  max-width: 68ch;
+}
+
+strong { color: var(--ink); }
+
+/* ── 信息框 ─────────────────────────────────────────────── */
+.callout {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 16px;
+  font-size: .88rem;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+.callout-gold { border-left-color: var(--gold); background: var(--gold-soft); }
+.callout-green { border-left-color: var(--green); background: var(--green-soft); }
+
+/* ── 表格 ─────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+  min-width: 400px;
+}
+thead tr {
+  background: var(--bg-surface);
+  border-bottom: 2px solid var(--border);
+}
+th {
+  text-align: left;
+  padding: 9px 12px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .78rem;
+  color: var(--ink-muted);
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--ink-mid);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg-surface); }
+
+/* ── 优先级标签 ─────────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.tag-p0 { background: var(--tag-p0-bg); color: var(--tag-p0-fg); }
+.tag-p1 { background: var(--tag-p1-bg); color: var(--tag-p1-fg); }
+.tag-p2 { background: var(--tag-p2-bg); color: var(--tag-p2-fg); }
+
+/* ── 代码块 ─────────────────────────────────────────────── */
+pre {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: .8rem;
+  line-height: 1.65;
+  color: var(--ink-mid);
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+}
+code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: .82em;
+  background: var(--bg-code);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--accent);
+}
+pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+/* ── 验收条目 ─────────────────────────────────────────────── */
+.ac-group { display: flex; flex-direction: column; gap: 4px; }
+.ac-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: .88rem;
+  color: var(--ink-mid);
+  line-height: 1.6;
+}
+.ac-item:hover { background: var(--bg-surface); }
+.ac-box {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* ── 用户故事 ─────────────────────────────────────────────── */
+.story-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+}
+.story-id {
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .72rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 4px;
+  height: fit-content;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.story-text {
+  font-size: .88rem;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+.story-text .role { color: var(--ink); font-weight: 600; }
+.story-text .feat { color: var(--accent); }
+
+/* ── 状态卡片线框图 ─────────────────────────────────────────── */
+.wireframe {
+  background: var(--bg-surface);
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .82rem;
+  color: var(--ink-mid);
+  line-height: 1.8;
+}
+.wireframe-title {
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .75rem;
+  color: var(--ink-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wireframe-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── 功能清单 ─────────────────────────────────────────────── */
+.feature-list { display: flex; flex-direction: column; gap: 8px; }
+.feature-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+.feature-item .tag { margin-top: 1px; flex-shrink: 0; }
+.feature-item-text { color: var(--ink-mid); flex: 1; min-width: 0; }
+.feature-item-text strong { color: var(--ink); }
+
+/* ── 数据字段 ─────────────────────────────────────────────── */
+.field-table td:first-child {
+  font-family: 'SF Mono', monospace;
+  font-size: .8rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.field-table td:nth-child(2) {
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  color: var(--ink-muted);
+  font-size: .82rem;
+}
+
+/* ── 前提条件 ─────────────────────────────────────────────── */
+.prereq-list { display: flex; flex-direction: column; gap: 8px; }
+.prereq-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.prereq-num {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .82rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.prereq-text { font-size: .88rem; color: var(--ink-mid); line-height: 1.65; flex: 1; min-width: 0; }
+.prereq-text strong { color: var(--ink); }
+
+/* ── Out of scope 表格 ─────────────────────────────────────── */
+.oos-label {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: .75rem;
+  background: var(--bg-surface);
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* ── 响应式 ─────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .sidebar { display: none; }
+  .layout { padding-block: 20px; gap: 0; }
+  .doc-title { font-size: 1.6rem; }
+  .section-title { font-size: 1.25rem; }
+  .banner-meta { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<!-- 顶部横幅 -->
+<header class="banner">
+  <div class="banner-title">每日任务系统 · PRD</div>
+  <div class="banner-meta">v1.0 · 2026-10-08 · 基于五角色七轮讨论</div>
+</header>
+
+<div class="layout">
+  <!-- 导航侧栏 -->
+  <nav class="sidebar" aria-label="文档导航">
+    <div class="sidebar-label">目录</div>
+    <a class="nav-link" href="#sec-bg">1. 背景与目标</a>
+    <a class="nav-link" href="#sec-stories">2. 用户故事</a>
+    <a class="nav-link" href="#sec-design">3. 功能详细设计</a>
+    <a class="nav-link" href="#sec-data">4. 数据结构</a>
+    <a class="nav-link" href="#sec-notify">5. 通知策略</a>
+    <a class="nav-link" href="#sec-ac">6. 验收标准</a>
+    <a class="nav-link" href="#sec-oos">7. 不做什么</a>
+    <a class="nav-link" href="#sec-prereq">前置条件</a>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="content">
+
+    <!-- 文档头 -->
+    <div class="doc-head">
+      <div class="doc-eyebrow">产品需求文档 · 最终版</div>
+      <h1 class="doc-title">每日任务系统</h1>
+      <div class="doc-meta-grid">
+        <span><strong>版本</strong> v1.0</span>
+        <span><strong>日期</strong> 2026-10-08</span>
+        <span><strong>负责人</strong> 张总（PM）</span>
+        <span><strong>讨论参与</strong> 陈博士 · 小林 · 王妈妈 · 老李</span>
+      </div>
+    </div>
+
+    <!-- 1. 背景与目标 -->
+    <section class="section" id="sec-bg">
+      <h2 class="section-title"><span class="section-num">01</span>背景与目标</h2>
+
+      <div class="callout">
+        <strong>核心问题：</strong>当前产品像字典——用完即走。用户进来背一首诗，背完之后没有任何东西在等他们回来。
+      </div>
+
+      <h3>根因诊断（五角色一致认同）</h3>
+      <div class="feature-list">
+        <div class="feature-item" style="border-left: 3px solid var(--accent);">
+          <div class="feature-item-text">没有"今天该做什么"的明确锚点，首页是开放式内容库而非任务驱动界面</div>
+        </div>
+        <div class="feature-item" style="border-left: 3px solid var(--accent);">
+          <div class="feature-item-text">完成之后没有召回钩子，不回来没有任何损失</div>
+        </div>
+        <div class="feature-item" style="border-left: 3px solid var(--accent);">
+          <div class="feature-item-text">进度数字"已背 X 首"对 6-8 岁孩子没有情绪意义，数字不等于动力</div>
+        </div>
+        <div class="feature-item" style="border-left: 3px solid var(--accent);">
+          <div class="feature-item-text">缺少完成感的积累——字典是查完即走的工具，没有时间维度</div>
+        </div>
+      </div>
+
+      <h3>量化目标</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>指标</th><th>现状（估算）</th><th>v1 目标</th></tr></thead>
+          <tbody>
+            <tr><td>次日留存率</td><td style="color:var(--accent)">&lt; 15%</td><td><strong style="color:var(--green);">&gt; 40%</strong></td></tr>
+            <tr><td>7 日留存率</td><td style="color:var(--accent)">&lt; 5%</td><td><strong style="color:var(--green);">&gt; 20%</strong></td></tr>
+            <tr><td>当日打开后任务完成率</td><td>—</td><td><strong style="color:var(--green);">&gt; 60%</strong></td></tr>
+            <tr><td>坚持 7 天以上用户占比</td><td>—</td><td><strong style="color:var(--green);">&gt; 15%</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>设计原则（全员共识）</h3>
+      <div class="feature-list">
+        <div class="feature-item"><div class="feature-item-text"><strong>任务要小，要必定完成</strong>：每天一首，5 分钟内完成，不能让孩子有失败体验</div></div>
+        <div class="feature-item"><div class="feature-item-text"><strong>即时可见的成就积累</strong>：完成瞬间要有视觉 + 听觉爆发，延迟满足对 6-8 岁无效</div></div>
+        <div class="feature-item"><div class="feature-item-text"><strong>不惩罚，不归零</strong>：断掉不清空，用温暖语言召回，不能给孩子和家长制造焦虑</div></div>
+        <div class="feature-item"><div class="feature-item-text"><strong>奖励服务于学习本身</strong>：撒花、连续天数是"我又背了一首诗"的放大器，不能反客为主</div></div>
+      </div>
+    </section>
+
+    <!-- 2. 用户故事 -->
+    <section class="section" id="sec-stories">
+      <h2 class="section-title"><span class="section-num">02</span>用户故事</h2>
+
+      <h3>主要用户：6-8 岁孩子</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="story-card">
+          <span class="story-id">US-01</span>
+          <div class="story-text">作为一个 <span class="role">6 岁的孩子</span>，我希望<span class="feat">打开 app 就能看到今天要背哪首诗</span>，以便不需要自己想或者问家长，直接开始就好。</div>
+        </div>
+        <div class="story-card">
+          <span class="story-id">US-02</span>
+          <div class="story-text">作为一个<span class="role">正在背诗的孩子</span>，我希望<span class="feat">背完诗的那一刻有撒花和音效</span>，以便感受到"我做到了"的成就感。</div>
+        </div>
+        <div class="story-card">
+          <span class="story-id">US-03</span>
+          <div class="story-text">作为一个<span class="role">连续背了几天诗的孩子</span>，我希望<span class="feat">看到"已坚持 X 天"的数字每天长大</span>，以便有继续回来的动力。</div>
+        </div>
+        <div class="story-card">
+          <span class="story-id">US-04</span>
+          <div class="story-text">作为一个<span class="role">昨天没背诗的孩子</span>，我希望<span class="feat">今天打开 app 时看到温暖的欢迎提示而不是惩罚</span>，以便不会因为"断了"就彻底放弃。</div>
+        </div>
+        <div class="story-card">
+          <span class="story-id">US-05</span>
+          <div class="story-text">作为一个<span class="role">刚背完诗的孩子</span>，我希望<span class="feat">能看到整首诗的全文</span>，以便叫家长来听我背一遍。</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:8px;">次要用户：家长</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="story-card">
+          <span class="story-id">US-06</span>
+          <div class="story-text">作为一个<span class="role">家长</span>，我希望<span class="feat">只需一次性设置孩子的年级</span>，以便之后系统自动推荐合适的诗，不需要我每天操心。</div>
+        </div>
+        <div class="story-card">
+          <span class="story-id">US-07</span>
+          <div class="story-text">作为一个<span class="role">家长</span>，我希望<span class="feat">首页今日任务够显眼、够明确</span>，以便孩子自己打开 app 就知道该做什么，我不需要全程陪同。</div>
+        </div>
+        <div class="story-card">
+          <span class="story-id">US-08</span>
+          <div class="story-text">作为一个<span class="role">家长</span>，我希望<span class="feat">孩子背完后有"已完成"的视觉状态</span>，以便偶尔瞥一眼就知道孩子今天做了没有。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 功能详细设计 -->
+    <section class="section" id="sec-design">
+      <h2 class="section-title"><span class="section-num">03</span>功能详细设计</h2>
+
+      <h3>3.1 首页改版</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0;">
+        <div>
+          <div class="wireframe-title">改版前（现状）</div>
+          <div class="wireframe" style="opacity:.6;">
+            顶栏<br>
+            进度条（已背 X / 70）<br>
+            筛选标签<br>
+            诗词卡片列表（主内容）
+          </div>
+        </div>
+        <div>
+          <div class="wireframe-title">改版后</div>
+          <div class="wireframe">
+            顶栏（保留）<br>
+            <strong style="color:var(--accent);">今日任务卡片（新增，约 55-60% 屏高）</strong><br>
+            ─ 分隔线 + "全部古诗"<br>
+            诗词卡片列表（降级）
+          </div>
+        </div>
+      </div>
+
+      <h3>3.2 今日任务卡片</h3>
+
+      <div class="wireframe-title">状态 A：今日任务未完成</div>
+      <div class="wireframe">
+        ┌─────────────────────────────────────────┐<br>
+        │ [角色图标] &nbsp;小诗人，李白在等你！&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;《静夜思》&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;唐 · 李白&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;李白写的，想念故乡的夜晚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ 开始今天的诗 → ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;🕯 已坚持 12 天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        └─────────────────────────────────────────┘
+      </div>
+
+      <div class="table-wrap" style="margin-top:-8px;">
+        <table>
+          <thead><tr><th>元素</th><th>规格</th></tr></thead>
+          <tbody>
+            <tr><td>邀请文案</td><td>ZCOOL KuaiLe，0.92rem，<code>--ink-light</code>；格式："小诗人，[诗人名]在等你！"</td></tr>
+            <tr><td>诗名</td><td>Ma Shan Zheng，2rem，<code>--ink</code>，居中</td></tr>
+            <tr><td>作者行</td><td>Noto Serif SC，0.82rem，<code>--ink-muted</code>，居中</td></tr>
+            <tr><td>15字背景介绍</td><td>ZCOOL KuaiLe，0.85rem，<code>--ink-light</code>，居中，斜体</td></tr>
+            <tr><td>开始按钮</td><td>朱砂红（<code>--accent</code>），圆角胶囊（border-radius:999px），宽100%，高50px</td></tr>
+            <tr><td>Streak</td><td>卡片底部左侧，0.84rem，天数数字用 <code>--accent</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wireframe-title">状态 B：今日任务已完成</div>
+      <div class="wireframe">
+        ┌─────────────────────────────────────────┐<br>
+        │ [角色图标·庆祝] &nbsp;太棒了！&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;《静夜思》今天背完啦！&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✓ 今天已完成，明天继续&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;🕯 已坚持 13 天&nbsp;&nbsp;<strong>+1</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        └─────────────────────────────────────────┘
+      </div>
+      <div class="callout" style="margin-top:-8px;">
+        卡片边框颜色切换为 <code>--green</code>（0.3s CSS transition）；streak 数字有弹跳放大动画（scale 1→1.5→0.9→1，0.45s）；"+1" 有 fadeUp 动画，2s 后淡出。
+      </div>
+
+      <div class="wireframe-title">状态 C：久违回访（昨日和今日均未完成）</div>
+      <div class="wireframe">
+        ┌─────────────────────────────────────────┐<br>
+        │ ✨ 好久不见，继续出发！&nbsp;&nbsp;&nbsp;&nbsp;← 4 秒后消失 │<br>
+        ├─────────────────────────────────────────┤<br>
+        │ （状态 A 卡片正常内容）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        └─────────────────────────────────────────┘
+      </div>
+      <div class="callout callout-gold" style="margin-top:-8px;">
+        触发条件：<code>last_complete_date</code> 不是今天也不是昨天。横幅背景 <code>--gold-soft</code>，border <code>--gold</code>，slideDown 进入动画，4 秒后 fadeOut，点击任意处也消失。不弹窗，不打断流程。
+      </div>
+
+      <div class="wireframe-title">状态 D：首次使用（grade 未设置）</div>
+      <div class="wireframe">
+        ┌─────────────────────────────────────────┐<br>
+        │ 欢迎来到每日诗词！&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │ 先告诉我你在几年级？&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;[ 一年级 · 从简单的开始 ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        │&nbsp;&nbsp;&nbsp;[ 二年级 · 稍难一些&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        └─────────────────────────────────────────┘
+      </div>
+
+      <h3>3.3 今日推荐逻辑</h3>
+      <pre>function getTodayPoem(grade) {
+  const poemList = POEM_LIST[grade];        // 按难度排序的诗目数组
+  const startDate = storage.get('daily_task.start_date');
+  const today     = getTodayStr();          // "YYYY-MM-DD"
+  const dayIndex  = diffDays(startDate, today);  // 今天是第几天（从0开始）
+  const idx       = dayIndex % poemList.length;  // 跑完后复习循环
+  return poemList[idx];
+}</pre>
+      <div class="callout">
+        <strong>规则：</strong>每天自动推进一首，以 <code>start_date</code> 为 Day 0。当天完成或未完成，第二天均推进到下一首（不补昨天的诗）。年级切换后 <code>start_date</code> 重置，从新年级第一首重新推进。
+      </div>
+
+      <h3>前 7 首固定顺序（P0 硬编码，两年级共用）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>诗名</th><th>作者</th><th>背景介绍（≤15字）</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>静夜思</td><td>唐·李白</td><td>李白写的，想念故乡的夜晚</td></tr>
+            <tr><td>2</td><td>咏鹅</td><td>唐·骆宾王</td><td>骆宾王7岁写的，夸大白鹅</td></tr>
+            <tr><td>3</td><td>春晓</td><td>唐·孟浩然</td><td>孟浩然春天睡醒后写的</td></tr>
+            <tr><td>4</td><td>锄禾</td><td>唐·李绅</td><td>提醒我们珍惜每粒粮食</td></tr>
+            <tr><td>5</td><td>登鹳雀楼</td><td>唐·王之涣</td><td>爬高楼看更远的风景</td></tr>
+            <tr><td>6</td><td>相思</td><td>唐·王维</td><td>王维送给远方朋友的礼物</td></tr>
+            <tr><td>7</td><td>江南</td><td>汉乐府</td><td>很久很久以前人们采莲的歌</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.82rem;color:var(--ink-muted);margin-top:4px;">第 8-20 首由陈博士提供难度排序后补入配置，属上线前置条件。</p>
+
+      <h3>3.4 Streak（坚持天数）机制</h3>
+      <pre>function updateStreak() {
+  const data  = loadDailyTask();
+  const today = getTodayStr();
+  if (data.last_complete_date === today) return; // 当天已计算，跳过
+  data.streak_count += 1;
+  data.last_complete_date = today;
+  data.today_complete = true;
+  saveDailyTask(data);
+}</pre>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>情况</th><th>展示文案</th></tr></thead>
+          <tbody>
+            <tr><td>streak_count === 0</td><td>今天开始第一天！</td></tr>
+            <tr><td>streak_count &gt; 0</td><td>已坚持 N 天</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout-green" style="margin-top:4px;">
+        <strong>不做：</strong>不清零、不归零、不显示"连续天数已中断"等惩罚性文案。v1 统一用累计天数，文案用"已坚持"而非"连续"。
+      </div>
+
+      <h3>3.5 年级设置</h3>
+      <p>入口：顶栏右侧设置图标，点击弹出底部面板（bottom sheet，sheetUp 动画 0.28s）。</p>
+      <div class="wireframe" style="margin-top:4px;">
+        ─────────────────────────<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;选择年级<br>
+        &nbsp;&nbsp;孩子现在在几年级？<br>
+        ─────────────────────────<br>
+        &nbsp;[ 一年级·从简单的开始 ] &nbsp;[ 二年级·稍难一些 ]<br>
+        ─────────────────────────<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ 确认 ]<br>
+        ─────────────────────────
+      </div>
+      <p style="margin-top:8px;font-size:.88rem;">点击遮罩层关闭面板，年级不变。确认后 <code>start_date</code> 重置，<code>day_index</code> 从 0 重算。</p>
+
+      <h3>3.6 背一背完成后流程</h3>
+      <div class="feature-list">
+        <div class="feature-item"><span class="tag tag-p0">第1步</span><div class="feature-item-text"><strong>撒花动画</strong>（现有功能保留）：全屏彩色纸屑，持续约 2.5s</div></div>
+        <div class="feature-item"><span class="tag tag-p0">第2步</span><div class="feature-item-text"><strong>更新 localStorage</strong>：标记 <code>today_complete = true</code>，<code>streak_count +1</code>，<code>last_complete_date = today</code></div></div>
+        <div class="feature-item"><span class="tag tag-p0">第3步</span><div class="feature-item-text"><strong>展示完整诗文 + "背给家长听"提示</strong>（静态界面）：完整诗句 + "背给家长听一遍吧！"文字 + "回首页"按钮</div></div>
+        <div class="feature-item"><span class="tag tag-p0">第4步</span><div class="feature-item-text"><strong>点击"回首页"</strong>：跳转首页，首页显示状态 B（已完成）</div></div>
+      </div>
+    </section>
+
+    <!-- 4. 数据结构 -->
+    <section class="section" id="sec-data">
+      <h2 class="section-title"><span class="section-num">04</span>数据结构设计</h2>
+      <p>所有数据存储于 <code>localStorage</code>，key 为 <code>poem_app_data</code>，value 为 JSON 字符串。</p>
+
+      <h3>完整结构</h3>
+      <pre>{
+  "daily_task": {
+    "grade": 1,                         // 年级，1 或 2；未设置为 null
+    "start_date": "2026-10-01",         // 首次使用日期，计算 dayIndex 用
+    "streak_count": 12,                 // 累计坚持天数，只增不减
+    "last_complete_date": "2026-10-07", // 最后完成日期，判断今日是否已完成
+    "today_complete": false             // 当日完成状态，跨日后自动重置
+  },
+  "poem_progress": {
+    "jing-ye-si": {
+      "read": true,
+      "memorized": true,
+      "memorized_date": "2026-10-01"
+    }
+  }
+}</pre>
+
+      <h3>字段说明</h3>
+      <div class="table-wrap">
+        <table class="field-table">
+          <thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>grade</td><td>number | null</td><td>年级，1 或 2；未设置为 null</td></tr>
+            <tr><td>start_date</td><td>string</td><td>"YYYY-MM-DD"；用于计算今日推荐序号</td></tr>
+            <tr><td>streak_count</td><td>number</td><td>累计坚持天数，只增不减，初始为 0</td></tr>
+            <tr><td>last_complete_date</td><td>string | null</td><td>最后完成任务日期；用于判断今日是否已完成</td></tr>
+            <tr><td>today_complete</td><td>boolean</td><td>当日完成状态；日期变化时自动重置为 false</td></tr>
+            <tr><td>poem_progress[key]</td><td>object</td><td>key 为诗的拼音 slug，如 "jing-ye-si"</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>初始化逻辑</h3>
+      <pre>function loadDailyTask() {
+  try {
+    const raw = localStorage.getItem('poem_app_data');
+    if (!raw) return getDefaultData();
+    const data = JSON.parse(raw);
+    // 跨日重置 today_complete（注意：streak_count 不变）
+    if (data.daily_task.last_complete_date !== getTodayStr()) {
+      data.daily_task.today_complete = false;
+    }
+    return data;
+  } catch (e) {
+    return getDefaultData(); // JSON 解析失败时重新初始化
+  }
+}
+
+function saveDailyTask(data) {
+  try {
+    localStorage.setItem('poem_app_data', JSON.stringify(data));
+  } catch (e) {
+    console.warn('localStorage write failed', e); // 私人浏览模式下静默降级
+  }
+}</pre>
+
+      <div class="callout" style="border-left-color: var(--gold);">
+        <strong>已知局限（v1 接受的技术债）：</strong>换设备或清除浏览器缓存后，所有进度丢失，从头开始。解决需账号体系，v1 不处理。建议在首次使用引导时展示一行小字："建议固定在同一台设备使用"。
+      </div>
+    </section>
+
+    <!-- 5. 通知策略 -->
+    <section class="section" id="sec-notify">
+      <h2 class="section-title"><span class="section-num">05</span>通知策略</h2>
+
+      <div class="callout callout-green">
+        <strong>v1 结论：不做推送通知。</strong>iOS Safari 对 PWA 通知的真实用户授权率低于 20%，把留存押注在大多数用户会拒绝的权限上是设计失败（老李 + 王妈妈联合判断，张总裁定）。
+      </div>
+
+      <h3>v1 降级方案</h3>
+      <p>用<strong>首屏显眼性</strong>替代推送——即"打开就是正确的行为提示"：</p>
+      <div class="feature-list">
+        <div class="feature-item"><div class="feature-item-text">今日任务卡片占首屏 55-60%，进入 app 第一眼就是今日任务</div></div>
+        <div class="feature-item"><div class="feature-item-text">完成第一次任务后，展示静态文字引导：<br><em style="color:var(--ink-muted);">"小贴士：每天固定时间背一首，效果最好！可以在手机时钟里设一个每天的小提醒"</em></div></div>
+      </div>
+
+      <h3>v2 规划（有数据后决策）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>项目</th><th>规格</th></tr></thead>
+          <tbody>
+            <tr><td>授权触发时机</td><td>孩子完成第一次任务后，先体验到价值再引导</td></tr>
+            <tr><td>控制权</td><td>家长可设置推送时间段（如每天 18:00-19:00）</td></tr>
+            <tr><td>默认</td><td>关闭，不主动请求权限</td></tr>
+            <tr><td>授权文案</td><td>"要不要每天提醒来背诗？"</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. 验收标准 -->
+    <section class="section" id="sec-ac">
+      <h2 class="section-title"><span class="section-num">06</span>验收标准</h2>
+
+      <h3>AC-01：首页今日任务卡片显示</h3>
+      <div class="ac-group">
+        <div class="ac-item"><div class="ac-box"></div>打开 app，首屏可见今日任务卡片（不需要滚动）</div>
+        <div class="ac-item"><div class="ac-box"></div>卡片展示今日推荐诗的诗名、作者、15 字背景介绍</div>
+        <div class="ac-item"><div class="ac-box"></div>卡片底部显示"已坚持 N 天"，N 为正确的累计完成天数</div>
+        <div class="ac-item"><div class="ac-box"></div>grade 未设置时，卡片区域显示年级选择引导，不显示任务卡片</div>
+      </div>
+
+      <h3>AC-02：今日任务完成流程</h3>
+      <div class="ac-group">
+        <div class="ac-item"><div class="ac-box"></div>点击"开始今天的诗"直接进入背一背模式，不经过详情页</div>
+        <div class="ac-item"><div class="ac-box"></div>背一背三关全部完成后，触发撒花动画</div>
+        <div class="ac-item"><div class="ac-box"></div>撒花后展示完整诗文 + "背给家长听"提示文字</div>
+        <div class="ac-item"><div class="ac-box"></div>点击"回首页"后，首页卡片切换为状态 B（已完成）</div>
+        <div class="ac-item"><div class="ac-box"></div>状态 B：卡片边框变绿，按钮变为"今天已完成"不可点击</div>
+        <div class="ac-item"><div class="ac-box"></div>状态 B：streak 数字显示新值，有 +1 标记和弹跳动画</div>
+      </div>
+
+      <h3>AC-03：Streak 数据正确性</h3>
+      <div class="ac-group">
+        <div class="ac-item"><div class="ac-box"></div>首次完成任务：streak_count 从 0 变为 1</div>
+        <div class="ac-item"><div class="ac-box"></div>连续完成第 N 天：streak_count 正确递增</div>
+        <div class="ac-item"><div class="ac-box"></div>昨天未完成，今天完成：streak_count 仍然正确递增（不归零）</div>
+        <div class="ac-item"><div class="ac-box"></div>同一天第二次完成背一背：streak_count 不重复计数</div>
+        <div class="ac-item"><div class="ac-box"></div>次日打开 app：today_complete 自动重置为 false，streak_count 不变</div>
+      </div>
+
+      <h3>AC-04：久违回访提示</h3>
+      <div class="ac-group">
+        <div class="ac-item"><div class="ac-box"></div>最后完成日期不是昨天也不是今天，进入首页时显示"好久不见，继续出发！"横幅</div>
+        <div class="ac-item"><div class="ac-box"></div>横幅 4 秒后自动消失</div>
+        <div class="ac-item"><div class="ac-box"></div>横幅不遮挡今日任务卡片的主要内容</div>
+        <div class="ac-item"><div class="ac-box"></div>连续完成中回来，不显示此横幅</div>
+      </div>
+
+      <h3>AC-05：年级设置</h3>
+      <div class="ac-group">
+        <div class="ac-item"><div class="ac-box"></div>顶栏设置图标可点击，弹出年级选择面板</div>
+        <div class="ac-item"><div class="ac-box"></div>选择年级并确认后，今日推荐诗切换为新年级第一首</div>
+        <div class="ac-item"><div class="ac-box"></div>点击遮罩层关闭面板，年级不变</div>
+        <div class="ac-item"><div class="ac-box"></div>年级切换后 start_date 重置，day_index 从 0 重算</div>
+      </div>
+
+      <h3>AC-06：今日推荐逻辑</h3>
+      <div class="ac-group">
+        <div class="ac-item"><div class="ac-box"></div>第一次使用推荐第一首诗（静夜思）</div>
+        <div class="ac-item"><div class="ac-box"></div>第二天打开推荐第二首诗（咏鹅）</div>
+        <div class="ac-item"><div class="ac-box"></div>今天完成或未完成，第二天均推进到下一首</div>
+        <div class="ac-item"><div class="ac-box"></div>跑完全部诗目后从第一首重新开始（循环）</div>
+      </div>
+
+      <h3>AC-07：降级处理</h3>
+      <div class="ac-group">
+        <div class="ac-item"><div class="ac-box"></div>localStorage 读取失败（如私人浏览模式）：app 正常显示，使用默认值，不崩溃</div>
+        <div class="ac-item"><div class="ac-box"></div>localStorage 写入失败：app 正常运行，静默失败，不弹错误提示</div>
+        <div class="ac-item"><div class="ac-box"></div>数据结构损坏（JSON 解析失败）：使用默认值重新初始化，不崩溃</div>
+      </div>
+    </section>
+
+    <!-- 7. 不做什么 -->
+    <section class="section" id="sec-oos">
+      <h2 class="section-title"><span class="section-num">07</span>不做什么（Out of Scope）</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>功能</th><th>排除原因</th><th>计划</th></tr></thead>
+          <tbody>
+            <tr><td>家长每日手选今日诗</td><td>制造决策疲劳，v1 先验证固定推荐框架</td><td><span class="oos-label">v2 待数据决策</span></td></tr>
+            <tr><td>补做昨日未完成内容</td><td>增加复杂度，且制造"欠债感"，与设计原则冲突</td><td><span class="oos-label">不做</span></td></tr>
+            <tr><td>补签机制（每周1次）</td><td>v1 以简单性为优先，先验证核心框架</td><td><span class="oos-label">v1.1</span></td></tr>
+            <tr><td>诗集归档视图</td><td>需要额外页面开发，v1 先跑通核心任务流程</td><td><span class="oos-label">v1.1</span></td></tr>
+            <tr><td>明日诗预告</td><td>待视觉稿确认后迭代</td><td><span class="oos-label">v1.1</span></td></tr>
+            <tr><td>PWA 推送通知</td><td>iOS 授权率低，不适合 v1 押注</td><td><span class="oos-label">v2</span></td></tr>
+            <tr><td>录音分享功能</td><td>技术成本高，文字提示已覆盖核心需求</td><td><span class="oos-label">v2</span></td></tr>
+            <tr><td>动态难度分桶推荐</td><td>需全量打标签 + 维护完成率，需先有数据</td><td><span class="oos-label">v3+</span></td></tr>
+            <tr><td>账号体系 / 跨设备同步</td><td>需后端，超出当前纯前端架构</td><td><span class="oos-label">v3+</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 上线前置条件 -->
+    <section class="section" id="sec-prereq">
+      <h2 class="section-title">上线前置条件</h2>
+      <div class="prereq-list">
+        <div class="prereq-item">
+          <div class="prereq-num">1</div>
+          <div class="prereq-text"><strong>前 20 首诗的难度排序</strong>（陈博士出，张总审核）：按音节数 + 常用字占比 + 全国知名度三维度排序，确保难度爬坡</div>
+        </div>
+        <div class="prereq-item">
+          <div class="prereq-num">2</div>
+          <div class="prereq-text"><strong>前 20 首诗的 15 字背景介绍文案</strong>（陈博士撰写，张总确认语气适合 6-8 岁）</div>
+        </div>
+        <div class="prereq-item">
+          <div class="prereq-num">3</div>
+          <div class="prereq-text"><strong>今日任务卡片角色图标视觉稿</strong>（设计师出稿，v1 可用占位图标暂替）</div>
+        </div>
+        <div class="prereq-item">
+          <div class="prereq-num">4</div>
+          <div class="prereq-text"><strong>"直接进背一背 vs 先进详情页"路径决策</strong>（建议直接进背一背，待 PM + 设计师确认）</div>
+        </div>
+        <div class="prereq-item">
+          <div class="prereq-num">5</div>
+          <div class="prereq-text"><strong>首次使用提示文案确认</strong>："建议固定在同一台设备使用"的表达方式，确保不让用户感到不安</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// 导航高亮：滚动时更新 active
+const sections = document.querySelectorAll('section[id], .doc-head');
+const links    = document.querySelectorAll('.nav-link');
+
+function updateNav() {
+  let current = '';
+  sections.forEach(sec => {
+    if (window.scrollY + 120 >= sec.offsetTop) current = sec.id;
+  });
+  links.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+</script>
