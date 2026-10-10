@@ -39,7 +39,7 @@ function IconUser({ active }: { active: boolean }) {
 const TABS = [
   { path: '/',            label: '首页', Icon: IconHome },
   { path: '/poems',       label: '诗集', Icon: IconBook },
-  { path: '/achievements',label: '成就', Icon: IconTrophy },
+  { path: '/progress',     label: '进度', Icon: IconTrophy },
   { path: '/profile',     label: '我的', Icon: IconUser },
 ]
 

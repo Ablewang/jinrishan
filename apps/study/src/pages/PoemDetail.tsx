@@ -36,15 +36,17 @@ export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { markRead, markMemorized, markReviewed } = useProgress()
+  const { markRead, markMemorized, markReviewed, reviewCards } = useProgress()
   const { queue, completePoem } = useQueue()
   const [showPinyin, setShowPinyin] = useState(true)
   const isReviewMode = searchParams.get('review') === '1'
+  const reviewIds = searchParams.get('reviewIds')?.split(',').map(Number).filter(Boolean) ?? []
+  const reviewIdx = Number(searchParams.get('reviewIdx') ?? 0)
   const [memorizing, setMemorizing] = useState(() => searchParams.get('autoMem') === '1' || isReviewMode)
   const [poem, setPoem] = useState<Poem | null>(null)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
   const [index, setIndex] = useState<PoemSummary[]>([])
-  const [distractorLines, setDistractorLines] = useState<string[]>([])
+  const [distractorLines, setDistractorLines] = useState<{ char: string; pinyin: string | null }[][]>([])
   const [titleHidden, setTitleHidden] = useState(false)
   const [splitColumn, setSplitColumn] = useState(false)
   const metaRef = useRef<HTMLDivElement>(null)
@@ -123,15 +125,16 @@ export default function PoemDetail() {
 
   // 预加载干扰项：从其他诗随机抽 2 首的诗行
   useEffect(() => {
+    setDistractorLines([])
     if (index.length < 3) return
     const others = index.filter(p => p.id !== numId)
     const picks = others.sort(() => Math.random() - 0.5).slice(0, 2)
     Promise.all(picks.map(p => loadPoem(p.id))).then(poems => {
-      const lines: string[] = []
+      const lines: { char: string; pinyin: string | null }[][] = []
       for (const p of poems) {
         if (!p) continue
         for (const ln of p.lines) {
-          lines.push(ln.chars.map(c => c.char).join(''))
+          lines.push(ln.chars)
         }
       }
       setDistractorLines(lines)
@@ -182,15 +185,24 @@ export default function PoemDetail() {
   }, [poem?.id, markReviewed])
 
   const handleNext = useCallback(() => {
+    if (isReviewMode && reviewIds.length > 0) {
+      const nextIdx = reviewIdx + 1
+      if (nextIdx < reviewIds.length) {
+        const ids = reviewIds.join(',')
+        navigate(`/poem/${reviewIds[nextIdx]}?review=1&reviewIds=${ids}&reviewIdx=${nextIdx}`)
+      } else {
+        navigate('/')
+      }
+      return
+    }
     setMemorizing(false)
-    // 队列里下一首
     const nextInQueue = queue[0]
     if (nextInQueue) {
       navigate(`/poem/${nextInQueue}?autoMem=1`)
     } else {
       navigate('/queue')
     }
-  }, [queue, navigate])
+  }, [queue, navigate, isReviewMode, reviewIds, reviewIdx])
 
   if (!poem) {
     return (
@@ -211,8 +223,10 @@ export default function PoemDetail() {
   }
 
   if (memorizing) {
+    const currentCard = reviewCards.find(c => c.id === numId)
     return (
       <MemorizeMode
+        key={poem.id}
         poem={poem}
         onExit={() => setMemorizing(false)}
         onNext={handleNext}
@@ -220,6 +234,9 @@ export default function PoemDetail() {
         isReview={isReviewMode}
         onVerified={handleVerified}
         distractorLines={distractorLines}
+        reviewIndex={isReviewMode && reviewIds.length > 0 ? reviewIdx + 1 : undefined}
+        reviewTotal={isReviewMode && reviewIds.length > 0 ? reviewIds.length : undefined}
+        reviewLevel={currentCard?.level}
       />
     )
   }

@@ -19,13 +19,14 @@ const annoDir = path.join(root, 'public/annotations')
 fs.mkdirSync(poemsDir, { recursive: true })
 fs.mkdirSync(annoDir, { recursive: true })
 
-// 首页索引：只含首行文字，不含拼音/chars
+// 首页索引：只含文字，不含拼音/chars
 const index = raw.poems.map(p => ({
   id: p.id,
   title: p.title,
   dynasty: p.dynasty ?? null,
   author: p.author,
   firstLine: p.lines[0]?.text ?? '',
+  allLines: p.lines.map(l => l.text).join(''),
 }))
 fs.writeFileSync(path.join(poemsDir, 'index.json'), JSON.stringify(index))
 console.log(`index.json: ${(JSON.stringify(index).length / 1024).toFixed(1)} KB`)

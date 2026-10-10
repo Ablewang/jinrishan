@@ -1,18 +1,18 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import TabBar from '../components/TabBar'
-import ProfileSheet from '../components/ProfileSheet'
+import ProfileSheet, { type ProfileSheetActions } from '../components/ProfileSheet'
 
 export default function Layout() {
   const { pathname } = useLocation()
   const showTab = !pathname.startsWith('/poem/')
-  const [showProfile, setShowProfile] = useState(false)
+  const profileRef = useRef<ProfileSheetActions>(null)
 
   return (
     <>
       <Outlet />
-      {showTab && <TabBar onProfileClick={() => setShowProfile(true)} />}
-      {showProfile && <ProfileSheet onClose={() => setShowProfile(false)} />}
+      {showTab && <TabBar onProfileClick={() => profileRef.current?.open()} />}
+      <ProfileSheet ref={profileRef} />
     </>
   )
 }

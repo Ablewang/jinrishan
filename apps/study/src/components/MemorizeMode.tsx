@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import type { Poem } from '../data/poems'
 import imgMap from '../data/poem_img_map.json'
+import { IconStar, IconFireworks, IconHeart } from './icons'
 
 interface Props {
   poem: Poem
@@ -9,12 +10,16 @@ interface Props {
   onMemorized: (stars: number, charCount: number) => void
   isReview?: boolean
   onVerified?: (passed: boolean) => void
-  distractorLines?: string[]  // 来自其他诗的句子，用作干扰项
+  distractorLines?: { char: string; pinyin: string | null }[][]
+  reviewIndex?: number
+  reviewTotal?: number
+  reviewLevel?: number
 }
 
 function lineText(line: { chars: { char: string; pinyin: string | null }[] }): string {
   return line.chars.map(c => c.char).join('')
 }
+
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -26,9 +31,9 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 interface QuizData {
-  questionLine: string
+  questionChars: { char: string; pinyin: string | null }[]
   correctAnswer: string
-  options: string[]
+  options: { text: string; chars: { char: string; pinyin: string | null }[] }[]
 }
 
 // 每行随机选 ~half 的汉字索引作为空格
@@ -44,7 +49,7 @@ function pickHidden(hanziCount: number): Set<number> {
 
 type Round = 1 | 2 | 3
 
-export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isReview, onVerified, distractorLines = [] }: Props) {
+export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isReview, onVerified, distractorLines = [], reviewIndex, reviewTotal, reviewLevel }: Props) {
   const [round, setRound] = useState<Round>(1)
   const [lineRevealed, setLineRevealed] = useState<boolean[][]>(() =>
     poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false))
@@ -83,18 +88,21 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
         // 生成验证题（诗行数>=2时才出题）
         if (isReview && onVerified && lines.length >= 2) {
           const qIdx = Math.floor(Math.random() * (lines.length - 1))
-          const questionLine = lineText(lines[qIdx])
+          const questionChars = lines[qIdx].chars
           const correctAnswer = lineText(lines[qIdx + 1])
+          const correctChars = lines[qIdx + 1].chars
           const distractors = distractorLines
-            .filter(l => l !== correctAnswer && l !== questionLine)
+            .filter(l => l.map(c => c.char).join('') !== correctAnswer && l.map(c => c.char).join('') !== questionChars.map(c => c.char).join(''))
             .slice(0, 2)
-          // 不够2个干扰项则跳过验证直接通过
           if (distractors.length < 2) {
             setCelebrated(true)
             return
           }
-          const options = shuffle([correctAnswer, ...distractors])
-          setQuiz({ questionLine, correctAnswer, options })
+          const options = shuffle([
+            { text: correctAnswer, chars: correctChars },
+            ...distractors.map(d => ({ text: d.map(c => c.char).join(''), chars: d }))
+          ])
+          setQuiz({ questionChars, correctAnswer, options })
         }
 
         setCelebrated(true)
@@ -166,6 +174,27 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
     return () => { alive = false; cancelAnimationFrame(rafRef.current) }
   }, [celebrated])
 
+  // 复习模式：distractors 加载后直接生成验证题，跳过3轮填空
+  useEffect(() => {
+    if (!isReview || quiz) return
+    if (!onVerified) return
+    if (distractorLines.length < 2) return
+    if (lines.length < 2) { onVerified(true); onNext(); return }
+    const qIdx = Math.floor(Math.random() * (lines.length - 1))
+    const questionChars = lines[qIdx].chars
+    const correctAnswer = lineText(lines[qIdx + 1])
+    const correctChars = lines[qIdx + 1].chars
+    const distractors = distractorLines
+      .filter(l => l.map(c => c.char).join('') !== correctAnswer && l.map(c => c.char).join('') !== questionChars.map(c => c.char).join(''))
+      .slice(0, 2)
+    if (distractors.length < 2) { onVerified(true); onNext(); return }
+    const options = shuffle([
+      { text: correctAnswer, chars: correctChars },
+      ...distractors.map(d => ({ text: d.map(c => c.char).join(''), chars: d }))
+    ])
+    setQuiz({ questionChars, correctAnswer, options })
+  }, [isReview, distractorLines]) // eslint-disable-line react-hooks/exhaustive-deps
+
   function revealChar(li: number, idx: number) {
     setLineRevealed(prev => prev.map((row, i) =>
       i === li ? row.map((v, j) => j === idx ? true : v) : row
@@ -175,55 +204,133 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
   const roundLabel = ['', '第一关', '有拼音', '无拼音'][round]
   const showPinyin = round !== 3
 
-  if (celebrated && quiz && !quizResult) {
-    return (
-      <div className="mm mm--celebrate">
-        {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
-        <div className="mm__quiz-box">
-          <p className="mm__quiz-title">考考你</p>
-          <p className="mm__quiz-question">"{quiz.questionLine}"</p>
-          <p className="mm__quiz-sub">下一句是？</p>
-          <div className="mm__quiz-options">
-            {quiz.options.map(opt => (
-              <button
-                key={opt}
-                className={`mm__quiz-opt${selectedOption === opt ? ' mm__quiz-opt--selected' : ''}`}
-                onClick={() => setSelectedOption(opt)}
-              >{opt}</button>
-            ))}
-          </div>
-          <button
-            className={`mm__btn mm__btn--primary${!selectedOption ? ' mm__btn--disabled' : ''}`}
-            disabled={!selectedOption}
-            onClick={() => {
-              if (!selectedOption) return
-              const passed = selectedOption === quiz.correctAnswer
-              setQuizResult(passed ? 'correct' : 'wrong')
-              setTimeout(() => {
-                if (onVerified) onVerified(passed)
-                onNext()
-              }, 1200)
-            }}
-          >确认</button>
-        </div>
-        <style>{celebrateStyle}</style>
-      </div>
-    )
-  }
+  if ((isReview && quiz) || (celebrated && quiz)) {
+    const LABELS = ['A', 'B', 'C', 'D']
+    const badgeText = (reviewIndex != null && reviewTotal != null)
+      ? `${reviewIndex} / ${reviewTotal}`
+      : '验证'
 
-  if (celebrated && quizResult) {
     return (
-      <div className="mm mm--celebrate">
+      <div className="mm mm--verify">
         {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
-        <div className="mm__quiz-box mm__quiz-box--result">
-          <p className={`mm__quiz-result-icon${quizResult === 'correct' ? ' mm__quiz-result-icon--ok' : ' mm__quiz-result-icon--fail'}`}>
-            {quizResult === 'correct' ? '✓' : '✗'}
-          </p>
-          <p className="mm__quiz-result-text">
-            {quizResult === 'correct' ? '答对了！' : `正确答案：${quiz!.correctAnswer}`}
-          </p>
+
+        <header className="mm__header">
+          <button className="mm__exit" onClick={e => { e.stopPropagation(); onExit() }}>← 返回</button>
+          <span className="mm__verify-header-title">今日复习</span>
+          <span className="mm__verify-header-badge">{badgeText}</span>
+        </header>
+
+        <div className="mm__verify-wrap">
+          <div className="mm__verify-poem-title">
+            <div className="mm__verify-poem-name">《{poem.title}》</div>
+            <div className="mm__verify-poem-author">{poem.dynasty ? `${poem.dynasty} · ${poem.author}` : poem.author}</div>
+          </div>
+
+          <div className="mm__verify-progress">
+            {[
+              { label: '1天' },
+              { label: '3天' },
+              { label: '7天' },
+              { label: '15天' },
+              { label: '掌握' },
+            ].map((node, i) => {
+              const level = reviewLevel ?? 0
+              let circleClass = 'mm__level-circle'
+              if (i === 4) circleClass += ' mm__level-circle--master'
+              if (i < level) circleClass += ' mm__level-circle--done'
+              else if (i === level) circleClass += ' mm__level-circle--current'
+              return (
+                <div key={i} className="mm__level-node">
+                  <div className={circleClass}>
+                    {i < level ? '✓' : i === 4 ? <IconStar size={12} fill="#FFD700" /> : i + 1}
+                  </div>
+                  <div className="mm__level-label">{node.label}</div>
+                  {i < 4 && <div className="mm__level-connector" />}
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="mm__verify-question-box">
+            <div className="mm__verify-q-label">考考你 🎯</div>
+            <div className="mm__verify-q-chars">
+              {quiz.questionChars.map((c, i) => (
+                <span key={i} className="mm__verify-char">
+                  <span className="mm__verify-char-py">{c.pinyin ?? ''}</span>
+                  <span className="mm__verify-char-hz">{c.char}</span>
+                </span>
+              ))}
+            </div>
+            <div className="mm__verify-q-hint">下一句是？</div>
+          </div>
+
+          <div className="mm__verify-options">
+            {quiz.options.map((opt, i) => {
+              let cls = 'mm__verify-option'
+              if (quizResult) {
+                if (opt.text === quiz.correctAnswer) cls += ' mm__verify-option--correct'
+                else if (selectedOption === opt.text && opt.text !== quiz.correctAnswer) cls += ' mm__verify-option--wrong'
+                else cls += ' mm__verify-option--dim'
+              } else if (selectedOption === opt.text) {
+                cls += ' mm__verify-option--selected'
+              }
+              return (
+                <button
+                  key={opt.text}
+                  className={cls}
+                  disabled={!!quizResult}
+                  onClick={() => {
+                    if (quizResult) return
+                    setSelectedOption(opt.text)
+                    const passed = opt.text === quiz.correctAnswer
+                    setQuizResult(passed ? 'correct' : 'wrong')
+                    if (onVerified) onVerified(passed)
+                  }}
+                >
+                  <div className="mm__opt-letter">{LABELS[i]}</div>
+                  <div className="mm__opt-chars">
+                    {opt.chars.map((c, ci) => (
+                      <span key={ci} className="mm__verify-char mm__verify-char--opt">
+                        <span className="mm__verify-char-py">{c.pinyin ?? ''}</span>
+                        <span className="mm__verify-char-hz">{c.char}</span>
+                      </span>
+                    ))}
+                    {quizResult && opt.text === quiz.correctAnswer && <span className="mm__opt-mark"> ✓</span>}
+                    {quizResult && opt.text === selectedOption && opt.text !== quiz.correctAnswer && <span className="mm__opt-mark"> ✗</span>}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {quizResult && (
+            <>
+              <div className={`mm__verify-result${quizResult === 'correct' ? ' mm__verify-result--pass' : ' mm__verify-result--fail'}`}>
+                <div className="mm__verify-result-icon">{quizResult === 'correct' ? <IconFireworks size={28} fill="#10B981" /> : <IconHeart size={28} fill="#F59E0B" />}</div>
+                <div>
+                  <div className="mm__verify-result-text">
+                    {quizResult === 'correct' ? '回答正确！' : '答错了，继续加油！'}
+                  </div>
+                  <div className="mm__verify-result-sub">
+                    {quizResult === 'correct' ? '复习进度 +1档' : '退回第1档 · 明天重新复习'}
+                  </div>
+                </div>
+              </div>
+              {quizResult === 'wrong' && (
+                <button className="mm__verify-restudy-btn" onClick={onExit}>
+                  去背一背这首诗
+                </button>
+              )}
+              <button className="mm__verify-next-btn" onClick={onNext}>
+                {(reviewIndex != null && reviewTotal != null && reviewIndex < reviewTotal)
+                  ? `继续下一首（${reviewIndex + 1} / ${reviewTotal}）`
+                  : '完成复习'}
+              </button>
+            </>
+          )}
         </div>
-        <style>{celebrateStyle}</style>
+
+        <style>{verifyStyle}</style>
       </div>
     )
   }
@@ -617,43 +724,152 @@ const celebrateStyle = `
     background: transparent; border: 1.5px solid #e0e0e0; color: #999;
   }
   .mm__btn--disabled { opacity: 0.4; }
-  .mm__quiz-box {
-    position: relative; z-index: 10;
-    background: rgba(255,255,255,0.95); border-radius: 24px;
-    padding: 28px 24px 24px; text-align: center;
-    max-width: 320px; width: 90%;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.1);
-    border: 1.5px solid rgba(198,40,40,0.12);
-    animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    display: flex; flex-direction: column; gap: 12px;
+`
+
+const verifyStyle = `
+  .mm--verify {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    background: var(--bg); overflow: hidden;
   }
-  .mm__quiz-title {
-    font-family: var(--font-brush); font-size: 1.6rem; color: #C62828;
+  .mm__bg-wrap {
+    position: absolute; bottom: 0; left: 0;
+    width: 100%; pointer-events: none; z-index: 0;
   }
-  .mm__quiz-question {
-    font-family: var(--font-brush); font-size: 1.1rem; color: #1a1a1a;
-    background: rgba(198,40,40,0.06); border-radius: 10px; padding: 10px 14px;
+  .mm__bg { display: block; width: 100%; height: auto; opacity: 0.12; }
+  .mm--verify .mm__header {
+    position: relative; z-index: 10; flex-shrink: 0;
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px; height: var(--navbar-height, 52px);
+    background: #C62828;
   }
-  .mm__quiz-sub { font-size: var(--text-sm); color: var(--ink-light); }
-  .mm__quiz-options { display: flex; flex-direction: column; gap: 8px; }
-  .mm__quiz-opt {
-    padding: 12px 16px; border-radius: 12px;
-    border: 1.5px solid var(--border); background: #fff;
-    font-family: var(--font-brush); font-size: 1rem; color: var(--ink);
+  .mm--verify .mm__exit {
+    font-family: var(--font-ui); font-size: var(--text-sm);
+    color: rgba(255,248,225,0.85); padding: 5px 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.15); flex-shrink: 0;
+  }
+  .mm--verify .mm__exit:active { background: rgba(255,255,255,0.28); }
+  .mm__verify-header-title {
+    font-family: var(--font-brush); color: #FFF8E1; font-size: 1.1rem; flex: 1;
+  }
+  .mm__verify-header-badge {
+    font-size: 0.72rem; color: rgba(255,248,225,0.75); font-weight: 700;
+    background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 999px;
+  }
+  .mm__verify-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom,0px));
+    gap: 14px; overflow-y: auto; position: relative; z-index: 1;
+  }
+  .mm__verify-poem-title { text-align: center; }
+  .mm__verify-poem-name {
+    font-family: var(--font-brush); font-size: 1.3rem; color: #C62828;
+  }
+  .mm__verify-poem-author { font-size: 0.72rem; color: var(--ink-light); margin-top: 2px; }
+  .mm__verify-progress {
+    display: flex; align-items: flex-start; justify-content: center;
+    gap: 0; padding: 4px 0;
+  }
+  .mm__level-node {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    position: relative; flex: 1;
+  }
+  .mm__level-connector {
+    position: absolute; top: 11px; left: 50%; width: 100%; height: 2px;
+    background: var(--border); z-index: 0;
+  }
+  .mm__level-circle {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.62rem; font-weight: 700; z-index: 1; position: relative;
+    color: var(--ink-light); line-height: 1;
+  }
+  .mm__level-circle svg { display: block; }
+  .mm__level-circle--done { background: #10B981; border-color: #10B981; color: #fff; }
+  .mm__level-circle--current { background: #C62828; border-color: #C62828; color: #fff; }
+  .mm__level-circle--master { border-color: #FFD700; background: #FFFBEA; }
+  .mm__level-label { font-size: 0.58rem; color: var(--ink-light); text-align: center; font-weight: 500; }
+  .mm__verify-question-box {
+    background: rgba(198,40,40,0.08); border-radius: 14px;
+    border-left: 4px solid #C62828; padding: 14px;
+  }
+  .mm__verify-q-label {
+    font-size: 0.7rem; color: #C62828; font-weight: 700; margin-bottom: 6px;
+  }
+  .mm__verify-q-chars {
+    display: flex; flex-wrap: wrap; gap: 2px; margin: 6px 0 4px;
+  }
+  .mm__verify-char {
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+  }
+  .mm__verify-char-py {
+    font-size: 0.72rem; color: #C62828; font-style: italic;
+    line-height: 1; min-height: 1em;
+  }
+  .mm__verify-char-hz {
+    font-family: var(--font-brush); font-size: 1.5rem; color: var(--ink); line-height: 1;
+  }
+  .mm__verify-char--opt .mm__verify-char-hz {
+    font-size: 1.3rem;
+  }
+  .mm__verify-q-hint { font-size: 0.75rem; color: var(--ink-light); margin-top: 4px; }
+  .mm__opt-chars {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 2px; flex: 1;
+  }
+  .mm__opt-mark {
+    font-size: 1rem; font-weight: 700; align-self: flex-end; margin-left: 2px;
+  }
+  .mm__verify-option--correct .mm__opt-mark { color: #10B981; }
+  .mm__verify-option--wrong .mm__opt-mark { color: #ef4444; }
+  .mm__verify-options { display: flex; flex-direction: column; gap: 8px; }
+  .mm__verify-option {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
     text-align: left; transition: all 0.15s;
   }
-  .mm__quiz-opt--selected {
-    border-color: #C62828; background: rgba(198,40,40,0.08); color: #C62828;
+  .mm__verify-option--selected { border-color: #C62828; background: rgba(198,40,40,0.08); }
+  .mm__verify-option--correct { border-color: #10B981; background: rgba(16,185,129,0.08); }
+  .mm__verify-option--wrong { border-color: #ef4444; background: rgba(239,68,68,0.07); }
+  .mm__verify-option--dim { opacity: 0.45; }
+  .mm__opt-letter {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--border); display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; flex-shrink: 0; color: var(--ink-light);
   }
-  .mm__quiz-box--result { justify-content: center; align-items: center; min-height: 160px; }
-  .mm__quiz-result-icon {
-    font-size: 3rem; font-weight: 700; line-height: 1;
-    width: 72px; height: 72px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+  .mm__verify-option--correct .mm__opt-letter { background: #10B981; color: #fff; }
+  .mm__verify-option--wrong .mm__opt-letter { background: #ef4444; color: #fff; }
+  .mm__verify-option--selected .mm__opt-letter { background: #C62828; color: #fff; }
+  .mm__verify-result {
+    border-radius: 14px; padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
   }
-  .mm__quiz-result-icon--ok { background: rgba(16,185,129,0.12); color: #10B981; }
-  .mm__quiz-result-icon--fail { background: rgba(198,40,40,0.1); color: #C62828; }
-  .mm__quiz-result-text {
-    font-family: var(--font-brush); font-size: 1.1rem; color: var(--ink); margin-top: 8px;
+  @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .mm__verify-result--pass { background: rgba(16,185,129,0.1); border: 1.5px solid rgba(16,185,129,0.25); }
+  .mm__verify-result--fail { background: rgba(239,68,68,0.07); border: 1.5px solid rgba(239,68,68,0.2); }
+  .mm__verify-result-icon { font-size: 24px; flex-shrink: 0; }
+  .mm__verify-result-text { font-size: 0.82rem; font-weight: 700; }
+  .mm__verify-result--pass .mm__verify-result-text { color: #047857; }
+  .mm__verify-result--fail .mm__verify-result-text { color: #b91c1c; }
+  .mm__verify-restudy-btn {
+    display: block; width: 100%;
+    padding: 12px; border-radius: 999px;
+    background: #fff; color: #C62828;
+    border: 2px solid #C62828;
+    font-family: var(--font-ui); font-size: var(--text-base); font-weight: 700;
+    text-align: center;
+    transition: transform 0.1s, opacity 0.1s;
   }
+  .mm__verify-restudy-btn:active { transform: scale(0.97); opacity: 0.88; }
+  .mm__verify-next-btn {
+    display: block; width: 100%;
+    padding: 14px; border-radius: 999px;
+    background: #C62828; color: #fff;
+    font-family: var(--font-ui); font-size: var(--text-base); font-weight: 700;
+    text-align: center; box-shadow: 0 4px 16px rgba(198,40,40,0.3);
+    transition: transform 0.1s, opacity 0.1s;
+  }
+  .mm__verify-next-btn:active { transform: scale(0.97); opacity: 0.88; }
 `

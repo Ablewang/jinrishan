@@ -5,6 +5,7 @@ export interface PoemSummary {
   dynasty: string | null
   author: string
   firstLine: string
+  allLines: string
 }
 
 export interface Char {
