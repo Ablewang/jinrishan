@@ -112,3 +112,11 @@ img {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 内联 SVG 图标与文字垂直居中 */
+button:has(svg), a:has(svg) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}

@@ -6,6 +6,12 @@ import { useProgress } from '../hooks/useProgress'
 
 type Tab = 'all' | 'unmemorized' | 'memorized'
 
+const PNG_IDS = new Set([46, 56, 58, 60, 65])
+function getPoemImg(id: number) {
+  const ext = PNG_IDS.has(id) ? 'png' : 'webp'
+  return `/images/poem_${String(id).padStart(2, '0')}.${ext}`
+}
+
 export default function PoemsScreen() {
   const navigate = useNavigate()
   const { getState, totalMemorized } = useProgress()
@@ -25,7 +31,7 @@ export default function PoemsScreen() {
   return (
     <div className="ps">
       <header className="ps__header">
-        <button className="ps__back" onClick={() => navigate(-1)}>← 返回</button>
+        <button className="ps__back" onClick={() => navigate(-1)}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         <h1 className="ps__title">诗集</h1>
         <span className="ps__count">{totalMemorized}/{total}</span>
       </header>
@@ -50,6 +56,7 @@ export default function PoemsScreen() {
               onClick={() => navigate(`/poem/${p.id}`)}
               role="button"
             >
+              <div className="ps__card-img" style={{ backgroundImage: `url(${getPoemImg(p.id)})` }} />
               {state.memorized && <span className="ps__card-badge">✓</span>}
               <div className="ps__card-title">《{p.title}》</div>
               <div className="ps__card-meta">{p.dynasty ? `${p.dynasty}·` : ''}{p.author}</div>
@@ -73,7 +80,7 @@ const styles = `
     flex-direction: column;
     min-height: 100vh;
     background: var(--bg);
-    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--tabbar-height, 64px) + 16px + env(safe-area-inset-bottom, 0px));
   }
   .ps__header {
     position: sticky;
@@ -142,13 +149,25 @@ const styles = `
     position: relative;
     background: var(--surface);
     border-radius: 14px;
-    padding: 14px 12px;
+    padding: 14px 12px 14px 12px;
     border: 1.5px solid var(--border);
     border-left: 4px solid #C62828;
     box-shadow: var(--shadow-card);
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.1s;
     overflow: hidden;
+    min-height: 110px;
+  }
+  .ps__card-img {
+    position: absolute;
+    top: 0; right: 0;
+    width: 60%;
+    height: 100%;
+    background-size: cover;
+    background-position: center right;
+    mask-image: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.85) 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.85) 100%);
+    pointer-events: none;
   }
   .ps__card:active { transform: scale(0.97); box-shadow: none; }
   .ps__card--done {

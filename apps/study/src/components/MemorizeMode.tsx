@@ -154,7 +154,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
             ))}
           </div>
           <div className="mm__celebrate-btns">
-            <button className="mm__btn mm__btn--primary" onClick={onNext}>下一首 →</button>
+            <button className="mm__btn mm__btn--primary" onClick={onNext}>下一首 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg></button>
             <button className="mm__btn mm__btn--ghost" onClick={() => {
               setCelebrated(false)
               setRound(1)

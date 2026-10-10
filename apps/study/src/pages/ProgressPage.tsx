@@ -37,7 +37,7 @@ export default function ProgressPage() {
   return (
     <div className="pg">
       <header className="pg__navbar">
-        <button className="pg__back" onClick={() => navigate('/')}>← 返回</button>
+        <button className="pg__back" onClick={() => navigate('/')}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         <span className="pg__title">学习记录</span>
       </header>
 
@@ -77,7 +77,7 @@ export default function ProgressPage() {
           totalChars={totalChars}
           memorizeHistory={memorizeHistory}
         />
-        <button className="pg__ach-link" onClick={() => navigate('/achievements')}>查看全部成就 →</button>
+        <button className="pg__ach-link" onClick={() => navigate('/achievements')}>查看全部成就 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg></button>
       </div>
 
       {/* 已背诗目 */}

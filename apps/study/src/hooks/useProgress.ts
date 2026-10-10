@@ -53,7 +53,7 @@ function saveTotalChars(n: number) {
 }
 
 // 最近背诵历史，每项 {id, stars}，最多保留 20 条
-export interface MemorizeRecord { id: number; stars: number }
+export interface MemorizeRecord { id: number; stars: number; date: string }
 
 function loadHistory(): MemorizeRecord[] {
   try {
@@ -120,7 +120,7 @@ export function useProgress() {
 
     // 更新背诵历史
     setMemorizeHistory(prev => {
-      const next = [...prev.filter(r => r.id !== id), { id, stars }].slice(-20)
+      const next = [...prev.filter(r => r.id !== id), { id, stars, date: todayStr() }].slice(-20)
       saveHistory(next)
       return next
     })
@@ -143,7 +143,8 @@ export function useProgress() {
 
   const totalMemorized = Object.values(progress).filter(s => s.memorized).length
   const totalPerfect = Object.values(progress).filter(s => s.bestStars === 3).length
+  const todayRecord = [...memorizeHistory].reverse().find(r => r.date === todayStr()) ?? null
 
-  return { getState, markRead, markMemorized, totalMemorized, totalPerfect, streak, progress, totalChars, memorizeHistory }
+  return { getState, markRead, markMemorized, totalMemorized, totalPerfect, streak, progress, totalChars, memorizeHistory, todayRecord }
 }
 

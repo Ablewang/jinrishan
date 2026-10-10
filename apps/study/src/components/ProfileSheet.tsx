@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useProgress } from '../hooks/useProgress'
 import { useQueue } from '../hooks/useQueue'
 
@@ -26,12 +26,21 @@ export default function ProfileSheet({ onClose }: Props) {
   const { totalMemorized, totalChars } = useProgress()
   const { streakCount } = useQueue()
   const [selected, setSelected] = useState<string>(loadReminder)
-
+  const timeInputRef = useRef<HTMLInputElement>(null)
   function selectTime(time: string | null) {
-    if (time === null) return
-    setSelected(time)
-    saveReminder(time)
+    if (time !== null) {
+      setSelected(time)
+      saveReminder(time)
+    }
   }
+
+  function handleCustomTime(e: React.ChangeEvent<HTMLInputElement>) {
+    const t = e.target.value
+    if (t) { setSelected(t); saveReminder(t) }
+  }
+
+  const presetTimes = REMINDER_OPTIONS.filter(o => o.time !== null).map(o => o.time)
+  const isCustom = !presetTimes.includes(selected)
 
   return (
     <div className="ps-overlay">
@@ -44,15 +53,51 @@ export default function ProfileSheet({ onClose }: Props) {
 
         <div className="ps-overlay__section-label">每日提醒时间</div>
         <div className="ps-overlay__chips">
-          {REMINDER_OPTIONS.map(opt => (
-            <button
-              key={opt.label}
-              className={`ps-overlay__chip${opt.time !== null && selected === opt.time ? ' ps-overlay__chip--active' : ''}`}
-              onClick={() => selectTime(opt.time)}
-            >
-              {opt.time ? `${opt.label} ${opt.time}` : opt.label}
-            </button>
-          ))}
+          {REMINDER_OPTIONS.map(opt => {
+            const isActive = opt.time !== null ? selected === opt.time : isCustom
+            if (opt.time !== null) {
+              return (
+                <button
+                  key={opt.label}
+                  className={`ps-overlay__chip${isActive ? ' ps-overlay__chip--active' : ''}`}
+                  onClick={() => selectTime(opt.time)}
+                >
+                  {`${opt.label} ${opt.time}`}
+                </button>
+              )
+            }
+            // 自定义：透明 input 覆盖在 button 上，点击自然唤起系统时间选择器
+            return (
+              <div
+                key={opt.label}
+                style={{ position: 'relative', display: 'inline-block' }}
+                onClick={() => {
+                  const input = timeInputRef.current
+                  if (!input) return
+                  try { (input as any).showPicker() } catch { input.click() }
+                }}
+              >
+                <button
+                  type="button"
+                  className={`ps-overlay__chip${isActive ? ' ps-overlay__chip--active' : ''}`}
+                >
+                  {isActive ? `自定义 ${selected}` : '自定义'}
+                </button>
+                <input
+                  ref={timeInputRef}
+                  type="time"
+                  value={isCustom ? selected : ''}
+                  onChange={handleCustomTime}
+                  style={{
+                    position: 'absolute', inset: 0,
+                    width: '100%', height: '100%',
+                    opacity: 0, cursor: 'pointer',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </div>
+            )
+          })}
         </div>
         <p className="ps-overlay__hint">提示：可在手机日历设置每日提醒，建议由家长操作</p>
 
@@ -132,10 +177,29 @@ export default function ProfileSheet({ onClose }: Props) {
           font-size: var(--text-sm); color: var(--ink); background: #fff;
           transition: all 0.15s;
         }
-        .ps-overlay__chip--active {
-          background: #C62828; border-color: #C62828; color: #fff; font-weight: 700;
+        .ps-overlay__chip--time {
+          appearance: none;
+          -webkit-appearance: none;
+          font-family: var(--font-ui);
+          font-size: var(--text-sm);
+          color: var(--ink);
+          background: #fff;
+          border: 1.5px solid var(--border);
+          border-radius: 999px;
+          padding: 9px 18px;
+          cursor: pointer;
+          min-width: 90px;
+          text-align: center;
         }
-        .ps-overlay__chip:active:not(.ps-overlay__chip--active) { background: var(--bg); }
+        .ps-overlay__chip--time.ps-overlay__chip--active {
+          background: #C62828;
+          border-color: #C62828;
+          color: #fff;
+          font-weight: 700;
+        }
+        .ps-overlay__chip--time::-webkit-calendar-picker-indicator {
+          display: none;
+        }
         .ps-overlay__hint {
           font-size: 11px; color: var(--ink-light); line-height: 1.5; margin-bottom: 20px;
         }

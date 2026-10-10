@@ -7,7 +7,7 @@ import { useQueue } from '../hooks/useQueue'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { getState, streak } = useProgress()
+  const { getState, streak, todayRecord, memorizeHistory } = useProgress()
   const { queue, streakCount, todayComplete, isReturning } = useQueue()
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [bannerVisible, setBannerVisible] = useState(false)
@@ -26,6 +26,10 @@ export default function Home() {
 
   const currentPoemId = queue[0] ?? null
   const currentPoem = poems.find(p => p.id === currentPoemId) ?? null
+  const completedPoem = poems.find(p => {
+    const record = todayRecord ?? (todayComplete ? memorizeHistory[memorizeHistory.length - 1] : null)
+    return p.id === record?.id
+  }) ?? null
 
   // 模式判断
   type Mode = 'pending' | 'done' | 'empty' | 'returning'
@@ -46,7 +50,7 @@ export default function Home() {
       <header className="home__navbar">
         <span className="home__logo">古诗小课堂</span>
         <span className="home__subtitle">小学必背70首</span>
-        <button className="home__manage-btn" onClick={() => navigate('/queue')}>管理队列</button>
+        <button className="home__manage-btn" onClick={() => navigate('/queue')}>背诗计划</button>
       </header>
 
       {/* 久违横幅 */}
@@ -80,10 +84,10 @@ export default function Home() {
               </div>
             </div>
             {queue.length > 1 && (
-              <div className="task-card__queue-hint">📋 队列还有 {queue.length} 首</div>
+              <div className="task-card__queue-hint">📋 计划还有 {queue.length} 首</div>
             )}
             <button className="task-card__start-btn" onClick={() => currentPoemId && startMem(currentPoemId)}>
-              开始背诵 →
+              开始背诵 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg>
             </button>
             <div className="task-card__footer">
               <span className="task-card__streak">已坚持 {streakCount || streak.count} 天</span>
@@ -96,7 +100,10 @@ export default function Home() {
             <div className="task-card__done-chip">
               <span className="task-card__done-icon">✓</span>
               <div>
-                <div className="task-card__done-title">《{currentPoem?.title ?? '已完成'}》背完了</div>
+                {completedPoem
+                  ? <div className="task-card__done-title">《{completedPoem.title}》背完了</div>
+                  : <div className="task-card__done-title">今天已完成背诵</div>
+                }
                 <div className="task-card__done-sub">还可以继续背下一首</div>
               </div>
             </div>
@@ -115,13 +122,13 @@ export default function Home() {
           </>
         ) : (
           <>
-            <div className="task-card__tag task-card__tag--empty">待背队列</div>
+            <div className="task-card__tag task-card__tag--empty">背诗计划</div>
             <div className="task-card__empty-prompt">
-              队列里还没有诗<br />
+              计划里还没有诗<br />
               <span>去挑几首，明天就能开始了</span>
             </div>
             <button className="task-card__start-btn" onClick={() => navigate('/queue')}>
-              去挑诗 →
+              去挑诗 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg>
             </button>
             <div className="task-card__footer">
               <span className="task-card__streak">已坚持 {streakCount || streak.count} 天</span>
@@ -139,8 +146,8 @@ export default function Home() {
             <div className="queue-empty-bubble">快来挑诗！</div>
           </div>
           <div className="queue-empty-text">
-            <strong>队列空空如也～</strong><br />
-            去诗集里挑几首，放进队列<br />每天背一首，积少成多
+            <strong>计划空空如也～</strong><br />
+            去诗集里挑几首，加入计划<br />每天背一首，积少成多
           </div>
         </div>
       ) : (
@@ -174,7 +181,7 @@ export default function Home() {
           })}
           {queue.length > 5 && (
             <div className="queue-preview__more" onClick={() => navigate('/queue')}>
-              还有 {queue.length - 5} 首 · 查看全部 →
+              还有 {queue.length - 5} 首 · 查看全部 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg>
             </div>
           )}
         </div>
@@ -506,7 +513,10 @@ const styles = `
     font-weight: 700;
   }
   .queue-preview__more {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     padding: 10px;
     font-size: var(--text-sm);
     color: var(--ink-light);

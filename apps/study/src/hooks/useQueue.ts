@@ -72,6 +72,15 @@ export function useQueue() {
 
   const isInQueue = useCallback((id: number) => store.queue.includes(id), [store.queue])
 
+  const reorderQueue = useCallback((from: number, to: number) => {
+    update(prev => {
+      const next = [...prev.queue]
+      const [item] = next.splice(from, 1)
+      next.splice(to, 0, item)
+      return { ...prev, queue: next }
+    })
+  }, [update])
+
   // 久违：上次完成距今超过 1 天
   const isReturning = (() => {
     if (!store.last_complete_date) return false
@@ -85,10 +94,12 @@ export function useQueue() {
     queue: store.queue,
     streakCount: store.streak_count,
     todayComplete: store.today_complete,
+    lastCompleteId: store.last_complete_id,
     isReturning,
     addToQueue,
     removeFromQueue,
     completePoem,
     isInQueue,
+    reorderQueue,
   }
 }
