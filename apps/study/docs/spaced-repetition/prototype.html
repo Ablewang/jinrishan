@@ -1,0 +1,1202 @@
+<title>间隔复习系统原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@400;600&display=swap">
+
+<style>
+  /* ── tokens ── */
+  :root {
+    --red: #C62828;
+    --red-light: rgba(198,40,40,0.08);
+    --red-mid: rgba(198,40,40,0.18);
+    --bg: #FFFDF8;
+    --surface: #FFFFFF;
+    --ink: #18120A;
+    --ink-light: #8C7A60;
+    --border: #EDE8DF;
+    --green: #10B981;
+    --gold: #F59E0B;
+    --font-brush: 'Ma Shan Zheng', cursive;
+    --font-ui: 'ZCOOL KuaiLe', sans-serif;
+    --font-serif: 'Noto Serif SC', serif;
+    --radius: 14px;
+    --shadow: 0 2px 12px rgba(150,80,30,0.09);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1410; --surface: #251e17; --ink: #f0e8dc;
+      --ink-light: #a0907a; --border: #3a2e22; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1a1410; --surface: #251e17; --ink: #f0e8dc;
+    --ink-light: #a0907a; --border: #3a2e22; color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-ui);
+    background: #2a2420;
+    color: var(--ink);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 16px 40px;
+    gap: 16px;
+  }
+
+  h1.doc-title {
+    font-family: var(--font-brush);
+    color: #fff;
+    font-size: 1.3rem;
+    text-align: center;
+    opacity: 0.9;
+  }
+  .doc-sub {
+    font-family: var(--font-ui);
+    color: rgba(255,255,255,0.5);
+    font-size: 0.8rem;
+    text-align: center;
+    margin-top: -8px;
+  }
+
+  /* ── phone shell ── */
+  .phones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+  }
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .screen-label {
+    font-family: var(--font-ui);
+    color: rgba(255,255,255,0.7);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+  .phone {
+    width: 320px;
+    background: var(--bg);
+    border-radius: 36px;
+    border: 3px solid rgba(255,255,255,0.12);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-notch {
+    height: 28px;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .phone-notch::after {
+    content: '';
+    width: 80px; height: 8px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 999px;
+  }
+  .phone-screen {
+    min-height: 580px;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── shared components ── */
+  .app-header {
+    background: var(--red);
+    padding: 14px 16px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .app-header-back {
+    color: rgba(255,248,225,0.85);
+    font-size: 0.78rem;
+    background: rgba(255,255,255,0.15);
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+  }
+  .app-header-title {
+    font-family: var(--font-brush);
+    color: #FFF8E1;
+    font-size: 1.1rem;
+    flex: 1;
+  }
+  .app-header-badge {
+    font-size: 0.72rem;
+    color: rgba(255,248,225,0.75);
+    font-weight: 700;
+  }
+
+  .tab-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 0;
+    font-size: 0.62rem;
+    color: var(--ink-light);
+  }
+  .tab-item.active { color: var(--red); }
+  .tab-icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: var(--red-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .tab-item.active .tab-icon { background: var(--red-mid); }
+
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--red);
+    box-shadow: var(--shadow);
+    padding: 14px;
+  }
+  .card-title {
+    font-family: var(--font-brush);
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .card-sub {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    line-height: 1.5;
+  }
+
+  .btn-red {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-family: var(--font-ui);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(198,40,40,0.28);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--red);
+    border: 1.5px solid var(--red);
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-family: var(--font-ui);
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .btn-grey {
+    background: var(--border);
+    color: var(--ink-light);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-family: var(--font-ui);
+    font-size: 0.88rem;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .pill-red { background: var(--red-light); color: var(--red); }
+  .pill-green { background: rgba(16,185,129,0.1); color: var(--green); }
+  .pill-gold { background: rgba(245,158,11,0.12); color: var(--gold); }
+
+  /* ──────────────────────────
+     SCREEN 1: 首页（今日任务）
+  ────────────────────────── */
+  .home-hero {
+    background: var(--red);
+    padding: 16px 16px 22px;
+    flex-shrink: 0;
+  }
+  .home-hero-greeting {
+    font-size: 0.78rem;
+    color: rgba(255,248,225,0.75);
+    margin-bottom: 2px;
+  }
+  .home-hero-title {
+    font-family: var(--font-brush);
+    font-size: 1.5rem;
+    color: #FFF8E1;
+  }
+  .home-hero-streak {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .streak-chip {
+    background: rgba(255,248,225,0.18);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    color: #FFF8E1;
+    font-weight: 700;
+  }
+
+  .task-section {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .task-header {
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .task-header-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--ink);
+    flex: 1;
+  }
+  .task-row {
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .task-row:last-child { border-bottom: none; }
+  .task-row-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .task-row-icon.review { background: rgba(245,158,11,0.12); }
+  .task-row-icon.new { background: var(--red-light); }
+  .task-row-icon.done { background: rgba(16,185,129,0.1); }
+  .task-row-info { flex: 1; }
+  .task-row-label { font-size: 0.82rem; font-weight: 700; color: var(--ink); }
+  .task-row-sub { font-size: 0.68rem; color: var(--ink-light); margin-top: 1px; }
+
+  .done-banner {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 1.5px solid rgba(16,185,129,0.25);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .done-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(16,185,129,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .done-text-main { font-size: 0.88rem; font-weight: 700; color: #047857; }
+  .done-text-sub { font-size: 0.7rem; color: #6b7280; margin-top: 2px; }
+
+  /* ──────────────────────────
+     SCREEN 2: 复习验证题
+  ────────────────────────── */
+  .verify-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 14px;
+  }
+  .verify-poem-title {
+    text-align: center;
+  }
+  .verify-poem-name {
+    font-family: var(--font-brush);
+    font-size: 1.3rem;
+    color: var(--red);
+  }
+  .verify-poem-author {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    margin-top: 2px;
+  }
+  .verify-progress {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+  }
+  .verify-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .verify-dot.done { background: var(--green); }
+  .verify-dot.current { background: var(--red); }
+
+  .verify-question-box {
+    background: var(--red-light);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--red);
+    padding: 14px;
+  }
+  .verify-q-label {
+    font-size: 0.7rem;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .verify-q-line {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .verify-q-hint {
+    font-size: 0.7rem;
+    color: var(--ink-light);
+    margin-top: 4px;
+  }
+
+  .verify-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .verify-option {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .verify-option:hover { border-color: var(--red); background: var(--red-light); }
+  .verify-option.correct { border-color: var(--green); background: rgba(16,185,129,0.08); }
+  .verify-option.wrong { border-color: #ef4444; background: rgba(239,68,68,0.07); }
+  .verify-option.correct .opt-letter { background: var(--green); color: #fff; }
+  .verify-option.wrong .opt-letter { background: #ef4444; color: #fff; }
+  .opt-letter {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .opt-text {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+
+  .verify-result {
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .verify-result.pass { background: rgba(16,185,129,0.1); border: 1.5px solid rgba(16,185,129,0.25); }
+  .verify-result.fail { background: rgba(239,68,68,0.07); border: 1.5px solid rgba(239,68,68,0.2); }
+  .verify-result-icon { font-size: 24px; }
+  .verify-result-text { font-size: 0.82rem; font-weight: 700; }
+  .verify-result.pass .verify-result-text { color: #047857; }
+  .verify-result.fail .verify-result-text { color: #b91c1c; }
+  .verify-result-sub { font-size: 0.7rem; color: var(--ink-light); margin-top: 2px; }
+
+  /* ──────────────────────────
+     SCREEN 3: 间隔进度
+  ────────────────────────── */
+  .level-track {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 14px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .level-node {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+  }
+  .level-node::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .level-node:last-child::after { display: none; }
+  .level-circle {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    z-index: 1;
+    position: relative;
+    color: var(--ink-light);
+  }
+  .level-circle.passed { background: var(--green); border-color: var(--green); color: #fff; }
+  .level-circle.current { background: var(--red); border-color: var(--red); color: #fff; }
+  .level-label { font-size: 0.56rem; color: var(--ink-light); text-align: center; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .stat-tile {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 8px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-num {
+    font-family: var(--font-brush);
+    font-size: 1.5rem;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 0.65rem; color: var(--ink-light); }
+
+  .review-poem-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .review-poem-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--red);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow);
+  }
+  .review-poem-item.overdue { border-left-color: #ef4444; }
+  .review-poem-item.upcoming { border-left-color: var(--border); opacity: 0.6; }
+  .rpi-info { flex: 1; }
+  .rpi-title { font-family: var(--font-brush); font-size: 0.92rem; color: var(--ink); }
+  .rpi-due { font-size: 0.65rem; color: var(--ink-light); margin-top: 2px; }
+  .rpi-level {
+    display: flex;
+    gap: 3px;
+  }
+  .rpi-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .rpi-dot.filled { background: var(--red); }
+
+  /* ──────────────────────────
+     SCREEN 4: ProfileSheet 改造
+  ────────────────────────── */
+  .profile-header {
+    background: var(--red);
+    padding: 28px 16px 20px;
+    text-align: center;
+  }
+  .profile-avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(255,248,225,0.2);
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .profile-name {
+    font-family: var(--font-brush);
+    font-size: 1.2rem;
+    color: #FFF8E1;
+  }
+  .profile-sub { font-size: 0.72rem; color: rgba(255,248,225,0.7); margin-top: 3px; }
+
+  .overview-section {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .ov-header {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .ov-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .ov-cell {
+    padding: 14px 8px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .ov-cell:last-child { border-right: none; }
+  .ov-num {
+    font-family: var(--font-brush);
+    font-size: 1.4rem;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+  .ov-label { font-size: 0.65rem; color: var(--ink-light); }
+  .ov-chars {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ov-chars-label { font-size: 0.75rem; color: var(--ink-light); }
+  .ov-chars-val { font-family: var(--font-brush); font-size: 1rem; color: var(--red); }
+
+  .mastered-progress {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+  .mp-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .mp-title { font-size: 0.78rem; font-weight: 700; color: var(--ink); }
+  .mp-pct { font-size: 0.72rem; color: var(--red); font-weight: 700; }
+  .mp-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .mp-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--red), #e57373);
+  }
+  .mp-segments {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .mp-seg {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    color: var(--ink-light);
+  }
+  .mp-seg-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  /* ── section headers ── */
+  .section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+  }
+</style>
+
+<h1 class="doc-title">间隔复习系统 · 交互原型</h1>
+<p class="doc-sub">v1.0 · 2026-10-10 · 点击选项可查看交互效果</p>
+
+<div class="phones">
+
+  <!-- ===== SCREEN 1: 首页今日任务 ===== -->
+  <div class="phone-wrap">
+    <div class="screen-label">① 首页 — 今日任务（有复习）</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="home-hero">
+          <div class="home-hero-greeting">早上好，小学生</div>
+          <div class="home-hero-title">古诗小课堂</div>
+          <div class="home-hero-streak">
+            <span class="streak-chip">🔥 连续 7 天</span>
+            <span class="streak-chip">已背 12 首</span>
+          </div>
+        </div>
+
+        <div class="scroll-area">
+          <div class="section-title">今日任务</div>
+
+          <div class="task-section">
+            <div class="task-header">
+              <div class="task-header-title">今日待完成</div>
+              <span class="pill pill-red">2 项</span>
+            </div>
+
+            <!-- 复习行 -->
+            <div class="task-row">
+              <div class="task-row-icon review">📖</div>
+              <div class="task-row-info">
+                <div class="task-row-label">今日复习</div>
+                <div class="task-row-sub">静夜思 · 春晓，共 2 首到期</div>
+              </div>
+              <button class="btn-red" style="font-size:0.75rem;padding:7px 12px;">开始</button>
+            </div>
+
+            <!-- 新诗行（置灰，复习未完成） -->
+            <div class="task-row">
+              <div class="task-row-icon new">✨</div>
+              <div class="task-row-info">
+                <div class="task-row-label" style="color:var(--ink-light)">学新诗</div>
+                <div class="task-row-sub">登鹳雀楼 · 先完成复习解锁</div>
+              </div>
+              <button class="btn-grey" style="font-size:0.75rem;padding:7px 12px;">学习</button>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:4px">背诗计划</div>
+          <div class="card">
+            <div class="card-title">《登鹳雀楼》</div>
+            <div class="card-sub">唐·王之涣 · 白日依山尽，黄河入海流…</div>
+            <div style="margin-top:10px">
+              <button class="btn-outline" style="font-size:0.75rem;padding:6px 14px;">去背诵</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">《春晓》</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+              <div class="card-sub">唐·孟浩然</div>
+              <span class="pill pill-green">复习中</span>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--border)"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--border)"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--border)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item active">
+            <div class="tab-icon">🏠</div>首页
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">📚</div>诗集
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">🏆</div>成就
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">👤</div>我的
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 1b: 首页今日完成 ===== -->
+  <div class="phone-wrap">
+    <div class="screen-label">① 首页 — 今日已全部完成</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="home-hero">
+          <div class="home-hero-greeting">下午好，小学生</div>
+          <div class="home-hero-title">古诗小课堂</div>
+          <div class="home-hero-streak">
+            <span class="streak-chip">🔥 连续 8 天</span>
+            <span class="streak-chip">已掌握 5 首</span>
+          </div>
+        </div>
+
+        <div class="scroll-area">
+          <div class="section-title">今日任务</div>
+
+          <div class="done-banner">
+            <div class="done-icon">🎉</div>
+            <div>
+              <div class="done-text-main">今日任务全部完成！</div>
+              <div class="done-text-sub">复习了 2 首 · 学了静夜思 · 连续 8 天</div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:4px">明日预告</div>
+          <div class="task-section">
+            <div class="task-header">
+              <div class="task-header-title">明天到期复习</div>
+              <span class="pill pill-gold">1 首</span>
+            </div>
+            <div class="task-row">
+              <div class="task-row-icon review">📖</div>
+              <div class="task-row-info">
+                <div class="task-row-label">咏鹅</div>
+                <div class="task-row-sub">明天到期 · 当前第 2 档</div>
+              </div>
+              <div style="display:flex;gap:3px">
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--red)"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--red)"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--border)"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--border)"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--border)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item active">
+            <div class="tab-icon">🏠</div>首页
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">📚</div>诗集
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">🏆</div>成就
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">👤</div>我的
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 2: 验证题（答对） ===== -->
+  <div class="phone-wrap">
+    <div class="screen-label">② 复习验证题 — 答对状态</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-header">
+          <button class="app-header-back">← 返回</button>
+          <span class="app-header-title">复习验证</span>
+          <span class="app-header-badge">1 / 2</span>
+        </div>
+
+        <div class="verify-wrap">
+          <div class="verify-poem-title">
+            <div class="verify-poem-name">《静夜思》</div>
+            <div class="verify-poem-author">唐 · 李白</div>
+          </div>
+
+          <div class="verify-progress">
+            <div class="verify-dot done"></div>
+            <div class="verify-dot done"></div>
+            <div class="verify-dot done"></div>
+            <div class="verify-dot current"></div>
+            <div class="verify-dot"></div>
+            <div class="verify-dot"></div>
+          </div>
+
+          <div class="verify-question-box">
+            <div class="verify-q-label">考考你 🎯</div>
+            <div class="verify-q-line">"床前明月光，"</div>
+            <div class="verify-q-hint">下一句是？</div>
+          </div>
+
+          <div class="verify-options">
+            <div class="verify-option correct">
+              <div class="opt-letter">A</div>
+              <div class="opt-text">疑是地上霜。✓</div>
+            </div>
+            <div class="verify-option" style="opacity:0.5">
+              <div class="opt-letter">B</div>
+              <div class="opt-text">举头望明月。</div>
+            </div>
+            <div class="verify-option" style="opacity:0.5">
+              <div class="opt-letter">C</div>
+              <div class="opt-text">春眠不觉晓。</div>
+            </div>
+          </div>
+
+          <div class="verify-result pass">
+            <div class="verify-result-icon">🎊</div>
+            <div>
+              <div class="verify-result-text">回答正确！</div>
+              <div class="verify-result-sub">复习进度 +1档 · 7天后再复习</div>
+            </div>
+          </div>
+
+          <button class="btn-red" style="width:100%">继续下一首</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 2b: 验证题（答错） ===== -->
+  <div class="phone-wrap">
+    <div class="screen-label">② 复习验证题 — 答错状态</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-header">
+          <button class="app-header-back">← 返回</button>
+          <span class="app-header-title">复习验证</span>
+          <span class="app-header-badge">2 / 2</span>
+        </div>
+
+        <div class="verify-wrap">
+          <div class="verify-poem-title">
+            <div class="verify-poem-name">《春晓》</div>
+            <div class="verify-poem-author">唐 · 孟浩然</div>
+          </div>
+
+          <div class="verify-progress">
+            <div class="verify-dot done"></div>
+            <div class="verify-dot done"></div>
+            <div class="verify-dot current"></div>
+            <div class="verify-dot"></div>
+            <div class="verify-dot"></div>
+          </div>
+
+          <div class="verify-question-box">
+            <div class="verify-q-label">考考你 🎯</div>
+            <div class="verify-q-line">"夜来风雨声，"</div>
+            <div class="verify-q-hint">下一句是？</div>
+          </div>
+
+          <div class="verify-options">
+            <div class="verify-option" style="opacity:0.5">
+              <div class="opt-letter">A</div>
+              <div class="opt-text">春眠不觉晓。</div>
+            </div>
+            <div class="verify-option wrong">
+              <div class="opt-letter">B</div>
+              <div class="opt-text">处处闻啼鸟。✗ 你选了这个</div>
+            </div>
+            <div class="verify-option correct">
+              <div class="opt-letter">C</div>
+              <div class="opt-text">花落知多少。← 正确答案</div>
+            </div>
+          </div>
+
+          <div class="verify-result fail">
+            <div class="verify-result-icon">😅</div>
+            <div>
+              <div class="verify-result-text">答错了，继续加油！</div>
+              <div class="verify-result-sub">退回第1档 · 明天重新复习</div>
+            </div>
+          </div>
+
+          <button class="btn-red" style="width:100%">知道了，再去背一遍</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 3: 复习进度页 ===== -->
+  <div class="phone-wrap">
+    <div class="screen-label">③ 进度页 — 复习统计</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="app-header">
+          <span class="app-header-title">学习进度</span>
+        </div>
+
+        <div class="scroll-area">
+          <div class="stats-grid">
+            <div class="stat-tile">
+              <div class="stat-num">12</div>
+              <div class="stat-label">已背诵</div>
+            </div>
+            <div class="stat-tile" style="border-left:3px solid var(--green)">
+              <div class="stat-num" style="color:var(--green)">5</div>
+              <div class="stat-label">已掌握</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-num">7</div>
+              <div class="stat-label">连续天数</div>
+            </div>
+          </div>
+
+          <div class="mastered-progress">
+            <div class="mp-label">
+              <span class="mp-title">掌握进度</span>
+              <span class="mp-pct">5 / 75 首</span>
+            </div>
+            <div class="mp-bar">
+              <div class="mp-fill" style="width:6.7%"></div>
+            </div>
+            <div class="mp-segments">
+              <div class="mp-seg">
+                <div class="mp-seg-dot" style="background:var(--green)"></div>
+                已掌握 5
+              </div>
+              <div class="mp-seg">
+                <div class="mp-seg-dot" style="background:var(--red)"></div>
+                复习中 7
+              </div>
+              <div class="mp-seg">
+                <div class="mp-seg-dot" style="background:var(--border)"></div>
+                待学习 63
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">复习队列（今日到期）</div>
+          <div class="review-poem-list">
+            <div class="review-poem-item">
+              <div class="rpi-info">
+                <div class="rpi-title">《静夜思》</div>
+                <div class="rpi-due">今日到期 · 第 2 档</div>
+              </div>
+              <div class="rpi-level">
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+              </div>
+            </div>
+            <div class="review-poem-item">
+              <div class="rpi-info">
+                <div class="rpi-title">《春晓》</div>
+                <div class="rpi-due">今日到期 · 第 1 档</div>
+              </div>
+              <div class="rpi-level">
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:4px">即将到期</div>
+          <div class="review-poem-list">
+            <div class="review-poem-item upcoming">
+              <div class="rpi-info">
+                <div class="rpi-title">《咏鹅》</div>
+                <div class="rpi-due">明天到期 · 第 2 档</div>
+              </div>
+              <div class="rpi-level">
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+              </div>
+            </div>
+            <div class="review-poem-item upcoming">
+              <div class="rpi-info">
+                <div class="rpi-title">《江南》</div>
+                <div class="rpi-due">3天后到期 · 第 3 档</div>
+              </div>
+              <div class="rpi-level">
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot filled"></div>
+                <div class="rpi-dot"></div>
+                <div class="rpi-dot"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:4px">间隔阶梯说明</div>
+          <div class="level-track">
+            <div class="level-node">
+              <div class="level-circle passed">✓</div>
+              <div class="level-label">1天</div>
+            </div>
+            <div class="level-node">
+              <div class="level-circle current">2</div>
+              <div class="level-label">3天</div>
+            </div>
+            <div class="level-node">
+              <div class="level-circle">3</div>
+              <div class="level-label">7天</div>
+            </div>
+            <div class="level-node">
+              <div class="level-circle">4</div>
+              <div class="level-label">15天</div>
+            </div>
+            <div class="level-node">
+              <div class="level-circle">⭐</div>
+              <div class="level-label">掌握</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item">
+            <div class="tab-icon">🏠</div>首页
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">📚</div>诗集
+          </div>
+          <div class="tab-item active">
+            <div class="tab-icon">🏆</div>成就
+          </div>
+          <div class="tab-item">
+            <div class="tab-icon">👤</div>我的
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 4: ProfileSheet 改造 ===== -->
+  <div class="phone-wrap">
+    <div class="screen-label">④ 我的（家长设置）— 改造后</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="profile-header">
+          <div class="profile-avatar">👧</div>
+          <div class="profile-name">小朋友</div>
+          <div class="profile-sub">坚持学习 · 连续 7 天</div>
+        </div>
+
+        <div class="scroll-area">
+          <div class="section-title">学习概览</div>
+          <div class="overview-section">
+            <div class="ov-grid">
+              <div class="ov-cell">
+                <div class="ov-num">12</div>
+                <div class="ov-label">已背诵</div>
+              </div>
+              <div class="ov-cell">
+                <div class="ov-num" style="color:var(--green)">5</div>
+                <div class="ov-label">已掌握</div>
+              </div>
+              <div class="ov-cell">
+                <div class="ov-num">7</div>
+                <div class="ov-label">坚持天数</div>
+              </div>
+            </div>
+            <div class="ov-chars">
+              <span class="ov-chars-label">累计背诵字数</span>
+              <span class="ov-chars-val">1,280 字</span>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:4px">掌握进度</div>
+          <div class="mastered-progress">
+            <div class="mp-label">
+              <span class="mp-title">75 首古诗</span>
+              <span class="mp-pct">6.7% 已掌握</span>
+            </div>
+            <div class="mp-bar">
+              <div class="mp-fill" style="width:6.7%"></div>
+            </div>
+            <div class="mp-segments">
+              <div class="mp-seg">
+                <div class="mp-seg-dot" style="background:var(--green)"></div>
+                已掌握 5
+              </div>
+              <div class="mp-seg">
+                <div class="mp-seg-dot" style="background:var(--red)"></div>
+                复习中 7
+              </div>
+              <div class="mp-seg">
+                <div class="mp-seg-dot" style="background:var(--border)"></div>
+                未开始 63
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:4px">最近背诵</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
+              <div style="font-family:var(--font-brush);font-size:0.9rem;color:var(--ink);flex:1">《静夜思》</div>
+              <div style="display:flex;gap:2px">
+                <span style="color:var(--gold);font-size:12px">★★★</span>
+              </div>
+              <span class="pill pill-red" style="font-size:0.62rem">今天</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
+              <div style="font-family:var(--font-brush);font-size:0.9rem;color:var(--ink);flex:1">《春晓》</div>
+              <div style="display:flex;gap:2px">
+                <span style="color:var(--gold);font-size:12px">★★☆</span>
+              </div>
+              <span class="pill pill-gold" style="font-size:0.62rem">昨天</span>
+            </div>
+          </div>
+
+          <button class="btn-red" style="width:100%;margin-top:8px">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
