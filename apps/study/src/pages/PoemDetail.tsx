@@ -36,13 +36,15 @@ export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { markRead, markMemorized } = useProgress()
+  const { markRead, markMemorized, markReviewed } = useProgress()
   const { queue, completePoem } = useQueue()
   const [showPinyin, setShowPinyin] = useState(true)
-  const [memorizing, setMemorizing] = useState(() => searchParams.get('autoMem') === '1')
+  const isReviewMode = searchParams.get('review') === '1'
+  const [memorizing, setMemorizing] = useState(() => searchParams.get('autoMem') === '1' || isReviewMode)
   const [poem, setPoem] = useState<Poem | null>(null)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
   const [index, setIndex] = useState<PoemSummary[]>([])
+  const [distractorLines, setDistractorLines] = useState<string[]>([])
   const [titleHidden, setTitleHidden] = useState(false)
   const [splitColumn, setSplitColumn] = useState(false)
   const metaRef = useRef<HTMLDivElement>(null)
@@ -119,6 +121,23 @@ export default function PoemDetail() {
     if (index.length === 0) loadPoemIndex().then(setIndex)
   }, [numId])
 
+  // 预加载干扰项：从其他诗随机抽 2 首的诗行
+  useEffect(() => {
+    if (index.length < 3) return
+    const others = index.filter(p => p.id !== numId)
+    const picks = others.sort(() => Math.random() - 0.5).slice(0, 2)
+    Promise.all(picks.map(p => loadPoem(p.id))).then(poems => {
+      const lines: string[] = []
+      for (const p of poems) {
+        if (!p) continue
+        for (const ln of p.lines) {
+          lines.push(ln.chars.map(c => c.char).join(''))
+        }
+      }
+      setDistractorLines(lines)
+    })
+  }, [numId, index])
+
   // 相邻诗预加载
   useEffect(() => {
     if (index.length === 0) return
@@ -154,8 +173,13 @@ export default function PoemDetail() {
   const handleMemorized = useCallback((stars: number, charCount: number) => {
     if (!poem) return
     markMemorized(poem.id, stars, charCount)
-    completePoem(poem.id)
-  }, [poem?.id, markMemorized, completePoem])
+    if (!isReviewMode) completePoem(poem.id)
+  }, [poem?.id, markMemorized, completePoem, isReviewMode])
+
+  const handleVerified = useCallback((passed: boolean) => {
+    if (!poem) return
+    markReviewed(poem.id, passed)
+  }, [poem?.id, markReviewed])
 
   const handleNext = useCallback(() => {
     setMemorizing(false)
@@ -187,7 +211,17 @@ export default function PoemDetail() {
   }
 
   if (memorizing) {
-    return <MemorizeMode poem={poem} onExit={() => setMemorizing(false)} onNext={handleNext} onMemorized={handleMemorized} />
+    return (
+      <MemorizeMode
+        poem={poem}
+        onExit={() => setMemorizing(false)}
+        onNext={handleNext}
+        onMemorized={handleMemorized}
+        isReview={isReviewMode}
+        onVerified={handleVerified}
+        distractorLines={distractorLines}
+      />
+    )
   }
 
   const dynastyLabel = poem.dynasty ? `[${poem.dynasty}] ${poem.author}` : poem.author

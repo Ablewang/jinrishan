@@ -94,7 +94,6 @@ export function useQueue() {
     queue: store.queue,
     streakCount: store.streak_count,
     todayComplete: store.today_complete,
-    lastCompleteId: store.last_complete_id,
     isReturning,
     addToQueue,
     removeFromQueue,

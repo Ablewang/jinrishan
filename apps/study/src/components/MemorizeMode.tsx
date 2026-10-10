@@ -7,6 +7,28 @@ interface Props {
   onExit: () => void
   onNext: () => void
   onMemorized: (stars: number, charCount: number) => void
+  isReview?: boolean
+  onVerified?: (passed: boolean) => void
+  distractorLines?: string[]  // 来自其他诗的句子，用作干扰项
+}
+
+function lineText(line: { chars: { char: string; pinyin: string | null }[] }): string {
+  return line.chars.map(c => c.char).join('')
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+interface QuizData {
+  questionLine: string
+  correctAnswer: string
+  options: string[]
 }
 
 // 每行随机选 ~half 的汉字索引作为空格
@@ -22,17 +44,18 @@ function pickHidden(hanziCount: number): Set<number> {
 
 type Round = 1 | 2 | 3
 
-export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Props) {
+export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isReview, onVerified, distractorLines = [] }: Props) {
   const [round, setRound] = useState<Round>(1)
-  // 每行每个汉字是否已揭开
   const [lineRevealed, setLineRevealed] = useState<boolean[][]>(() =>
     poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false))
   )
-  // 每行的隐藏字集合（整个会话固定，不随轮次变化）
   const [hiddenMap] = useState<Set<number>[]>(() =>
     poem.lines.map(ln => pickHidden(ln.chars.filter(c => c.pinyin !== null).length))
   )
   const [celebrated, setCelebrated] = useState(false)
+  const [quiz, setQuiz] = useState<QuizData | null>(null)
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
+  const [quizResult, setQuizResult] = useState<'correct' | 'wrong' | null>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number>(0)
 
@@ -51,13 +74,30 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
     if (!allDone) return
     const t = setTimeout(() => {
       if (round < 3) {
-        // 进入下一轮，重置揭开状态
         setRound(r => (r + 1) as Round)
         setLineRevealed(poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false)))
       } else {
         const charCount = lines.reduce((sum, ln) => sum + ln.chars.filter(c => c.pinyin !== null).length, 0)
-        setCelebrated(true)
         onMemorized(3, charCount)
+
+        // 生成验证题（诗行数>=2时才出题）
+        if (isReview && onVerified && lines.length >= 2) {
+          const qIdx = Math.floor(Math.random() * (lines.length - 1))
+          const questionLine = lineText(lines[qIdx])
+          const correctAnswer = lineText(lines[qIdx + 1])
+          const distractors = distractorLines
+            .filter(l => l !== correctAnswer && l !== questionLine)
+            .slice(0, 2)
+          // 不够2个干扰项则跳过验证直接通过
+          if (distractors.length < 2) {
+            setCelebrated(true)
+            return
+          }
+          const options = shuffle([correctAnswer, ...distractors])
+          setQuiz({ questionLine, correctAnswer, options })
+        }
+
+        setCelebrated(true)
       }
     }, 500)
     return () => clearTimeout(t)
@@ -134,6 +174,59 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized }: Prop
 
   const roundLabel = ['', '第一关', '有拼音', '无拼音'][round]
   const showPinyin = round !== 3
+
+  if (celebrated && quiz && !quizResult) {
+    return (
+      <div className="mm mm--celebrate">
+        {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
+        <div className="mm__quiz-box">
+          <p className="mm__quiz-title">考考你</p>
+          <p className="mm__quiz-question">"{quiz.questionLine}"</p>
+          <p className="mm__quiz-sub">下一句是？</p>
+          <div className="mm__quiz-options">
+            {quiz.options.map(opt => (
+              <button
+                key={opt}
+                className={`mm__quiz-opt${selectedOption === opt ? ' mm__quiz-opt--selected' : ''}`}
+                onClick={() => setSelectedOption(opt)}
+              >{opt}</button>
+            ))}
+          </div>
+          <button
+            className={`mm__btn mm__btn--primary${!selectedOption ? ' mm__btn--disabled' : ''}`}
+            disabled={!selectedOption}
+            onClick={() => {
+              if (!selectedOption) return
+              const passed = selectedOption === quiz.correctAnswer
+              setQuizResult(passed ? 'correct' : 'wrong')
+              setTimeout(() => {
+                if (onVerified) onVerified(passed)
+                onNext()
+              }, 1200)
+            }}
+          >确认</button>
+        </div>
+        <style>{celebrateStyle}</style>
+      </div>
+    )
+  }
+
+  if (celebrated && quizResult) {
+    return (
+      <div className="mm mm--celebrate">
+        {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
+        <div className="mm__quiz-box mm__quiz-box--result">
+          <p className={`mm__quiz-result-icon${quizResult === 'correct' ? ' mm__quiz-result-icon--ok' : ' mm__quiz-result-icon--fail'}`}>
+            {quizResult === 'correct' ? '✓' : '✗'}
+          </p>
+          <p className="mm__quiz-result-text">
+            {quizResult === 'correct' ? '答对了！' : `正确答案：${quiz!.correctAnswer}`}
+          </p>
+        </div>
+        <style>{celebrateStyle}</style>
+      </div>
+    )
+  }
 
   if (celebrated) {
     return (
@@ -522,5 +615,45 @@ const celebrateStyle = `
   }
   .mm__btn--ghost {
     background: transparent; border: 1.5px solid #e0e0e0; color: #999;
+  }
+  .mm__btn--disabled { opacity: 0.4; }
+  .mm__quiz-box {
+    position: relative; z-index: 10;
+    background: rgba(255,255,255,0.95); border-radius: 24px;
+    padding: 28px 24px 24px; text-align: center;
+    max-width: 320px; width: 90%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+    border: 1.5px solid rgba(198,40,40,0.12);
+    animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .mm__quiz-title {
+    font-family: var(--font-brush); font-size: 1.6rem; color: #C62828;
+  }
+  .mm__quiz-question {
+    font-family: var(--font-brush); font-size: 1.1rem; color: #1a1a1a;
+    background: rgba(198,40,40,0.06); border-radius: 10px; padding: 10px 14px;
+  }
+  .mm__quiz-sub { font-size: var(--text-sm); color: var(--ink-light); }
+  .mm__quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .mm__quiz-opt {
+    padding: 12px 16px; border-radius: 12px;
+    border: 1.5px solid var(--border); background: #fff;
+    font-family: var(--font-brush); font-size: 1rem; color: var(--ink);
+    text-align: left; transition: all 0.15s;
+  }
+  .mm__quiz-opt--selected {
+    border-color: #C62828; background: rgba(198,40,40,0.08); color: #C62828;
+  }
+  .mm__quiz-box--result { justify-content: center; align-items: center; min-height: 160px; }
+  .mm__quiz-result-icon {
+    font-size: 3rem; font-weight: 700; line-height: 1;
+    width: 72px; height: 72px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mm__quiz-result-icon--ok { background: rgba(16,185,129,0.12); color: #10B981; }
+  .mm__quiz-result-icon--fail { background: rgba(198,40,40,0.1); color: #C62828; }
+  .mm__quiz-result-text {
+    font-family: var(--font-brush); font-size: 1.1rem; color: var(--ink); margin-top: 8px;
   }
 `

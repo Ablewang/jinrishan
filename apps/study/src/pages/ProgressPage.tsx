@@ -8,15 +8,15 @@ type StarFilter = '全部' | '无提示' | '少量提示' | '多次提示'
 const STAR_FILTERS: StarFilter[] = ['全部', '无提示', '少量提示', '多次提示']
 const TOTAL = 70
 
+const LEVEL_INTERVALS = ['1天', '3天', '7天', '15天', '30天', '已掌握']
+
 export default function ProgressPage() {
   const navigate = useNavigate()
-  const { progress, streak, totalChars, memorizeHistory, totalMemorized } = useProgress()
+  const { progress, streak, totalChars, memorizeHistory, totalMemorized, reviewCards, masteredCount, reviewingCount } = useProgress()
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [filter, setFilter] = useState<StarFilter>('全部')
 
   useEffect(() => { loadPoemIndex().then(setPoems) }, [])
-
-  const totalPerfect = Object.values(progress).filter(s => s.bestStars === 3).length
 
   const memorizedPoems = useMemo(() => {
     return poems
@@ -30,9 +30,18 @@ export default function ProgressPage() {
     if (filter === '无提示') return memorizedPoems.filter(p => p.bestStars === 3)
     if (filter === '少量提示') return memorizedPoems.filter(p => p.bestStars === 2)
     if (filter === '多次提示') return memorizedPoems.filter(p => p.bestStars === 1)
+    return memorizedPoems
   }, [memorizedPoems, filter])
 
   const RESULT_LABEL = (stars: number) => stars === 3 ? '无提示' : stars === 2 ? '少量提示' : stars === 1 ? '多次提示' : ''
+
+  // 今日到期复习
+  const today = new Date().toISOString().slice(0, 10)
+  const dueToday = reviewCards.filter(c => c.level < 5 && c.due <= today)
+  const upcoming = reviewCards
+    .filter(c => c.level < 5 && c.due > today)
+    .sort((a, b) => a.due.localeCompare(b.due))
+    .slice(0, 5)
 
   return (
     <div className="pg">
@@ -48,8 +57,8 @@ export default function ProgressPage() {
           <span className="pg__stat-label">已背诵</span>
         </div>
         <div className="pg__stat">
-          <span className="pg__stat-num">{totalPerfect}</span>
-          <span className="pg__stat-label">无提示背出</span>
+          <span className="pg__stat-num">{masteredCount}</span>
+          <span className="pg__stat-label">已掌握</span>
         </div>
         <div className="pg__stat">
           <span className="pg__stat-num">{totalChars}</span>
@@ -68,6 +77,82 @@ export default function ProgressPage() {
         </div>
         <span className="pg__bar-label">{totalMemorized} / {TOTAL} 首</span>
       </div>
+
+      {/* 复习统计 */}
+      {reviewCards.length > 0 && (
+        <div className="pg__section pg__section--review">
+          <div className="pg__section-header">
+            <span className="pg__section-title">间隔复习</span>
+            <span className="pg__section-count">{reviewingCount} 首复习中</span>
+          </div>
+          <div className="pg__review-stats">
+            <div className="pg__review-stat">
+              <span className="pg__review-num">{dueToday.length}</span>
+              <span className="pg__review-label">今日到期</span>
+            </div>
+            <div className="pg__review-stat">
+              <span className="pg__review-num">{reviewingCount}</span>
+              <span className="pg__review-label">复习中</span>
+            </div>
+            <div className="pg__review-stat pg__review-stat--mastered">
+              <span className="pg__review-num">{masteredCount}</span>
+              <span className="pg__review-label">已掌握</span>
+            </div>
+          </div>
+
+          {/* 间隔阶梯说明 */}
+          <div className="pg__ladder">
+            <div className="pg__ladder-title">复习阶梯</div>
+            <div className="pg__ladder-steps">
+              {LEVEL_INTERVALS.map((label, i) => (
+                <div key={i} className={`pg__ladder-step${i === 5 ? ' pg__ladder-step--mastered' : ''}`}>
+                  <span className="pg__ladder-step-num">{i === 5 ? '★' : `L${i + 1}`}</span>
+                  <span className="pg__ladder-step-label">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 今日到期 */}
+          {dueToday.length > 0 && (
+            <div className="pg__review-list">
+              <div className="pg__review-list-title">今日到期</div>
+              {dueToday.slice(0, 3).map(rc => {
+                const p = poems.find(pm => pm.id === rc.id)
+                if (!p) return null
+                return (
+                  <button key={rc.id} className="pg__review-item" onClick={() => navigate(`/poem/${rc.id}?review=1`)}>
+                    <span className="pg__review-item-level">L{rc.level}</span>
+                    <span className="pg__review-item-title">《{p.title}》</span>
+                    <span className="pg__review-item-meta">{p.author}</span>
+                    <span className="pg__review-item-cta">去复习</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {/* 即将到期 */}
+          {upcoming.length > 0 && (
+            <div className="pg__review-list">
+              <div className="pg__review-list-title">即将到期</div>
+              {upcoming.map(rc => {
+                const p = poems.find(pm => pm.id === rc.id)
+                if (!p) return null
+                const diff = Math.round((new Date(rc.due).getTime() - new Date(today).getTime()) / 86400000)
+                return (
+                  <div key={rc.id} className="pg__review-item pg__review-item--upcoming">
+                    <span className="pg__review-item-level">L{rc.level}</span>
+                    <span className="pg__review-item-title">《{p.title}》</span>
+                    <span className="pg__review-item-meta">{p.author}</span>
+                    <span className="pg__review-item-days">{diff}天后</span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 成就 */}
       <div className="pg__ach-row">
@@ -332,4 +417,80 @@ const style = `
   .pg__item-stars--perfect { color: #C62828; }
   .pg__item-stars--mid { color: #999; }
   .pg__item-stars--low { color: #bbb; }
+
+  /* ── 复习统计 ── */
+  .pg__section--review {
+    border-color: rgba(198,40,40,0.2);
+  }
+  .pg__review-stats {
+    display: flex; gap: 10px; margin-bottom: 14px;
+  }
+  .pg__review-stat {
+    flex: 1; background: rgba(198,40,40,0.06);
+    border-radius: 12px; padding: 12px 8px; text-align: center;
+  }
+  .pg__review-stat--mastered { background: rgba(16,185,129,0.08); }
+  .pg__review-num {
+    display: block; font-size: 1.4rem; font-weight: 700;
+    color: #C62828; font-variant-numeric: tabular-nums; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .pg__review-stat--mastered .pg__review-num { color: #10B981; }
+  .pg__review-label { font-size: 11px; color: var(--ink-light); }
+  .pg__ladder {
+    background: var(--bg); border-radius: 10px;
+    padding: 10px 12px; margin-bottom: 14px;
+  }
+  .pg__ladder-title {
+    font-size: 11px; font-weight: 700; color: var(--ink-light);
+    margin-bottom: 8px; letter-spacing: 0.04em;
+  }
+  .pg__ladder-steps {
+    display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;
+  }
+  .pg__ladder-steps::-webkit-scrollbar { display: none; }
+  .pg__ladder-step {
+    flex: 1; min-width: 44px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: rgba(198,40,40,0.06); border-radius: 8px; padding: 6px 4px;
+  }
+  .pg__ladder-step--mastered { background: rgba(16,185,129,0.08); }
+  .pg__ladder-step-num {
+    font-size: 10px; font-weight: 700; color: #C62828;
+  }
+  .pg__ladder-step--mastered .pg__ladder-step-num { color: #10B981; }
+  .pg__ladder-step-label { font-size: 10px; color: var(--ink-light); white-space: nowrap; }
+  .pg__review-list { margin-bottom: 10px; }
+  .pg__review-list-title {
+    font-size: 11px; font-weight: 700; color: var(--ink-light);
+    margin-bottom: 6px; letter-spacing: 0.04em;
+  }
+  .pg__review-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 4px; border-bottom: 1px solid var(--border);
+    text-align: left; background: transparent; width: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pg__review-item:last-child { border-bottom: none; }
+  .pg__review-item:active:not(.pg__review-item--upcoming) { background: rgba(198,40,40,0.04); }
+  .pg__review-item-level {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    background: rgba(198,40,40,0.08); color: #C62828;
+  }
+  .pg__review-item-title {
+    font-family: var(--font-brush); font-size: 0.95rem; color: var(--ink); flex-shrink: 0;
+  }
+  .pg__review-item-meta {
+    font-size: 11px; color: var(--ink-light); flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .pg__review-item-cta {
+    flex-shrink: 0; font-size: 11px; font-weight: 700; color: #C62828;
+    background: rgba(198,40,40,0.08); border-radius: 999px; padding: 3px 10px;
+  }
+  .pg__review-item-days {
+    flex-shrink: 0; font-size: 11px; color: var(--ink-light);
+  }
 `

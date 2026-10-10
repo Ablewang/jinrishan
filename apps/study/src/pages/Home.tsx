@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
@@ -7,7 +7,7 @@ import { useQueue } from '../hooks/useQueue'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { getState, streak, todayRecord, memorizeHistory } = useProgress()
+  const { getState, streak, todayRecord, memorizeHistory, todayDueReviews, reviewCards } = useProgress()
   const { queue, streakCount, todayComplete, isReturning } = useQueue()
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [bannerVisible, setBannerVisible] = useState(false)
@@ -31,6 +31,20 @@ export default function Home() {
     return p.id === record?.id
   }) ?? null
 
+  // 今日复习：todayDueReviews 中对应诗信息
+  const reviewPoems = useMemo(() =>
+    todayDueReviews.map(rc => poems.find(p => p.id === rc.id)).filter(Boolean) as PoemSummary[],
+    [todayDueReviews, poems]
+  )
+
+  // 今日复习是否全部完成（today所有due的卡片的lastDate===today）
+  const today = new Date().toISOString().slice(0, 10)
+  const reviewDoneToday = useMemo(() =>
+    todayDueReviews.every(rc => rc.lastDate === today),
+    [todayDueReviews, today, reviewCards]
+  )
+  const hasReviews = todayDueReviews.length > 0
+
   // 模式判断
   type Mode = 'pending' | 'done' | 'empty' | 'returning'
   const mode: Mode = (() => {
@@ -42,6 +56,10 @@ export default function Home() {
 
   function startMem(poemId: number) {
     navigate(`/poem/${poemId}?autoMem=1`)
+  }
+
+  function startReview(poemId: number) {
+    navigate(`/poem/${poemId}?review=1`)
   }
 
   return (
@@ -71,6 +89,36 @@ export default function Home() {
           <div className="home__progress-fill" style={{ width: `${Math.min(100, (streakCount || streak.count) * 5)}%` }} />
         </div>
       </div>
+
+      {/* 今日复习区块 */}
+      {hasReviews && (
+        <div className="review-block">
+          <div className="review-block__header">
+            <span className="review-block__title">今日复习</span>
+            <span className={`review-block__badge${reviewDoneToday ? ' review-block__badge--done' : ''}`}>
+              {reviewDoneToday ? '已完成 ✓' : `${todayDueReviews.length} 首`}
+            </span>
+          </div>
+          <div className="review-block__list">
+            {reviewPoems.map(p => {
+              const card = todayDueReviews.find(rc => rc.id === p.id)!
+              const done = card.lastDate === today
+              return (
+                <button
+                  key={p.id}
+                  className={`review-block__item${done ? ' review-block__item--done' : ''}`}
+                  onClick={() => !done && startReview(p.id)}
+                >
+                  <span className="review-block__item-dot">{done ? '✓' : `L${card.level}`}</span>
+                  <span className="review-block__item-title">《{p.title}》</span>
+                  <span className="review-block__item-meta">{p.dynasty ? `${p.dynasty}·` : ''}{p.author}</span>
+                  {!done && <span className="review-block__item-cta">复习</span>}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* 今日任务卡片 */}
       <div className={`task-card${mode === 'done' ? ' task-card--done' : mode === 'empty' ? ' task-card--empty' : ''}`}>
@@ -577,4 +625,60 @@ const styles = `
     line-height: 1.7;
   }
   .queue-empty-text strong { color: var(--ink); font-weight: 600; }
+
+  /* ── 今日复习区块 ── */
+  .review-block {
+    margin: 12px 16px 0;
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-card);
+    border: 1.5px solid rgba(198,40,40,0.2);
+  }
+  .review-block__header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .review-block__title {
+    font-size: var(--text-sm); font-weight: 700; color: var(--ink);
+  }
+  .review-block__badge {
+    font-size: 11px; font-weight: 700; color: #C62828;
+    background: rgba(198,40,40,0.08); border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .review-block__badge--done {
+    color: #10B981; background: rgba(16,185,129,0.1);
+  }
+  .review-block__list { display: flex; flex-direction: column; gap: 2px; }
+  .review-block__item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 4px; border-bottom: 1px solid var(--border);
+    text-align: left; background: transparent;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s;
+  }
+  .review-block__item:last-child { border-bottom: none; }
+  .review-block__item:active:not(.review-block__item--done) { background: rgba(198,40,40,0.04); }
+  .review-block__item--done { opacity: 0.55; }
+  .review-block__item-dot {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    background: rgba(198,40,40,0.08); color: #C62828;
+  }
+  .review-block__item--done .review-block__item-dot {
+    background: rgba(16,185,129,0.12); color: #10B981;
+  }
+  .review-block__item-title {
+    font-family: var(--font-brush); font-size: 0.95rem; color: var(--ink); flex-shrink: 0;
+  }
+  .review-block__item-meta {
+    font-size: 11px; color: var(--ink-light); flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .review-block__item-cta {
+    flex-shrink: 0; font-size: 11px; font-weight: 700; color: #C62828;
+    background: rgba(198,40,40,0.08); border-radius: 999px; padding: 3px 10px;
+  }
 `

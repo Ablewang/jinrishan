@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 
 export interface PoemState {
   read: boolean
@@ -13,10 +13,28 @@ export interface StreakData {
   count: number
 }
 
+export interface ReviewCard {
+  id: number
+  level: number     // 0=刚背完, 1-4=复习中, 5=已掌握
+  due: string       // 'YYYY-MM-DD'
+  lastDate: string
+  passCount: number
+}
+
 const STORAGE_KEY = 'poem_progress'
 const STREAK_KEY = 'poem_streak'
 const CHARS_KEY = 'poem_total_chars'
 const HISTORY_KEY = 'poem_memorize_history'
+const REVIEW_KEY = 'poem_review_cards'
+
+// INTERVALS[level] = 通过 level 档后距下次复习的天数
+const INTERVALS = [1, 3, 7, 15, 30]
+
+function addDays(base: string, days: number): string {
+  const d = new Date(base + 'T00:00:00')
+  d.setDate(d.getDate() + days)
+  return d.toISOString().slice(0, 10)
+}
 
 function loadProgress(): Progress {
   try {
@@ -68,6 +86,19 @@ function saveHistory(h: MemorizeRecord[]) {
   try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)) } catch { /* ignore */ }
 }
 
+function loadReviewCards(): ReviewCard[] {
+  try {
+    const raw = localStorage.getItem(REVIEW_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+function saveReviewCards(cards: ReviewCard[]) {
+  try { localStorage.setItem(REVIEW_KEY, JSON.stringify(cards)) } catch { /* ignore */ }
+}
+
 function todayStr(): string {
   return new Date().toISOString().slice(0, 10)
 }
@@ -77,6 +108,7 @@ export function useProgress() {
   const [streak, setStreak] = useState<StreakData>(loadStreak)
   const [totalChars, setTotalChars] = useState<number>(loadTotalChars)
   const [memorizeHistory, setMemorizeHistory] = useState<MemorizeRecord[]>(loadHistory)
+  const [reviewCards, setReviewCards] = useState<ReviewCard[]>(loadReviewCards)
 
   const getState = useCallback((id: number): PoemState => {
     return progress[String(id)] ?? { read: false, memorized: false, bestStars: 0 }
@@ -94,6 +126,8 @@ export function useProgress() {
   }, [])
 
   const markMemorized = useCallback((id: number, stars = 0, charCount = 0) => {
+    const today = todayStr()
+
     setProgress(prev => {
       const key = String(id)
       const existing = prev[key] ?? { read: false, memorized: false, bestStars: 0 }
@@ -109,7 +143,6 @@ export function useProgress() {
       }
       saveProgress(next)
 
-      // 首次背诵才累计字数
       if (isFirstTime && charCount > 0) {
         const newTotal = loadTotalChars() + charCount
         saveTotalChars(newTotal)
@@ -118,18 +151,31 @@ export function useProgress() {
       return next
     })
 
-    // 更新背诵历史
+    // 新建或更新 ReviewCard（首次背诵 → 档位0，due = 明天）
+    setReviewCards(prev => {
+      const existing = prev.find(c => c.id === id)
+      // 已掌握的诗再次背诵不重置档位
+      if (existing && existing.level === 5) {
+        const updated = prev.map(c => c.id === id ? { ...c, lastDate: today } : c)
+        saveReviewCards(updated)
+        return updated
+      }
+      if (existing) return prev // 复习中不重建
+      const newCard: ReviewCard = { id, level: 0, due: addDays(today, 1), lastDate: today, passCount: 0 }
+      const updated = [...prev, newCard]
+      saveReviewCards(updated)
+      return updated
+    })
+
     setMemorizeHistory(prev => {
-      const next = [...prev.filter(r => r.id !== id), { id, stars, date: todayStr() }].slice(-20)
+      const next = [...prev.filter(r => r.id !== id), { id, stars, date: today }].slice(-20)
       saveHistory(next)
       return next
     })
 
-    // 更新连续学习天数
-    const today = todayStr()
     const current = loadStreak()
     if (current.lastDate !== today) {
-      const prevDay = new Date()
+      const prevDay = new Date(today + 'T00:00:00')
       prevDay.setDate(prevDay.getDate() - 1)
       const prevStr = prevDay.toISOString().slice(0, 10)
       const newStreak: StreakData = {
@@ -141,10 +187,51 @@ export function useProgress() {
     }
   }, [])
 
+  // passed=true → 档位+1；passed=false → 退回档位0
+  const markReviewed = useCallback((id: number, passed: boolean) => {
+    const today = todayStr()
+    setReviewCards(prev => {
+      const idx = prev.findIndex(c => c.id === id)
+      if (idx === -1) return prev
+      const card = prev[idx]
+      let newLevel: number
+      let newDue: string
+      if (passed) {
+        newLevel = Math.min(card.level + 1, 5)
+        newDue = newLevel < 5 ? addDays(today, INTERVALS[newLevel - 1]) : addDays(today, 365)
+      } else {
+        newLevel = 0
+        newDue = addDays(today, 1)
+      }
+      const updated = prev.map((c, i) => i === idx
+        ? { ...c, level: newLevel, due: newDue, lastDate: today, passCount: passed ? c.passCount + 1 : c.passCount }
+        : c
+      )
+      saveReviewCards(updated)
+      return updated
+    })
+  }, [])
+
+  // 今日到期复习，最多3首（due <= today，level < 5）
+  const todayDueReviews = useMemo(() => {
+    const today = todayStr()
+    return reviewCards
+      .filter(c => c.level < 5 && c.due <= today)
+      .slice(0, 3)
+  }, [reviewCards])
+
+  const masteredCount = useMemo(() => reviewCards.filter(c => c.level === 5).length, [reviewCards])
+
+  const reviewingCount = useMemo(() => reviewCards.filter(c => c.level > 0 && c.level < 5).length, [reviewCards])
+
   const totalMemorized = Object.values(progress).filter(s => s.memorized).length
   const totalPerfect = Object.values(progress).filter(s => s.bestStars === 3).length
   const todayRecord = [...memorizeHistory].reverse().find(r => r.date === todayStr()) ?? null
 
-  return { getState, markRead, markMemorized, totalMemorized, totalPerfect, streak, progress, totalChars, memorizeHistory, todayRecord }
+  return {
+    getState, markRead, markMemorized, markReviewed,
+    totalMemorized, totalPerfect, streak, progress, totalChars, memorizeHistory, todayRecord,
+    reviewCards, todayDueReviews, masteredCount, reviewingCount,
+  }
 }
 
