@@ -75,7 +75,7 @@ export default function ProfileSheet({ onClose }: Props) {
             <div className="ps-overlay__section-label">最近背诵</div>
             {recentPoems.map(r => (
               <div key={r.id} className="ps-overlay__recent-item">
-                <span className="ps-overlay__recent-date">{r.date.slice(5)}</span>
+                <span className="ps-overlay__recent-date">{(r.date ?? '').slice(5)}</span>
                 <span className="ps-overlay__recent-stars">{'★'.repeat(r.stars)}</span>
               </div>
             ))}
