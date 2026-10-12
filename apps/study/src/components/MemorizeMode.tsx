@@ -51,7 +51,7 @@ function pickHidden(hanziCount: number): Set<number> {
 
 type Round = 1 | 2 | 3
 
-export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isReview, onVerified, distractorLines = [], reviewIndex, reviewTotal, reviewLevel }: Props) {
+export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isReview, onVerified, distractorLines = [], reviewIndex, reviewTotal, reviewLevel, isOnboarding }: Props) {
   const [round, setRound] = useState<Round>(1)
   const [lineRevealed, setLineRevealed] = useState<boolean[][]>(() =>
     poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false))
@@ -344,8 +344,11 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
         {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
         <canvas ref={canvasRef} className="mm__confetti-canvas" aria-hidden />
         <div className="mm__celebrate-box">
-          <p className="mm__celebrate-title">背出来啦！</p>
+          <p className="mm__celebrate-title">{isOnboarding ? '你背完了第一首！' : '背出来啦！'}</p>
           <p className="mm__celebrate-poem">{poem.title}</p>
+          {isOnboarding && (
+            <p className="mm__celebrate-onb-sub">真棒，继续下去你就能背会所有古诗！</p>
+          )}
           <div className="mm__stars-row">
             {[1, 2, 3].map(i => (
               <svg key={i} className="mm__star-item mm__star-item--on"
@@ -357,13 +360,17 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
             ))}
           </div>
           <div className="mm__celebrate-btns">
-            <button className="mm__btn mm__btn--primary" onClick={onNext}>下一首 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg></button>
-            <button className="mm__btn mm__btn--ghost" onClick={() => {
-              hintsUsedRef.current = 0
-              setCelebrated(false)
-              setRound(1)
-              setLineRevealed(poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false)))
-            }}>再背一遍</button>
+            <button className="mm__btn mm__btn--primary" onClick={onNext}>
+              {isOnboarding ? '去首页看看 →' : '下一首'}{!isOnboarding && <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg>}
+            </button>
+            {!isOnboarding && (
+              <button className="mm__btn mm__btn--ghost" onClick={() => {
+                hintsUsedRef.current = 0
+                setCelebrated(false)
+                setRound(1)
+                setLineRevealed(poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false)))
+              }}>再背一遍</button>
+            )}
           </div>
         </div>
         <style>{celebrateStyle}</style>
@@ -700,6 +707,10 @@ const celebrateStyle = `
   .mm__celebrate-poem {
     font-family: var(--font-brush); font-size: 1.1rem;
     color: #aaa; margin-bottom: 4px;
+  }
+  .mm__celebrate-onb-sub {
+    font-family: var(--font-ui); font-size: var(--text-sm);
+    color: var(--ink-light); margin: 8px 0 4px; line-height: 1.6;
   }
   .mm__stars-row {
     display: flex; justify-content: center; gap: 8px;

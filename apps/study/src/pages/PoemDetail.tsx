@@ -170,9 +170,11 @@ export default function PoemDetail() {
     return () => obs.disconnect()
   }, [poem?.id])
 
-  const currentIndex = index.findIndex(p => p.id === numId)
-  const prevPoem = currentIndex > 0 ? index[currentIndex - 1] : null
-  const nextPoem = currentIndex < index.length - 1 ? index[currentIndex + 1] : null
+  const ONBOARDING_IDS = [4, 10, 19]
+  const visibleIndex = isOnboarding ? index.filter(p => ONBOARDING_IDS.includes(p.id)) : index
+  const currentIndex = visibleIndex.findIndex(p => p.id === numId)
+  const prevPoem = currentIndex > 0 ? visibleIndex[currentIndex - 1] : null
+  const nextPoem = currentIndex < visibleIndex.length - 1 ? visibleIndex[currentIndex + 1] : null
 
   const handleMemorized = useCallback((stars: number, charCount: number, noHintPass?: boolean) => {
     if (!poem) return
@@ -186,6 +188,12 @@ export default function PoemDetail() {
   }, [poem?.id, markReviewed])
 
   const handleNext = useCallback(() => {
+    // Onboarding 完成：写入标志，回首页
+    if (isOnboarding) {
+      try { localStorage.setItem('poem_onboarding_done', '1') } catch { /* ignore */ }
+      navigate('/', { replace: true })
+      return
+    }
     if (isReviewMode && reviewIds.length > 0) {
       const nextIdx = reviewIdx + 1
       if (nextIdx < reviewIds.length) {
@@ -252,7 +260,7 @@ export default function PoemDetail() {
   return (
     <div className="d">
       <header className="d-nav">
-        <button className="d-nav__back" onClick={() => navigate('/')}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
+        <button className="d-nav__back" onClick={() => navigate(-1)}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         {titleHidden && <span className="d-nav__title">{poem.title}</span>}
         <button
           className={`d-nav__toggle${showPinyin ? ' d-nav__toggle--on' : ''}`}
@@ -328,11 +336,11 @@ export default function PoemDetail() {
           onClick={() => { if (!dragState.current?.moved) setMemorizing(true) }}
         >背一背</button>
         <div className="d-footer__nav">
-          <button className="d-footer__nav-btn" onClick={() => prevPoem && navigate(`/poem/${prevPoem.id}`)} disabled={!prevPoem}>
+          <button className="d-footer__nav-btn" onClick={() => prevPoem && navigate(`/poem/${prevPoem.id}${isOnboarding ? '?onboarding=1' : ''}`, { replace: true })} disabled={!prevPoem}>
             <span className="d-footer__nav-arrow">‹</span>
             <span className="d-footer__nav-label">上一首</span>
           </button>
-          <button className="d-footer__nav-btn" onClick={() => nextPoem && navigate(`/poem/${nextPoem.id}`)} disabled={!nextPoem}>
+          <button className="d-footer__nav-btn" onClick={() => nextPoem && navigate(`/poem/${nextPoem.id}${isOnboarding ? '?onboarding=1' : ''}`, { replace: true })} disabled={!nextPoem}>
             <span className="d-footer__nav-label">下一首</span>
             <span className="d-footer__nav-arrow">›</span>
           </button>

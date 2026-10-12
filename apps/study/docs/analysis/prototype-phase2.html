@@ -1,0 +1,1635 @@
+<title>今日山 · 第二期原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+
+<style>
+/* ── Token system ──────────────────────────────────────── */
+:root {
+  --bg:        #FAF6F1;
+  --bg2:       #F2EBE1;
+  --surface:   #FFFFFF;
+  --ink:       #2C2416;
+  --ink-mid:   #6B5B48;
+  --ink-light: #A89A88;
+  --red:       #C0392B;
+  --red-deep:  #96291F;
+  --red-soft:  #F5E6E4;
+  --gold:      #C9A84C;
+  --gold-soft: #FDF3DC;
+  --green:     #3A7D44;
+  --shadow:    rgba(44,36,22,0.10);
+
+  --font-display: 'ZCOOL KuaiLe', cursive;
+  --font-poem:    'Noto Serif SC', serif;
+  --font-ui:      'Noto Sans SC', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1A1410; --bg2: #231C15; --surface: #2C2318;
+    --ink: #F0E8DC; --ink-mid: #B8A898; --ink-light: #7A6A58;
+    --red-soft: #3D1A17; --gold-soft: #2D2410;
+    --shadow: rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1A1410; --bg2: #231C15; --surface: #2C2318;
+  --ink: #F0E8DC; --ink-mid: #B8A898; --ink-light: #7A6A58;
+  --red-soft: #3D1A17; --gold-soft: #2D2410;
+  --shadow: rgba(0,0,0,0.4);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg2);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 32px 48px;
+  padding-inline: 16px;
+  gap: 0;
+}
+
+/* ── Page header ───────────────────────────────────────── */
+.page-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--red);
+  letter-spacing: .04em;
+}
+.page-header p {
+  font-size: .82rem;
+  color: var(--ink-mid);
+  margin-top: 4px;
+}
+
+/* ── Screen nav dots ───────────────────────────────────── */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ink-light);
+  cursor: pointer;
+  border: none;
+  transition: background .2s, transform .2s;
+  flex-shrink: 0;
+}
+.nav-dot.active { background: var(--red); transform: scale(1.4); }
+.nav-label {
+  font-size: .72rem;
+  color: var(--ink-light);
+  font-family: var(--font-ui);
+  white-space: nowrap;
+}
+
+/* ── Phone frame ───────────────────────────────────────── */
+.phone-wrap {
+  width: 100%;
+  max-width: 375px;
+  position: relative;
+}
+.phone {
+  background: var(--surface);
+  border-radius: 44px;
+  box-shadow: 0 0 0 2px var(--bg2), 0 0 0 8px var(--ink-mid), 0 24px 64px var(--shadow);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 390/844;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.phone-notch {
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 34px;
+  background: #111;
+  border-radius: 0 0 20px 20px;
+  z-index: 10;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.phone-camera { width: 12px; height: 12px; border-radius: 50%; background: #222; border: 1.5px solid #333; }
+.phone-speaker { width: 48px; height: 5px; border-radius: 10px; background: #1a1a1a; }
+.phone-status {
+  height: 44px;
+  padding: 14px 24px 0;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .68rem; font-weight: 600; letter-spacing: .02em;
+  color: var(--ink);
+  flex-shrink: 0;
+  position: relative; z-index: 5;
+}
+.phone-home { height: 32px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; flex-shrink: 0; }
+.phone-home-bar { width: 120px; height: 5px; border-radius: 10px; background: var(--ink); opacity: .15; }
+
+/* ── Screen container ──────────────────────────────────── */
+.screens {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.screen {
+  position: absolute; inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex; flex-direction: column;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+}
+.screen.active {
+  opacity: 1; transform: translateX(0);
+  pointer-events: auto;
+}
+.screen.exit {
+  opacity: 0; transform: translateX(-30px);
+}
+
+/* ── Common UI ─────────────────────────────────────────── */
+.btn-primary {
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 14px 28px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: .06em;
+  cursor: pointer;
+  width: 100%;
+  transition: background .15s, transform .1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary:active { background: var(--red-deep); transform: scale(.98); }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-mid);
+  border: 1.5px solid var(--ink-light);
+  border-radius: 24px;
+  padding: 12px 28px;
+  font-family: var(--font-ui);
+  font-size: .88rem;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color .15s;
+}
+.btn-ghost:active { border-color: var(--ink-mid); }
+.btn-link {
+  background: transparent;
+  border: none;
+  color: var(--ink-mid);
+  font-size: .78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--ink-light);
+  padding: 4px 0;
+  font-family: var(--font-ui);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 0 — Welcome
+═══════════════════════════════════════════════════════ */
+.s-welcome {
+  background: var(--bg);
+  justify-content: flex-end;
+  padding: 0 24px 40px;
+  position: relative;
+}
+.welcome-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #FAF6F1 40%, #F0E3D8 100%);
+  overflow: hidden;
+}
+.welcome-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: .08;
+  background: var(--red);
+}
+.welcome-art {
+  position: absolute;
+  top: 60px; left: 50%; transform: translateX(-50%);
+  width: 200px; text-align: center;
+}
+.welcome-art .big-char {
+  font-family: var(--font-display);
+  font-size: 7rem;
+  color: var(--red);
+  opacity: .12;
+  line-height: 1;
+  display: block;
+}
+.welcome-art .poem-lines {
+  font-family: var(--font-poem);
+  font-size: .78rem;
+  color: var(--ink-mid);
+  line-height: 2.2;
+  letter-spacing: .12em;
+  text-align: center;
+}
+.welcome-body { position: relative; z-index: 1; }
+.welcome-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--red-soft);
+  color: var(--red);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  margin-bottom: 16px;
+}
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--ink);
+  line-height: 1.3;
+  letter-spacing: .04em;
+  margin-bottom: 8px;
+  text-wrap: balance;
+}
+.welcome-sub {
+  font-size: .84rem;
+  color: var(--ink-mid);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.welcome-steps {
+  display: flex; gap: 16px;
+  margin-bottom: 28px;
+}
+.welcome-step {
+  flex: 1; text-align: center;
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 12px 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+.welcome-step .step-num {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--red);
+  display: block;
+}
+.welcome-step .step-label {
+  font-size: .68rem;
+  color: var(--ink-mid);
+  margin-top: 2px;
+}
+/* 欢迎屏右上角跳过链接 */
+.welcome-skip {
+  position: absolute;
+  top: 12px; right: 20px;
+  z-index: 2;
+  background: transparent;
+  border: none;
+  color: var(--ink-mid);
+  font-size: .75rem;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  padding: 6px 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 1 — Poem selection
+═══════════════════════════════════════════════════════ */
+.s-pick { background: var(--bg); padding-bottom: 24px; }
+.pick-header {
+  padding: 20px 20px 12px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.pick-header-left {}
+.pick-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--ink);
+  letter-spacing: .04em;
+}
+.pick-sub { font-size: .78rem; color: var(--ink-mid); margin-top: 4px; }
+.pick-skip {
+  background: transparent; border: none;
+  color: var(--ink-light); font-size: .75rem;
+  cursor: pointer; font-family: var(--font-ui);
+  flex-shrink: 0; padding-top: 4px;
+}
+.pick-cards { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+.pick-card {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex; gap: 14px; align-items: center;
+  box-shadow: 0 2px 10px var(--shadow);
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .2s, box-shadow .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pick-card.selected {
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px var(--red-soft);
+}
+.pick-card-num {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--red-soft);
+  color: var(--red);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pick-card-info { flex: 1; min-width: 0; }
+.pick-card-title {
+  font-family: var(--font-poem);
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+.pick-card-meta {
+  font-size: .72rem;
+  color: var(--ink-mid);
+  margin-top: 2px;
+}
+.pick-card-line {
+  font-family: var(--font-poem);
+  font-size: .8rem;
+  color: var(--ink-mid);
+  margin-top: 5px;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pick-card-badge {
+  font-size: .65rem;
+  background: var(--gold-soft);
+  color: var(--gold);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.pick-footer { padding: 16px 16px 0; }
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 2 — Poem detail (simplified)
+═══════════════════════════════════════════════════════ */
+.s-poem {
+  background: var(--bg);
+  position: relative;
+}
+.poem-bg-img {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 220px;
+  background: linear-gradient(135deg, #C9A84C22 0%, #C0392B22 100%);
+  overflow: hidden;
+}
+.poem-bg-pattern {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, #C9A84C18 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, #C0392B18 0%, transparent 50%);
+}
+.poem-bg-char {
+  position: absolute; right: -10px; top: -20px;
+  font-family: var(--font-display);
+  font-size: 160px;
+  color: var(--red);
+  opacity: .05;
+  line-height: 1;
+  pointer-events: none;
+}
+.poem-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  position: relative; z-index: 2;
+}
+.poem-back {
+  background: rgba(255,255,255,.7);
+  backdrop-filter: blur(8px);
+  border: none;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: .8rem;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+}
+.poem-pinyin-toggle {
+  background: rgba(255,255,255,.7);
+  backdrop-filter: blur(8px);
+  border: none;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: .75rem;
+  color: var(--ink-mid);
+  cursor: pointer;
+}
+.poem-content {
+  flex: 1;
+  padding: 8px 20px 20px;
+  position: relative; z-index: 2;
+  overflow-y: auto;
+}
+.poem-title-block {
+  text-align: center;
+  padding: 16px 0 20px;
+}
+.poem-title-pinyin {
+  font-size: .65rem;
+  color: var(--ink-light);
+  letter-spacing: .2em;
+  margin-bottom: 4px;
+  font-family: var(--font-ui);
+}
+.poem-title-hanzi {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--ink);
+  letter-spacing: .1em;
+}
+.poem-author {
+  font-size: .75rem;
+  color: var(--ink-mid);
+  margin-top: 4px;
+  font-family: var(--font-poem);
+}
+.poem-lines { text-align: center; margin: 16px 0; }
+.poem-line {
+  margin-bottom: 20px;
+}
+.poem-line-pinyin {
+  font-size: .6rem;
+  color: var(--ink-light);
+  letter-spacing: .18em;
+  margin-bottom: 4px;
+}
+.poem-line-chars {
+  display: flex; justify-content: center; gap: 2px;
+}
+.poem-char-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.poem-char-py { font-size: .58rem; color: var(--ink-light); letter-spacing: 0; }
+.poem-char-hz {
+  font-family: var(--font-poem);
+  font-size: 1.35rem;
+  color: var(--ink);
+}
+.poem-footer-bar {
+  background: var(--surface);
+  border-top: 1px solid var(--bg2);
+  padding: 12px 16px;
+  display: flex; gap: 10px; align-items: center;
+}
+.poem-footer-bar .btn-primary { font-size: .9rem; padding: 12px; }
+.poem-nav-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.poem-nav-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-mid);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 3 — Memorize Round 1（看一看）
+═══════════════════════════════════════════════════════ */
+.s-mem-r1 { background: var(--bg); display: flex; flex-direction: column; }
+.mem-header {
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bg2);
+}
+.mem-round {
+  font-size: .72rem;
+  color: var(--ink-mid);
+}
+.mem-round strong { color: var(--red); font-family: var(--font-display); font-size: .9rem; }
+.mem-progress-bar {
+  height: 3px; background: var(--bg2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.mem-progress-fill { height: 100%; background: var(--red); border-radius: 2px; transition: width .4s; }
+.mem-poem-title {
+  font-family: var(--font-poem);
+  font-size: .78rem;
+  color: var(--ink-mid);
+}
+.mem-body { flex: 1; padding: 20px 16px; overflow-y: auto; }
+.mem-instruction {
+  background: var(--gold-soft);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: .78rem;
+  color: var(--ink-mid);
+  margin-bottom: 18px;
+  border-left: 3px solid var(--gold);
+  line-height: 1.5;
+}
+/* Round 1 专用：大字展示全诗 */
+.r1-poem-display {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 20px;
+}
+.r1-poem-line {
+  font-family: var(--font-poem);
+  font-size: 1.25rem;
+  color: var(--ink);
+  letter-spacing: .12em;
+  line-height: 2.2;
+}
+.r1-poem-tip {
+  font-size: .7rem;
+  color: var(--ink-light);
+  margin-top: 10px;
+}
+.mem-footer {
+  padding: 12px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--bg2);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 4 — Memorize Round 3（选择题）
+═══════════════════════════════════════════════════════ */
+.s-mem { background: var(--bg); display: flex; flex-direction: column; }
+.mem-lines { display: flex; flex-direction: column; gap: 16px; }
+.mem-line-row {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-poem);
+  font-size: 1.15rem;
+  color: var(--ink);
+  letter-spacing: .06em;
+}
+.mem-blank {
+  display: inline-block;
+  width: 56px; height: 34px;
+  background: var(--red-soft);
+  border-bottom: 2px solid var(--red);
+  border-radius: 4px 4px 0 0;
+  vertical-align: middle;
+}
+.mem-blank.filled {
+  color: var(--red);
+  text-align: center;
+  line-height: 34px;
+  font-family: var(--font-poem);
+  font-size: 1rem;
+}
+.mem-choices {
+  margin-top: 20px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.mem-choice {
+  background: var(--surface);
+  border: 1.5px solid var(--bg2);
+  border-radius: 12px;
+  padding: 12px;
+  font-family: var(--font-poem);
+  font-size: .92rem;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s, background .15s;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.4;
+}
+.mem-choice:active { background: var(--red-soft); border-color: var(--red); }
+.mem-choice.correct { background: #E8F5E9; border-color: var(--green); color: var(--green); }
+.mem-choice.wrong { background: #FDECEA; border-color: #E53935; color: #E53935; }
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 5 — Completion
+═══════════════════════════════════════════════════════ */
+.s-done {
+  background: linear-gradient(160deg, #FAF6F1 0%, #F0E3D8 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px 24px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.done-confetti { position: absolute; inset: 0; pointer-events: none; }
+.done-firework {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  animation: burst 1.2s ease-out forwards;
+}
+@keyframes burst {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+.done-badge {
+  width: 100px; height: 100px;
+  background: var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 4px 24px var(--shadow), 0 0 0 4px var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.done-badge-inner {
+  font-size: 3rem;
+  line-height: 1;
+}
+.done-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--ink);
+  letter-spacing: .04em;
+  margin-bottom: 8px;
+  position: relative; z-index: 1;
+  text-wrap: balance;
+}
+.done-sub {
+  font-size: .82rem;
+  color: var(--ink-mid);
+  margin-bottom: 24px;
+  line-height: 1.6;
+  position: relative; z-index: 1;
+}
+.done-achievement {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px var(--shadow);
+  border: 1.5px solid var(--gold);
+  position: relative; z-index: 1;
+  width: 100%;
+  animation: slideUp .5s .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.done-ach-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+.done-ach-text { text-align: left; }
+.done-ach-label {
+  font-size: .65rem;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+.done-ach-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.done-ach-desc {
+  font-size: .72rem;
+  color: var(--ink-mid);
+  margin-top: 2px;
+}
+.done-stars {
+  display: flex; gap: 6px;
+  margin-bottom: 20px;
+  position: relative; z-index: 1;
+}
+.done-star { font-size: 1.8rem; animation: starPop .3s calc(var(--d)) cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes starPop {
+  0% { transform: scale(0) rotate(-30deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+/* 完成页底部分享入口 */
+.done-share-entry {
+  position: relative; z-index: 1;
+  width: 100%;
+  margin-top: 4px;
+}
+.done-share-link {
+  display: block;
+  text-align: center;
+  font-size: .75rem;
+  color: var(--ink-mid);
+  text-decoration: underline;
+  text-decoration-color: var(--ink-light);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  padding: 8px 0;
+  font-family: var(--font-ui);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 6 — Home（Onboarding后）
+═══════════════════════════════════════════════════════ */
+.s-home { background: var(--bg); }
+.home-hero {
+  background: linear-gradient(160deg, var(--red) 0%, var(--red-deep) 100%);
+  padding: 16px 20px 20px;
+  position: relative; overflow: hidden;
+}
+.home-hero-bg-char {
+  position: absolute; right: -8px; top: -16px;
+  font-family: var(--font-display);
+  font-size: 120px; color: #fff; opacity: .06;
+  pointer-events: none; line-height: 1;
+}
+.home-greeting {
+  font-size: .78rem; color: rgba(255,255,255,.7); margin-bottom: 4px;
+}
+.home-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem; color: #fff;
+  letter-spacing: .04em;
+}
+.home-stats {
+  display: flex; gap: 10px; margin-top: 14px;
+}
+.home-stat {
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 10px 14px;
+  flex: 1; text-align: center;
+}
+.home-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.3rem; color: #fff;
+  display: block;
+}
+.home-stat-label { font-size: .65rem; color: rgba(255,255,255,.7); }
+/* 分享成果卡片快捷入口 */
+.home-share-entry {
+  margin-top: 12px;
+  background: rgba(255,255,255,.12);
+  border-radius: 10px;
+  padding: 8px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.2);
+}
+.home-share-entry-text {
+  font-size: .75rem;
+  color: rgba(255,255,255,.9);
+}
+.home-share-entry-arrow {
+  font-size: .8rem;
+  color: rgba(255,255,255,.6);
+}
+.home-section { padding: 16px 16px 8px; }
+.home-section-title {
+  font-family: var(--font-display);
+  font-size: .85rem; color: var(--ink);
+  letter-spacing: .06em;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.home-section-title::before {
+  content: '';
+  display: block;
+  width: 3px; height: 14px;
+  background: var(--red);
+  border-radius: 2px;
+}
+.home-review-cards { display: flex; flex-direction: column; gap: 10px; }
+.home-review-card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 2px 8px var(--shadow);
+  cursor: pointer;
+}
+.home-rc-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--red-soft); color: var(--red);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.home-rc-info { flex: 1; min-width: 0; }
+.home-rc-title {
+  font-family: var(--font-poem);
+  font-size: .92rem; color: var(--ink); font-weight: 600;
+}
+.home-rc-meta { font-size: .68rem; color: var(--ink-mid); margin-top: 2px; }
+.home-rc-badge {
+  font-size: .65rem; background: var(--red-soft); color: var(--red);
+  padding: 3px 8px; border-radius: 8px; font-weight: 700; flex-shrink: 0;
+}
+.home-new-card {
+  background: var(--surface);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow);
+  cursor: pointer;
+}
+.home-new-card-bg {
+  height: 80px;
+  background: linear-gradient(135deg, #C9A84C22, #C0392B22);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 2rem; color: var(--red); opacity: .4;
+  letter-spacing: .2em;
+}
+.home-new-card-info { padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; }
+.home-new-card-title { font-family: var(--font-poem); font-size: .92rem; color: var(--ink); font-weight: 600; }
+.home-new-card-meta { font-size: .68rem; color: var(--ink-mid); }
+.home-new-btn {
+  background: var(--red);
+  color: #fff;
+  border: none; border-radius: 20px;
+  padding: 7px 16px;
+  font-family: var(--font-display);
+  font-size: .8rem; cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 7 — Achievements
+═══════════════════════════════════════════════════════ */
+.s-ach { background: var(--bg); }
+.ach-header {
+  padding: 16px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bg2);
+}
+.ach-header h2 { font-family: var(--font-display); font-size: 1.1rem; color: var(--ink); }
+.ach-header p { font-size: .72rem; color: var(--ink-mid); margin-top: 2px; }
+.ach-level-card {
+  margin: 14px 16px;
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-deep) 100%);
+  border-radius: 18px;
+  padding: 16px;
+  color: #fff;
+  display: flex; align-items: center; gap: 14px;
+}
+.ach-level-badge {
+  width: 56px; height: 56px;
+  background: rgba(255,255,255,.2);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; flex-shrink: 0;
+}
+.ach-level-name { font-family: var(--font-display); font-size: 1.15rem; }
+.ach-level-desc { font-size: .72rem; opacity: .8; margin-top: 2px; }
+.ach-level-progress { margin-top: 8px; }
+.ach-level-bar { height: 4px; background: rgba(255,255,255,.2); border-radius: 2px; overflow: hidden; }
+.ach-level-fill { height: 100%; background: #fff; border-radius: 2px; }
+.ach-level-nums { font-size: .65rem; opacity: .7; margin-top: 3px; display: flex; justify-content: space-between; }
+.ach-section { padding: 0 16px 16px; }
+.ach-section-title {
+  font-family: var(--font-display);
+  font-size: .82rem; color: var(--ink-mid);
+  letter-spacing: .1em;
+  margin-bottom: 10px; margin-top: 14px;
+}
+.ach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ach-item {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 0 1px 6px var(--shadow);
+}
+.ach-item.locked { opacity: .55; filter: grayscale(.6); }
+.ach-item-icon { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+.ach-item-name { font-size: .65rem; color: var(--ink); font-weight: 600; line-height: 1.3; }
+.ach-item.unlocked .ach-item-name { color: var(--red); }
+.ach-item-date { font-size: .58rem; color: var(--ink-light); margin-top: 2px; }
+/* 未解锁进度提示 */
+.ach-item-progress {
+  font-size: .58rem;
+  color: var(--ink-light);
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCREEN 8 — Share card（我的页 简化版）
+═══════════════════════════════════════════════════════ */
+.s-share { background: var(--bg); padding-bottom: 24px; }
+.share-header {
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.share-back {
+  width: 32px; height: 32px;
+  border-radius: 50%; border: none;
+  background: var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-mid); cursor: pointer; font-size: .9rem;
+}
+.share-header-title { font-family: var(--font-display); font-size: 1rem; color: var(--ink); }
+.share-card {
+  margin: 0 16px;
+  background: linear-gradient(160deg, #FAF6F1 0%, #F0E3D8 100%);
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 6px 30px var(--shadow);
+  position: relative; overflow: hidden;
+  border: 1px solid var(--bg2);
+}
+.share-card-bg-char {
+  position: absolute; right: -12px; bottom: -20px;
+  font-family: var(--font-display);
+  font-size: 120px; color: var(--red); opacity: .05;
+  pointer-events: none; line-height: 1;
+}
+.share-card-top {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.share-card-avatar {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 1.5rem; color: #fff;
+  flex-shrink: 0;
+}
+.share-card-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem; color: var(--ink);
+}
+.share-card-title-badge {
+  display: inline-block;
+  background: var(--red-soft); color: var(--red);
+  font-size: .65rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 8px;
+  margin-top: 2px;
+}
+.share-card-poem {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--red);
+}
+.share-card-poem-label { font-size: .65rem; color: var(--ink-light); letter-spacing: .1em; margin-bottom: 6px; }
+.share-card-poem-title {
+  font-family: var(--font-poem);
+  font-size: 1rem; color: var(--ink); font-weight: 600;
+}
+.share-card-poem-line {
+  font-family: var(--font-poem);
+  font-size: .82rem; color: var(--ink-mid);
+  margin-top: 4px; font-style: italic;
+}
+.share-card-stats {
+  display: flex; gap: 10px;
+}
+.share-card-stat {
+  flex: 1; text-align: center;
+  background: var(--surface);
+  border-radius: 12px; padding: 10px 8px;
+}
+.share-card-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.4rem; color: var(--red);
+}
+.share-card-stat-label { font-size: .65rem; color: var(--ink-mid); margin-top: 2px; }
+.share-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px dashed var(--bg2);
+}
+.share-card-app { font-family: var(--font-display); font-size: .8rem; color: var(--red); }
+.share-card-date { font-size: .68rem; color: var(--ink-light); }
+.share-actions { padding: 16px 16px 0; display: flex; flex-direction: column; gap: 10px; }
+.share-hint { text-align: center; font-size: .72rem; color: var(--ink-mid); margin-top: 8px; line-height: 1.5; }
+
+/* ── Bottom tab bar ───────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--bg2);
+  padding: 6px 0 2px;
+  flex-shrink: 0;
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  padding: 6px 0;
+  cursor: pointer;
+  border: none; background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab-icon { font-size: 1.2rem; }
+.tab-label { font-size: .6rem; color: var(--ink-light); font-family: var(--font-ui); }
+.tab-item.active .tab-label { color: var(--red); }
+
+/* ── Legend ────────────────────────────────────────────── */
+.legend {
+  max-width: 375px;
+  width: 100%;
+  margin-top: 28px;
+}
+.legend-title {
+  font-size: .75rem;
+  color: var(--ink-mid);
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+.legend-items { display: flex; flex-direction: column; gap: 6px; }
+.legend-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+.legend-num {
+  width: 22px; height: 22px;
+  background: var(--red-soft); color: var(--red);
+  border-radius: 50%; font-size: .72rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.legend-text .legend-label { font-size: .8rem; font-weight: 600; color: var(--ink); }
+.legend-text .legend-desc { font-size: .72rem; color: var(--ink-mid); margin-top: 2px; line-height: 1.4; }
+</style>
+
+<div class="page-header">
+  <h1>今日山 · 第二期原型</h1>
+  <p>Onboarding + 激励体系 交互原型 v0.2</p>
+</div>
+
+<div class="nav-bar" id="navBar">
+  <span class="nav-label">欢迎</span>
+  <button class="nav-dot active" onclick="goTo(0)"></button>
+  <button class="nav-dot" onclick="goTo(1)"></button>
+  <button class="nav-dot" onclick="goTo(2)"></button>
+  <button class="nav-dot" onclick="goTo(3)"></button>
+  <button class="nav-dot" onclick="goTo(4)"></button>
+  <button class="nav-dot" onclick="goTo(5)"></button>
+  <button class="nav-dot" onclick="goTo(6)"></button>
+  <button class="nav-dot" onclick="goTo(7)"></button>
+  <button class="nav-dot" onclick="goTo(8)"></button>
+  <span class="nav-label">分享</span>
+</div>
+
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="phone-notch"><div class="phone-speaker"></div><div class="phone-camera"></div></div>
+    <div class="phone-status">
+      <span>9:41</span>
+      <span style="display:flex;gap:5px;align-items:center;font-size:.7rem">
+        <span>●●●●</span><span>WiFi</span><span>█ 87%</span>
+      </span>
+    </div>
+
+    <div class="screens" id="screens">
+
+      <!-- ── Screen 0: Welcome ── -->
+      <div class="screen active s-welcome" id="screen-0">
+        <div class="welcome-bg">
+          <div class="welcome-circle" style="width:300px;height:300px;top:-100px;right:-80px"></div>
+          <div class="welcome-circle" style="width:180px;height:180px;bottom:120px;left:-60px"></div>
+          <div class="welcome-art">
+            <span class="big-char">诗</span>
+            <div class="poem-lines">床前明月光<br>疑是地上霜<br>举头望明月<br>低头思故乡</div>
+          </div>
+        </div>
+        <!-- 右上角跳过 -->
+        <button class="welcome-skip" onclick="skipOnboarding()">跳过，自己挑诗 →</button>
+        <div class="welcome-body">
+          <div class="welcome-badge">✦ 今日山古诗启蒙</div>
+          <div class="welcome-title">陪孩子<br>背古诗</div>
+          <div class="welcome-sub">每天5分钟，用科学方法帮孩子轻松记住古诗。70首经典古诗，从今天开始。</div>
+          <div class="welcome-steps">
+            <div class="welcome-step"><span class="step-num">背</span><div class="step-label">趣味背诵</div></div>
+            <div class="welcome-step"><span class="step-num">复</span><div class="step-label">智能复习</div></div>
+            <div class="welcome-step"><span class="step-num">记</span><div class="step-label">长久记忆</div></div>
+          </div>
+          <button class="btn-primary" onclick="goTo(1)">开始第一首诗 →</button>
+        </div>
+      </div>
+
+      <!-- ── Screen 1: Pick poems ── -->
+      <div class="screen s-pick" id="screen-1">
+        <div class="pick-header">
+          <div class="pick-header-left">
+            <div class="pick-title">选一首开始背</div>
+            <div class="pick-sub">这3首是入门关卡，选一首开始！</div>
+          </div>
+          <button class="pick-skip" onclick="skipOnboarding()">跳过</button>
+        </div>
+        <div class="pick-cards">
+          <div class="pick-card selected" id="card-0" onclick="selectCard(0)">
+            <div class="pick-card-num">鹅</div>
+            <div class="pick-card-info">
+              <div class="pick-card-title">咏鹅</div>
+              <div class="pick-card-meta">唐 · 骆宾王 · 4行18字 · 约3分钟</div>
+              <div class="pick-card-line">鹅，鹅，鹅，曲项向天歌</div>
+            </div>
+            <div class="pick-card-badge">入门</div>
+          </div>
+          <div class="pick-card" id="card-1" onclick="selectCard(1)">
+            <div class="pick-card-num">春</div>
+            <div class="pick-card-info">
+              <div class="pick-card-title">春晓</div>
+              <div class="pick-card-meta">唐 · 孟浩然 · 4行20字 · 约3分钟</div>
+              <div class="pick-card-line">春眠不觉晓，处处闻啼鸟</div>
+            </div>
+            <div class="pick-card-badge">入门</div>
+          </div>
+          <div class="pick-card" id="card-2" onclick="selectCard(2)">
+            <div class="pick-card-num">月</div>
+            <div class="pick-card-info">
+              <div class="pick-card-title">静夜思</div>
+              <div class="pick-card-meta">唐 · 李白 · 4行20字 · 约3分钟</div>
+              <div class="pick-card-line">床前明月光，疑是地上霜</div>
+            </div>
+            <div class="pick-card-badge">入门</div>
+          </div>
+        </div>
+        <div class="pick-footer">
+          <button class="btn-primary" id="pickStartBtn" onclick="goTo(2)" style="margin-top:8px">从《咏鹅》开始 →</button>
+        </div>
+      </div>
+
+      <!-- ── Screen 2: Poem detail ── -->
+      <div class="screen s-poem" id="screen-2">
+        <div class="poem-bg-img">
+          <div class="poem-bg-pattern"></div>
+          <div class="poem-bg-char">鹅</div>
+        </div>
+        <div class="poem-nav">
+          <button class="poem-back" onclick="goTo(1)">‹ 返回</button>
+          <button class="poem-pinyin-toggle">拼音 ON</button>
+        </div>
+        <div class="poem-content">
+          <div class="poem-title-block">
+            <div class="poem-title-pinyin">yǒng é</div>
+            <div class="poem-title-hanzi">咏鹅</div>
+            <div class="poem-author">唐 · 骆宾王</div>
+          </div>
+          <div class="poem-lines">
+            <div class="poem-line">
+              <div class="poem-line-chars">
+                <div class="poem-char-wrap"><span class="poem-char-py">é</span><span class="poem-char-hz">鹅</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py"></span><span class="poem-char-hz">，</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">é</span><span class="poem-char-hz">鹅</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py"></span><span class="poem-char-hz">，</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">é</span><span class="poem-char-hz">鹅</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py"></span><span class="poem-char-hz">，</span></div>
+              </div>
+            </div>
+            <div class="poem-line">
+              <div class="poem-line-chars">
+                <div class="poem-char-wrap"><span class="poem-char-py">qū</span><span class="poem-char-hz">曲</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">xiàng</span><span class="poem-char-hz">项</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">xiàng</span><span class="poem-char-hz">向</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">tiān</span><span class="poem-char-hz">天</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">gē</span><span class="poem-char-hz">歌</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py"></span><span class="poem-char-hz">。</span></div>
+              </div>
+            </div>
+            <div class="poem-line">
+              <div class="poem-line-chars">
+                <div class="poem-char-wrap"><span class="poem-char-py">bái</span><span class="poem-char-hz">白</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">máo</span><span class="poem-char-hz">毛</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">fú</span><span class="poem-char-hz">浮</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">lǜ</span><span class="poem-char-hz">绿</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">shuǐ</span><span class="poem-char-hz">水</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py"></span><span class="poem-char-hz">，</span></div>
+              </div>
+            </div>
+            <div class="poem-line">
+              <div class="poem-line-chars">
+                <div class="poem-char-wrap"><span class="poem-char-py">hóng</span><span class="poem-char-hz">红</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">zhǎng</span><span class="poem-char-hz">掌</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">bō</span><span class="poem-char-hz">拨</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">qīng</span><span class="poem-char-hz">清</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py">bō</span><span class="poem-char-hz">波</span></div>
+                <div class="poem-char-wrap"><span class="poem-char-py"></span><span class="poem-char-hz">。</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="poem-footer-bar">
+          <button class="btn-primary" onclick="goTo(3)">背一背</button>
+          <div class="poem-nav-btns">
+            <button class="poem-nav-btn">‹</button>
+            <button class="poem-nav-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Screen 3: Memorize Round 1（看一遍）── -->
+      <div class="screen s-mem-r1" id="screen-3">
+        <div class="mem-header">
+          <div>
+            <div class="mem-round">第 <strong>1</strong> 关 · 看一遍，读一读</div>
+            <div class="mem-poem-title">咏鹅 · 骆宾王</div>
+          </div>
+        </div>
+        <div class="mem-progress-bar"><div class="mem-progress-fill" style="width:0%"></div></div>
+        <div class="mem-body">
+          <div class="mem-instruction">
+            先看一遍全诗，记住每句话，然后进入下一关挑战
+          </div>
+          <div class="r1-poem-display">
+            <div class="r1-poem-line">鹅，鹅，鹅，</div>
+            <div class="r1-poem-line">曲项向天歌。</div>
+            <div class="r1-poem-line">白毛浮绿水，</div>
+            <div class="r1-poem-line">红掌拨清波。</div>
+            <div class="r1-poem-tip">可以跟着读一读</div>
+          </div>
+        </div>
+        <div class="mem-footer">
+          <button class="btn-primary" onclick="goTo(4)">记住了，下一关 →</button>
+        </div>
+      </div>
+
+      <!-- ── Screen 4: Memorize Round 3（选择题）── -->
+      <div class="screen s-mem" id="screen-4">
+        <div class="mem-header">
+          <div>
+            <div class="mem-round">第 <strong>3</strong> 关 · 选出正确的诗句</div>
+            <div class="mem-poem-title">咏鹅 · 骆宾王</div>
+          </div>
+        </div>
+        <div class="mem-progress-bar"><div class="mem-progress-fill" style="width:66%"></div></div>
+        <div class="mem-body">
+          <div class="mem-instruction">
+            最后一关！选出第3句完整的诗句，就算背会啦
+          </div>
+          <div class="mem-lines">
+            <div class="mem-line-row">鹅，鹅，鹅，</div>
+            <div class="mem-line-row">曲项向天歌。</div>
+            <div id="blankLine" class="mem-line-row">
+              <div id="blankEl" class="mem-blank"></div>
+            </div>
+            <div class="mem-line-row">红掌拨清波。</div>
+          </div>
+          <div class="mem-choices">
+            <button class="mem-choice" onclick="pickChoice(this,'wrong')">红毛浮绿水，</button>
+            <button class="mem-choice" onclick="pickChoice(this,'correct')">白毛浮绿水，</button>
+            <button class="mem-choice" onclick="pickChoice(this,'wrong')">白羽映碧水，</button>
+            <button class="mem-choice" onclick="pickChoice(this,'wrong')">鹅掌划清水，</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Screen 5: Done ── -->
+      <div class="screen s-done" id="screen-5">
+        <div class="done-confetti" id="confetti"></div>
+        <div class="done-badge"><div class="done-badge-inner">📜</div></div>
+        <div class="done-title">《咏鹅》背完啦！</div>
+        <div class="done-sub">真棒，继续下去<br>你就能背会所有古诗！</div>
+        <div class="done-stars">
+          <span class="done-star" style="--d:0.1s">⭐</span>
+          <span class="done-star" style="--d:0.2s">⭐</span>
+          <span class="done-star" style="--d:0.3s">⭐</span>
+        </div>
+        <div class="done-achievement">
+          <div class="done-ach-icon">🎖️</div>
+          <div class="done-ach-text">
+            <div class="done-ach-label">✦ 成就解锁</div>
+            <div class="done-ach-name">初入诗门</div>
+            <div class="done-ach-desc">背完了人生第一首古诗！</div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="goTo(6)" style="width:100%">去首页看看 →</button>
+        <div class="done-share-entry">
+          <button class="done-share-link" onclick="goTo(8)">生成今日成果卡片，分享给家人</button>
+        </div>
+      </div>
+
+      <!-- ── Screen 6: Home ── -->
+      <div class="screen s-home" id="screen-6">
+        <div class="home-hero">
+          <div class="home-hero-bg-char">诗</div>
+          <div class="home-greeting">欢迎回来，小诗人</div>
+          <div class="home-title">今天继续背诗吗？</div>
+          <div class="home-stats">
+            <div class="home-stat"><span class="home-stat-num">1</span><div class="home-stat-label">连续天数</div></div>
+            <div class="home-stat"><span class="home-stat-num">1</span><div class="home-stat-label">已背首数</div></div>
+            <div class="home-stat"><span class="home-stat-num">18</span><div class="home-stat-label">累计字数</div></div>
+          </div>
+          <!-- 分享卡片入口，始终可见 -->
+          <div class="home-share-entry" onclick="goTo(8)">
+            <span class="home-share-entry-text">生成今日成果卡片</span>
+            <span class="home-share-entry-arrow">→</span>
+          </div>
+        </div>
+        <div class="home-section">
+          <div class="home-section-title">今日复习</div>
+          <div class="home-review-cards">
+            <div class="home-review-card">
+              <div class="home-rc-icon">鹅</div>
+              <div class="home-rc-info">
+                <div class="home-rc-title">咏鹅</div>
+                <div class="home-rc-meta">唐 · 骆宾王 · 第1级复习</div>
+              </div>
+              <div class="home-rc-badge">今日到期</div>
+            </div>
+          </div>
+        </div>
+        <div class="home-section">
+          <div class="home-section-title">继续背新诗</div>
+          <div class="home-new-card" onclick="goTo(2)">
+            <div class="home-new-card-bg">春晓</div>
+            <div class="home-new-card-info">
+              <div>
+                <div class="home-new-card-title">春晓</div>
+                <div class="home-new-card-meta">唐 · 孟浩然 · 4行20字</div>
+              </div>
+              <button class="home-new-btn">去背诵</button>
+            </div>
+          </div>
+        </div>
+        <div style="height:8px"></div>
+        <div class="tab-bar">
+          <button class="tab-item active"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></button>
+          <button class="tab-item"><span class="tab-icon">📚</span><span class="tab-label">诗集</span></button>
+          <button class="tab-item" onclick="goTo(7)"><span class="tab-icon">🏆</span><span class="tab-label">成就</span></button>
+          <button class="tab-item" onclick="goTo(8)"><span class="tab-icon">👤</span><span class="tab-label">我的</span></button>
+        </div>
+      </div>
+
+      <!-- ── Screen 7: Achievements ── -->
+      <div class="screen s-ach" id="screen-7">
+        <div class="ach-header">
+          <h2>我的成就</h2>
+          <p>已解锁 1 / 9 个勋章</p>
+        </div>
+        <!-- 等级称号卡片（与勋章独立） -->
+        <div class="ach-level-card">
+          <div class="ach-level-badge">🌱</div>
+          <div style="flex:1;min-width:0">
+            <div class="ach-level-name">学诗新苗</div>
+            <div class="ach-level-desc">再背4首升级为初阶诗童</div>
+            <div class="ach-level-progress">
+              <div class="ach-level-bar"><div class="ach-level-fill" style="width:20%"></div></div>
+              <div class="ach-level-nums"><span>1首</span><span>5首</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="ach-section">
+          <div class="ach-section-title">已解锁勋章</div>
+          <div class="ach-grid">
+            <div class="ach-item unlocked">
+              <span class="ach-item-icon">🎖️</span>
+              <div class="ach-item-name">初入诗门</div>
+              <div class="ach-item-date">今天解锁</div>
+            </div>
+          </div>
+          <div class="ach-section-title">待解锁勋章</div>
+          <div class="ach-grid">
+            <div class="ach-item locked">
+              <span class="ach-item-icon">📅</span>
+              <div class="ach-item-name">三日初成</div>
+              <div class="ach-item-progress">已打卡 1/3 天</div>
+            </div>
+            <div class="ach-item locked">
+              <span class="ach-item-icon">🌙</span>
+              <div class="ach-item-name">七日不辍</div>
+              <div class="ach-item-progress">已打卡 1/7 天</div>
+            </div>
+            <div class="ach-item locked">
+              <span class="ach-item-icon">📚</span>
+              <div class="ach-item-name">五首入门</div>
+              <div class="ach-item-progress">已背 1/5 首</div>
+            </div>
+            <div class="ach-item locked">
+              <span class="ach-item-icon">🖌️</span>
+              <div class="ach-item-name">十五首晋阶</div>
+              <div class="ach-item-progress">已背 1/15 首</div>
+            </div>
+            <div class="ach-item locked">
+              <span class="ach-item-icon">📜</span>
+              <div class="ach-item-name">三十首精通</div>
+              <div class="ach-item-progress">已背 1/30 首</div>
+            </div>
+            <div class="ach-item locked">
+              <span class="ach-item-icon">👑</span>
+              <div class="ach-item-name">诗书满腹</div>
+              <div class="ach-item-progress">已背 1/70 首</div>
+            </div>
+            <div class="ach-item locked">
+              <span class="ach-item-icon">💡</span>
+              <div class="ach-item-name">过目不忘</div>
+              <div class="ach-item-progress">第3关全部首次答对</div>
+            </div>
+            <div class="ach-item locked">
+              <span class="ach-item-icon">🔴</span>
+              <div class="ach-item-name">铁杆书生</div>
+              <div class="ach-item-progress">已打卡 1/30 天</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-item" onclick="goTo(6)"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></button>
+          <button class="tab-item"><span class="tab-icon">📚</span><span class="tab-label">诗集</span></button>
+          <button class="tab-item active"><span class="tab-icon">🏆</span><span class="tab-label">成就</span></button>
+          <button class="tab-item" onclick="goTo(8)"><span class="tab-icon">👤</span><span class="tab-label">我的</span></button>
+        </div>
+      </div>
+
+      <!-- ── Screen 8: Share card（我的页简化版）── -->
+      <div class="screen s-share" id="screen-8">
+        <div class="share-header">
+          <button class="share-back" onclick="goTo(6)">‹</button>
+          <div class="share-header-title">今日成果卡片</div>
+        </div>
+        <div class="share-card">
+          <div class="share-card-bg-char">诗</div>
+          <div class="share-card-top">
+            <div class="share-card-avatar">小</div>
+            <div>
+              <div class="share-card-name">小诗人</div>
+              <div class="share-card-title-badge">学诗新苗</div>
+            </div>
+          </div>
+          <div class="share-card-poem">
+            <div class="share-card-poem-label">今日背诵</div>
+            <div class="share-card-poem-title">《咏鹅》 · 骆宾王</div>
+            <div class="share-card-poem-line">鹅，鹅，鹅，曲项向天歌。</div>
+          </div>
+          <div class="share-card-stats">
+            <div class="share-card-stat">
+              <div class="share-card-stat-num">第1天</div>
+              <div class="share-card-stat-label">连续打卡</div>
+            </div>
+            <div class="share-card-stat">
+              <div class="share-card-stat-num">1</div>
+              <div class="share-card-stat-label">已背古诗</div>
+            </div>
+            <div class="share-card-stat">
+              <div class="share-card-stat-num">⭐⭐⭐</div>
+              <div class="share-card-stat-label">今日表现</div>
+            </div>
+          </div>
+          <div class="share-card-footer">
+            <div class="share-card-app">今日山 · 古诗启蒙</div>
+            <div class="share-card-date">2026年10月12日</div>
+          </div>
+        </div>
+        <div class="share-actions">
+          <button class="btn-primary">分享 / 保存图片</button>
+          <button class="btn-ghost">复制文字</button>
+        </div>
+        <div class="share-hint">iOS：点"分享"选存储图片<br>安卓：点"保存图片"直接存到相册</div>
+        <div class="tab-bar">
+          <button class="tab-item" onclick="goTo(6)"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></button>
+          <button class="tab-item"><span class="tab-icon">📚</span><span class="tab-label">诗集</span></button>
+          <button class="tab-item" onclick="goTo(7)"><span class="tab-icon">🏆</span><span class="tab-label">成就</span></button>
+          <button class="tab-item active"><span class="tab-icon">👤</span><span class="tab-label">我的</span></button>
+        </div>
+      </div>
+
+    </div><!-- /screens -->
+
+    <div class="phone-home"><div class="phone-home-bar"></div></div>
+  </div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<div class="legend">
+  <div class="legend-title">页面说明</div>
+  <div class="legend-items">
+    <div class="legend-item"><div class="legend-num">1</div><div class="legend-text"><div class="legend-label">欢迎屏</div><div class="legend-desc">全新用户第一次打开。右上角"跳过"写入 onboarding_done 后直接进首页，不加入默认计划</div></div></div>
+    <div class="legend-item"><div class="legend-num">2</div><div class="legend-text"><div class="legend-label">推荐诗选</div><div class="legend-desc">3首入门诗，按钮文案跟随选中的诗变化（"从《X》开始 →"）。点击"开始"时3首统一加入计划</div></div></div>
+    <div class="legend-item"><div class="legend-num">3</div><div class="legend-text"><div class="legend-label">诗词详情</div><div class="legend-desc">大拼音 + 注释，带动感字符背景，一键进入背诵第1关</div></div></div>
+    <div class="legend-item"><div class="legend-num">4</div><div class="legend-text"><div class="legend-label">背诵第1关（新增）</div><div class="legend-desc">展示全诗，引导朗读记忆，进度0%。让用户先有整体印象再答题</div></div></div>
+    <div class="legend-item"><div class="legend-num">5</div><div class="legend-text"><div class="legend-label">背诵第3关</div><div class="legend-desc">选择题关卡，答对后动画反馈，进入完成页</div></div></div>
+    <div class="legend-item"><div class="legend-num">6</div><div class="legend-text"><div class="legend-label">完成庆祝</div><div class="legend-desc">烟花 + 成就"初入诗门"解锁弹出。副文案不再承诺推送通知。底部添加分享成果卡片快捷入口</div></div></div>
+    <div class="legend-item"><div class="legend-num">7</div><div class="legend-text"><div class="legend-label">首页（Onboarding后）</div><div class="legend-desc">英雄区新增"生成成果卡片"入口，始终可见，不依赖当日完成状态</div></div></div>
+    <div class="legend-item"><div class="legend-num">8</div><div class="legend-text"><div class="legend-label">成就页</div><div class="legend-desc">称号"学诗新苗"与勋章系统完全独立命名。待解锁勋章显示当前进度（已背X/Y首）</div></div></div>
+    <div class="legend-item"><div class="legend-num">9</div><div class="legend-text"><div class="legend-label">成果卡片（我的页）</div><div class="legend-desc">始终可见。按钮改为"分享 / 保存图片"，说明文案区分 iOS/安卓 保存方式，不说"一键保存"</div></div></div>
+  </div>
+</div>
+
+<script>
+let current = 0;
+const total = 9;
+
+const poemNames = ['咏鹅', '春晓', '静夜思'];
+let selected = 0;
+
+function goTo(n) {
+  const prev = document.getElementById('screen-' + current);
+  const next = document.getElementById('screen-' + n);
+  if (!next || n === current) return;
+
+  prev.classList.remove('active');
+  prev.classList.add('exit');
+  setTimeout(() => prev.classList.remove('exit'), 350);
+
+  next.classList.add('active');
+  current = n;
+  updateDots();
+
+  if (n === 5) spawnConfetti();
+  // 进入第3关时重置答题状态
+  if (n === 4) resetMemorize();
+}
+
+function updateDots() {
+  document.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+  });
+}
+
+function skipOnboarding() {
+  // 模拟写入 poem_onboarding_done='1'
+  goTo(6);
+}
+
+function selectCard(i) {
+  document.querySelectorAll('.pick-card').forEach((c, j) => {
+    c.classList.toggle('selected', j === i);
+  });
+  selected = i;
+  const btn = document.getElementById('pickStartBtn');
+  if (btn) btn.textContent = '从《' + poemNames[i] + '》开始 →';
+}
+
+let answered = false;
+function resetMemorize() {
+  answered = false;
+  const blank = document.getElementById('blankEl');
+  if (blank) {
+    blank.textContent = '';
+    blank.classList.remove('filled');
+  }
+  document.querySelectorAll('.mem-choice').forEach(c => {
+    c.classList.remove('correct', 'wrong');
+  });
+}
+
+function pickChoice(el, result) {
+  if (answered) return;
+  answered = true;
+  el.classList.add(result);
+  const blank = document.getElementById('blankEl');
+  if (result === 'correct') {
+    blank.textContent = '白毛浮绿水，';
+    blank.classList.add('filled');
+    setTimeout(() => goTo(5), 900);
+  } else {
+    document.querySelectorAll('.mem-choice').forEach(c => {
+      if (c.textContent.trim() === '白毛浮绿水，') c.classList.add('correct');
+    });
+    setTimeout(() => { answered = false; }, 1500);
+  }
+}
+
+function spawnConfetti() {
+  const container = document.getElementById('confetti');
+  container.innerHTML = '';
+  const colors = ['#C0392B','#C9A84C','#3A7D44','#2471A3','#884EA0'];
+  const cx = 187, cy = 300;
+  for (let i = 0; i < 40; i++) {
+    const el = document.createElement('div');
+    el.className = 'done-firework';
+    const angle = (i / 40) * Math.PI * 2;
+    const dist = 60 + (i * 3.7 % 100);
+    el.style.cssText = `
+      left:${cx}px; top:${cy}px;
+      background:${colors[i % colors.length]};
+      --dx:${Math.cos(angle)*dist}px;
+      --dy:${Math.sin(angle)*dist}px;
+      animation-delay:${(i * 0.0075).toFixed(3)}s;
+      width:${4 + (i % 3) * 2}px;
+      height:${4 + (i % 3) * 2}px;
+    `;
+    container.appendChild(el);
+  }
+}
+</script>

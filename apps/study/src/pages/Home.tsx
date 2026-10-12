@@ -19,9 +19,10 @@ export default function Home() {
 
   useEffect(() => { loadPoemIndex().then(setPoems) }, [])
 
-  // 久违横幅
+  // 久违横幅：每次会话只显示一次
   useEffect(() => {
-    if (isReturning && !todayComplete) {
+    if (isReturning && !todayComplete && !sessionStorage.getItem('wb_shown')) {
+      sessionStorage.setItem('wb_shown', '1')
       setBannerVisible(true)
       bannerTimer.current = setTimeout(() => setBannerVisible(false), 4000)
     }
