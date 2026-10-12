@@ -5,6 +5,7 @@ import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
 import { useQueue } from '../hooks/useQueue'
 import { IconReview, IconSparkle, IconFireworks } from '../components/icons'
+import { getLevelTitle } from '../utils/levelTitle'
 import imgMap from '../data/poem_img_map.json'
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [bannerVisible, setBannerVisible] = useState(false)
   const bannerTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const levelTitle = getLevelTitle(totalMemorized)
 
   useEffect(() => { loadPoemIndex().then(setPoems) }, [])
 
@@ -80,12 +82,18 @@ export default function Home() {
           <text x="148" y="72" fontSize="48" fontFamily="serif" fill="rgba(255,255,255,0.04)" transform="rotate(-12,100,60)">词</text>
         </svg>
         <div className="home__hero-greeting">古诗小课堂</div>
-        <div className="home__hero-title">小学必背70首</div>
+        <div className="home__hero-title-row">
+          <span className="home__hero-title">小学必背70首</span>
+          <span className="home__level-title">{levelTitle}</span>
+        </div>
         <div className="home__hero-streak">
           <span className="home__streak-chip">连续 {streakCount} 天</span>
           <span className="home__progress-chip">{totalMemorized} / 70 首</span>
           <button className="home__manage-btn" onClick={() => navigate('/queue')}>背诗计划</button>
         </div>
+        <button className="home__share-card-btn" onClick={() => navigate('/share-card')}>
+          生成成果卡片
+        </button>
       </header>
 
       {/* 久违横幅 */}
@@ -341,12 +349,43 @@ const styles = `
     letter-spacing: 0.06em;
     position: relative;
   }
-  .home__hero-title {
-    font-size: 0.78rem;
-    color: rgba(255,248,225,0.7);
+  .home__hero-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-top: 2px;
     position: relative;
   }
+  .home__hero-title {
+    font-size: 0.78rem;
+    color: rgba(255,248,225,0.7);
+  }
+  .home__level-title {
+    font-size: 0.7rem;
+    color: rgba(255,248,225,0.9);
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,248,225,0.3);
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+  }
+  .home__share-card-btn {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: #FFF8E1;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,248,225,0.3);
+    border-radius: 999px;
+    padding: 7px 16px;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .home__share-card-btn:active { background: rgba(255,255,255,0.25); }
   .home__hero-streak {
     margin-top: 10px;
     display: flex;

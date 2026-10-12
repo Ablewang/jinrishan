@@ -2,6 +2,23 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
 import { useQueue } from '../hooks/useQueue'
+import { getLevelTitle } from '../utils/levelTitle'
+
+const NICKNAME_KEY = 'poem_nickname'
+const REMINDER_KEY = 'reminder_time'
+
+function loadNickname(): string {
+  try { return localStorage.getItem(NICKNAME_KEY) ?? '小诗人' } catch { return '小诗人' }
+}
+function saveNickname(n: string) {
+  try { localStorage.setItem(NICKNAME_KEY, n) } catch { /* ignore */ }
+}
+function loadReminder(): string {
+  try { return localStorage.getItem(REMINDER_KEY) ?? '18:30' } catch { return '18:30' }
+}
+function saveReminder(t: string) {
+  try { localStorage.setItem(REMINDER_KEY, t) } catch { /* ignore */ }
+}
 
 const REMINDER_OPTIONS = [
   { label: '放学后', time: '16:00' },
@@ -10,39 +27,67 @@ const REMINDER_OPTIONS = [
   { label: '自定义', time: null },
 ]
 
-const REMINDER_KEY = 'reminder_time'
-
-function loadReminder(): string {
-  try { return localStorage.getItem(REMINDER_KEY) ?? '18:30' } catch { return '18:30' }
-}
-
-function saveReminder(t: string) {
-  try { localStorage.setItem(REMINDER_KEY, t) } catch { /* ignore */ }
-}
-
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { totalMemorized, totalChars } = useProgress()
   const { streakCount } = useQueue()
   const [selected, setSelected] = useState<string>(loadReminder)
+  const [nickname, setNickname] = useState<string>(loadNickname)
+  const [nicknameEdit, setNicknameEdit] = useState(false)
+  const [nicknameInput, setNicknameInput] = useState(nickname)
+  const title = getLevelTitle(totalMemorized)
 
   function selectTime(time: string | null) {
-    if (time === null) return // 自定义：不做选中，仅提示
+    if (time === null) return
     setSelected(time)
     saveReminder(time)
   }
 
+  function confirmNickname() {
+    const trimmed = nicknameInput.trim().slice(0, 6)
+    const val = trimmed || '小诗人'
+    setNickname(val)
+    setNicknameInput(val)
+    saveNickname(val)
+    setNicknameEdit(false)
+  }
+
   return (
     <div className="pp">
-      {/* 背景蒙层感觉 */}
       <div className="pp__backdrop" />
-
-      {/* Sheet */}
       <div className="pp__sheet">
         <div className="pp__handle" />
 
         <h2 className="pp__title">家长设置</h2>
         <p className="pp__subtitle">为孩子定制学习计划</p>
+
+        <div className="pp__divider" />
+
+        {/* 昵称设置 */}
+        <div className="pp__section-label">孩子昵称</div>
+        <div className="pp__nickname-row">
+          {nicknameEdit ? (
+            <>
+              <input
+                className="pp__nickname-input"
+                value={nicknameInput}
+                maxLength={6}
+                autoFocus
+                onChange={e => setNicknameInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && confirmNickname()}
+                placeholder="1-6个字"
+              />
+              <button className="pp__nickname-confirm" onClick={confirmNickname}>确认</button>
+            </>
+          ) : (
+            <>
+              <span className="pp__nickname-val">{nickname}</span>
+              <span className="pp__nickname-title">{title}</span>
+              <button className="pp__nickname-edit" onClick={() => { setNicknameInput(nickname); setNicknameEdit(true) }}>修改</button>
+            </>
+          )}
+        </div>
+        <p className="pp__hint" style={{ marginBottom: 20 }}>昵称用于分享卡片，1-6个字</p>
 
         <div className="pp__divider" />
 
@@ -85,138 +130,87 @@ export default function ProfilePage() {
 
       <style>{`
         .pp {
-          position: fixed;
-          inset: 0;
-          z-index: 300;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
+          position: fixed; inset: 0; z-index: 300;
+          display: flex; flex-direction: column; justify-content: flex-end;
         }
-        .pp__backdrop {
-          position: absolute;
-          inset: 0;
-          background: rgba(0,0,0,0.35);
-        }
+        .pp__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
         .pp__sheet {
-          position: relative;
-          z-index: 1;
-          background: #fff;
+          position: relative; z-index: 1; background: #fff;
           border-radius: 24px 24px 0 0;
           padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px));
-          max-width: 480px;
-          width: 100%;
-          margin: 0 auto;
+          max-width: 480px; width: 100%; margin: 0 auto;
           animation: slideUp 0.28s cubic-bezier(0.32,0.72,0,1) both;
+          max-height: 90vh; overflow-y: auto;
         }
         @keyframes slideUp {
           from { transform: translateY(100%); }
           to   { transform: translateY(0); }
         }
         .pp__handle {
-          width: 40px; height: 4px;
-          border-radius: 999px;
-          background: #e0d8d0;
-          margin: 0 auto 16px;
+          width: 40px; height: 4px; border-radius: 999px;
+          background: #e0d8d0; margin: 0 auto 16px;
         }
         .pp__title {
-          font-family: var(--font-brush);
-          font-size: 1.4rem;
-          color: var(--ink);
-          text-align: center;
-          margin-bottom: 4px;
+          font-family: var(--font-brush); font-size: 1.4rem;
+          color: var(--ink); text-align: center; margin-bottom: 4px;
         }
         .pp__subtitle {
-          font-size: var(--text-sm);
-          color: var(--ink-light);
-          text-align: center;
-          margin-bottom: 16px;
+          font-size: var(--text-sm); color: var(--ink-light);
+          text-align: center; margin-bottom: 16px;
         }
-        .pp__divider {
-          height: 1px;
-          background: var(--border);
-          margin-bottom: 20px;
-        }
+        .pp__divider { height: 1px; background: var(--border); margin-bottom: 20px; }
         .pp__section-label {
-          font-size: var(--text-sm);
-          font-weight: 700;
-          color: var(--ink);
-          margin-bottom: 12px;
+          font-size: var(--text-sm); font-weight: 700; color: var(--ink); margin-bottom: 10px;
         }
-        .pp__chips {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-          margin-bottom: 10px;
+        .pp__nickname-row {
+          display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
         }
+        .pp__nickname-val {
+          font-family: var(--font-brush); font-size: 1.1rem; color: var(--ink);
+        }
+        .pp__nickname-title {
+          font-size: var(--text-xs); color: #C62828;
+          background: rgba(198,40,40,0.08); border: 1px solid rgba(198,40,40,0.2);
+          border-radius: 999px; padding: 2px 10px;
+        }
+        .pp__nickname-edit {
+          margin-left: auto; font-size: var(--text-xs); color: #C62828; background: transparent; padding: 4px 0;
+        }
+        .pp__nickname-input {
+          flex: 1; border: 1.5px solid #C62828; border-radius: 8px;
+          padding: 8px 12px; font-size: var(--text-base); color: var(--ink); outline: none;
+        }
+        .pp__nickname-confirm {
+          flex-shrink: 0; padding: 8px 16px;
+          background: #C62828; color: #fff; border-radius: 8px;
+          font-size: var(--text-sm); font-weight: 700;
+        }
+        .pp__chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
         .pp__chip {
-          padding: 9px 18px;
-          border-radius: 999px;
+          padding: 9px 18px; border-radius: 999px;
           border: 1.5px solid var(--border);
-          font-size: var(--text-sm);
-          color: var(--ink);
-          background: #fff;
-          transition: all 0.15s;
+          font-size: var(--text-sm); color: var(--ink); background: #fff; transition: all 0.15s;
         }
-        .pp__chip--active {
-          background: #C62828;
-          border-color: #C62828;
-          color: #fff;
-          font-weight: 700;
-        }
+        .pp__chip--active { background: #C62828; border-color: #C62828; color: #fff; font-weight: 700; }
         .pp__chip:active:not(.pp__chip--active) { background: var(--bg); }
-        .pp__hint {
-          font-size: 11px;
-          color: var(--ink-light);
-          line-height: 1.5;
-          margin-bottom: 20px;
-        }
-        .pp__stats-box {
-          background: #fff5f5;
-          border-radius: 14px;
-          padding: 16px;
-          margin-bottom: 20px;
-        }
-        .pp__stats-title {
-          font-size: var(--text-sm);
-          font-weight: 700;
-          color: var(--ink);
-          margin-bottom: 14px;
-        }
-        .pp__stats-row {
-          display: flex;
-          gap: 10px;
-        }
+        .pp__hint { font-size: 11px; color: var(--ink-light); line-height: 1.5; margin-bottom: 20px; }
+        .pp__stats-box { background: #fff5f5; border-radius: 14px; padding: 16px; margin-bottom: 20px; }
+        .pp__stats-title { font-size: var(--text-sm); font-weight: 700; color: var(--ink); margin-bottom: 14px; }
+        .pp__stats-row { display: flex; gap: 10px; }
         .pp__stat {
-          flex: 1;
-          background: rgba(198,40,40,0.08);
-          border-radius: 12px;
-          padding: 14px 8px;
-          text-align: center;
+          flex: 1; background: rgba(198,40,40,0.08);
+          border-radius: 12px; padding: 14px 8px; text-align: center;
         }
         .pp__stat-num {
-          font-family: var(--font-brush);
-          font-size: 1.6rem;
-          color: #C62828;
-          line-height: 1;
-          margin-bottom: 6px;
-          font-variant-numeric: tabular-nums;
+          font-family: var(--font-brush); font-size: 1.6rem;
+          color: #C62828; line-height: 1; margin-bottom: 6px; font-variant-numeric: tabular-nums;
         }
-        .pp__stat-label {
-          font-size: 11px;
-          color: var(--ink-light);
-        }
+        .pp__stat-label { font-size: 11px; color: var(--ink-light); }
         .pp__close-btn {
-          display: block;
-          width: 100%;
-          padding: 16px;
-          background: #C62828;
-          color: #fff;
-          border-radius: 999px;
-          font-size: var(--text-base);
-          font-weight: 700;
-          text-align: center;
-          box-shadow: 0 4px 16px rgba(198,40,40,0.3);
-          transition: transform 0.1s, opacity 0.1s;
+          display: block; width: 100%; padding: 16px;
+          background: #C62828; color: #fff; border-radius: 999px;
+          font-size: var(--text-base); font-weight: 700; text-align: center;
+          box-shadow: 0 4px 16px rgba(198,40,40,0.3); transition: transform 0.1s, opacity 0.1s;
         }
         .pp__close-btn:active { transform: scale(0.97); opacity: 0.88; }
       `}</style>

@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import TabBar from '../components/TabBar'
 import ProfileSheet, { type ProfileSheetActions } from '../components/ProfileSheet'
+import AchievementBanner from '../components/AchievementBanner'
 
 export default function Layout() {
   const { pathname } = useLocation()
@@ -10,6 +11,7 @@ export default function Layout() {
 
   return (
     <>
+      <AchievementBanner />
       <Outlet />
       {showTab && <TabBar onProfileClick={() => profileRef.current?.open()} />}
       <ProfileSheet ref={profileRef} />

@@ -1,44 +1,60 @@
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
 import { useAchievements } from '../hooks/useAchievements'
+import { useQueue } from '../hooks/useQueue'
+import { getLevelTitle } from '../utils/levelTitle'
+
+const TOTAL = 70
 
 export default function AchievementsPage() {
   const navigate = useNavigate()
-  const { progress, streak, totalChars, memorizeHistory } = useProgress()
+  const { progress, streak, totalChars, memorizeHistory, totalMemorized } = useProgress()
+  const { streakCount } = useQueue()
   const badges = useAchievements({ progress, streak, totalChars, memorizeHistory })
   const unlockedCount = badges.filter(b => b.unlocked).length
+  const title = getLevelTitle(totalMemorized)
 
   function formatDate(iso: string): string {
     const d = new Date(iso)
-    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
+    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
   }
 
   return (
     <div className="ap">
       <header className="ap__navbar">
-        <button className="ap__back" onClick={() => navigate(-1)}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
-        <span className="ap__title">成就</span>
-        <span className="ap__count">{unlockedCount} / {badges.length}</span>
+        <button className="ap__back" onClick={() => navigate(-1)}>
+          <svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg>
+          返回
+        </button>
+        <span className="ap__navbar-title">成就</span>
+        <span className="ap__navbar-count">{unlockedCount} / {badges.length}</span>
       </header>
 
-      <div className="ap__list">
+      {/* 称号卡片 */}
+      <div className="ap__level-card">
+        <div className="ap__level-title">{title}</div>
+        <div className="ap__level-sub">{totalMemorized} / {TOTAL} 首 · 连续 {streakCount} 天</div>
+        <div className="ap__level-bar-wrap">
+          <div className="ap__level-bar">
+            <div className="ap__level-bar-fill" style={{ width: `${Math.min(100, Math.round(totalMemorized / TOTAL * 100))}%` }} />
+          </div>
+        </div>
+      </div>
+
+      {/* 勋章网格 */}
+      <div className="ap__section-label">成就勋章</div>
+      <div className="ap__grid">
         {badges.map(b => (
-          <div key={b.id} className={`ap__item${b.unlocked ? ' ap__item--on' : ''}`}>
-            <div className="ap__icon">{b.icon}</div>
-            <div className="ap__info">
-              <span className="ap__label">{b.label}</span>
-              <span className="ap__desc">{b.desc}</span>
-              {b.unlocked && b.unlockedAt && (
-                <span className="ap__date">达成于 {formatDate(b.unlockedAt)}</span>
-              )}
-            </div>
-            <div className="ap__status">
-              {b.unlocked ? (
-                <span className="ap__done">已达成</span>
-              ) : (
-                <span className="ap__locked">未达成</span>
-              )}
-            </div>
+          <div key={b.id} className={`ap__badge${b.unlocked ? ' ap__badge--on' : ''}`}>
+            <div className="ap__badge-icon">{b.icon}</div>
+            <div className="ap__badge-name">{b.label}</div>
+            <div className="ap__badge-desc">{b.desc}</div>
+            {b.unlocked && b.unlockedAt && (
+              <div className="ap__badge-date">{formatDate(b.unlockedAt)}</div>
+            )}
+            {!b.unlocked && b.progress && (
+              <div className="ap__badge-progress">{b.progress}</div>
+            )}
           </div>
         ))}
       </div>
@@ -75,102 +91,118 @@ const style = `
     padding: 6px 12px;
     border-radius: 999px;
     background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; gap: 4px;
   }
   .ap__back:active { background: rgba(255,255,255,0.28); }
-  .ap__title {
+  .ap__navbar-title {
     font-family: var(--font-brush);
     font-size: 1.2rem;
     color: #FFF8E1;
     flex: 1;
   }
-  .ap__count {
+  .ap__navbar-count {
     font-family: var(--font-ui);
     font-size: var(--text-sm);
     color: rgba(255,248,225,0.8);
   }
-  .ap__list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 16px 16px 0;
+
+  /* 称号卡片 */
+  .ap__level-card {
+    margin: 16px 16px 0;
+    background: linear-gradient(135deg, #C62828, #B71C1C);
+    border-radius: 18px;
+    padding: 20px 20px 18px;
+    color: #FFF8E1;
+    box-shadow: 0 4px 20px rgba(183,28,28,0.3);
   }
-  .ap__item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  .ap__level-title {
+    font-family: var(--font-brush);
+    font-size: 1.8rem;
+    color: #FFF8E1;
+    margin-bottom: 4px;
+  }
+  .ap__level-sub {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: rgba(255,248,225,0.75);
+    margin-bottom: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .ap__level-bar-wrap { }
+  .ap__level-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .ap__level-bar-fill {
+    height: 100%;
+    background: #FFF8E1;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  /* 勋章网格 */
+  .ap__section-label {
+    margin: 16px 16px 10px;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .ap__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 0 16px;
+  }
+  .ap__badge {
     background: var(--surface);
-    border-radius: 14px;
-    padding: 16px;
     border: 1.5px solid var(--border);
-    box-shadow: var(--shadow-card);
+    border-radius: 14px;
+    padding: 14px 10px 12px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
     opacity: 0.5;
     transition: opacity 0.2s;
+    box-shadow: var(--shadow-card);
   }
-  .ap__item--on {
+  .ap__badge--on {
     opacity: 1;
-    border-color: rgba(198,40,40,0.2);
+    border-color: rgba(198,40,40,0.25);
   }
-  .ap__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-brush);
-    font-size: 1.2rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    background: #f0f0f0;
-    color: #ccc;
+  .ap__badge-icon {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-brush); font-size: 1.1rem; font-weight: 700;
+    background: #f0f0f0; color: #ccc;
+    margin-bottom: 4px;
   }
-  .ap__item--on .ap__icon {
+  .ap__badge--on .ap__badge-icon {
     background: rgba(198,40,40,0.1);
     color: #C62828;
     border: 2px solid rgba(198,40,40,0.25);
   }
-  .ap__info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    min-width: 0;
+  .ap__badge-name {
+    font-family: var(--font-brush); font-size: 0.85rem;
+    color: var(--ink); text-align: center; line-height: 1.2;
   }
-  .ap__label {
-    font-family: var(--font-brush);
-    font-size: 1rem;
-    color: var(--ink);
+  .ap__badge-desc {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: var(--ink-light); text-align: center; line-height: 1.4;
   }
-  .ap__desc {
-    font-family: var(--font-ui);
-    font-size: var(--text-xs);
-    color: var(--ink-light);
-    line-height: 1.4;
+  .ap__badge-date {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: #C62828; margin-top: 2px;
   }
-  .ap__date {
-    font-family: var(--font-ui);
-    font-size: 0.65rem;
-    color: #C62828;
-    margin-top: 2px;
+  .ap__badge-progress {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: var(--ink-light); margin-top: 2px;
+    text-align: center;
   }
-  .ap__status { flex-shrink: 0; }
-  .ap__done {
-    font-family: var(--font-ui);
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: #C62828;
-    background: rgba(198,40,40,0.08);
-    border: 1px solid rgba(198,40,40,0.2);
-    border-radius: 999px;
-    padding: 3px 10px;
-  }
-  .ap__locked {
-    font-family: var(--font-ui);
-    font-size: 0.65rem;
-    color: #ccc;
-    background: #f5f5f5;
-    border: 1px solid #e8e8e8;
-    border-radius: 999px;
-    padding: 3px 10px;
+  @media (max-width: 340px) {
+    .ap__grid { grid-template-columns: repeat(2, 1fr); }
   }
 `

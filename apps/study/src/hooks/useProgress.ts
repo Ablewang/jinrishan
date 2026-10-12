@@ -4,6 +4,7 @@ export interface PoemState {
   read: boolean
   memorized: boolean
   bestStars: number
+  noHintPass?: boolean
 }
 
 type Progress = Record<string, PoemState>
@@ -125,7 +126,7 @@ export function useProgress() {
     })
   }, [])
 
-  const markMemorized = useCallback((id: number, stars = 0, charCount = 0) => {
+  const markMemorized = useCallback((id: number, stars = 0, charCount = 0, noHintPass = false) => {
     const today = todayStr()
 
     setProgress(prev => {
@@ -139,6 +140,7 @@ export function useProgress() {
           read: true,
           memorized: true,
           bestStars: Math.max(existing.bestStars ?? 0, stars),
+          noHintPass: existing.noHintPass || noHintPass,
         },
       }
       saveProgress(next)

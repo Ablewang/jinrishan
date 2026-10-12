@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { PoemState, StreakData, MemorizeRecord } from './useProgress'
 
-const LIBAI_IDS = new Set([19, 20, 21, 22, 23, 24, 25])
-const MOON_IDS = new Set([13, 18, 19, 20, 31, 35, 36, 54, 64, 68])
 const STORAGE_KEY = 'poem_achievement_dates'
 
 export interface AchievementDef {
@@ -12,18 +10,23 @@ export interface AchievementDef {
   icon: string
 }
 
+// 9枚勋章（PRD v0.2）- 命名不与称号重叠
 export const ACHIEVEMENT_DEFS: AchievementDef[] = [
-  { id: 'perfect',  label: '一气呵成', desc: '完成一首诗全程0次提示',    icon: '一' },
-  { id: 'streak3',  label: '三连击',   desc: '连续3首诗获得两星以上',    icon: '连' },
-  { id: 'moon',     label: '月亮诗人', desc: '完成所有含「月」字的诗（共10首）', icon: '月' },
-  { id: 'streak7',  label: '每日学诗', desc: '连续学习7天',              icon: '恒' },
-  { id: 'chars',    label: '百字侠',   desc: '累计背出100个汉字',        icon: '百' },
-  { id: 'libai',    label: '小李白',   desc: '完成所有李白诗目（共7首）', icon: '白' },
+  { id: 'first_poem',    label: '初入诗门', desc: '背完第1首诗',                  icon: '入' },
+  { id: 'streak3',       label: '三日初成', desc: '连续打卡3天',                  icon: '三' },
+  { id: 'streak7',       label: '七日不辍', desc: '连续打卡7天',                  icon: '七' },
+  { id: 'poems5',        label: '五首入门', desc: '背完5首诗',                    icon: '五' },
+  { id: 'poems15',       label: '十五首晋阶', desc: '背完15首诗',                 icon: '十' },
+  { id: 'poems30',       label: '三十首精通', desc: '背完30首诗',                 icon: '卅' },
+  { id: 'poems70',       label: '诗书满腹', desc: '背完全部70首诗',               icon: '满' },
+  { id: 'no_hint',       label: '过目不忘', desc: '某首诗第3轮全部首次答对（无提示）', icon: '忘' },
+  { id: 'streak30',      label: '铁杆书生', desc: '连续打卡30天',                 icon: '铁' },
 ]
 
 export interface Badge extends AchievementDef {
   unlocked: boolean
   unlockedAt: string | null
+  progress?: string  // 未解锁时的进度提示，如"已背 3/5 首"
 }
 
 interface Input {
@@ -45,25 +48,37 @@ function saveDates(d: Record<string, string>) {
 }
 
 function computeUnlocked(input: Input): Record<string, boolean> {
-  const { progress, streak, totalChars, memorizeHistory } = input
-  const memorizedIds = new Set(
-    Object.entries(progress).filter(([, s]) => s.memorized).map(([id]) => Number(id))
-  )
-
-  let streak3 = false
-  let count = 0
-  for (const r of memorizeHistory) {
-    if (r.stars >= 2) { count++; if (count >= 3) { streak3 = true; break } }
-    else count = 0
-  }
+  const { progress, streak } = input
+  const memorizedCount = Object.values(progress).filter(s => s.memorized).length
+  const noHintEver = Object.values(progress).some(s => s.noHintPass === true)
 
   return {
-    perfect: Object.values(progress).some(s => s.bestStars === 3),
-    streak3,
-    moon:    [...MOON_IDS].every(id => memorizedIds.has(id)),
-    streak7: streak.count >= 7,
-    chars:   totalChars >= 100,
-    libai:   [...LIBAI_IDS].every(id => memorizedIds.has(id)),
+    first_poem: memorizedCount >= 1,
+    streak3:    streak.count >= 3,
+    streak7:    streak.count >= 7,
+    poems5:     memorizedCount >= 5,
+    poems15:    memorizedCount >= 15,
+    poems30:    memorizedCount >= 30,
+    poems70:    memorizedCount >= 70,
+    no_hint:    noHintEver,
+    streak30:   streak.count >= 30,
+  }
+}
+
+function getProgress(id: string, input: Input): string | undefined {
+  const { progress, streak } = input
+  const memorizedCount = Object.values(progress).filter(s => s.memorized).length
+
+  switch (id) {
+    case 'first_poem': return `已背 ${memorizedCount}/1 首`
+    case 'streak3':    return `已连续 ${streak.count}/3 天`
+    case 'streak7':    return `已连续 ${streak.count}/7 天`
+    case 'poems5':     return `已背 ${memorizedCount}/5 首`
+    case 'poems15':    return `已背 ${memorizedCount}/15 首`
+    case 'poems30':    return `已背 ${memorizedCount}/30 首`
+    case 'poems70':    return `已背 ${memorizedCount}/70 首`
+    case 'streak30':   return `已连续 ${streak.count}/30 天`
+    default: return undefined
   }
 }
 
@@ -72,7 +87,6 @@ export function useAchievements(input: Input): Badge[] {
 
   const unlocked = computeUnlocked(input)
 
-  // 检测新解锁，记录时间
   useEffect(() => {
     const current = loadDates()
     let changed = false
@@ -87,14 +101,17 @@ export function useAchievements(input: Input): Badge[] {
       saveDates(current)
       setDates({ ...current })
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    unlocked.perfect, unlocked.streak3, unlocked.moon,
-    unlocked.streak7, unlocked.chars,   unlocked.libai,
+    unlocked.first_poem, unlocked.streak3, unlocked.streak7,
+    unlocked.poems5, unlocked.poems15, unlocked.poems30,
+    unlocked.poems70, unlocked.no_hint, unlocked.streak30,
   ])
 
   return ACHIEVEMENT_DEFS.map(def => ({
     ...def,
     unlocked: unlocked[def.id] ?? false,
     unlockedAt: dates[def.id] ?? null,
+    progress: unlocked[def.id] ? undefined : getProgress(def.id, input),
   }))
 }

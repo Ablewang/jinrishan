@@ -7,13 +7,15 @@ interface Props {
   poem: Poem
   onExit: () => void
   onNext: () => void
-  onMemorized: (stars: number, charCount: number) => void
+  onMemorized: (stars: number, charCount: number, noHintPass?: boolean) => void
   isReview?: boolean
   onVerified?: (passed: boolean) => void
   distractorLines?: { char: string; pinyin: string | null }[][]
   reviewIndex?: number
   reviewTotal?: number
   reviewLevel?: number
+  isOnboarding?: boolean
+  onOnboardingComplete?: () => void
 }
 
 function lineText(line: { chars: { char: string; pinyin: string | null }[] }): string {
@@ -63,6 +65,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
   const [quizResult, setQuizResult] = useState<'correct' | 'wrong' | null>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number>(0)
+  const hintsUsedRef = useRef(0)
 
   const lines = poem.lines
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
@@ -83,7 +86,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
         setLineRevealed(poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false)))
       } else {
         const charCount = lines.reduce((sum, ln) => sum + ln.chars.filter(c => c.pinyin !== null).length, 0)
-        onMemorized(3, charCount)
+        onMemorized(3, charCount, hintsUsedRef.current === 0)
 
         // 生成验证题（诗行数>=2时才出题）
         if (isReview && onVerified && lines.length >= 2) {
@@ -356,6 +359,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
           <div className="mm__celebrate-btns">
             <button className="mm__btn mm__btn--primary" onClick={onNext}>下一首 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg></button>
             <button className="mm__btn mm__btn--ghost" onClick={() => {
+              hintsUsedRef.current = 0
               setCelebrated(false)
               setRound(1)
               setLineRevealed(poem.lines.map(ln => ln.chars.filter(c => c.pinyin !== null).map(() => false)))
@@ -495,6 +499,7 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
           {round === 3 && '不看拼音，全靠记忆！'}
         </span>
         <button className="mm__hint-btn" onClick={() => {
+          hintsUsedRef.current += 1
           if (round === 2) {
             setLineRevealed(prev => prev.map(row => row.map(() => true)))
           } else {

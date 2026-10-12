@@ -173,9 +173,9 @@ export default function PoemDetail() {
   const prevPoem = currentIndex > 0 ? index[currentIndex - 1] : null
   const nextPoem = currentIndex < index.length - 1 ? index[currentIndex + 1] : null
 
-  const handleMemorized = useCallback((stars: number, charCount: number) => {
+  const handleMemorized = useCallback((stars: number, charCount: number, noHintPass?: boolean) => {
     if (!poem) return
-    markMemorized(poem.id, stars, charCount)
+    markMemorized(poem.id, stars, charCount, noHintPass)
     if (!isReviewMode) completePoem(poem.id)
   }, [poem?.id, markMemorized, completePoem, isReviewMode])
 
