@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { loadPoem, loadPoemIndex } from '../data/poems'
 import type { Poem, PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
@@ -36,6 +36,7 @@ export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const location = useLocation()
   const { markRead, markMemorized, markReviewed, reviewCards } = useProgress()
   const { queue, completePoem } = useQueue()
   const [showPinyin, setShowPinyin] = useState(true)
@@ -260,7 +261,7 @@ export default function PoemDetail() {
   return (
     <div className="d">
       <header className="d-nav">
-        <button className="d-nav__back" onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
+        <button className="d-nav__back" onClick={() => location.key !== 'default' ? navigate(-1) : navigate('/')}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         {titleHidden && <span className="d-nav__title">{poem.title}</span>}
         <button
           className={`d-nav__toggle${showPinyin ? ' d-nav__toggle--on' : ''}`}
