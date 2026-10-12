@@ -3,12 +3,18 @@ import { useProgress } from '../hooks/useProgress'
 import { useAchievements } from '../hooks/useAchievements'
 import type { Badge } from '../hooks/useAchievements'
 
+const SHOWN_KEY = 'poem_achievement_shown'
+
 function loadShownIds(): Set<string> {
   try {
-    const raw = localStorage.getItem('poem_achievement_dates')
-    const dates: Record<string, string> = raw ? JSON.parse(raw) : {}
-    return new Set(Object.keys(dates))
+    const raw = localStorage.getItem(SHOWN_KEY)
+    const arr: string[] = raw ? JSON.parse(raw) : []
+    return new Set(arr)
   } catch { return new Set() }
+}
+
+function saveShownIds(s: Set<string>) {
+  try { localStorage.setItem(SHOWN_KEY, JSON.stringify([...s])) } catch { /* ignore */ }
 }
 
 export default function AchievementBanner() {
@@ -19,11 +25,12 @@ export default function AchievementBanner() {
   const [current, setCurrent] = useState<Badge | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // 检测新解锁
+  // 检测新解锁（与 shown 记录对比）
   useEffect(() => {
     const newOnes = badges.filter(b => b.unlocked && !shownRef.current.has(b.id))
     if (newOnes.length > 0) {
       newOnes.forEach(b => shownRef.current.add(b.id))
+      saveShownIds(shownRef.current)
       setQueue(prev => [...prev, ...newOnes])
     }
   }, [badges])
@@ -77,16 +84,9 @@ export default function AchievementBanner() {
           color: #C62828; flex-shrink: 0;
         }
         .ach-banner__body { flex: 1; min-width: 0; }
-        .ach-banner__label {
-          font-family: var(--font-brush); font-size: 1rem; color: #C62828;
-        }
-        .ach-banner__desc {
-          font-family: var(--font-ui); font-size: 0.7rem; color: var(--ink-light); margin-top: 2px;
-        }
-        .ach-banner__close {
-          font-size: 1.2rem; color: var(--ink-light);
-          padding: 4px 6px; background: transparent; flex-shrink: 0;
-        }
+        .ach-banner__label { font-family: var(--font-brush); font-size: 1rem; color: #C62828; }
+        .ach-banner__desc { font-family: var(--font-ui); font-size: 0.7rem; color: var(--ink-light); margin-top: 2px; }
+        .ach-banner__close { font-size: 1.2rem; color: var(--ink-light); padding: 4px 6px; background: transparent; flex-shrink: 0; }
       `}</style>
     </div>
   )

@@ -39,6 +39,7 @@ export default function PoemDetail() {
   const { markRead, markMemorized, markReviewed, reviewCards } = useProgress()
   const { queue, completePoem } = useQueue()
   const [showPinyin, setShowPinyin] = useState(true)
+  const isOnboarding = searchParams.get('onboarding') === '1'
   const isReviewMode = searchParams.get('review') === '1'
   const reviewIds = searchParams.get('reviewIds')?.split(',').map(Number).filter(Boolean) ?? []
   const reviewIdx = Number(searchParams.get('reviewIdx') ?? 0)
@@ -237,6 +238,7 @@ export default function PoemDetail() {
         reviewIndex={isReviewMode && reviewIds.length > 0 ? reviewIdx + 1 : undefined}
         reviewTotal={isReviewMode && reviewIds.length > 0 ? reviewIds.length : undefined}
         reviewLevel={currentCard?.level}
+        isOnboarding={isOnboarding}
       />
     )
   }

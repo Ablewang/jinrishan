@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
+import { useAchievements } from '../hooks/useAchievements'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
-import Achievements from '../components/Achievements'
 type StarFilter = '全部' | '无提示' | '少量提示' | '多次提示'
 const STAR_FILTERS: StarFilter[] = ['全部', '无提示', '少量提示', '多次提示']
 const TOTAL = 70
@@ -11,6 +11,8 @@ const TOTAL = 70
 export default function ProgressPage() {
   const navigate = useNavigate()
   const { progress, streak, totalChars, memorizeHistory, totalMemorized, reviewCards, masteredCount, reviewingCount } = useProgress()
+  const badges = useAchievements({ progress, streak, totalChars, memorizeHistory })
+  const unlockedCount = badges.filter(b => b.unlocked).length
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [filter, setFilter] = useState<StarFilter>('全部')
 
@@ -143,12 +145,21 @@ export default function ProgressPage() {
 
       {/* 成就 */}
       <div className="pg__ach-row">
-        <Achievements
-          progress={progress}
-          streak={streak}
-          totalChars={totalChars}
-          memorizeHistory={memorizeHistory}
-        />
+        <div className="pg__ach-section">
+          <div className="pg__section-header">
+            <span className="pg__section-title">成就勋章</span>
+            <span className="pg__section-count">{unlockedCount} / {badges.length}</span>
+          </div>
+          <div className="pg__ach-grid">
+            {badges.map(b => (
+              <div key={b.id} className={`pg__ach-badge${b.unlocked ? ' pg__ach-badge--on' : ''}`}>
+                <span className="pg__ach-icon">{b.icon}</span>
+                <span className="pg__ach-label">{b.label}</span>
+                {!b.unlocked && b.progress && <span className="pg__ach-prog">{b.progress}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
         <button className="pg__ach-link" onClick={() => navigate('/achievements')}>查看全部成就 <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg></button>
       </div>
 
@@ -297,6 +308,43 @@ const style = `
     display: flex;
     flex-direction: column;
     gap: 6px;
+  }
+  .pg__ach-section {
+    margin: 12px 16px 0;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-card);
+    border: 1.5px solid var(--border);
+  }
+  .pg__ach-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .pg__ach-badge {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 10px 4px; border-radius: 10px;
+    opacity: 0.45; transition: opacity 0.2s;
+  }
+  .pg__ach-badge--on { opacity: 1; }
+  .pg__ach-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-brush); font-size: 0.95rem; font-weight: 700;
+    background: #f0f0f0; color: #ccc;
+  }
+  .pg__ach-badge--on .pg__ach-icon {
+    background: rgba(198,40,40,0.1); color: #C62828;
+    border: 1.5px solid rgba(198,40,40,0.25);
+  }
+  .pg__ach-label {
+    font-family: var(--font-ui); font-size: 0.62rem;
+    color: var(--ink-light); text-align: center; line-height: 1.2;
+  }
+  .pg__ach-prog {
+    font-family: var(--font-ui); font-size: 0.58rem;
+    color: var(--ink-light); text-align: center; opacity: 0.7;
   }
   .pg__ach-link {
     text-align: right;
