@@ -63,9 +63,6 @@ export default function Home() {
     return 'pending'
   })()
 
-  function startMem(poemId: number) {
-    navigate(`/poem/${poemId}?autoMem=1`)
-  }
 
   function startReview() {
     if (reviewPoems.length === 0) return
