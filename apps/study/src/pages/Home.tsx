@@ -9,7 +9,7 @@ import imgMap from '../data/poem_img_map.json'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { streak, todayDueReviews, reviewCards, totalMemorized } = useProgress()
+  const { todayDueReviews, reviewCards, totalMemorized } = useProgress()
   const { queue, streakCount, todayComplete, isReturning } = useQueue()
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [bannerVisible, setBannerVisible] = useState(false)
@@ -82,7 +82,7 @@ export default function Home() {
         <div className="home__hero-greeting">古诗小课堂</div>
         <div className="home__hero-title">小学必背70首</div>
         <div className="home__hero-streak">
-          <span className="home__streak-chip">连续 {streakCount || streak.count} 天</span>
+          <span className="home__streak-chip">连续 {streakCount} 天</span>
           <span className="home__progress-chip">{totalMemorized} / 70 首</span>
           <button className="home__manage-btn" onClick={() => navigate('/queue')}>背诗计划</button>
         </div>
@@ -103,7 +103,7 @@ export default function Home() {
             <div className="done-icon"><IconFireworks size={22} fill="#10B981" /></div>
             <div>
               <div className="done-text-main">今日任务全部完成！</div>
-              <div className="done-text-sub">复习了 {todayDueReviews.length} 首 · 连续 {streakCount || streak.count} 天</div>
+              <div className="done-text-sub">复习了 {todayDueReviews.length} 首 · 连续 {streakCount} 天</div>
             </div>
           </div>
         ) : (

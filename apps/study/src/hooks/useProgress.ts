@@ -200,7 +200,7 @@ export function useProgress() {
         newLevel = Math.min(card.level + 1, 5)
         newDue = newLevel < 5 ? addDays(today, INTERVALS[newLevel - 1]) : addDays(today, 365)
       } else {
-        newLevel = 0
+        newLevel = Math.max(0, card.level - 1)
         newDue = addDays(today, 1)
       }
       const updated = prev.map((c, i) => i === idx
@@ -212,12 +212,11 @@ export function useProgress() {
     })
   }, [])
 
-  // 今日到期复习，最多3首（due <= today，level < 5）
+  // 今日到期复习，全量返回（due <= today，level < 5）
   const todayDueReviews = useMemo(() => {
     const today = todayStr()
     return reviewCards
       .filter(c => c.level < 5 && c.due <= today)
-      .slice(0, 3)
   }, [reviewCards])
 
   const masteredCount = useMemo(() => reviewCards.filter(c => c.level === 5).length, [reviewCards])

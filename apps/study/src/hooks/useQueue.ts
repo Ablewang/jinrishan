@@ -62,7 +62,11 @@ export function useQueue() {
       const today = todayStr()
       const next = { ...prev, queue: prev.queue.filter(q => q !== id) }
       if (!prev.today_complete) {
-        next.streak_count = prev.streak_count + 1
+        const d = new Date(today + 'T00:00:00')
+        d.setDate(d.getDate() - 1)
+        const yesterday = d.toISOString().slice(0, 10)
+        const isConsecutive = prev.last_complete_date === yesterday
+        next.streak_count = isConsecutive ? prev.streak_count + 1 : 1
         next.last_complete_date = today
         next.today_complete = true
       }

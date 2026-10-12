@@ -34,7 +34,12 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /\/annotations\.json/,
+            urlPattern: /\/annotations\/\d+\.json/,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'poem-data' },
+          },
+          {
+            urlPattern: /\/poems\/\d+\.json/,
             handler: 'StaleWhileRevalidate',
             options: { cacheName: 'poem-data' },
           },
