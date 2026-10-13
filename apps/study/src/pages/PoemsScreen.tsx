@@ -84,13 +84,13 @@ const styles = `
   }
   .ps__header {
     position: sticky;
-    top: 0;
+    top: env(safe-area-inset-top, 0px);
     z-index: 20;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: env(safe-area-inset-top, 0px) 16px 0;
-    height: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+    padding: 0 16px;
+    height: var(--navbar-height);
     background: #C62828;
   }
   .ps__back {

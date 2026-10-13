@@ -82,7 +82,7 @@ export default function Home() {
           <text x="110" y="100" fontSize="96" fontFamily="serif" fill="rgba(255,255,255,0.06)" transform="rotate(-12,100,60)">诗</text>
           <text x="148" y="72" fontSize="48" fontFamily="serif" fill="rgba(255,255,255,0.04)" transform="rotate(-12,100,60)">词</text>
         </svg>
-        <div className="home__hero-greeting">古诗小课堂 <span style={{color:'#AB47BC'}}>✦</span></div>
+        <div className="home__hero-greeting">古诗小课堂 <span style={{color:'#4CAF50'}}>✦</span></div>
         <div className="home__hero-title-row">
           <span className="home__hero-title">小学必背古诗70首</span>
           <span className="home__level-title">{levelTitle}</span>
@@ -330,8 +330,7 @@ const styles = `
   /* ── hero ── */
   .home__hero {
     background: linear-gradient(160deg, #D32F2F 0%, #B71C1C 100%);
-    margin-top: calc(-1 * env(safe-area-inset-top, 0px));
-    padding: calc(16px + env(safe-area-inset-top, 0px)) 18px 28px;
+    padding: 16px 18px 28px;
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
