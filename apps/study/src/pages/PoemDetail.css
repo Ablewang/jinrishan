@@ -1,7 +1,7 @@
 .d {
   position: fixed;
   inset: 0;
-  background: #fff;
+  background: #C62828;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -54,6 +54,7 @@
   flex: 1;
   overflow: hidden;
   position: relative;
+  background: #fff;
 }
 
 .d-bg-wrap {
