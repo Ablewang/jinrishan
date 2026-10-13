@@ -54,7 +54,6 @@ body {
   color: var(--ink);
   min-height: 100%;
   overflow-x: hidden;
-  padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   -webkit-font-smoothing: antialiased;
 }
