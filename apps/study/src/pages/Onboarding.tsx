@@ -134,15 +134,6 @@ const style = `
     padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
     overflow: hidden;
   }
-  .ob::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: env(safe-area-inset-bottom, 0px);
-    background: #8B0000;
-    z-index: 9999;
-    pointer-events: none;
-  }
 
   /* 跳过 */
   .ob__skip {
