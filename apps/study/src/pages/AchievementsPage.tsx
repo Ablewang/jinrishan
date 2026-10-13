@@ -74,13 +74,13 @@ const style = `
   }
   .ap__navbar {
     position: sticky;
-    top: env(safe-area-inset-top, 0px);
+    top: 0;
     z-index: 20;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0 16px;
-    height: var(--navbar-height);
+    padding: env(safe-area-inset-top, 0px) 16px 0;
+    height: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
     background: #C62828;
     flex-shrink: 0;
   }
