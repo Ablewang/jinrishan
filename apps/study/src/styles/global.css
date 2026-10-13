@@ -33,6 +33,27 @@
   --navbar-height: 56px;
 }
 
+/* iOS 26+ Liquid Glass 采样层：必须用 background-color 纯色，不能用 gradient */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: env(safe-area-inset-top, 44px);
+  background-color: #C62828;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: env(safe-area-inset-bottom, 34px);
+  background-color: #C62828;
+  z-index: 9999;
+  pointer-events: none;
+}
+
 /* ===== Reset ===== */
 *, *::before, *::after {
   box-sizing: border-box;
