@@ -1,19 +1,19 @@
 .d {
-  min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  position: fixed;
+  inset: 0;
+  background: #C62828;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  overflow: hidden;
 }
 
 .d-nav {
-  position: sticky;
-  top: env(safe-area-inset-top, 0px);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  height: var(--navbar-height);
+  padding: env(safe-area-inset-top, 0px) 16px 0;
+  height: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
   background: #C62828;
   z-index: 20;
 }
@@ -52,6 +52,7 @@
 
 .d-body {
   flex: 1;
+  overflow: hidden;
   position: relative;
   background: #fff;
 }
@@ -74,7 +75,10 @@
 .d-scroll {
   position: relative;
   z-index: 1;
-  padding: 0 14px calc(100px + env(safe-area-inset-bottom, 0px));
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 14px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -217,15 +221,11 @@
 }
 
 .d-footer {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
+  position: relative;
   z-index: 10;
+  flex-shrink: 0;
   padding: 8px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-  background: #fff;
+  background: #C62828;
   display: flex;
   flex-direction: column;
   gap: 8px;
