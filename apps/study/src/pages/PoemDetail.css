@@ -1,10 +1,20 @@
 .d {
   position: fixed;
   inset: 0;
-  background: #C62828;
+  background: #fff;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.d::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: env(safe-area-inset-bottom, 0px);
+  background: #C62828;
+  z-index: 9999;
+  pointer-events: none;
 }
 
 .d-nav {
@@ -54,7 +64,6 @@
   flex: 1;
   overflow: hidden;
   position: relative;
-  background: #fff;
 }
 
 .d-bg-wrap {
