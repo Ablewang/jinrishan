@@ -43,6 +43,16 @@
   pointer-events: none;
 }
 
+/* 底部 Home Indicator 采样层 */
+.ios-home-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: env(safe-area-inset-bottom, 0px);
+  background: #C62828;
+  z-index: 99999;
+  pointer-events: none;
+}
+
 /* ===== Reset ===== */
 *, *::before, *::after {
   box-sizing: border-box;
