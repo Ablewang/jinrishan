@@ -347,6 +347,7 @@ export default function PoemDetail() {
           </button>
         </div>
       </div>
+      <div style={{height: 'env(safe-area-inset-bottom, 0px)', background: '#C62828', flexShrink: 0}} />
     </div>
   )
 }
