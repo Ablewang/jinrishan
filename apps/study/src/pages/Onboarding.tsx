@@ -127,9 +127,9 @@ export default function Onboarding() {
 
 const style = `
   .ob {
-    display: flex; flex-direction: column;
-    height: 100dvh;
+    position: fixed; inset: 0;
     background: linear-gradient(150deg, #D32F2F 0%, #8B0000 100%);
+    display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
     overflow: hidden;
