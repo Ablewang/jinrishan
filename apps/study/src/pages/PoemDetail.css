@@ -1,19 +1,19 @@
 .d {
-  position: fixed;
-  inset: 0;
-  background: #C62828;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  background: #fff;
 }
 
 .d-nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: env(safe-area-inset-top, 0px) 16px 0;
-  height: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+  padding: 0 16px;
+  height: var(--navbar-height);
   background: #C62828;
   z-index: 20;
 }
@@ -52,7 +52,6 @@
 
 .d-body {
   flex: 1;
-  overflow: hidden;
   position: relative;
   background: #fff;
 }
@@ -75,10 +74,7 @@
 .d-scroll {
   position: relative;
   z-index: 1;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 0 14px;
+  padding: 0 14px calc(100px + env(safe-area-inset-bottom, 0px));
   -webkit-overflow-scrolling: touch;
 }
 
@@ -221,11 +217,15 @@
 }
 
 .d-footer {
-  position: relative;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
   z-index: 10;
-  flex-shrink: 0;
   padding: 8px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-  background: #C62828;
+  background: #fff;
   display: flex;
   flex-direction: column;
   gap: 8px;
