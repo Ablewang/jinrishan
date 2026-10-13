@@ -13,7 +13,7 @@ export default defineConfig({
         short_name: '古诗小课堂',
         description: '小学生必背古诗70首，趣味闯关学古诗',
         theme_color: '#C62828',
-        background_color: '#ffffff',
+        background_color: '#C62828',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
