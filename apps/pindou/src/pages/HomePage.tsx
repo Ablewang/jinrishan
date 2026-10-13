@@ -5,7 +5,7 @@ import type { NavTarget } from '../App'
 import styles from './HomePage.module.css'
 
 const LOGO = (
-  <span className={styles.logo}>分类</span>
+  <span className={styles.logo}>分类 </span>
 )
 
 interface Props {
