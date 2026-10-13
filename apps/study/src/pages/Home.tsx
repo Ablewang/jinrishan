@@ -82,7 +82,8 @@ export default function Home() {
           <text x="110" y="100" fontSize="96" fontFamily="serif" fill="rgba(255,255,255,0.06)" transform="rotate(-12,100,60)">诗</text>
           <text x="148" y="72" fontSize="48" fontFamily="serif" fill="rgba(255,255,255,0.04)" transform="rotate(-12,100,60)">词</text>
         </svg>
-        <div className="home__hero-greeting">【v2】古诗小课堂</div>
+        <div className="home__hero-greeting">古诗小课堂</div>
+        <div style={{fontSize:'10px',color:'rgba(255,255,255,0.4)',marginTop:'-4px'}}>v2</div>
         <div className="home__hero-title-row">
           <span className="home__hero-title">小学必背70首</span>
           <span className="home__level-title">{levelTitle}</span>
