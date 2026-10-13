@@ -47,6 +47,7 @@ export default function Onboarding() {
 
   return (
     <div className="ob">
+      <div className="ios-status-bar" aria-hidden="true" />
       <button className="ob__skip" onClick={skip}>跳过</button>
 
       {/* 背景水印大字 */}
