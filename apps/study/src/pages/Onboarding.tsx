@@ -127,11 +127,11 @@ export default function Onboarding() {
 
 const style = `
   .ob {
-    position: fixed; inset: 0;
+    min-height: 100vh;
     background: linear-gradient(150deg, #D32F2F 0%, #8B0000 100%);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    padding: env(safe-area-inset-top, 0px) 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
     overflow: hidden;
   }
 
