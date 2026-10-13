@@ -1,5 +1,5 @@
 .d {
-  min-height: 100dvh;
+  min-height: calc(100dvh - env(safe-area-inset-top, 0px));
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -290,7 +290,7 @@
 }
 
 .d-loading {
-  min-height: 100dvh;
+  min-height: calc(100dvh - env(safe-area-inset-top, 0px));
   background: #fff;
   display: flex;
   flex-direction: column;
