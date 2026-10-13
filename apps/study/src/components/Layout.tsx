@@ -11,7 +11,6 @@ export default function Layout() {
 
   return (
     <>
-      <div className="ios-status-bar" aria-hidden="true" />
       <AchievementBanner />
       <Outlet />
       {showTab && <TabBar onProfileClick={() => profileRef.current?.open()} />}

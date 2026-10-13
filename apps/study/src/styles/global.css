@@ -33,26 +33,6 @@
   --navbar-height: 56px;
 }
 
-/* iOS PWA 状态栏颜色采样层 — WebKit 会采样此元素背景色延伸到状态栏 */
-.ios-status-bar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: env(safe-area-inset-top, 0px);
-  background: #C62828;
-  z-index: 99999;
-  pointer-events: none;
-}
-
-/* 底部 Home Indicator 采样层 */
-.ios-home-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: env(safe-area-inset-bottom, 0px);
-  background: #C62828;
-  z-index: 99999;
-  pointer-events: none;
-}
-
 /* ===== Reset ===== */
 *, *::before, *::after {
   box-sizing: border-box;
