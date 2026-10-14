@@ -40,26 +40,24 @@ async function drawPoemCard(
 ): Promise<string> {
   await document.fonts.ready
 
-  // 先计算总高度
   const PADDING_X = 28
   const TITLE_TOP = 24
   const TITLE_FONT_SIZE = 32
+  const TITLE_H = 40        // 固定行高，不用乘数
   const AUTHOR_FONT_SIZE = 11
-  const LINE_GAP = 8
-  const PINYIN_FONT_SIZE = 9
+  const AUTHOR_H = 20       // 固定行高
+  const DIVIDER_H = 16
+  const PINYIN_H = 14       // 拼音行固定高度
   const CHAR_FONT_SIZE = 26
-  const CHAR_W = 34
+  const CHAR_H = 32         // 汉字行固定高度
+  const LINE_GAP = 6
+  const CONTENT_BOTTOM = 28
   const FOOTER_H = 52
+  const CHAR_W = 34
 
-  // 计算内容区高度
-  const titleH = TITLE_FONT_SIZE * 1.2
-  const authorH = AUTHOR_FONT_SIZE * 1.8
-  const dividerH = 16
-  const linesH = poem.lines.length * (PINYIN_FONT_SIZE * 1.4 + CHAR_FONT_SIZE * 1.2) + (poem.lines.length - 1) * LINE_GAP
-  const CONTENT_BOTTOM = 32
-  const totalH = TITLE_TOP + titleH + 6 + authorH + dividerH + linesH + CONTENT_BOTTOM + FOOTER_H
-
-  const H = Math.ceil(totalH)
+  // 精确计算内容高度（全部用固定值，无乘数）
+  const linesH = poem.lines.length * (PINYIN_H + CHAR_H) + (poem.lines.length - 1) * LINE_GAP
+  const H = TITLE_TOP + TITLE_H + 6 + AUTHOR_H + DIVIDER_H + linesH + CONTENT_BOTTOM + FOOTER_H
 
   const canvas = document.createElement('canvas')
   canvas.width = W * SCALE
@@ -67,18 +65,12 @@ async function drawPoemCard(
   const ctx = canvas.getContext('2d')!
   ctx.scale(SCALE, SCALE)
 
-  // 背景
+  // 背景（用 H 整数高度完整填充）
   if (bgImg) {
-    const sw = bgImg.naturalWidth
-    const sh = bgImg.naturalHeight
-    const dw = W
-    const dh = H
-    const scale = Math.max(dw / sw, dh / sh)
-    const nw = sw * scale
-    const nh = sh * scale
-    const ox = (dw - nw) / 2
-    const oy = (dh - nh) / 2
-    ctx.drawImage(bgImg, ox, oy, nw, nh)
+    const sw = bgImg.naturalWidth, sh = bgImg.naturalHeight
+    const sc = Math.max(W / sw, H / sh)
+    const nw = sw * sc, nh = sh * sc
+    ctx.drawImage(bgImg, (W - nw) / 2, (H - nh) / 2, nw, nh)
     ctx.fillStyle = 'rgba(0,0,0,0.48)'
     ctx.fillRect(0, 0, W, H)
   } else {
@@ -88,6 +80,7 @@ async function drawPoemCard(
 
   // 标题
   ctx.textAlign = 'center'
+  ctx.textBaseline = 'alphabetic'
   ctx.fillStyle = '#ffffff'
   ctx.font = `${TITLE_FONT_SIZE}px 'Ma Shan Zheng', cursive`
   ctx.shadowColor = 'rgba(0,0,0,0.5)'
@@ -96,15 +89,12 @@ async function drawPoemCard(
   ctx.shadowBlur = 0
 
   // 作者
-  let y = TITLE_TOP + titleH + 6
-  const authorText = [
-    poemSummary?.dynasty ? `【${poemSummary.dynasty}】` : '',
-    poemSummary?.author ?? ''
-  ].join('')
+  let y = TITLE_TOP + TITLE_H + 6
+  const authorText = (poemSummary?.dynasty ? `【${poemSummary.dynasty}】` : '') + (poemSummary?.author ?? '')
   ctx.font = `${AUTHOR_FONT_SIZE}px 'PingFang SC', sans-serif`
   ctx.fillStyle = 'rgba(255,255,255,0.72)'
   ctx.fillText(authorText, W / 2, y + AUTHOR_FONT_SIZE)
-  y += authorH
+  y += AUTHOR_H
 
   // 分隔线
   const gradL = ctx.createLinearGradient(W / 2 - 20, 0, W / 2 + 20, 0)
@@ -117,25 +107,24 @@ async function drawPoemCard(
   ctx.moveTo(W / 2 - 20, y + 6)
   ctx.lineTo(W / 2 + 20, y + 6)
   ctx.stroke()
-  y += dividerH
+  y += DIVIDER_H
 
-  // 诗句（拼音 + 汉字）
-  for (const line of poem.lines) {
-    const chars = line.chars
+  // 诗句
+  for (let li = 0; li < poem.lines.length; li++) {
+    const chars = poem.lines[li].chars
     const lineW = chars.length * CHAR_W
     const startX = (W - lineW) / 2
 
-    // 拼音行
-    ctx.font = `${PINYIN_FONT_SIZE}px 'PingFang SC', sans-serif`
+    // 拼音行（baseline = top + PINYIN_H）
+    ctx.font = `9px 'PingFang SC', sans-serif`
     ctx.fillStyle = 'rgba(255,255,255,0.82)'
-    ctx.textAlign = 'center'
+    ctx.textBaseline = 'alphabetic'
     for (let i = 0; i < chars.length; i++) {
-      const cx = startX + i * CHAR_W + CHAR_W / 2
       if (chars[i].pinyin) {
-        ctx.fillText(chars[i].pinyin!, cx, y + PINYIN_FONT_SIZE)
+        ctx.fillText(chars[i].pinyin!, startX + i * CHAR_W + CHAR_W / 2, y + 10)
       }
     }
-    y += PINYIN_FONT_SIZE * 1.4
+    y += PINYIN_H
 
     // 汉字行
     ctx.font = `${CHAR_FONT_SIZE}px 'Ma Shan Zheng', cursive`
@@ -143,52 +132,56 @@ async function drawPoemCard(
     ctx.shadowColor = 'rgba(0,0,0,0.45)'
     ctx.shadowBlur = 5
     for (let i = 0; i < chars.length; i++) {
-      const cx = startX + i * CHAR_W + CHAR_W / 2
-      ctx.fillText(chars[i].char, cx, y + CHAR_FONT_SIZE)
+      ctx.fillText(chars[i].char, startX + i * CHAR_W + CHAR_W / 2, y + CHAR_FONT_SIZE)
     }
     ctx.shadowBlur = 0
-    y += CHAR_FONT_SIZE * 1.2 + LINE_GAP
+    y += CHAR_H
+    if (li < poem.lines.length - 1) y += LINE_GAP
   }
 
   y += CONTENT_BOTTOM
 
-  // 底栏背景
+  // 底栏背景（精确从 y 到 y+FOOTER_H，canvas 总高 H = y+FOOTER_H）
   ctx.fillStyle = 'rgba(0,0,0,0.38)'
   ctx.fillRect(0, y, W, FOOTER_H)
 
-  // icon 图片
+  // icon
   const iconImg = await loadImage('/icon.png')
   if (iconImg) {
+    const ICON_SIZE = 32
     const ix = PADDING_X
-    const iy = y + (FOOTER_H - 32) / 2
+    const iy = y + (FOOTER_H - ICON_SIZE) / 2
     ctx.save()
     ctx.beginPath()
     const r = 7
     ctx.moveTo(ix + r, iy)
-    ctx.lineTo(ix + 32 - r, iy)
-    ctx.quadraticCurveTo(ix + 32, iy, ix + 32, iy + r)
-    ctx.lineTo(ix + 32, iy + 32 - r)
-    ctx.quadraticCurveTo(ix + 32, iy + 32, ix + 32 - r, iy + 32)
-    ctx.lineTo(ix + r, iy + 32)
-    ctx.quadraticCurveTo(ix, iy + 32, ix, iy + 32 - r)
+    ctx.lineTo(ix + ICON_SIZE - r, iy)
+    ctx.quadraticCurveTo(ix + ICON_SIZE, iy, ix + ICON_SIZE, iy + r)
+    ctx.lineTo(ix + ICON_SIZE, iy + ICON_SIZE - r)
+    ctx.quadraticCurveTo(ix + ICON_SIZE, iy + ICON_SIZE, ix + ICON_SIZE - r, iy + ICON_SIZE)
+    ctx.lineTo(ix + r, iy + ICON_SIZE)
+    ctx.quadraticCurveTo(ix, iy + ICON_SIZE, ix, iy + ICON_SIZE - r)
     ctx.lineTo(ix, iy + r)
     ctx.quadraticCurveTo(ix, iy, ix + r, iy)
     ctx.closePath()
     ctx.clip()
-    ctx.drawImage(iconImg, ix, iy, 32, 32)
+    ctx.drawImage(iconImg, ix, iy, ICON_SIZE, ICON_SIZE)
     ctx.restore()
   }
 
-  // 品牌文字——用 textBaseline middle 精确垂直居中
+  // 品牌文字：两行作为整体垂直居中
+  // 大字15px + 间距4px + 小字9px = 28px 总高，居中于 FOOTER_H
   const textX = PADDING_X + 40
+  const textBlockH = 15 + 4 + 9
+  const textBlockTop = y + (FOOTER_H - textBlockH) / 2
   ctx.textAlign = 'left'
-  ctx.textBaseline = 'middle'
+  ctx.textBaseline = 'top'
   ctx.font = `15px 'ZCOOL KuaiLe', sans-serif`
   ctx.fillStyle = 'rgba(255,248,225,0.85)'
-  ctx.fillText('古诗小课堂', textX, y + FOOTER_H / 2 - 7)
+  ctx.fillText('古诗小课堂', textX, textBlockTop)
   ctx.font = `9px 'PingFang SC', sans-serif`
   ctx.fillStyle = 'rgba(255,248,225,0.45)'
-  ctx.fillText('每天一首，积累经典', textX, y + FOOTER_H / 2 + 9)
+  ctx.fillText('每天一首，积累经典', textX, textBlockTop + 15 + 4)
   ctx.textBaseline = 'alphabetic'
 
   return canvas.toDataURL('image/png')
