@@ -55,7 +55,7 @@ async function drawPoemCard(
   const titleH = TITLE_FONT_SIZE * 1.2
   const authorH = AUTHOR_FONT_SIZE * 1.8
   const dividerH = 16
-  const linesH = poem.lines.length * (PINYIN_FONT_SIZE * 1.4 + CHAR_FONT_SIZE * 1.2 + LINE_GAP)
+  const linesH = poem.lines.length * (PINYIN_FONT_SIZE * 1.4 + CHAR_FONT_SIZE * 1.2) + (poem.lines.length - 1) * LINE_GAP
   const CONTENT_BOTTOM = 32
   const totalH = TITLE_TOP + titleH + 6 + authorH + dividerH + linesH + CONTENT_BOTTOM + FOOTER_H
 
