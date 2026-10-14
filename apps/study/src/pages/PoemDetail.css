@@ -50,6 +50,19 @@
   background: rgba(255,255,255,0.2);
 }
 
+.d-nav__share {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255,248,225,0.5);
+  color: #FFF8E1;
+  background: transparent;
+  display: flex; align-items: center; gap: 4px;
+  transition: all 0.15s;
+}
+.d-nav__share:active { background: rgba(255,255,255,0.2); }
+
 .d-body {
   flex: 1;
   position: relative;

@@ -8,7 +8,8 @@ import QueueScreen from './pages/QueueScreen'
 import PoemsScreen from './pages/PoemsScreen'
 import ProfilePage from './pages/ProfilePage'
 import Onboarding from './pages/Onboarding'
-import ShareCardPage from './pages/ShareCardPage'
+import { ShareCardProvider } from './contexts/ShareCardContext'
+import ShareCardModal from './components/ShareCardModal'
 
 function isOnboardingDone(): boolean {
   try { return localStorage.getItem('poem_onboarding_done') === '1' } catch { return true }
@@ -21,18 +22,20 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/onboarding" element={<Onboarding />} />
-      <Route element={<Layout />}>
-        <Route path="/" element={<OnboardingGate><Home /></OnboardingGate>} />
-        <Route path="/poems" element={<PoemsScreen />} />
-        <Route path="/achievements" element={<AchievementsPage />} />
-        <Route path="/progress" element={<ProgressPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/queue" element={<QueueScreen />} />
-        <Route path="/share-card" element={<ShareCardPage />} />
-      </Route>
-      <Route path="/poem/:id" element={<PoemDetail />} />
-    </Routes>
+    <ShareCardProvider>
+      <Routes>
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<OnboardingGate><Home /></OnboardingGate>} />
+          <Route path="/poems" element={<PoemsScreen />} />
+          <Route path="/achievements" element={<AchievementsPage />} />
+          <Route path="/progress" element={<ProgressPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/queue" element={<QueueScreen />} />
+        </Route>
+        <Route path="/poem/:id" element={<PoemDetail />} />
+      </Routes>
+      <ShareCardModal />
+    </ShareCardProvider>
   )
 }

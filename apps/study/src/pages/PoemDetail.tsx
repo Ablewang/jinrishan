@@ -7,6 +7,7 @@ import { useQueue } from '../hooks/useQueue'
 import PoemText from '../components/PoemText'
 import MemorizeMode from '../components/MemorizeMode'
 import imgMap from '../data/poem_img_map.json'
+import { useShareCard } from '../contexts/ShareCardContext'
 import './PoemDetail.css'
 
 interface AnnotationData {
@@ -39,6 +40,7 @@ export default function PoemDetail() {
   const location = useLocation()
   const { markRead, markMemorized, markReviewed, reviewCards } = useProgress()
   const { queue, completePoem } = useQueue()
+  const { open: openShareCard } = useShareCard()
   const [showPinyin, setShowPinyin] = useState(true)
   const isOnboarding = searchParams.get('onboarding') === '1'
   const isReviewMode = searchParams.get('review') === '1'
@@ -263,12 +265,25 @@ export default function PoemDetail() {
       <header className="d-nav">
         <button className="d-nav__back" onClick={() => location.key !== 'default' ? navigate(-1) : navigate('/')}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         {titleHidden && <span className="d-nav__title">{poem.title}</span>}
-        <button
-          className={`d-nav__toggle${showPinyin ? ' d-nav__toggle--on' : ''}`}
-          onClick={() => setShowPinyin(v => !v)}
-        >
-          {showPinyin ? '拼音 ON' : '拼音 OFF'}
-        </button>
+        <div style={{ display:'flex', alignItems:'center', gap:6, marginLeft:'auto' }}>
+          <button
+            className="d-nav__share"
+            onClick={() => openShareCard({ type: 'poem', poemId: numId })}
+            aria-label="分享这首诗"
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            分享
+          </button>
+          <button
+            className={`d-nav__toggle${showPinyin ? ' d-nav__toggle--on' : ''}`}
+            onClick={() => setShowPinyin(v => !v)}
+          >
+            {showPinyin ? '拼音 ON' : '拼音 OFF'}
+          </button>
+        </div>
       </header>
 
       <div className="d-body">
