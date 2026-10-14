@@ -398,12 +398,16 @@ const PoemCard = forwardRef<HTMLDivElement, PoemCardProps>(({ poem, poemSummary,
         <div style={{ width:36, height:1, background:'linear-gradient(to right,transparent,rgba(255,248,225,0.5),transparent)', marginBottom:6 }} />
         <div style={{ display:'flex', flexDirection:'column', gap:1, padding:'10px 14px' }}>
           {poem.lines.map((line, i) => (
-            <div key={i} style={{ display:'block', whiteSpace:'nowrap', textAlign:'center', marginBottom:6, lineHeight:1 }}>
+            <div key={i} style={{ display:'flex', justifyContent:'center', alignItems:'flex-end', marginBottom:6 }}>
               {line.chars.map((c, j) => (
-                <ruby key={j} style={{ fontFamily:"'Ma Shan Zheng','KaiTi',serif", fontSize:'1.45rem', color:'#fff', textShadow:'0 1px 6px rgba(0,0,0,0.5)', letterSpacing:'0.32em' }}>
-                  {c.char}
-                  {c.pinyin && <rt style={{ fontFamily:'PingFang SC,sans-serif', fontSize:'0.42em', color:'rgba(255,255,255,0.85)', letterSpacing:'0.05em' }}>{c.pinyin}</rt>}
-                </ruby>
+                <div key={j} style={{ display:'flex', flexDirection:'column', alignItems:'center', width:'1.9rem' }}>
+                  <div style={{ fontFamily:'PingFang SC,sans-serif', fontSize:'0.55rem', color:'rgba(255,255,255,0.85)', lineHeight:1.2, letterSpacing:0, whiteSpace:'nowrap', height:'0.75rem' }}>
+                    {c.pinyin ?? ''}
+                  </div>
+                  <div style={{ fontFamily:"'Ma Shan Zheng','KaiTi',serif", fontSize:'1.45rem', color:'#fff', textShadow:'0 1px 6px rgba(0,0,0,0.5)', lineHeight:1 }}>
+                    {c.char}
+                  </div>
+                </div>
               ))}
             </div>
           ))}
