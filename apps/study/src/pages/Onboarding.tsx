@@ -128,6 +128,7 @@ export default function Onboarding() {
 const style = `
   .ob {
     min-height: calc(100dvh - env(safe-area-inset-top, 0px));
+    width: 100%;
     background: linear-gradient(150deg, #D32F2F 0%, #8B0000 100%);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
