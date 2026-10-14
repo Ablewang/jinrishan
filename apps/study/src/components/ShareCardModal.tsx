@@ -387,9 +387,17 @@ const PoemCard = forwardRef<HTMLDivElement, PoemCardProps>(({ poem, poemSummary,
   if (!poem) return <div ref={ref} style={{ width:300, height:420, background:'#2C1008', borderRadius:20 }} />
 
   return (
-    <div ref={ref} style={{ width:300, background:'#2C1008', borderRadius:0, overflow:'hidden', display:'flex', flexDirection:'column', position:'relative', fontFamily:'PingFang SC,Helvetica Neue,Arial,sans-serif' }}>
-      {bgDataUrl && <div style={{ position:'absolute', inset:0, backgroundImage:`url(${bgDataUrl})`, backgroundSize:'cover', backgroundPosition:'center' }} />}
-      <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.45)' }} />
+    <div ref={ref} style={{
+      width:300, borderRadius:0, overflow:'hidden',
+      display:'flex', flexDirection:'column', position:'relative',
+      fontFamily:'PingFang SC,Helvetica Neue,Arial,sans-serif',
+      backgroundImage: bgDataUrl
+        ? `linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)), url(${bgDataUrl})`
+        : undefined,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundColor: '#2C1008',
+    }}>
       <div style={{ position:'relative', zIndex:2, flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', padding:'20px 28px 36px', gap:4, textAlign:'center' }}>
         <div style={{ fontFamily:"'Ma Shan Zheng','KaiTi',serif", fontSize:'2.0rem', color:'#fff', lineHeight:1.1, textShadow:'0 2px 12px rgba(0,0,0,0.5)', marginBottom:4, whiteSpace:'nowrap' }}>{poem.title}</div>
         <div style={{ fontFamily:'PingFang SC,sans-serif', fontSize:'0.62rem', color:'rgba(255,255,255,0.75)', letterSpacing:'0.1em', marginBottom:6 }}>
