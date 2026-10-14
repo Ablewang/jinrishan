@@ -339,7 +339,7 @@ const CheckinCard = forwardRef<HTMLDivElement, CheckinCardProps>(({
     : todayCount === 1 && todayPoemTitle ? `《${todayPoemTitle}》`
     : `背了 ${todayCount} 首`
   return (
-    <div ref={ref} style={{ width:300, background:'#fff', borderRadius:20, overflow:'hidden', fontFamily:'PingFang SC,Helvetica Neue,Arial,sans-serif' }}>
+    <div ref={ref} style={{ width:300, background:'#fff', borderRadius:0, overflow:'hidden', fontFamily:'PingFang SC,Helvetica Neue,Arial,sans-serif' }}>
       <div style={{ background:'#C62828', padding:'16px 20px 20px', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', right:-40, top:-50, width:160, height:160, borderRadius:'50%', background:'rgba(255,255,255,0.07)' }} />
         <div style={{ position:'absolute', right:50, bottom:-55, width:100, height:100, borderRadius:'50%', background:'rgba(255,255,255,0.06)' }} />
@@ -387,7 +387,7 @@ const PoemCard = forwardRef<HTMLDivElement, PoemCardProps>(({ poem, poemSummary,
   if (!poem) return <div ref={ref} style={{ width:300, height:420, background:'#2C1008', borderRadius:20 }} />
 
   return (
-    <div ref={ref} style={{ width:300, background:'#2C1008', borderRadius:20, overflow:'hidden', display:'flex', flexDirection:'column', position:'relative', fontFamily:'PingFang SC,Helvetica Neue,Arial,sans-serif' }}>
+    <div ref={ref} style={{ width:300, background:'#2C1008', borderRadius:0, overflow:'hidden', display:'flex', flexDirection:'column', position:'relative', fontFamily:'PingFang SC,Helvetica Neue,Arial,sans-serif' }}>
       {bgDataUrl && <div style={{ position:'absolute', inset:0, backgroundImage:`url(${bgDataUrl})`, backgroundSize:'cover', backgroundPosition:'center' }} />}
       <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.45)' }} />
       <div style={{ position:'relative', zIndex:2, flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', padding:'20px 28px 36px', gap:4, textAlign:'center' }}>
