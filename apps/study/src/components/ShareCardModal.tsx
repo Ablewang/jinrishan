@@ -414,7 +414,9 @@ export default function ShareCardModal() {
 
   useEffect(() => {
     if (!params) return
-    generate()
+    // 等弹窗动画完成（280ms）后再开始绘制，避免卡顿
+    const t = setTimeout(() => { generate() }, 320)
+    return () => clearTimeout(t)
   }, [params])
 
   async function handleShare() {
