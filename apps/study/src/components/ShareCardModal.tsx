@@ -396,19 +396,25 @@ const PoemCard = forwardRef<HTMLDivElement, PoemCardProps>(({ poem, poemSummary,
           {poemSummary?.dynasty ? `【${poemSummary.dynasty}】` : ''}{poemSummary?.author ?? ''}
         </div>
         <div style={{ width:36, height:1, background:'linear-gradient(to right,transparent,rgba(255,248,225,0.5),transparent)', marginBottom:6 }} />
-        <div style={{ display:'flex', flexDirection:'column', gap:1, padding:'10px 14px' }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:0, padding:'10px 14px' }}>
           {poem.lines.map((line, i) => (
-            <div key={i} style={{ display:'flex', justifyContent:'center', alignItems:'flex-end', marginBottom:6 }}>
-              {line.chars.map((c, j) => (
-                <div key={j} style={{ display:'flex', flexDirection:'column', alignItems:'center', width:'1.9rem' }}>
-                  <div style={{ fontFamily:'PingFang SC,sans-serif', fontSize:'0.55rem', color:'rgba(255,255,255,0.85)', lineHeight:1.2, letterSpacing:0, whiteSpace:'nowrap', height:'0.75rem' }}>
+            <div key={i} style={{ marginBottom:8 }}>
+              {/* 拼音行 */}
+              <div style={{ display:'flex', justifyContent:'center' }}>
+                {line.chars.map((c, j) => (
+                  <div key={j} style={{ width:'1.9rem', textAlign:'center', fontFamily:'PingFang SC,sans-serif', fontSize:'0.52rem', color:'rgba(255,255,255,0.85)', lineHeight:1.3, letterSpacing:0 }}>
                     {c.pinyin ?? ''}
                   </div>
-                  <div style={{ fontFamily:"'Ma Shan Zheng','KaiTi',serif", fontSize:'1.45rem', color:'#fff', textShadow:'0 1px 6px rgba(0,0,0,0.5)', lineHeight:1 }}>
+                ))}
+              </div>
+              {/* 汉字行 */}
+              <div style={{ display:'flex', justifyContent:'center' }}>
+                {line.chars.map((c, j) => (
+                  <div key={j} style={{ width:'1.9rem', textAlign:'center', fontFamily:"'Ma Shan Zheng','KaiTi',serif", fontSize:'1.45rem', color:'#fff', textShadow:'0 1px 6px rgba(0,0,0,0.5)', lineHeight:1.1 }}>
                     {c.char}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ))}
         </div>
