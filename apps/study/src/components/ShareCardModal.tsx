@@ -59,31 +59,31 @@ async function drawPoemCard(
   const CONTENT_BOTTOM = 32
   const totalH = TITLE_TOP + titleH + 6 + authorH + dividerH + linesH + CONTENT_BOTTOM + FOOTER_H
 
+  const H = Math.ceil(totalH)
+
   const canvas = document.createElement('canvas')
   canvas.width = W * SCALE
-  canvas.height = Math.ceil(totalH) * SCALE
+  canvas.height = H * SCALE
   const ctx = canvas.getContext('2d')!
   ctx.scale(SCALE, SCALE)
 
   // 背景
   if (bgImg) {
-    // 等比裁剪填满
     const sw = bgImg.naturalWidth
     const sh = bgImg.naturalHeight
     const dw = W
-    const dh = totalH
+    const dh = H
     const scale = Math.max(dw / sw, dh / sh)
     const nw = sw * scale
     const nh = sh * scale
     const ox = (dw - nw) / 2
     const oy = (dh - nh) / 2
     ctx.drawImage(bgImg, ox, oy, nw, nh)
-    // 半透明遮罩
     ctx.fillStyle = 'rgba(0,0,0,0.48)'
-    ctx.fillRect(0, 0, W, totalH)
+    ctx.fillRect(0, 0, W, H)
   } else {
     ctx.fillStyle = '#2C1008'
-    ctx.fillRect(0, 0, W, totalH)
+    ctx.fillRect(0, 0, W, H)
   }
 
   // 标题
@@ -159,7 +159,6 @@ async function drawPoemCard(
   // icon 图片
   const iconImg = await loadImage('/icon.png')
   if (iconImg) {
-    // 圆角矩形裁剪 icon
     const ix = PADDING_X
     const iy = y + (FOOTER_H - 32) / 2
     ctx.save()
@@ -180,15 +179,17 @@ async function drawPoemCard(
     ctx.restore()
   }
 
-  // 品牌文字
+  // 品牌文字——用 textBaseline middle 精确垂直居中
   const textX = PADDING_X + 40
   ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
   ctx.font = `15px 'ZCOOL KuaiLe', sans-serif`
   ctx.fillStyle = 'rgba(255,248,225,0.85)'
-  ctx.fillText('古诗小课堂', textX, y + FOOTER_H / 2 + 2)
+  ctx.fillText('古诗小课堂', textX, y + FOOTER_H / 2 - 7)
   ctx.font = `9px 'PingFang SC', sans-serif`
   ctx.fillStyle = 'rgba(255,248,225,0.45)'
-  ctx.fillText('每天一首，积累经典', textX, y + FOOTER_H / 2 + 16)
+  ctx.fillText('每天一首，积累经典', textX, y + FOOTER_H / 2 + 9)
+  ctx.textBaseline = 'alphabetic'
 
   return canvas.toDataURL('image/png')
 }
