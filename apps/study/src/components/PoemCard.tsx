@@ -22,6 +22,7 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
   const dynastyLabel = poem.dynasty ? `${poem.dynasty}·${poem.author}` : poem.author
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
   const masteryConf = mastery ? MASTERY_CONFIG[mastery] : null
+  const stripColor = masteryConf ? masteryConf.stripColor : '#C62828'
 
   useEffect(() => {
     if (!imgFile) return
@@ -40,156 +41,134 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
     return () => obs.disconnect()
   }, [imgFile])
 
-  const stripColor = masteryConf ? masteryConf.stripColor : '#C62828'
-
   return (
     <button
       ref={ref}
-      className="poem-card"
-      style={{ '--strip-color': stripColor } as React.CSSProperties}
+      className="pc"
+      style={{ '--pc-strip': stripColor } as React.CSSProperties}
       onClick={() => navigate(`/poem/${poem.id}`)}
       aria-label={`${poem.title}，${dynastyLabel}`}
     >
-      {imgSrc && <img className="poem-card__bg" src={imgSrc} aria-hidden />}
-      {masteryConf && mastery !== 'unlearned' && (
-        <span
-          className="poem-card__badge poem-card__badge--mastery"
-          style={{ color: masteryConf.color, background: `${masteryConf.color}18` }}
-        >
-          {masteryConf.label}
-        </span>
-      )}
-      {!mastery && isMemorized && bestStars > 0 && (
-        <span className={`poem-card__badge poem-card__badge--result poem-card__badge--r${bestStars}`}>
-          {bestStars === 3 ? '无提示' : bestStars === 2 ? '少量提示' : '多次提示'}
-        </span>
-      )}
-      {!mastery && isMemorized && bestStars === 0 && (
-        <span className="poem-card__badge poem-card__badge--memorized" aria-label="已背">背</span>
-      )}
-      {!mastery && isRead && !isMemorized && (
-        <span className="poem-card__badge poem-card__badge--read" aria-label="已读" />
-      )}
+      {/* 左侧色条 */}
+      <div className="pc__strip" />
 
-      <div className="poem-card__text">
-        <h2 className="poem-card__title">{poem.title}</h2>
-        <p className="poem-card__author">{dynastyLabel}</p>
-        <p className="poem-card__line">{poem.firstLine}</p>
+      {/* 右侧背景图 */}
+      {imgSrc && <img className="pc__bg" src={imgSrc} aria-hidden />}
+
+      {/* 主内容 */}
+      <div className="pc__body">
+        <div className="pc__top">
+          <span className="pc__title">{poem.title}</span>
+          {masteryConf && (
+            <span className="pc__badge" style={{ color: masteryConf.color, background: `${masteryConf.color}1a` }}>
+              {masteryConf.label}
+            </span>
+          )}
+          {!mastery && isMemorized && bestStars > 0 && (
+            <span className="pc__badge pc__badge--stars">
+              {'★'.repeat(bestStars)}
+            </span>
+          )}
+          {!mastery && isRead && !isMemorized && (
+            <span className="pc__dot" />
+          )}
+        </div>
+        <p className="pc__meta">{dynastyLabel}</p>
+        <p className="pc__line">{poem.firstLine.slice(0, 10)}</p>
       </div>
 
       <style>{`
-        .poem-card {
+        .pc {
           position: relative;
-          padding: 0;
-          border-radius: var(--radius-card);
-          box-shadow: var(--shadow-card);
+          display: flex;
+          align-items: stretch;
+          background: var(--surface, #fff);
+          border-radius: 12px;
+          border: 1.5px solid var(--border, #EDE8DF);
+          box-shadow: 0 2px 8px rgba(150,80,30,0.07);
+          overflow: hidden;
           text-align: left;
           width: 100%;
-          background-color: #FFFFFF;
-          border: 1.5px solid var(--border);
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
+          min-height: 88px;
+          cursor: pointer;
+          transition: transform 0.1s, box-shadow 0.1s;
           -webkit-tap-highlight-color: transparent;
-          overflow: hidden;
-          min-height: 90px;
         }
-        .poem-card__bg {
-          position: absolute;
-          top: 0;
-          right: 0;
-          width: 60%;
-          height: 100%;
-          display: block;
-          object-fit: cover;
-          object-position: center;
-          opacity: 0.22;
-          pointer-events: none;
-          z-index: 0;
-        }
-        .poem-card::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to right,
-            rgba(255,255,255,0.97) 0%,
-            rgba(255,255,255,0.92) 45%,
-            rgba(255,255,255,0.5) 70%,
-            rgba(255,255,255,0) 100%
-          );
-          border-radius: var(--radius-card);
-          pointer-events: none;
-          z-index: 0;
-        }
-        .poem-card::before {
-          content: '';
-          position: absolute;
-          left: 0; top: 0; bottom: 0;
-          width: 5px;
-          background: var(--strip-color, #C62828);
-          border-radius: var(--radius-card) 0 0 var(--radius-card);
-          z-index: 1;
-        }
-        .poem-card:active { transform: scale(0.96); box-shadow: none; }
+        .pc:active { transform: scale(0.97); box-shadow: none; }
         @media (hover: hover) {
-          .poem-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
+          .pc:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(150,80,30,0.13); }
         }
-        .poem-card__badge {
+        .pc__strip {
+          width: 4px;
+          flex-shrink: 0;
+          background: var(--pc-strip, #C62828);
+        }
+        .pc__bg {
           position: absolute;
-          top: 8px; right: 10px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          line-height: 1;
-          z-index: 2;
+          top: 0; right: 0;
+          width: 55%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center right;
+          opacity: 0.18;
+          pointer-events: none;
+          mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.9) 100%);
+          -webkit-mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.9) 100%);
         }
-        .poem-card__badge--mastery {
-          font-size: 0.6rem;
+        .pc__body {
+          position: relative;
+          z-index: 1;
+          flex: 1;
+          padding: 11px 10px 11px 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          min-width: 0;
+        }
+        .pc__top {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .pc__title {
+          font-family: var(--font-brush);
+          font-size: 1.15rem;
+          color: var(--ink, #18120A);
+          line-height: 1.2;
+          flex-shrink: 0;
+        }
+        .pc__badge {
+          font-size: 10px;
           font-weight: 700;
           font-family: var(--font-ui);
           border-radius: 999px;
-          padding: 1px 7px;
+          padding: 1px 6px;
+          white-space: nowrap;
+          line-height: 1.6;
         }
-        .poem-card__badge--result {
-          font-size: 0.6rem;
-          font-family: var(--font-ui);
+        .pc__badge--stars {
+          font-size: 10px;
+          color: #F59E0B;
+          background: #FFF8E1;
         }
-        .poem-card__badge--r3 { color: #C62828; }
-        .poem-card__badge--r2 { color: #999; }
-        .poem-card__badge--r1 { color: #bbb; }
-        .poem-card__badge--memorized { color: var(--green); }
-        .poem-card__badge--read {
-          width: 7px; height: 7px;
+        .pc__dot {
+          width: 6px; height: 6px;
           border-radius: 50%;
-          background: var(--gold);
-          display: inline-block;
+          background: #F59E0B;
+          flex-shrink: 0;
         }
-        .poem-card__text {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-          padding: 14px 10px 14px 18px;
-          min-width: 0;
-          flex: 1;
+        .pc__meta {
+          font-size: 11px;
+          color: var(--ink-light, #8C7A60);
+          line-height: 1.3;
         }
-        .poem-card__title {
-          font-family: var(--font-brush);
-          font-size: var(--text-xl);
-          color: #C62828;
-          line-height: 1.2;
-        }
-        .poem-card__author {
-          font-family: var(--font-ui);
-          font-size: var(--text-xs);
-          color: var(--ink-light);
-        }
-        .poem-card__line {
-          font-family: var(--font-serif);
-          font-size: var(--text-xs);
-          color: var(--ink-light);
-          margin-top: 2px;
+        .pc__line {
+          font-size: 11px;
+          color: var(--ink-light, #8C7A60);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          margin-top: 1px;
         }
       `}</style>
     </button>
