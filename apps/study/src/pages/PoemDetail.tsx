@@ -6,6 +6,12 @@ import { useProgress } from '../hooks/useProgress'
 import { useQueue } from '../hooks/useQueue'
 import PoemText from '../components/PoemText'
 import MemorizeMode from '../components/MemorizeMode'
+import ParentMode from '../components/ParentMode'
+import ChildMode from '../components/ChildMode'
+import ReciteResult from '../components/ReciteResult'
+import { useRecitation } from '../hooks/useRecitation'
+import type { LineResult, RecitationSession } from '../types/recitation'
+import { updateSchedule } from '../lib/spacedRepetition'
 import imgMap from '../data/poem_img_map.json'
 import { useShareCard } from '../contexts/ShareCardContext'
 import './PoemDetail.css'
@@ -47,6 +53,9 @@ export default function PoemDetail() {
   const reviewIds = searchParams.get('reviewIds')?.split(',').map(Number).filter(Boolean) ?? []
   const reviewIdx = Number(searchParams.get('reviewIdx') ?? 0)
   const [memorizing, setMemorizing] = useState(() => searchParams.get('autoMem') === '1' || isReviewMode)
+  const [reciteMode, setReciteMode] = useState<'parent' | 'child' | null>(null)
+  const [reciteResult, setReciteResult] = useState<{ session: RecitationSession; interval: number } | null>(null)
+  const { saveResult, getSchedule } = useRecitation()
   const [poem, setPoem] = useState<Poem | null>(null)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
   const [index, setIndex] = useState<PoemSummary[]>([])
@@ -57,7 +66,7 @@ export default function PoemDetail() {
   const notesWrapRef = useRef<HTMLDivElement>(null)
 
   const numId = Number(id)
-  const fabRef = useRef<HTMLButtonElement>(null)
+  const fabRef = useRef<HTMLDivElement>(null)
   const dragState = useRef<{ startX: number; startY: number; initX: number; initY: number; moved: boolean } | null>(null)
 
   // 用原生事件绑定，passive:false 才能 preventDefault
@@ -190,6 +199,16 @@ export default function PoemDetail() {
     markReviewed(poem.id, passed)
   }, [poem?.id, markReviewed])
 
+  const handleReciteDone = useCallback((lines: LineResult[]) => {
+    if (!poem || !reciteMode) return
+    const today = new Date().toISOString().slice(0, 10)
+    const session = saveResult(poem.id, reciteMode, lines, today)
+    const prev = getSchedule(poem.id)
+    const updated = updateSchedule(prev, session)
+    setReciteMode(null)
+    setReciteResult({ session, interval: updated.interval })
+  }, [poem?.id, reciteMode, saveResult, getSchedule])
+
   const handleNext = useCallback(() => {
     // Onboarding 完成：写入标志，回首页
     if (isOnboarding) {
@@ -250,6 +269,25 @@ export default function PoemDetail() {
         reviewTotal={isReviewMode && reviewIds.length > 0 ? reviewIds.length : undefined}
         reviewLevel={currentCard?.level}
         isOnboarding={isOnboarding}
+      />
+    )
+  }
+
+  if (reciteMode === 'parent') {
+    return <ParentMode key={poem.id} poem={poem} onDone={handleReciteDone} onExit={() => setReciteMode(null)} />
+  }
+
+  if (reciteMode === 'child') {
+    return <ChildMode key={poem.id} poem={poem} onDone={handleReciteDone} onExit={() => setReciteMode(null)} />
+  }
+
+  if (reciteResult) {
+    return (
+      <ReciteResult
+        session={reciteResult.session}
+        nextInterval={reciteResult.interval}
+        poem={poem}
+        onDone={() => setReciteResult(null)}
       />
     )
   }
@@ -346,11 +384,16 @@ export default function PoemDetail() {
       </div>
 
       <div className="d-footer">
-        <button
-          ref={fabRef}
-          className="d-footer__memorize"
-          onClick={() => { if (!dragState.current?.moved) setMemorizing(true) }}
-        >背一背</button>
+        <div ref={fabRef} className="d-footer__memorize">
+          <button
+            className="d-footer__memorize-btn d-footer__memorize-btn--secondary"
+            onClick={() => { if (!dragState.current?.moved) setReciteMode('parent') }}
+          >家长测</button>
+          <button
+            className="d-footer__memorize-btn d-footer__memorize-btn--primary"
+            onClick={() => { if (!dragState.current?.moved) setReciteMode('child') }}
+          >背一背</button>
+        </div>
         <div className="d-footer__nav">
           <button className="d-footer__nav-btn" onClick={() => prevPoem && navigate(`/poem/${prevPoem.id}${isOnboarding ? '?onboarding=1' : ''}`, { replace: true })} disabled={!prevPoem}>
             <span className="d-footer__nav-arrow">‹</span>

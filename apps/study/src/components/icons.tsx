@@ -73,3 +73,22 @@ export function IconHeart({ size = 16, fill = 'currentColor', className }: IconP
     </svg>
   )
 }
+
+// 对勾 icon — 背诵正确
+export function IconCorrect({ size = 16, fill = 'currentColor', className }: IconProps) {
+  return (
+    <svg viewBox="0 0 1024 1024" width={size} height={size} fill={fill} className={className} style={{ display: 'block' }}>
+      <path d="M64.5 526.7s231.71 189.54 254.73 350.74c0 0 303.83-497.37 641.43-541.87 0 0-102.81-74.93-69.05-193.35 0 0-187.21 18.68-540.15 566.5L186.04 427.94 64.5 526.7z"/>
+    </svg>
+  )
+}
+
+// 叉号 icon — 背诵错误
+export function IconWrong({ size = 16, fill = 'currentColor', className }: IconProps) {
+  return (
+    <svg viewBox="0 0 1024 1024" width={size} height={size} fill={fill} className={className} style={{ display: 'block' }}>
+      <path d="M108.606061 915.393939c119.187394-245.030788 440.35103-500.177455 806.787878-651.636363-51.665455-57.297455-62.370909-100.274424-77.575757-155.151515C366.374788 353.636848 108.606061 758.877091 108.606061 915.393939z"/>
+      <path d="M294.787879 201.69697c291.84 150.822788 381.595152 326.299152 480.969697 651.636363-132.344242-223.728485-352.162909-480.612848-589.575758-558.545454 33.590303-13.079273 76.008727-58.709333 108.606061-93.090909z"/>
+    </svg>
+  )
+}
