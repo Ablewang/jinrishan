@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>背一背 原型图 v6</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; border: none; outline: none; background: none; cursor: default; }
+body {
+  background: #E8E4DC;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  padding: 40px 32px;
+  min-height: 100vh;
+}
+h1 {
+  text-align: center;
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.6rem;
+  color: #3D2314;
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+.subtitle {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #8C7A60;
+  margin-bottom: 40px;
+}
+.screens {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+.screen-wrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.screen-label {
+  font-size: 0.78rem;
+  color: #5C4A30;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+.phone {
+  width: 375px;
+  height: 812px;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 2px #1A0F07;
+  display: flex;
+  flex-direction: column;
+  background: #FFFDF8;
+  position: relative;
+}
+
+/* ── 导航栏 ── */
+.nav {
+  height: 52px;
+  background: #C62828;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  flex-shrink: 0;
+  gap: 8px;
+  z-index: 10;
+}
+.nav-back {
+  font-size: 0.72rem;
+  color: rgba(255,248,225,0.9);
+  background: rgba(255,255,255,0.18);
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.nav-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.1rem;
+  color: #FFF8E1;
+  flex: 1;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+.nav-badge {
+  font-size: 0.62rem;
+  color: rgba(255,248,225,0.85);
+  background: rgba(255,255,255,0.18);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.progress-bar-wrap {
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  z-index: 10;
+  background: #C62828;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: rgba(255,248,225,0.6);
+  transition: width 0.3s;
+}
+
+/* ── 古诗背景区 ── */
+.poem-bg {
+  flex: 1;
+  background: #FFFDF8;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.poem-bg-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.poem-bg-overlay img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.12;
+}
+.poem-lines-area {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 20px;
+  gap: 0;
+}
+
+/* ── 诗句行 ── */
+.line-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin: 4px 0;
+  transition: all 0.25s;
+  gap: 10px;
+}
+.line-row.dim { opacity: 0.45; }
+.line-row.done-pass { opacity: 0.7; }
+.line-row.done-fail { opacity: 0.7; }
+.line-row.current { background: rgba(198,40,40,0.08); opacity: 1; border: 1px solid rgba(198,40,40,0.12); }
+
+.line-strip {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 2px;
+  flex-shrink: 0;
+  min-height: 36px;
+}
+.line-strip.green  { background: #4CAF50; }
+.line-strip.red    { background: #EF5350; }
+.line-strip.white  { background: #C62828; }
+.line-strip.none   { background: transparent; }
+
+.line-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.line-pinyin {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: #8C7A60;
+}
+.line-text {
+  font-family: 'Ma Shan Zheng', serif;
+  letter-spacing: 0.15em;
+  color: #18120A;
+}
+.line-row.current .line-text  { font-size: 1.6rem; }
+.line-row.dim .line-text      { font-size: 1.1rem; color: rgba(24,18,10,0.4); }
+.line-row.done-pass .line-text{ font-size: 1.1rem; color: rgba(24,18,10,0.65); }
+.line-row.done-fail .line-text{ font-size: 1.1rem; color: #C62828; }
+.line-row.current .line-pinyin{ color: #5C4A30; }
+.line-row.dim .line-pinyin    { color: rgba(24,18,10,0.25); }
+
+/* 遮盖方块 */
+.char-wrap { display: inline-flex; gap: 5px; align-items: center; }
+.char-mask {
+  display: inline-block;
+  background: rgba(198,40,40,0.18);
+  border: none;
+  border-radius: 6px;
+  width: 2rem;
+  height: 2rem;
+}
+/* 拼音小方块 */
+.char-mask--pin {
+  width: 2rem;
+  height: 0.9rem;
+  border-radius: 4px;
+  background: rgba(198,40,40,0.13);
+  border: none;
+}
+.child-card--dim .char-mask {
+  background: rgba(24,18,10,0.1);
+  border: none;
+}
+.child-card--dim .char-mask--pin {
+  background: rgba(24,18,10,0.07);
+  border: none;
+}
+
+/* ── 底部按钮区 ── */
+.bottom-bar {
+  flex-shrink: 0;
+  background: rgba(255,253,248,0.95);
+  border-top: 1px solid #EDE8DF;
+  padding: 12px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+.btn-row { display: flex; gap: 10px; }
+.btn {
+  height: 52px;
+  border-radius: 12px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  flex: 1;
+}
+.btn:active { transform: scale(0.96); opacity: 0.85; }
+.btn-fail {
+  background: #FFF0F0;
+  color: #C62828;
+  border: 1.5px solid #FFCDD2;
+}
+.btn-pass {
+  background: #C62828;
+  color: #FFF8E1;
+}
+.btn-hint {
+  height: 44px;
+  border-radius: 12px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: 0.95rem;
+  background: transparent;
+  border: 1.5px solid #8B6914;
+  color: #8B6914;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-recite {
+  height: 52px;
+  border-radius: 12px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: 1rem;
+  background: #2E7D32;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn-recite:active { transform: scale(0.96); }
+.btn-next {
+  height: 52px;
+  border-radius: 12px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: 1rem;
+  background: #C62828;
+  color: #FFF8E1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.prev-link {
+  text-align: center;
+  font-size: 0.68rem;
+  color: rgba(255,248,225,0.4);
+  cursor: pointer;
+}
+
+/* ── 儿童模式卡片 ── */
+.child-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid #EDE8DF;
+  box-shadow: 0 2px 8px rgba(150,80,30,0.06);
+  margin-bottom: 8px;
+  overflow: hidden;
+  padding: 10px 12px 10px 0;
+  gap: 10px;
+}
+.child-card--current {
+  border-color: #C62828;
+  box-shadow: 0 4px 16px rgba(198,40,40,0.15);
+}
+.child-card--hint {
+  border-color: #D4A836;
+  box-shadow: 0 4px 16px rgba(212,168,54,0.15);
+  background: #FFFDF5;
+}
+.child-card--done {
+  border-color: #EDE8DF;
+  opacity: 0.75;
+}
+.child-card--dim {
+  border-color: #EDE8DF;
+  opacity: 0.45;
+  background: #FAFAF8;
+}
+.child-card-strip {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 0;
+  flex-shrink: 0;
+  min-height: 40px;
+}
+.child-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.child-card-pinyin {
+  font-size: 0.6rem;
+  color: #8C7A60;
+  letter-spacing: 0.08em;
+}
+.child-card-text {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.3rem;
+  color: #18120A;
+  letter-spacing: 0.12em;
+}
+.child-card-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.child-recite-btn {
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #C62828;
+  color: #FFF8E1;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── 入口屏 ── */
+.entry-poem-img {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #2C1A0E 0%, #3D2314 50%, #1A0F07 100%);
+  z-index: 0;
+}
+.entry-poem-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1;
+}
+.entry-nav {
+  position: relative;
+  z-index: 2;
+  height: 52px;
+  background: rgba(198,40,40,0.92);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+}
+.entry-poem-text {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding-bottom: 40px;
+}
+.entry-poem-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 2.2rem;
+  color: #FFF8E1;
+  letter-spacing: 0.3em;
+}
+.entry-poem-author {
+  font-size: 0.78rem;
+  color: rgba(255,248,225,0.55);
+  letter-spacing: 0.1em;
+}
+.entry-poem-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+.entry-poem-line {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.35rem;
+  color: rgba(255,248,225,0.82);
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+.entry-btns {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 0 20px 32px;
+}
+.entry-btn-parent {
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255,248,225,0.45);
+  background: rgba(255,255,255,0.12);
+  color: #FFF8E1;
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.entry-btn-child {
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: #C62828;
+  color: #FFF8E1;
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(198,40,40,0.5);
+}
+
+/* ── 结果页 ── */
+.result-screen {
+  background: #FFFDF8;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.result-hero {
+  background: #C62828;
+  padding: 28px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.result-stars { display: flex; gap: 10px; }
+.star-svg {
+  width: 36px; height: 36px;
+  animation: star-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) var(--d,0s) both;
+}
+@keyframes star-pop {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.3) rotate(5deg);  opacity: 1; }
+  100% { transform: scale(1)  rotate(0deg);   opacity: 1; }
+}
+.result-quote {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1rem;
+  color: #FFF8E1;
+  letter-spacing: 0.1em;
+}
+/* 粒子 */
+.particles { position: absolute; inset: 0; pointer-events: none; }
+.p {
+  position: absolute; width: 6px; height: 6px; border-radius: 2px;
+  left: 50%; top: 50%;
+  animation: pfly 1.2s ease-out var(--pd,0s) both;
+}
+@keyframes pfly {
+  0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--tx),var(--ty)) rotate(var(--r)); opacity: 0; }
+}
+
+.result-body {
+  flex: 1;
+  padding: 20px 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+.result-poem-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 2rem;
+  color: #18120A;
+  text-align: center;
+  letter-spacing: 0.25em;
+  margin-bottom: 4px;
+}
+.result-poem-author {
+  font-size: 0.78rem;
+  color: #8C7A60;
+  text-align: center;
+  letter-spacing: 0.1em;
+  margin-bottom: 18px;
+}
+.result-poem-lines { display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px; }
+.result-poem-line {
+  display: flex;
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: 8px;
+  gap: 10px;
+}
+.rls { width: 3px; height: 32px; border-radius: 2px; flex-shrink: 0; }
+.rlt {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.2rem;
+  color: #18120A;
+  letter-spacing: 0.15em;
+  flex: 1;
+}
+.rtag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.tag-g { background:#F1F8F2; color:#2E7D32; border:1px solid #A5D6A7; }
+.tag-o { background:#FFF8F0; color:#E65100; border:1px solid #FFCC80; }
+.tag-r { background:#FFF5F5; color:#C62828; border:1px solid #FFCDD2; }
+
+.result-review {
+  background: #fff;
+  border-radius: 10px;
+  border: 1.5px solid #EDE8DF;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  margin-bottom: 14px;
+}
+.result-done {
+  width: 100%;
+  height: 50px;
+  border-radius: 999px;
+  background: #C62828;
+  color: #FFF8E1;
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(198,40,40,0.3);
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>背一背 · 原型图 v6</h1>
+<p class="subtitle">全诗展示 + 古画背景 + 当前句高亮 &nbsp;/&nbsp; 2026-10-15</p>
+
+<div class="screens">
+
+  <!-- ① 入口 -->
+  <div class="screen-wrap">
+    <div class="screen-label">① 入口</div>
+    <div class="phone" style="position:relative;">
+      <div class="entry-poem-img"></div>
+      <div class="entry-poem-overlay"></div>
+      <div class="entry-nav">
+        <span class="nav-back" style="color:rgba(255,248,225,0.9);">← 返回</span>
+        <span class="nav-title">春晓</span>
+        <span class="nav-badge">已读</span>
+      </div>
+      <div class="entry-poem-text">
+        <div class="entry-poem-title">春 晓</div>
+        <div class="entry-poem-author">[唐] 孟浩然</div>
+        <div class="entry-poem-lines">
+          <div class="entry-poem-line">春眠不觉晓</div>
+          <div class="entry-poem-line">处处闻啼鸟</div>
+          <div class="entry-poem-line">夜来风雨声</div>
+          <div class="entry-poem-line">花落知多少</div>
+        </div>
+      </div>
+      <div class="entry-btns">
+        <button class="entry-btn-parent">家长陪背</button>
+        <button class="entry-btn-child">背一背</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 家长模式 第2句 -->
+  <div class="screen-wrap">
+    <div class="screen-label">② 家长模式 · 第2句进行中</div>
+    <div class="phone" id="parent-phone">
+      <div class="nav">
+        <span class="nav-back">← 返回</span>
+        <span class="nav-title">家长陪背</span>
+        <span class="nav-badge" id="parent-badge">第2/4句</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="parent-pb" style="width:25%;"></div>
+      </div>
+      <div class="poem-bg">
+        <div class="poem-bg-overlay"><img src="https://picsum.photos/seed/poem1/375/500" alt="" /></div>
+        <div class="poem-lines-area" id="parent-lines">
+          <div style="text-align:center;margin-bottom:16px;">
+            <div style="font-family:'Ma Shan Zheng',serif;font-size:1.4rem;color:#18120A;letter-spacing:0.15em;">春晓</div>
+            <div style="font-size:0.65rem;color:#8C7A60;margin-top:2px;">[唐] 孟浩然</div>
+          </div>
+          <div class="line-row done-pass" data-idx="0">
+            <div class="line-strip green"></div>
+            <div class="line-content">
+              <div class="line-pinyin">chūn mián bù jué xiǎo</div>
+              <div class="line-text">春眠不觉晓</div>
+            </div>
+            <span style="font-size:1.1rem;color:#81C784;flex-shrink:0;">✓</span>
+          </div>
+          <div class="line-row current" data-idx="1">
+            <div class="line-strip white"></div>
+            <div class="line-content">
+              <div class="line-pinyin">chù chù wén tí niǎo</div>
+              <div class="line-text">处处闻啼鸟</div>
+            </div>
+          </div>
+          <div class="line-row dim" data-idx="2">
+            <div class="line-strip none"></div>
+            <div class="line-content">
+              <div class="line-pinyin">yè lái fēng yǔ shēng</div>
+              <div class="line-text">夜来风雨声</div>
+            </div>
+          </div>
+          <div class="line-row dim" data-idx="3">
+            <div class="line-strip none"></div>
+            <div class="line-content">
+              <div class="line-pinyin">huā luò zhī duō shǎo</div>
+              <div class="line-text">花落知多少</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <div class="btn-row">
+          <button class="btn btn-fail" id="parent-fail">✗ 没背出来</button>
+          <button class="btn btn-pass" id="parent-pass">✓ 背出来了</button>
+        </div>
+        <div class="prev-link">← 修改上一句</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 儿童模式 遮盖中 -->
+  <div class="screen-wrap">
+    <div class="screen-label">③ 儿童模式 · 遮盖中</div>
+    <div class="phone" id="child-phone">
+      <div class="nav">
+        <span class="nav-back">← 返回</span>
+        <span class="nav-title">背一背</span>
+        <span class="nav-badge">第2/4句</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width:25%;"></div>
+      </div>
+      <div class="poem-bg">
+        <div class="poem-bg-overlay"><img src="https://picsum.photos/seed/poem1/375/500" alt="" /></div>
+        <div class="poem-lines-area" style="justify-content:flex-start;padding:16px 14px;">
+          <div style="text-align:center;margin-bottom:12px;">
+            <div style="font-family:'Ma Shan Zheng',serif;font-size:1.3rem;color:#18120A;letter-spacing:0.15em;">春晓</div>
+            <div style="font-size:0.62rem;color:#8C7A60;margin-top:2px;">[唐] 孟浩然</div>
+          </div>
+          <!-- 已完成行：紧凑卡片 -->
+          <div class="child-card child-card--done">
+            <div class="child-card-strip" style="background:#4CAF50;"></div>
+            <div class="child-card-body">
+              <div class="child-card-pinyin">chūn mián bù jué xiǎo</div>
+              <div class="child-card-text">春眠不觉晓</div>
+            </div>
+            <span class="child-card-tag" style="color:#4CAF50;background:rgba(76,175,80,0.12);border-color:rgba(76,175,80,0.3);">✓</span>
+          </div>
+          <!-- 当前行：突出卡片，格子遮盖 -->
+          <div class="child-card child-card--current">
+            <div class="child-card-strip" style="background:#C62828;"></div>
+            <div class="child-card-body" style="align-items:center;">
+              <div class="char-wrap">
+                <span class="char-mask char-mask--pin"></span>
+                <span class="char-mask char-mask--pin"></span>
+                <span class="char-mask char-mask--pin"></span>
+                <span class="char-mask char-mask--pin"></span>
+                <span class="char-mask char-mask--pin"></span>
+              </div>
+              <div class="char-wrap">
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+              </div>
+            </div>
+            <button class="child-recite-btn">背出来了</button>
+          </div>
+          <div class="child-card child-card--dim">
+            <div class="child-card-strip" style="background:transparent;"></div>
+            <div class="child-card-body" style="align-items:center;">
+              <div class="char-wrap">
+                <span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span>
+              </div>
+              <div class="char-wrap">
+                <span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span>
+              </div>
+            </div>
+          </div>
+          <div class="child-card child-card--dim">
+            <div class="child-card-strip" style="background:transparent;"></div>
+            <div class="child-card-body" style="align-items:center;">
+              <div class="char-wrap">
+                <span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span>
+              </div>
+              <div class="char-wrap">
+                <span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-bar" id="child-bar">
+        <button class="btn-hint" id="btn-hint">想不起来？看一眼</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 儿童模式 看提示后 -->
+  <div class="screen-wrap">
+    <div class="screen-label">④ 儿童模式 · 看了提示</div>
+    <div class="phone">
+      <div class="nav">
+        <span class="nav-back">← 返回</span>
+        <span class="nav-title">背一背</span>
+        <span class="nav-badge">第2/4句</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width:25%;"></div>
+      </div>
+      <div class="poem-bg">
+        <div class="poem-bg-overlay"><img src="https://picsum.photos/seed/poem1/375/500" alt="" /></div>
+        <div class="poem-lines-area" style="justify-content:flex-start;padding:16px 14px;">
+          <div style="text-align:center;margin-bottom:12px;">
+            <div style="font-family:'Ma Shan Zheng',serif;font-size:1.3rem;color:#18120A;letter-spacing:0.15em;">春晓</div>
+            <div style="font-size:0.62rem;color:#8C7A60;margin-top:2px;">[唐] 孟浩然</div>
+          </div>
+          <div class="child-card child-card--done">
+            <div class="child-card-strip" style="background:#4CAF50;"></div>
+            <div class="child-card-body">
+              <div class="child-card-pinyin">chūn mián bù jué xiǎo</div>
+              <div class="child-card-text">春眠不觉晓</div>
+            </div>
+            <span class="child-card-tag" style="color:#4CAF50;background:rgba(76,175,80,0.12);border-color:rgba(76,175,80,0.3);">✓</span>
+          </div>
+          <!-- 第一次提示：黄色边框，只露出第一个字拼音，汉字仍格子遮盖 -->
+          <div class="child-card child-card--hint">
+            <div class="child-card-strip" style="background:#D4A836;"></div>
+            <div class="child-card-body" style="align-items:center;">
+              <div class="char-wrap">
+                <span style="font-size:0.6rem;color:#A08040;width:2rem;text-align:center;letter-spacing:0.02em;">chù</span>
+                <span class="char-mask char-mask--pin"></span>
+                <span class="char-mask char-mask--pin"></span>
+                <span class="char-mask char-mask--pin"></span>
+                <span class="char-mask char-mask--pin"></span>
+              </div>
+              <div class="char-wrap">
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+                <span class="char-mask"></span>
+              </div>
+            </div>
+            <button class="child-recite-btn">背出来了</button>
+          </div>
+          <div class="child-card child-card--dim">
+            <div class="child-card-strip" style="background:transparent;"></div>
+            <div class="child-card-body" style="align-items:center;">
+              <div class="char-wrap">
+                <span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span>
+              </div>
+              <div class="char-wrap">
+                <span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span>
+              </div>
+            </div>
+          </div>
+          <div class="child-card child-card--dim">
+            <div class="child-card-strip" style="background:transparent;"></div>
+            <div class="child-card-body" style="align-items:center;">
+              <div class="char-wrap">
+                <span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span><span class="char-mask char-mask--pin"></span>
+              </div>
+              <div class="char-wrap">
+                <span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span><span class="char-mask"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn-hint" style="opacity:0.5;cursor:not-allowed;">再看一眼（已用1次）</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 结果页 3星 -->
+  <div class="screen-wrap">
+    <div class="screen-label">⑤ 结果页 · 3星完成</div>
+    <div class="phone result-screen">
+      <div class="result-hero">
+        <div class="particles">
+          <div class="p" style="background:#FFB300;--tx:-90px;--ty:-55px;--r:300deg;--pd:0.55s;"></div>
+          <div class="p" style="background:#FFF8E1;--tx:95px;--ty:-65px;--r:-240deg;--pd:0.65s;"></div>
+          <div class="p" style="background:#4CAF50;--tx:-55px;--ty:-85px;--r:180deg;--pd:0.75s;"></div>
+          <div class="p" style="background:#FFB300;--tx:75px;--ty:-45px;--r:360deg;--pd:0.6s;"></div>
+          <div class="p" style="background:#FFF8E1;--tx:-105px;--ty:-35px;--r:-300deg;--pd:0.7s;"></div>
+          <div class="p" style="background:#C62828;--tx:115px;--ty:-75px;--r:270deg;--pd:0.5s;"></div>
+          <div class="p" style="background:#FFB300;--tx:-35px;--ty:-100px;--r:-180deg;--pd:0.85s;"></div>
+          <div class="p" style="background:#4CAF50;--tx:55px;--ty:-105px;--r:420deg;--pd:0.58s;"></div>
+        </div>
+        <div class="result-stars">
+          <svg class="star-svg" style="--d:0.1s" viewBox="0 0 24 24" fill="#FFB300"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="star-svg" style="--d:0.3s" viewBox="0 0 24 24" fill="#FFB300"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="star-svg" style="--d:0.5s" viewBox="0 0 24 24" fill="#FFB300"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="result-quote">厉害！一个字都没看！</div>
+      </div>
+      <div class="result-body">
+        <div class="result-poem-title">春 晓</div>
+        <div class="result-poem-author">[唐] 孟浩然</div>
+        <div class="result-poem-lines">
+          <div class="result-poem-line">
+            <div class="rls" style="background:#2E7D32;"></div>
+            <div class="rlt">春眠不觉晓</div>
+            <span class="rtag tag-g">无提示</span>
+          </div>
+          <div class="result-poem-line">
+            <div class="rls" style="background:#2E7D32;"></div>
+            <div class="rlt">处处闻啼鸟</div>
+            <span class="rtag tag-g">无提示</span>
+          </div>
+          <div class="result-poem-line">
+            <div class="rls" style="background:#FF8F00;"></div>
+            <div class="rlt">夜来风雨声</div>
+            <span class="rtag tag-o">提示×1</span>
+          </div>
+          <div class="result-poem-line">
+            <div class="rls" style="background:#2E7D32;"></div>
+            <div class="rlt">花落知多少</div>
+            <span class="rtag tag-g">无提示</span>
+          </div>
+        </div>
+        <div class="result-review">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div>
+            <div style="font-size:0.82rem;font-weight:700;color:#C62828;">3天后复习</div>
+            <div style="font-size:0.62rem;color:#8C7A60;margin-top:2px;">系统已记录，到期提醒</div>
+          </div>
+        </div>
+        <button class="result-done">完成</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 家长模式交互
+const LINES = [
+  { pinyin: 'chūn mián bù jué xiǎo', text: '春眠不觉晓' },
+  { pinyin: 'chù chù wén tí niǎo',   text: '处处闻啼鸟' },
+  { pinyin: 'yè lái fēng yǔ shēng',  text: '夜来风雨声' },
+  { pinyin: 'huā luò zhī duō shǎo',  text: '花落知多少' },
+]
+let parentCurrent = 1
+function updateParent(pass) {
+  const rows = document.querySelectorAll('#parent-lines .line-row')
+  const cur = rows[parentCurrent]
+  if (!cur) return
+  cur.classList.remove('current')
+  const strip = cur.querySelector('.line-strip')
+  if (pass) {
+    cur.classList.add('done-pass')
+    if (strip) strip.className = 'line-strip green'
+    const tag = document.createElement('span')
+    tag.textContent = '背出来了'
+    tag.style.cssText = 'font-size:0.6rem;color:#81C784;background:rgba(76,175,80,0.2);padding:2px 8px;border-radius:999px;flex-shrink:0;'
+    cur.appendChild(tag)
+  } else {
+    cur.classList.add('done-fail')
+    if (strip) strip.className = 'line-strip red'
+    const tag = document.createElement('span')
+    tag.textContent = '再练练'
+    tag.style.cssText = 'font-size:0.6rem;color:#EF9A9A;background:rgba(239,83,80,0.15);padding:2px 8px;border-radius:999px;flex-shrink:0;'
+    cur.appendChild(tag)
+  }
+  parentCurrent++
+  if (parentCurrent < rows.length) {
+    rows[parentCurrent].classList.remove('dim')
+    rows[parentCurrent].classList.add('current')
+    const ns = rows[parentCurrent].querySelector('.line-strip')
+    if (ns) ns.className = 'line-strip white'
+    const done = parentCurrent
+    document.getElementById('parent-pb').style.width = (done / rows.length * 100) + '%'
+    document.getElementById('parent-badge').textContent = `第${parentCurrent+1}/${rows.length}句`
+  } else {
+    document.getElementById('parent-pb').style.width = '100%'
+    document.getElementById('parent-badge').textContent = '已完成'
+    document.querySelector('#parent-phone .btn-fail').style.opacity = '0.4'
+    document.querySelector('#parent-phone .btn-pass').style.opacity = '0.4'
+  }
+}
+document.getElementById('parent-pass').addEventListener('click', () => updateParent(true))
+document.getElementById('parent-fail').addEventListener('click', () => updateParent(false))
+
+// 儿童模式提示交互
+let hinted = false
+document.getElementById('btn-hint').addEventListener('click', function() {
+  if (hinted) return
+  hinted = true
+  const masks = document.getElementById('child-masks')
+  masks.innerHTML = '<span style="font-family:\'Ma Shan Zheng\',serif;font-size:2rem;color:#FFF8E1;letter-spacing:0.15em;">处处闻啼鸟</span>'
+  const cur = document.getElementById('child-current')
+  cur.style.background = 'rgba(212,168,54,0.12)'
+  cur.querySelector('.line-strip').style.background = '#D4A836'
+  const hint = document.createElement('div')
+  hint.textContent = '看一眼，试着记住它'
+  hint.style.cssText = 'font-size:0.6rem;color:#D4A836;margin-top:2px;'
+  cur.querySelector('.line-content').insertBefore(hint, masks)
+  this.style.display = 'none'
+  document.getElementById('btn-recite').textContent = '好了，下一句 →'
+  document.getElementById('btn-recite').style.background = '#C62828'
+})
+</script>
+</body>
+</html>
