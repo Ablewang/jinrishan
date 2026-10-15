@@ -1,8 +1,9 @@
 .d {
-  min-height: calc(100dvh - env(safe-area-inset-top, 0px));
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background: #fff;
+  overflow: hidden;
 }
 
 .d-nav {
@@ -67,6 +68,8 @@
   flex: 1;
   position: relative;
   background: #fff;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .d-bg-wrap {
@@ -90,7 +93,6 @@
   position: relative;
   z-index: 1;
   padding: 0 14px calc(100px + env(safe-area-inset-bottom, 0px));
-  -webkit-overflow-scrolling: touch;
 }
 
 .d-meta {

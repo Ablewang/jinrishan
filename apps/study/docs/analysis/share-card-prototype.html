@@ -1,0 +1,968 @@
+<title>分享卡片原型</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap">
+
+<style>
+  :root {
+    --red: #C62828;
+    --red-deep: #8B0000;
+    --red-glow: #E53935;
+    --warm: #FFF8F0;
+    --ink: #2C1810;
+    --ink-mid: #6B4226;
+    --ink-light: #A07050;
+    --gold: #D4A853;
+    --gold-light: #F5E4A8;
+    --bg-page: #EDE0D4;
+    --shadow: 0 16px 48px rgba(80,20,0,0.28), 0 4px 12px rgba(80,20,0,0.12);
+    --font-brush: 'Ma Shan Zheng', 'KaiTi', 'STKaiti', serif;
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-ui: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-page);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    min-height: 100%;
+    padding-block: 28px;
+  }
+  .page {
+    max-width: 480px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+
+  /* tab */
+  .tabs {
+    display: flex; background: rgba(255,255,255,0.5);
+    border-radius: 12px; padding: 4px; gap: 4px;
+  }
+  .tab {
+    flex: 1; font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+    padding: 9px; border-radius: 9px; cursor: pointer; border: none;
+    background: transparent; color: var(--ink-light); transition: all 0.18s; text-align: center;
+  }
+  .tab.active { background: var(--red); color: white; box-shadow: 0 2px 8px rgba(198,40,40,0.3); }
+
+  /* controls */
+  .controls {
+    background: rgba(255,255,255,0.55); border-radius: 14px;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+    border: 1px solid rgba(198,40,40,0.1);
+  }
+  .controls-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .ctrl-label { font-size: 12px; color: var(--ink-mid); font-weight: 600; min-width: 44px; flex-shrink: 0; }
+  .ctrl-input {
+    font-family: var(--font-ui); font-size: 13px;
+    border: 1px solid rgba(198,40,40,0.2); border-radius: 8px;
+    padding: 5px 9px; background: white; color: var(--ink); flex: 1; min-width: 0; outline: none;
+  }
+  .ctrl-input:focus { border-color: var(--red); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    font-size: 12px; padding: 4px 11px; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid rgba(198,40,40,0.2); background: white; color: var(--ink-mid);
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .chip.active { background: var(--red); color: white; border-color: var(--red); }
+
+  .card-wrap { display: flex; justify-content: center; }
+
+  /* ══════════════════════════════
+     方案A：水墨书法感
+  ══════════════════════════════ */
+  .cc-a {
+    width: 300px; flex-shrink: 0;
+    position: relative; border-radius: 16px; overflow: hidden;
+    box-shadow: var(--shadow);
+    background: #F5EDD8;
+    display: flex; flex-direction: column;
+  }
+  .cc-a-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 160% 60% at 50% 0%, rgba(139,0,0,0.08) 0%, transparent 70%),
+      linear-gradient(180deg, #F7EDDA 0%, #EFE0C0 100%);
+  }
+  /* 宣纸纹理 */
+  .cc-a-texture {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='1' height='1' x='1' y='1' fill='rgba(100,60,20,0.04)'/%3E%3Crect width='1' height='1' x='4' y='4' fill='rgba(100,60,20,0.03)'/%3E%3Crect width='1' height='1' x='3' y='0' fill='rgba(100,60,20,0.02)'/%3E%3C/svg%3E");
+  }
+  /* 左侧红色竖条 */
+  .cc-a-redbar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: linear-gradient(180deg, #C62828 0%, #8B0000 100%);
+  }
+  .cc-a-inner {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column;
+    padding: 20px 20px 18px 26px;
+    gap: 0;
+  }
+  .cc-a-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .cc-a-date {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: #8B5E3C; letter-spacing: 0.12em;
+  }
+  .cc-a-logo img { width: 26px; height: 26px; object-fit: contain; }
+
+  /* 印章区 */
+  .cc-a-stamp-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .cc-a-stamp {
+    width: 52px; height: 52px; flex-shrink: 0;
+    border: 2px solid #C62828; border-radius: 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1px;
+    position: relative;
+  }
+  .cc-a-stamp::after {
+    content: ''; position: absolute; inset: 2px;
+    border: 1px solid rgba(198,40,40,0.3); border-radius: 4px;
+  }
+  .cc-a-stamp-char {
+    font-family: var(--font-brush); font-size: 0.95rem;
+    color: #C62828; line-height: 1;
+  }
+  .cc-a-right { display: flex; flex-direction: column; gap: 2px; }
+  .cc-a-label {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: #A07050; letter-spacing: 0.1em;
+  }
+  .cc-a-nick {
+    font-family: var(--font-brush); font-size: 1.9rem;
+    color: #2C1008; line-height: 1.1;
+  }
+  .cc-a-rank {
+    font-family: var(--font-ui); font-size: 0.62rem;
+    color: #C62828; letter-spacing: 0.08em;
+    border: 1px solid rgba(198,40,40,0.4);
+    border-radius: 3px; padding: 1px 6px;
+    display: inline-block; margin-top: 2px;
+  }
+
+  /* 分隔线 */
+  .cc-a-divider {
+    height: 1px; margin: 12px 0;
+    background: linear-gradient(to right, rgba(139,0,0,0.5), rgba(139,0,0,0.15), transparent);
+  }
+
+  /* 诗句区 */
+  .cc-a-poem { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+  .cc-a-poem-label {
+    font-family: var(--font-ui); font-size: 0.58rem;
+    color: #A07050; letter-spacing: 0.1em; margin-bottom: 2px;
+  }
+  .cc-a-poem-name {
+    font-family: var(--font-brush); font-size: 1.2rem;
+    color: #2C1008; line-height: 1.2;
+  }
+  .cc-a-poem-line {
+    font-family: var(--font-brush); font-size: 0.82rem;
+    color: #6B4226; line-height: 1.6;
+  }
+
+  /* 数据 */
+  .cc-a-stats {
+    display: flex; gap: 0; margin-bottom: 14px;
+  }
+  .cc-a-stat { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .cc-a-stat-num {
+    font-family: var(--font-display); font-size: 1.6rem;
+    color: #2C1008; line-height: 1; font-variant-numeric: tabular-nums;
+  }
+  .cc-a-stat-tag { font-size: 0.58rem; color: #A07050; letter-spacing: 0.04em; }
+  .cc-a-stat-div { width: 1px; background: rgba(139,0,0,0.15); margin: 4px 16px; }
+
+  /* 底部 */
+  .cc-a-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgba(139,0,0,0.12);
+  }
+  .cc-a-brand { font-family: var(--font-display); font-size: 0.75rem; color: #8B5E3C; }
+  .cc-a-slogan { font-size: 0.52rem; color: #B08060; margin-top: 1px; }
+
+  /* ══════════════════════════════
+     方案B：现代简约感（优化版）
+  ══════════════════════════════ */
+  .cc-b {
+    width: 300px; flex-shrink: 0;
+    position: relative; border-radius: 20px; overflow: hidden;
+    box-shadow: var(--shadow);
+    background: #fff;
+    display: flex; flex-direction: column;
+  }
+  /* 顶部红色色块 */
+  .cc-b-header {
+    background: #C62828;
+    padding: 16px 20px 20px;
+    position: relative; overflow: hidden;
+    flex-shrink: 0;
+  }
+  /* 大圆装饰 */
+  .cc-b-header-circle {
+    position: absolute; right: -40px; top: -50px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+  }
+  .cc-b-header-circle2 {
+    position: absolute; right: 50px; bottom: -55px;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .cc-b-header-circle3 {
+    position: absolute; left: -20px; top: 30px;
+    width: 70px; height: 70px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .cc-b-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; position: relative; z-index: 1;
+  }
+  .cc-b-date {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: rgba(255,255,255,0.65); letter-spacing: 0.06em;
+  }
+  .cc-b-logo img { width: 28px; height: 28px; object-fit: contain; }
+  .cc-b-tag {
+    font-family: var(--font-ui); font-size: 0.58rem;
+    color: rgba(255,255,255,0.7); letter-spacing: 0.14em;
+    margin-bottom: 2px; position: relative; z-index: 1;
+  }
+  .cc-b-nick {
+    font-family: var(--font-display); font-size: 2.8rem;
+    color: #fff; line-height: 1; position: relative; z-index: 1;
+    letter-spacing: -0.01em;
+  }
+  .cc-b-rank {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: rgba(255,255,255,0.65); margin-top: 8px;
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 999px; padding: 3px 10px 3px 8px;
+    width: fit-content;
+  }
+  .cc-b-rank::before {
+    content: ''; display: block; width: 5px; height: 5px;
+    border-radius: 50%; background: rgba(255,255,255,0.7);
+  }
+
+  /* 白色内容区 */
+  .cc-b-body {
+    padding: 16px 16px 14px;
+    display: flex; flex-direction: column; gap: 10px;
+    flex: 1;
+  }
+  /* 诗句卡 */
+  .cc-b-poem {
+    background: #FBF6F0;
+    border-radius: 12px; padding: 11px 14px;
+    display: flex; flex-direction: column; gap: 3px;
+    border-left: 3px solid #C62828;
+  }
+  .cc-b-poem-label {
+    font-family: var(--font-ui); font-size: 0.55rem;
+    color: #A07050; letter-spacing: 0.08em;
+  }
+  .cc-b-poem-name {
+    font-family: var(--font-brush); font-size: 1.15rem;
+    color: #2C1008;
+  }
+  .cc-b-poem-line {
+    font-family: var(--font-brush); font-size: 0.78rem;
+    color: #6B4226;
+  }
+  /* 数据格 */
+  .cc-b-stats { display: flex; gap: 8px; }
+  .cc-b-stat {
+    flex: 1; border-radius: 12px;
+    padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 2px;
+    background: #FBF6F0;
+  }
+  .cc-b-stat-num {
+    font-family: var(--font-display); font-size: 1.9rem;
+    color: #C62828; line-height: 1; font-variant-numeric: tabular-nums;
+  }
+  .cc-b-stat-tag { font-size: 0.55rem; color: #A07050; }
+
+  /* 底部 */
+  .cc-b-footer {
+    padding: 9px 16px 13px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid #F0E8DC;
+  }
+  .cc-b-brand { font-family: var(--font-display); font-size: 0.78rem; color: #6B4226; }
+  .cc-b-slogan { font-size: 0.52rem; color: #B08060; margin-top: 1px; }
+
+  /* 方案切换 */
+  .style-switch {
+    display: flex; background: rgba(255,255,255,0.5);
+    border-radius: 10px; padding: 3px; gap: 3px;
+  }
+  .style-btn {
+    flex: 1; font-family: var(--font-ui); font-size: 12px; font-weight: 600;
+    padding: 7px; border-radius: 8px; cursor: pointer; border: none;
+    background: transparent; color: var(--ink-light); transition: all 0.15s; text-align: center;
+  }
+  .style-btn.active { background: var(--red); color: white; }
+
+  /* ══════════════════════════════
+     古诗分享卡片
+  ══════════════════════════════ */
+  .poem-card {
+    width: 300px;
+    min-height: 400px;
+    height: auto;
+    flex-shrink: 0;
+    position: relative;
+    border-radius: 20px; overflow: hidden;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column;
+    background: #2C1008;
+  }
+  .pc-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transition: background-image 0.3s;
+  }
+  .pc-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.38);
+  }
+  .pc-logo {
+    position: absolute; top: 14px; right: 14px; z-index: 3;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pc-logo img { width: 32px; height: 32px; object-fit: contain; }
+
+  .pc-body {
+    position: relative; z-index: 2; flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 28px 8px; gap: 4px; text-align: center;
+  }
+  .pc-title {
+    font-family: var(--font-brush); font-size: 2.0rem;
+    color: #ffffff; line-height: 1.1;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    margin-bottom: 6px;
+    white-space: nowrap;
+  }
+  .pc-divider {
+    width: 36px; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,248,225,0.4), transparent);
+    margin-bottom: 6px;
+  }
+  .pc-lines {
+    display: flex; flex-direction: column; gap: 1px;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .pc-line {
+    display: block;
+    white-space: nowrap;
+    text-align: center;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .pc-line ruby {
+    font-family: var(--font-brush); font-size: 1.45rem;
+    color: #ffffff;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+    letter-spacing: 0.32em;
+    ruby-align: center;
+  }
+  .pc-line rt {
+    font-family: var(--font-ui); font-size: 0.42em;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.05em;
+    ruby-position: over;
+  }
+  .pc-ellipsis { font-size: 0.7rem; color: rgba(255,248,225,0.4); margin-top: 4px; }
+  .pc-author {
+    font-family: var(--font-ui); font-size: 0.62rem;
+    color: rgba(255,255,255,0.75); letter-spacing: 0.1em; margin-top: 8px;
+  }
+
+  .pc-footer {
+    position: relative; z-index: 2;
+    padding: 9px 16px 13px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    flex-shrink: 0;
+  }
+  .pc-footer-inner { display: flex; align-items: center; gap: 8px; }
+  .pc-footer-icon { width: 28px; height: 28px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+  .pc-footer-icon img { width: 100%; height: 100%; object-fit: contain; }
+  .pc-brand-name { font-family: var(--font-display); font-size: 0.85rem; color: rgba(255,248,225,0.85); line-height: 1; }
+  .pc-brand-tag { font-size: 0.55rem; color: rgba(255,248,225,0.45); margin-top: 2px; }
+
+  /* 按钮 */
+  .btn-row { display: flex; gap: 10px; }
+  .btn-action {
+    flex: 1; font-family: var(--font-ui); font-size: 14px; font-weight: 600;
+    padding: 13px; border-radius: 12px; cursor: pointer;
+    transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; border: none;
+  }
+  .btn-save { background: white; color: var(--red); border: 2px solid var(--red); }
+  .btn-save:hover { background: rgba(198,40,40,0.05); }
+  .btn-share { background: var(--red); color: white; box-shadow: 0 4px 14px rgba(198,40,40,0.35); }
+  .btn-share:hover { background: var(--red-deep); }
+
+  /* 高清图预览弹层 */
+  .preview-mask {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.85);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .preview-mask.show { opacity: 1; pointer-events: auto; }
+  .preview-mask img {
+    max-width: 92vw; max-height: 80vh;
+    border-radius: 16px;
+    touch-action: pinch-zoom;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .preview-hint { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .preview-close {
+    position: absolute; top: 20px; right: 20px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); color: white;
+    font-size: 18px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: none;
+  }
+
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: rgba(44,24,16,0.88); color: white;
+    font-size: 13px; padding: 9px 20px; border-radius: 999px;
+    opacity: 0; transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .ann-toggle {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; cursor: pointer; user-select: none;
+  }
+  .ann-toggle input { accent-color: var(--red); }
+  .ann-toggle span { font-size: 12px; color: var(--ink-light); }
+  .anns { display: flex; flex-direction: column; gap: 8px; }
+  .ann {
+    background: white; border-left: 3px solid var(--red);
+    border-radius: 0 10px 10px 0; padding: 10px 14px;
+    font-size: 12px; line-height: 1.6; color: var(--ink);
+  }
+  .ann b { color: var(--red); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 3px; }
+
+  @media (max-width: 400px) {
+    .checkin-card, .poem-card { width: 260px; height: 347px; }
+  }
+</style>
+
+<div class="page">
+  <div class="tabs">
+    <button class="tab active" id="tab-checkin" onclick="switchTab('checkin')">今日打卡卡片</button>
+    <button class="tab" id="tab-poem" onclick="switchTab('poem')">古诗分享卡片</button>
+  </div>
+
+  <!-- 打卡控件 -->
+  <div class="controls" id="ctrl-checkin">
+    <div class="controls-row">
+      <span class="ctrl-label">昵称</span>
+      <input class="ctrl-input" id="inp-nick" maxlength="6" placeholder="小诗人（最多6字）" value="小明">
+    </div>
+    <div class="controls-row">
+      <span class="ctrl-label">今日诗</span>
+      <div class="chips" id="chips-poem">
+        <div class="chip active" data-poem="0">静夜思</div>
+        <div class="chip" data-poem="1">春晓</div>
+        <div class="chip" data-poem="2">咏鹅</div>
+        <div class="chip" data-poem="3">多首</div>
+        <div class="chip" data-poem="4">未背</div>
+      </div>
+    </div>
+    <div class="controls-row">
+      <span class="ctrl-label">连续</span>
+      <input class="ctrl-input" id="inp-streak" type="number" min="1" max="365" value="7" style="max-width:68px">
+      <span class="ctrl-label" style="min-width:unset">天&nbsp; 已背</span>
+      <input class="ctrl-input" id="inp-count" type="number" min="0" max="70" value="12" style="max-width:68px">
+      <span class="ctrl-label" style="min-width:unset">首</span>
+    </div>
+    <div class="controls-row">
+      <span class="ctrl-label">风格</span>
+      <div class="style-switch">
+        <button class="style-btn active" id="btn-style-a" onclick="switchStyle('a')">水墨书法</button>
+        <button class="style-btn" id="btn-style-b" onclick="switchStyle('b')">现代简约</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 古诗控件 -->
+  <div class="controls" id="ctrl-poem" hidden>
+    <div class="controls-row">
+      <span class="ctrl-label">选诗</span>
+      <div class="chips" id="chips-pselect">
+        <div class="chip active" data-pid="0">静夜思</div>
+        <div class="chip" data-pid="1">春晓</div>
+        <div class="chip" data-pid="2">咏鹅</div>
+        <div class="chip" data-pid="3">江雪</div>
+        <div class="chip" data-pid="4">长歌行(10句)</div>
+        <div class="chip" data-pid="5">超长句测试</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+
+    <!-- 打卡卡片 方案A：水墨书法 -->
+    <div class="cc-a" id="card-checkin">
+      <div class="cc-a-bg"></div>
+      <div class="cc-a-texture"></div>
+      <div class="cc-a-redbar"></div>
+      <div class="cc-a-inner">
+        <div class="cc-a-topbar">
+          <div class="cc-a-date" id="c-date">2026年10月14日</div>
+          <div class="cc-a-logo"><img id="icon-cc" alt=""></div>
+        </div>
+        <div class="cc-a-stamp-row">
+          <div class="cc-a-stamp">
+            <span class="cc-a-stamp-char">打</span>
+            <span class="cc-a-stamp-char">卡</span>
+          </div>
+          <div class="cc-a-right">
+            <div class="cc-a-label">今日打卡成功</div>
+            <div class="cc-a-nick" id="c-nick">小明</div>
+            <div class="cc-a-rank" id="c-rank">入门学徒</div>
+          </div>
+        </div>
+        <div class="cc-a-divider"></div>
+        <div class="cc-a-poem">
+          <div class="cc-a-poem-label" id="c-label">今日背了</div>
+          <div class="cc-a-poem-name" id="c-pname">《静夜思》</div>
+          <div class="cc-a-poem-line" id="c-line">床前明月光，疑是地上霜。</div>
+        </div>
+        <div class="cc-a-stats">
+          <div class="cc-a-stat">
+            <span class="cc-a-stat-num" id="c-streak">7</span>
+            <span class="cc-a-stat-tag">连续打卡天</span>
+          </div>
+          <div class="cc-a-stat-div"></div>
+          <div class="cc-a-stat">
+            <span class="cc-a-stat-num" id="c-mastered">12</span>
+            <span class="cc-a-stat-tag">已掌握首</span>
+          </div>
+        </div>
+        <div class="cc-a-footer">
+          <div>
+            <div class="cc-a-brand">古诗小课堂</div>
+            <div class="cc-a-slogan">每天几分钟，轻松背百首古诗</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 打卡卡片 方案B：现代简约 -->
+    <div class="cc-b" id="card-checkin-b" hidden>
+      <div class="cc-b-header">
+        <div class="cc-b-header-circle"></div>
+        <div class="cc-b-header-circle2"></div>
+        <div class="cc-b-header-circle3"></div>
+        <div class="cc-b-topbar">
+          <div class="cc-b-date" id="c-date-b">2026年10月14日</div>
+          <div class="cc-b-logo"><img id="icon-cc-b" alt=""></div>
+        </div>
+        <div class="cc-b-tag">今日打卡成功</div>
+        <div class="cc-b-nick" id="c-nick-b">小明</div>
+        <div class="cc-b-rank" id="c-rank-b">入门学徒</div>
+      </div>
+      <div class="cc-b-body">
+        <div class="cc-b-poem">
+          <div class="cc-b-poem-label" id="c-label-b">今日背了</div>
+          <div class="cc-b-poem-name" id="c-pname-b">《静夜思》</div>
+          <div class="cc-b-poem-line" id="c-line-b">床前明月光，疑是地上霜。</div>
+        </div>
+        <div class="cc-b-stats">
+          <div class="cc-b-stat">
+            <span class="cc-b-stat-num" id="c-streak-b">7</span>
+            <span class="cc-b-stat-tag">连续打卡天</span>
+          </div>
+          <div class="cc-b-stat">
+            <span class="cc-b-stat-num" id="c-mastered-b">12</span>
+            <span class="cc-b-stat-tag">已掌握首</span>
+          </div>
+        </div>
+      </div>
+      <div class="cc-b-footer">
+        <div>
+          <div class="cc-b-brand">古诗小课堂</div>
+          <div class="cc-b-slogan">每天几分钟，轻松背百首古诗</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 古诗卡片 -->
+    <div class="poem-card" id="card-poem" hidden>
+      <div class="pc-bg" id="pc-bg"></div>
+      <div class="pc-overlay"></div>
+      <div class="pc-logo"><img id="icon-pc" alt="古诗小课堂" style="width:22px;height:22px;object-fit:contain;border-radius:4px;"></div>
+      <div class="pc-body">
+        <div class="pc-title" id="pc-title">《静夜思》</div>
+        <div class="pc-divider"></div>
+        <div class="pc-lines" id="pc-lines"></div>
+        <div class="pc-ellipsis" id="pc-ellipsis" hidden>…… 节选前四句</div>
+        <div class="pc-author" id="pc-author">—— 李白（唐）</div>
+      </div>
+      <div class="pc-footer">
+        <div class="pc-footer-inner">
+          <div>
+            <div class="pc-brand-name">古诗小课堂</div>
+            <div class="pc-brand-tag">每天几分钟，轻松背百首古诗</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-action btn-save" onclick="generateHD()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      查看高清图
+    </button>
+    <button class="btn-action btn-share" onclick="showToast('原型模式：实际 App 中将调起系统分享')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      分享给朋友
+    </button>
+  </div>
+
+  <label class="ann-toggle">
+    <input type="checkbox" id="chk-ann" checked>
+    <span>显示设计说明</span>
+  </label>
+
+  <div class="anns" id="anns-checkin">
+    <div class="ann"><b>整体气质</b>深红暗底 + 红色光晕，像颁奖仪式的聚光灯打在孩子身上，传递"今天你做到了"的荣耀感。</div>
+    <div class="ann"><b>昵称主视觉</b>孩子名字是最大的字，配称号（根据已背首数变化）。家长看到会有"我家孩子是进阶书生"的虚荣心满足。</div>
+    <div class="ann"><b>诗名横幅</b>半透明红色描边区块，突出今日成果，首句让看到卡片的人感受到内容。</div>
+    <div class="ann"><b>数据格</b>连续打卡天数 + 已掌握首数并排，大数字，一目了然。</div>
+    <div class="ann"><b>右上角 Logo</b>实际用 /icon.png，原型用文字占位。</div>
+  </div>
+
+  <div class="anns" id="anns-poem" hidden>
+    <div class="ann"><b>背景图</b>直接用该诗的配图（/images/XXX.webp），叠加渐变遮罩保证文字可读。原型用绝对路径读取本地图片。</div>
+    <div class="ann"><b>诗名大字</b>书法体居中，带红色光晕阴影，从背景图中浮出来。</div>
+    <div class="ann"><b>诗句</b>短诗显示全文；超过8句只显示前4句 + "节选"提示。</div>
+    <div class="ann"><b>底部毛玻璃区</b>品牌名 + 口号，与打卡卡片一致，强化品牌认知。</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="preview-mask" id="preview-mask">
+  <button class="preview-close" onclick="closePreview()">✕</button>
+  <img id="preview-img" src="" alt="高清预览">
+  <div class="preview-hint">双指缩放查看细节</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+  const IMG_BASE = 'file:///Users/wangyong/yong/jinrishan/apps/study/public/images/'
+  const ICON_URL = 'file:///Users/wangyong/yong/jinrishan/apps/study/public/icon.png'
+  document.querySelectorAll('#icon-cc, #icon-cc-b, #icon-pc').forEach(el => {
+    el.src = ICON_URL
+    el.style.cssText = 'width:26px;height:26px;object-fit:contain;'
+  })
+
+  let curStyle = 'a'
+  function switchStyle(s) {
+    curStyle = s
+    document.getElementById('card-checkin').hidden = s !== 'a'
+    document.getElementById('card-checkin-b').hidden = s !== 'b'
+    document.getElementById('btn-style-a').classList.toggle('active', s === 'a')
+    document.getElementById('btn-style-b').classList.toggle('active', s === 'b')
+  }
+
+  const CHECKIN_POEMS = [
+    { name: '静夜思', author: '李白（唐）', line: '床前明月光，疑是地上霜。' },
+    { name: '春晓',   author: '孟浩然（唐）', line: '春眠不觉晓，处处闻啼鸟。' },
+    { name: '咏鹅',   author: '骆宾王（唐）', line: '鹅，鹅，鹅，曲项向天歌。' },
+  ]
+
+  const POEM_CARDS = [
+    {
+      name: '静夜思', author: '李白（唐）',
+      img: '017 李白：静夜思.webp',
+      lines: [
+        { text: '床前明月光，', pinyin: 'chuáng qián míng yuè guāng' },
+        { text: '疑是地上霜。', pinyin: 'yí shì dì shàng shuāng' },
+        { text: '举头望明月，', pinyin: 'jǔ tóu wàng míng yuè' },
+        { text: '低头思故乡。', pinyin: 'dī tóu sī gù xiāng' },
+      ]
+    },
+    {
+      name: '春晓', author: '孟浩然（唐）',
+      img: '010 孟浩然：春晓.webp',
+      lines: [
+        { text: '春眠不觉晓，', pinyin: 'chūn mián bù jué xiǎo' },
+        { text: '处处闻啼鸟。', pinyin: 'chù chù wén tí niǎo' },
+        { text: '夜来风雨声，', pinyin: 'yè lái fēng yǔ shēng' },
+        { text: '花落知多少。', pinyin: 'huā luò zhī duō shǎo' },
+      ]
+    },
+    {
+      name: '咏鹅', author: '骆宾王（唐）',
+      img: '004 咏鹅.webp',
+      lines: [
+        { text: '鹅，鹅，鹅，', pinyin: 'é é é' },
+        { text: '曲项向天歌。', pinyin: 'qū xiàng xiàng tiān gē' },
+        { text: '白毛浮绿水，', pinyin: 'bái máo fú lǜ shuǐ' },
+        { text: '红掌拨清波。', pinyin: 'hóng zhǎng bō qīng bō' },
+      ]
+    },
+    {
+      name: '江雪', author: '柳宗元（唐）',
+      img: '043｜柳宗元：江雪 .webp',
+      lines: [
+        { text: '千山鸟飞绝，', pinyin: 'qiān shān niǎo fēi jué' },
+        { text: '万径人踪灭。', pinyin: 'wàn jìng rén zōng miè' },
+        { text: '孤舟蓑笠翁，', pinyin: 'gū zhōu suō lì wēng' },
+        { text: '独钓寒江雪。', pinyin: 'dú diào hán jiāng xuě' },
+      ]
+    },
+    {
+      name: '超长句测试', author: '测试（朝代）',
+      img: 'poem_02.webp',
+      lines: [
+        { text: '这是一句非常非常非常长的诗句用来测试缩放逻辑，', pinyin: 'zhè shì yī jù fēi cháng fēi cháng fēi cháng cháng de shī jù' },
+        { text: '短句。', pinyin: 'duǎn jù' },
+        { text: '又一句稍微长一点点的诗句测试，', pinyin: 'yòu yī jù shāo wēi cháng yī diǎn diǎn de shī jù cè shì' },
+        { text: '正常句子长度啊。', pinyin: 'zhèng cháng jù zi cháng dù a' },
+        { text: '再来一句超级超级超级超级无敌长的测试诗句，', pinyin: 'zài lái yī jù chāo jí chāo jí wú dí cháng de cè shì shī jù' },
+        { text: '普通长度的句子。', pinyin: 'pǔ tōng cháng dù de jù zi' },
+        { text: '中等偏长一些的诗句测试一下，', pinyin: 'zhōng děng piān cháng yī xiē de shī jù cè shì yī xià' },
+        { text: '短。', pinyin: 'duǎn' },
+        { text: '最后一句也比较长用来压轴测试效果。', pinyin: 'zuì hòu yī jù yě bǐ jiào cháng yòng lái yā zhóu cè shì xiào guǒ' },
+        { text: '第十行再加一句看看整体高度。', pinyin: 'dì shí háng zài jiā yī jù kàn kan zhěng tǐ gāo dù' },
+        { text: '第十一行继续撑高卡片高度测试。', pinyin: 'dì shí yī háng jì xù chēng gāo kǎ piàn gāo dù cè shì' },
+        { text: '第十二行普通长度。', pinyin: 'dì shí èr háng pǔ tōng cháng dù' },
+        { text: '第十三行超级无敌长长长长长长长长长的一句话，', pinyin: 'dì shí sān háng chāo jí wú dí cháng cháng cháng cháng de yī jù huà' },
+        { text: '第十四行短。', pinyin: 'dì shí sì háng duǎn' },
+        { text: '第十五行收尾测试一下。', pinyin: 'dì shí wǔ háng shōu wěi cè shì yī xià' },
+        { text: '第十六行又来一句长长长长长长长长长的诗句，', pinyin: 'dì shí liù háng yòu lái yī jù cháng cháng cháng cháng de shī jù' },
+        { text: '第十七行正常。', pinyin: 'dì shí qī háng zhèng cháng' },
+        { text: '第十八行稍微长一点的句子测试。', pinyin: 'dì shí bā háng shāo wēi cháng yī diǎn de jù zi cè shì' },
+        { text: '第十九行继续加长加长加长加长的内容，', pinyin: 'dì shí jiǔ háng jì xù jiā cháng jiā cháng de nèi róng' },
+        { text: '第二十行终于到底了。', pinyin: 'dì èr shí háng zhōng yú dào dǐ le' },
+      ]
+    },
+    {
+      name: '长歌行', author: '汉乐府',
+      img: 'poem_02.webp',
+      lines: [
+        { text: '青青园中葵，', pinyin: 'qīng qīng yuán zhōng kuí' },
+        { text: '朝露待日晞。', pinyin: 'zhāo lù dài rì xī' },
+        { text: '阳春布德泽，', pinyin: 'yáng chūn bù dé zé' },
+        { text: '万物生光辉。', pinyin: 'wàn wù shēng guāng huī' },
+        { text: '常恐秋节至，', pinyin: 'cháng kǒng qiū jié zhì' },
+        { text: '焜黄华叶衰。', pinyin: 'hūn huáng huā yè shuāi' },
+        { text: '百川东到海，', pinyin: 'bǎi chuān dōng dào hǎi' },
+        { text: '何时复西归？', pinyin: 'hé shí fù xī guī' },
+        { text: '少壮不努力，', pinyin: 'shào zhuàng bù nǔ lì' },
+        { text: '老大徒伤悲！', pinyin: 'lǎo dà tú shāng bēi' },
+      ]
+    },
+  ]
+
+  const RANKS = [[0,'诗书初学'],[5,'入门学徒'],[15,'进阶书生'],[30,'饱读诗书'],[50,'资深学者'],[65,'古诗大家']]
+  function pick(table, n) { let r = table[0][1]; for (const [m,v] of table) { if (n >= m) r = v } return r }
+
+  let curTab = 'checkin', poemIdx = 0, pidx = 0
+
+  function switchTab(tab) {
+    curTab = tab
+    ;['checkin','poem'].forEach(t => {
+      document.getElementById('tab-'+t).classList.toggle('active', t === tab)
+      document.getElementById('ctrl-'+t).hidden = t !== tab
+      document.getElementById('anns-'+t).hidden = t !== tab
+    })
+    if (tab === 'checkin') {
+      document.getElementById('card-checkin').hidden = curStyle !== 'a'
+      document.getElementById('card-checkin-b').hidden = curStyle !== 'b'
+      document.getElementById('card-poem').hidden = true
+    } else {
+      document.getElementById('card-checkin').hidden = true
+      document.getElementById('card-checkin-b').hidden = true
+      document.getElementById('card-poem').hidden = false
+      updatePoemCard()
+    }
+  }
+
+  function updateCheckin() {
+    const nick     = document.getElementById('inp-nick').value.trim() || '小诗人'
+    const streak   = parseInt(document.getElementById('inp-streak').value) || 7
+    const mastered = parseInt(document.getElementById('inp-count').value) || 0
+    const rank     = pick(RANKS, mastered)
+
+    let label, pname, line
+    if (poemIdx === 3) {
+      label = '今日背了'; pname = '《静夜思》等 3 首'; line = ''
+    } else if (poemIdx === 4) {
+      label = ''; pname = '今日暂无记录'; line = '明天继续加油！'
+    } else {
+      const p = CHECKIN_POEMS[poemIdx]
+      label = '今日背了'; pname = `《${p.name}》`; line = p.line
+    }
+
+    // 方案A
+    document.getElementById('c-nick').textContent     = nick
+    document.getElementById('c-streak').textContent   = streak
+    document.getElementById('c-mastered').textContent = mastered
+    document.getElementById('c-rank').textContent     = rank
+    document.getElementById('c-label').textContent    = label
+    document.getElementById('c-pname').textContent    = pname
+    document.getElementById('c-line').textContent     = line
+
+    // 方案B
+    document.getElementById('c-nick-b').textContent     = nick
+    document.getElementById('c-streak-b').textContent   = streak
+    document.getElementById('c-mastered-b').textContent = mastered
+    document.getElementById('c-rank-b').textContent     = rank
+    document.getElementById('c-label-b').textContent    = label
+    document.getElementById('c-pname-b').textContent    = pname
+    document.getElementById('c-line-b').textContent     = line
+  }
+
+  function updatePoemCard() {
+    const p = POEM_CARDS[pidx]
+    const titleEl = document.getElementById('pc-title')
+    const nameStr = `《${p.name}》`
+    titleEl.textContent = nameStr
+    // 诗名字数多就缩小字号，确保一行放下
+    const len = nameStr.length
+    const size = len <= 6 ? 2.0 : len <= 8 ? 1.6 : len <= 10 ? 1.35 : 1.1
+    titleEl.style.fontSize = size + 'rem'
+
+    document.getElementById('pc-author').textContent = `—— ${p.author}`
+
+    const imgUrl = IMG_BASE + p.img
+    document.getElementById('pc-bg').style.backgroundImage =
+      `url("${imgUrl}"), linear-gradient(160deg,#5D1A0E 0%,#2C0A06 100%)`
+
+    // 渲染所有诗句，用 ruby 逐字对齐拼音
+    const container = document.getElementById('pc-lines')
+    container.innerHTML = ''
+    container.style.transform = ''
+    container.style.gap = '4px'
+    p.lines.forEach(l => {
+      const row = document.createElement('div')
+      row.className = 'pc-line'
+      // 把汉字和拼音逐字配对
+      const chars = l.text.split('')
+      const pinyins = l.pinyin ? l.pinyin.split(' ') : []
+      chars.forEach((ch, i) => {
+        const rb = document.createElement('ruby')
+        rb.textContent = ch
+        const rt = document.createElement('rt')
+        // 标点符号不加拼音
+        rt.textContent = /[\，。？！、；：""''《》]/.test(ch) ? '' : (pinyins[i] || '')
+        rb.appendChild(rt)
+        row.appendChild(rb)
+      })
+      container.appendChild(row)
+    })
+    document.getElementById('pc-ellipsis').hidden = true
+
+    // 量最宽一行，超出就整体等比缩放，并补偿高度
+    requestAnimationFrame(() => {
+      const cardW = 300
+      const padH = 28 * 2
+      const maxW = cardW - padH
+      const actualW = container.scrollWidth
+      container.style.marginBottom = ''
+      if (actualW > maxW) {
+        const scale = maxW / actualW
+        container.style.transform = `scale(${scale})`
+        container.style.transformOrigin = 'center top'
+        // 缩放后视觉高度变小，用负 margin 补回差值
+        const actualH = container.scrollHeight
+        const shrink = actualH * (1 - scale)
+        container.style.marginBottom = `-${shrink}px`
+      }
+    })
+  }
+
+  document.getElementById('chips-poem').addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c) return
+    document.querySelectorAll('#chips-poem .chip').forEach(x => x.classList.remove('active'))
+    c.classList.add('active'); poemIdx = parseInt(c.dataset.poem); updateCheckin()
+  })
+  document.getElementById('chips-pselect').addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c) return
+    document.querySelectorAll('#chips-pselect .chip').forEach(x => x.classList.remove('active'))
+    c.classList.add('active'); pidx = parseInt(c.dataset.pid); updatePoemCard()
+  })
+  ;['inp-nick','inp-streak','inp-count'].forEach(id =>
+    document.getElementById(id).addEventListener('input', updateCheckin)
+  )
+  document.getElementById('chk-ann').addEventListener('change', e => {
+    const show = e.target.checked
+    document.getElementById('anns-checkin').style.display = (show && curTab==='checkin') ? '' : 'none'
+    document.getElementById('anns-poem').style.display    = (show && curTab==='poem')    ? '' : 'none'
+  })
+
+  function showToast(msg) {
+    const t = document.getElementById('toast')
+    t.textContent = msg; t.classList.add('show')
+    setTimeout(() => t.classList.remove('show'), 2200)
+  }
+
+  function closePreview() {
+    document.getElementById('preview-mask').classList.remove('show')
+  }
+
+  async function generateHD() {
+    let card
+    if (curTab === 'poem') {
+      card = document.getElementById('card-poem')
+    } else {
+      card = curStyle === 'b'
+        ? document.getElementById('card-checkin-b')
+        : document.getElementById('card-checkin')
+    }
+    showToast('生成中…')
+    try {
+      const canvas = await html2canvas(card, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+      })
+      const img = document.getElementById('preview-img')
+      img.src = canvas.toDataURL('image/png')
+      document.getElementById('preview-mask').classList.add('show')
+    } catch (e) {
+      showToast('生成失败：' + e.message)
+    }
+  }
+
+  updateCheckin(); updatePoemCard()
+</script>
