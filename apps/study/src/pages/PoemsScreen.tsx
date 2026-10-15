@@ -160,4 +160,63 @@ const styles = `
   @media (max-width: 340px) {
     .ps__grid { grid-template-columns: 1fr; }
   }
+  .ps__card {
+    position: relative;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 14px 12px 14px 12px;
+    border: 1.5px solid var(--border);
+    border-left: 4px solid #C62828;
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    overflow: hidden;
+    min-height: 110px;
+  }
+  .ps__card-img {
+    position: absolute;
+    top: 0; right: 0;
+    width: 60%;
+    height: 100%;
+    background-size: cover;
+    background-position: center right;
+    mask-image: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.85) 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.85) 100%);
+    pointer-events: none;
+  }
+  .ps__card:active { transform: scale(0.97); box-shadow: none; }
+  .ps__card-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+  .ps__card-title {
+    font-family: var(--font-brush);
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+  .ps__card-meta {
+    font-size: 11px;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+  }
+  .ps__card-line {
+    font-size: 11px;
+    color: var(--ink-light);
+    line-height: 1.4;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .ps__card-stars {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #F59E0B;
+    letter-spacing: 1px;
+  }
 `
