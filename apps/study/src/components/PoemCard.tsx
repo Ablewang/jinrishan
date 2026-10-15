@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { PoemSummary } from '../data/poems'
+import type { MasteryLevel } from '../types/poem'
+import { MASTERY_CONFIG } from '../types/poem'
 import imgMap from '../data/poem_img_map.json'
 
 interface Props {
@@ -9,15 +11,17 @@ interface Props {
   isMemorized: boolean
   bestStars?: number
   colorIndex: number
+  mastery?: MasteryLevel
 }
 
-export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, colorIndex: _colorIndex }: Props) {
+export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, colorIndex: _colorIndex, mastery }: Props) {
   const navigate = useNavigate()
   const ref = useRef<HTMLButtonElement>(null)
   const [imgSrc, setImgSrc] = useState<string | null>(null)
 
   const dynastyLabel = poem.dynasty ? `${poem.dynasty}·${poem.author}` : poem.author
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
+  const masteryConf = mastery ? MASTERY_CONFIG[mastery] : null
 
   useEffect(() => {
     if (!imgFile) return
@@ -36,23 +40,34 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
     return () => obs.disconnect()
   }, [imgFile])
 
+  const stripColor = masteryConf ? masteryConf.stripColor : '#C62828'
+
   return (
     <button
       ref={ref}
       className="poem-card"
+      style={{ '--strip-color': stripColor } as React.CSSProperties}
       onClick={() => navigate(`/poem/${poem.id}`)}
       aria-label={`${poem.title}，${dynastyLabel}`}
     >
       {imgSrc && <img className="poem-card__bg" src={imgSrc} aria-hidden />}
-      {isMemorized && bestStars > 0 && (
+      {masteryConf && mastery !== 'unlearned' && (
+        <span
+          className="poem-card__badge poem-card__badge--mastery"
+          style={{ color: masteryConf.color, background: `${masteryConf.color}18` }}
+        >
+          {masteryConf.label}
+        </span>
+      )}
+      {!mastery && isMemorized && bestStars > 0 && (
         <span className={`poem-card__badge poem-card__badge--result poem-card__badge--r${bestStars}`}>
           {bestStars === 3 ? '无提示' : bestStars === 2 ? '少量提示' : '多次提示'}
         </span>
       )}
-      {isMemorized && bestStars === 0 && (
+      {!mastery && isMemorized && bestStars === 0 && (
         <span className="poem-card__badge poem-card__badge--memorized" aria-label="已背">背</span>
       )}
-      {isRead && !isMemorized && (
+      {!mastery && isRead && !isMemorized && (
         <span className="poem-card__badge poem-card__badge--read" aria-label="已读" />
       )}
 
@@ -109,7 +124,7 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
           position: absolute;
           left: 0; top: 0; bottom: 0;
           width: 5px;
-          background: #C62828;
+          background: var(--strip-color, #C62828);
           border-radius: var(--radius-card) 0 0 var(--radius-card);
           z-index: 1;
         }
@@ -124,6 +139,13 @@ export default function PoemCard({ poem, isRead, isMemorized, bestStars = 0, col
           font-weight: 700;
           line-height: 1;
           z-index: 2;
+        }
+        .poem-card__badge--mastery {
+          font-size: 0.6rem;
+          font-weight: 700;
+          font-family: var(--font-ui);
+          border-radius: 999px;
+          padding: 1px 7px;
         }
         .poem-card__badge--result {
           font-size: 0.6rem;

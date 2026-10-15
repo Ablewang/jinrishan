@@ -132,7 +132,6 @@ export default function ChildMode({ poem, onDone, onExit }: Props) {
       setLineStates(prev => prev.map((s, i) =>
         i === currentIdx ? { phase: 'hint2', hintCount: 2 } : s
       ))
-      if (autoTimer.current) clearTimeout(autoTimer.current)
       markDone(currentIdx, 2)
     }
   }

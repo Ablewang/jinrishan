@@ -205,9 +205,18 @@ export default function PoemDetail() {
     const session = saveResult(poem.id, reciteMode, lines, today)
     const prev = getSchedule(poem.id)
     const updated = updateSchedule(prev, session)
+
+    // 打通到 useProgress
+    const charCount = poem.lines.reduce((sum, l) => sum + l.chars.filter(c => /[一-鿿]/.test(c.char)).length, 0)
+    const noHintPass = session.stars === 3
+    // 首次背诵：建立 ReviewCard + 计入汉字统计
+    markMemorized(poem.id, session.stars, charCount, noHintPass)
+    // 推进复习档位：2星以上算通过，1星算失败
+    markReviewed(poem.id, session.stars >= 2)
+
     setReciteMode(null)
     setReciteResult({ session, interval: updated.interval })
-  }, [poem?.id, reciteMode, saveResult, getSchedule])
+  }, [poem?.id, reciteMode, saveResult, getSchedule, markMemorized, markReviewed])
 
   const handleNext = useCallback(() => {
     // Onboarding 完成：写入标志，回首页
