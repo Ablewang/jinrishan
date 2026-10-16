@@ -4,6 +4,9 @@ import { useProgress } from '../hooks/useProgress'
 import { useAchievements } from '../hooks/useAchievements'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
+import HeatmapChart from '../components/HeatmapChart'
+import HardRanking from '../components/HardRanking'
+import TimeSlotChart from '../components/TimeSlotChart'
 import './ProgressPage.css'
 type StarFilter = '全部' | '无提示' | '少量提示' | '多次提示'
 const STAR_FILTERS: StarFilter[] = ['全部', '无提示', '少量提示', '多次提示']
@@ -79,6 +82,15 @@ export default function ProgressPage() {
         <span className="pg__bar-label">{totalMemorized} / {TOTAL} 首</span>
       </div>
 
+      {/* M1 学习热力图 */}
+      <div className="pg__section">
+        <div className="pg__section-header">
+          <span className="pg__section-title">学习热力图</span>
+          <span className="pg__section-count">近12周</span>
+        </div>
+        <HeatmapChart />
+      </div>
+
       {/* 复习统计 */}
       {reviewCards.length > 0 && (
         <div className="pg__section pg__section--review">
@@ -143,6 +155,23 @@ export default function ProgressPage() {
           )}
         </div>
       )}
+
+      {/* M4 难诗排行 + M5 最佳时段 */}
+      <div className="pg__two-col">
+        <div className="pg__section pg__section--half">
+          <div className="pg__section-header">
+            <span className="pg__section-title">难诗排行</span>
+            <span className="pg__section-count">Top 5</span>
+          </div>
+          <HardRanking poems={poems} />
+        </div>
+        <div className="pg__section pg__section--half">
+          <div className="pg__section-header">
+            <span className="pg__section-title">最佳时段</span>
+          </div>
+          <TimeSlotChart />
+        </div>
+      </div>
 
       {/* 成就 */}
       <div className="pg__ach-row">

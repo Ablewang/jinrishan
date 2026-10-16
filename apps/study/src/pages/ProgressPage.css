@@ -322,3 +322,12 @@
     width: 6px; height: 6px; border-radius: 50%; background: var(--border);
   }
   .pg__rpi-dot--filled { background: #C62828; }
+  .pg__two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    padding: 0 16px; margin-bottom: 8px;
+  }
+  .pg__section--half {
+    padding: 12px; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: 12px;
+  }
+  .pg__section--half .pg__section-header { margin-bottom: 8px; }
