@@ -1,4 +1,4 @@
-.bs-overlay { position: fixed; inset: 0; z-index: 200; }
+.bs-overlay { position: fixed; inset: 0; z-index: 300; }
 .bs-backdrop {
   position: absolute; inset: 0;
   background: rgba(0,0,0,0.45);
@@ -12,6 +12,7 @@
   display: flex; flex-direction: column;
   overflow: hidden;
   will-change: transform;
+  background: var(--surface);
 }
 .bs-sheet--enter {
   animation: bs-slide-up 0.32s cubic-bezier(0.32,0.72,0,1) both;
@@ -21,8 +22,9 @@
   cursor: grab; flex-shrink: 0;
   display: flex; justify-content: center;
   height: 28px; align-items: center;
+  background: transparent;
 }
 .bs-handle {
   width: 40px; height: 4px; border-radius: 999px;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.5);
 }

@@ -9,12 +9,13 @@ export interface BottomSheetActions {
 interface Props {
   children: ReactNode
   onClose?: () => void
+  handleColor?: string
 }
 
 const CLOSE_THRESHOLD_RATIO = 0.5
 const VELOCITY_THRESHOLD = 0.5  // px/ms
 
-const BottomSheet = forwardRef<BottomSheetActions, Props>(({ children, onClose }, ref) => {
+const BottomSheet = forwardRef<BottomSheetActions, Props>(({ children, onClose, handleColor }, ref) => {
   const [visible, setVisible] = useState(false)
   const [phase, setPhase] = useState<'hidden' | 'enter' | 'idle' | 'drag' | 'closing' | 'snapping'>('hidden')
   const [dragY, setDragY] = useState(0)
@@ -123,6 +124,7 @@ const BottomSheet = forwardRef<BottomSheetActions, Props>(({ children, onClose }
       >
         <div
           className="bs-handle-area"
+          style={handleColor ? { background: handleColor } : undefined}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}

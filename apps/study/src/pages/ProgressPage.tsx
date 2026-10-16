@@ -156,21 +156,21 @@ export default function ProgressPage() {
         </div>
       )}
 
-      {/* M4 难诗排行 + M5 最佳时段 */}
-      <div className="pg__two-col">
-        <div className="pg__section pg__section--half">
-          <div className="pg__section-header">
-            <span className="pg__section-title">难诗排行</span>
-            <span className="pg__section-count">Top 5</span>
-          </div>
-          <HardRanking poems={poems} />
+      {/* M4 难诗排行 */}
+      <div className="pg__section">
+        <div className="pg__section-header">
+          <span className="pg__section-title">难诗排行</span>
+          <span className="pg__section-count">Top 5</span>
         </div>
-        <div className="pg__section pg__section--half">
-          <div className="pg__section-header">
-            <span className="pg__section-title">最佳时段</span>
-          </div>
-          <TimeSlotChart />
+        <HardRanking poems={poems} />
+      </div>
+
+      {/* M5 最佳时段 */}
+      <div className="pg__section">
+        <div className="pg__section-header">
+          <span className="pg__section-title">最佳时段</span>
         </div>
+        <TimeSlotChart />
       </div>
 
       {/* 成就 */}
