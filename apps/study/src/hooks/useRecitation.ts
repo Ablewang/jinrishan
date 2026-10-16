@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import type { LineResult, RecitationSession, ReviewSchedule } from '../types/recitation'
 import { buildSession, updateSchedule, getTodayReviews } from '../lib/spacedRepetition'
+import { pruneOldSessions } from '../lib/storageMonitor'
 
 const SESSIONS_KEY = 'recitation_sessions'
 const SCHEDULES_KEY = 'review_schedules'
@@ -16,7 +17,20 @@ function loadSessions(): RecitationSession[] {
 function saveSessions(sessions: RecitationSession[]): void {
   try {
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions))
-  } catch {}
+  } catch (e) {
+    if (e instanceof DOMException && (
+      e.name === 'QuotaExceededError' ||
+      e.name === 'NS_ERROR_DOM_QUOTA_REACHED'
+    )) {
+      pruneOldSessions(90)
+      try {
+        localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions))
+      } catch {
+        console.error('[Storage] recitation_sessions 写入失败（清理后仍超限）')
+        window.dispatchEvent(new CustomEvent('storage-critical'))
+      }
+    }
+  }
 }
 
 function loadSchedules(): Record<number, ReviewSchedule> {
