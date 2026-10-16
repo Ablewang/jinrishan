@@ -44,7 +44,8 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [importMsg, setImportMsg] = useState<{ ok: boolean; text: string } | null>(null)
-  const [lastBackup, setLastBackup] = useState<string | null>(() => getLastBackupDate())
+  const [lastBackupTick, setLastBackupTick] = useState(0)
+  const lastBackup = getLastBackupDate()
 
   const storageReport = getStorageReport()
   const usedMB = (storageReport.totalBytes / (1024 * 1024)).toFixed(1)
@@ -72,7 +73,7 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
 
   const handleExport = useCallback(() => {
     downloadBackup()
-    setLastBackup(new Date().toISOString().slice(0, 10))
+    setLastBackupTick(t => t + 1)
   }, [])
 
   const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
