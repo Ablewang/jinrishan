@@ -298,8 +298,26 @@ export default function Home() {
                     还有 {queue.length - 4} 首 · 查看全部 <svg viewBox="0 0 1024 1024" width="14" height="14" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg>
                   </div>
                 )}
-                {queue.length === 0 && (
-                  <div className="queue-preview__empty">手动计划为空，今日新诗由系统自动推荐</div>
+                {queue.length === 0 && plan.newPoemId && newPoem && (
+                  <div className="queue-preview__item" onClick={() => navigate(`/poem/${plan.newPoemId}`)} role="button">
+                    {(imgMap as Record<string, string>)[String(plan.newPoemId)] && (
+                      <img className="queue-preview__bg" src={`/images/${encodeURIComponent((imgMap as Record<string, string>)[String(plan.newPoemId)])}`} aria-hidden="true" />
+                    )}
+                    <div className="queue-preview__header">
+                      <span className="queue-preview__index queue-preview__index--active">1</span>
+                      <div className="queue-preview__title">《{newPoem.title}》</div>
+                      <span className="task-row-tag" style={{ marginLeft: 6 }}>自动推荐</span>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--ink-light)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.5 }}>
+                      {newPoem.dynasty ? `${newPoem.dynasty}·` : ''}{newPoem.author}{newPoem.allLines ? ` · ${newPoem.allLines}` : ''}
+                    </div>
+                    <div style={{ marginTop: 10 }}>
+                      <button className="queue-preview__start-btn" onClick={e => { e.stopPropagation(); navigate(`/poem/${plan.newPoemId}`) }}>去背诵</button>
+                    </div>
+                  </div>
+                )}
+                {queue.length === 0 && !plan.newPoemId && (
+                  <div className="queue-preview__empty">所有诗已背完，太厉害了！</div>
                 )}
               </div>
             )}
