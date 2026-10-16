@@ -1,4 +1,19 @@
 import { useState, useCallback, useMemo } from 'react'
+import { scheduleToCard } from '../utils/scheduleAdapter'
+import type { ReviewSchedule } from '../types/recitation'
+
+// Phase 1 开关：false=仍用 System B，true=读取 System A
+const USE_SYSTEM_A = false
+
+const SCHEDULES_KEY = 'review_schedules'
+
+function loadSchedules(): Record<number, ReviewSchedule> {
+  try {
+    return JSON.parse(localStorage.getItem(SCHEDULES_KEY) ?? '{}')
+  } catch {
+    return {}
+  }
+}
 
 export interface PoemState {
   read: boolean
@@ -214,12 +229,22 @@ export function useProgress() {
     })
   }, [])
 
-  // 今日到期复习，全量返回（due <= today，level < 5）
+  // 今日到期复习，全量返回（due <= today，level < 5）— System B
   const todayDueReviews = useMemo(() => {
     const today = todayStr()
     return reviewCards
       .filter(c => c.level < 5 && c.due <= today)
   }, [reviewCards])
+
+  // System A 读取：将 review_schedules 适配为 ReviewCard 格式
+  const todayDueFromA = useMemo(() => {
+    if (!USE_SYSTEM_A) return null
+    const today = todayStr()
+    const schedules = loadSchedules()
+    return Object.values(schedules)
+      .filter(s => s.nextReviewDate <= today)
+      .map(scheduleToCard)
+  }, [])
 
   const masteredCount = useMemo(() => reviewCards.filter(c => c.level === 5).length, [reviewCards])
 
@@ -232,7 +257,7 @@ export function useProgress() {
   return {
     getState, markRead, markMemorized, markReviewed,
     totalMemorized, totalPerfect, streak, progress, totalChars, memorizeHistory, todayRecord,
-    reviewCards, todayDueReviews, masteredCount, reviewingCount,
+    reviewCards, todayDueReviews, todayDueFromA, masteredCount, reviewingCount,
   }
 }
 
