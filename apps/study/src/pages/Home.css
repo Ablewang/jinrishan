@@ -455,3 +455,16 @@
     text-align: center; line-height: 1.7;
   }
   .queue-empty-text strong { color: var(--ink); font-weight: 600; }
+  .task-row-tag {
+    display: inline-block; margin-left: 6px;
+    font-size: 10px; padding: 1px 6px; border-radius: 999px;
+    background: rgba(198,40,40,0.08); color: #C62828; font-weight: 600;
+  }
+  .task-row-tag--hard {
+    background: rgba(198,40,40,0.12); color: #C62828;
+  }
+  .task-row-icon--hard {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(198,40,40,0.08);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
