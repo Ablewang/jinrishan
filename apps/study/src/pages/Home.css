@@ -9,7 +9,7 @@
 
   /* ── hero ── */
   .home__hero {
-    background: linear-gradient(160deg, #D32F2F 0%, #B71C1C 100%);
+    background: linear-gradient(to bottom, #C62828 0%, #B71C1C 100%);
     padding: 0 18px 28px;
     flex-shrink: 0;
     position: sticky;
