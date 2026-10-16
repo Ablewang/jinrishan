@@ -169,7 +169,7 @@ export default function Home() {
                 <div className="task-row-icon task-row-icon--new"><IconSparkle size={18} fill="#C62828" /></div>
                 <div className="task-row-info">
                   <div className={`task-row-label${hasReviews && !reviewDoneToday ? ' task-row-label--dim' : ''}`}>
-                    今日新诗
+                    <span>今日新诗</span>
                     {plan.newPoemAuto && <span className="task-row-tag">自动推荐</span>}
                   </div>
                   <div className="task-row-sub">
@@ -195,7 +195,7 @@ export default function Home() {
                 </div>
                 <div className="task-row-info">
                   <div className="task-row-label">
-                    攻坚加练
+                    <span>攻坚加练</span>
                     <span className="task-row-tag task-row-tag--hard">难诗</span>
                   </div>
                   <div className="task-row-sub">{hardPoem.title} · 需要加强</div>
