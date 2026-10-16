@@ -10,9 +10,11 @@
   /* ── hero ── */
   .home__hero {
     background: linear-gradient(160deg, #D32F2F 0%, #B71C1C 100%);
-    padding: 16px 18px 28px;
+    padding: 0 18px 28px;
     flex-shrink: 0;
-    position: relative;
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
     overflow: hidden;
     border-radius: 0 0 28px 28px;
     box-shadow: 0 4px 20px rgba(183,28,28,0.35);
@@ -22,6 +24,7 @@
     right: -10px; top: -10px;
     width: 160px; height: 110px;
     pointer-events: none;
+    z-index: 21;
   }
   .home__hero-greeting {
     font-family: var(--font-brush);
@@ -29,6 +32,7 @@
     color: #FFF8E1;
     letter-spacing: 0.06em;
     position: relative;
+    padding: 12px 0 0;
   }
   .home__hero-title-row {
     display: flex;
