@@ -1,0 +1,263 @@
+<title>T5 智能每日计划</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+  :root {
+    --red: #C62828;
+    --red-light: #FFEBEE;
+    --red-mid: rgba(198,40,40,0.10);
+    --bg: #FFFFFF;
+    --bg2: #F8F5F2;
+    --fg: #1A1A1A;
+    --fg2: #666666;
+    --fg3: #999999;
+    --border: #E8E0D8;
+    --tag-review-bg: #FFF3E0;
+    --tag-review-fg: #E65100;
+    --tag-new-bg: #E8F5E9;
+    --tag-new-fg: #2E7D32;
+    --tag-hard-bg: #FCE4EC;
+    --tag-hard-fg: #C62828;
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-body: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080; --fg3: #6A5A50;
+      --border: #3A2E26; --red-mid: rgba(198,40,40,0.18); --red-light: #3A1010;
+      --tag-review-bg: #2A1E0A; --tag-review-fg: #FFB74D;
+      --tag-new-bg: #0A1E0E; --tag-new-fg: #66BB6A;
+      --tag-hard-bg: #2A0A10; --tag-hard-fg: #EF9A9A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080; --fg3: #6A5A50;
+    --border: #3A2E26; --red-mid: rgba(198,40,40,0.18); --red-light: #3A1010;
+    --tag-review-bg: #2A1E0A; --tag-review-fg: #FFB74D;
+    --tag-new-bg: #0A1E0E; --tag-new-fg: #66BB6A;
+    --tag-hard-bg: #2A0A10; --tag-hard-fg: #EF9A9A;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-inline: 16px; padding-block: 20px;
+    max-width: 420px; margin-inline: auto;
+  }
+  .proto-header {
+    background: var(--red); color: #fff; padding: 8px 14px;
+    border-radius: 8px; margin-bottom: 24px;
+    font-family: var(--font-display); font-size: 14px;
+  }
+  .screen-label {
+    font-family: var(--font-display); color: var(--red);
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .screen { margin-bottom: 36px; }
+
+  /* 首页头部 */
+  .home-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .home-title { font-family: var(--font-display); font-size: 22px; color: var(--fg); }
+  .home-streak {
+    background: var(--red); color: #fff; border-radius: 20px;
+    padding: 4px 12px; font-family: var(--font-display); font-size: 13px;
+  }
+
+  /* 今日计划卡片 */
+  .plan-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin-bottom: 16px;
+  }
+  .plan-card-header {
+    padding: 12px 14px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .plan-card-title { font-family: var(--font-display); font-size: 16px; }
+  .plan-badge {
+    background: var(--red-mid); color: var(--red);
+    font-size: 11px; font-family: var(--font-display);
+    padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(198,40,40,0.2);
+  }
+  .plan-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px; border-bottom: 1px solid var(--border);
+  }
+  .plan-item:last-child { border-bottom: none; }
+  .tag {
+    font-size: 11px; font-family: var(--font-display);
+    padding: 2px 7px; border-radius: 10px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .tag-review { background: var(--tag-review-bg); color: var(--tag-review-fg); }
+  .tag-new    { background: var(--tag-new-bg);    color: var(--tag-new-fg); }
+  .tag-hard   { background: var(--tag-hard-bg);   color: var(--tag-hard-fg); }
+  .plan-poem  { flex: 1; font-size: 14px; font-weight: 600; min-width: 0; }
+  .plan-sub   { font-size: 12px; color: var(--fg2); margin-top: 1px; }
+  .btn-start {
+    background: var(--red); color: #fff; border: none;
+    border-radius: 6px; padding: 6px 12px;
+    font-family: var(--font-display); font-size: 13px; cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* 手动队列对比 */
+  .plan-item-manual {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px; border-bottom: 1px solid var(--border);
+  }
+  .plan-item-manual:last-child { border-bottom: none; }
+  .manual-badge {
+    font-size: 11px; color: var(--fg3); flex-shrink: 0;
+    font-family: var(--font-display);
+  }
+
+  /* 注释框 */
+  .anno {
+    background: var(--red-mid); border-left: 3px solid var(--red);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: var(--fg2); margin-top: 8px;
+  }
+
+  /* 算法流程图 */
+  .algo-box {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px;
+  }
+  .algo-title { font-family: var(--font-display); font-size: 14px; margin-bottom: 12px; color: var(--red); }
+  .algo-step {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;
+  }
+  .algo-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--red); color: #fff;
+    font-size: 12px; font-family: var(--font-display);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .algo-text { font-size: 13px; line-height: 1.5; }
+  .algo-text strong { color: var(--fg); }
+  .algo-text small { color: var(--fg2); display: block; }
+  .algo-arrow {
+    text-align: center; color: var(--fg3); font-size: 16px;
+    margin: 2px 0 2px 11px; line-height: 1;
+  }
+</style>
+
+<div class="proto-header">T5 · 智能每日计划 · 原型图</div>
+
+<!-- Screen 1: 自动推荐状态 -->
+<div class="screen">
+  <div class="screen-label">Screen 1 · 首页 · 自动推荐模式（poem_queue 为空）</div>
+  <div class="home-header">
+    <div class="home-title">今日计划</div>
+    <div class="home-streak">连续 14 天</div>
+  </div>
+  <div class="plan-card">
+    <div class="plan-card-header">
+      <div class="plan-card-title">今日计划</div>
+      <div class="plan-badge">智能推荐</div>
+    </div>
+    <div class="plan-item">
+      <span class="tag tag-review">复习</span>
+      <div style="flex:1;min-width:0;">
+        <div class="plan-poem">《静夜思》</div>
+        <div class="plan-sub">今日到期 · 复习第3次</div>
+      </div>
+      <button class="btn-start">开始</button>
+    </div>
+    <div class="plan-item">
+      <span class="tag tag-review">复习</span>
+      <div style="flex:1;min-width:0;">
+        <div class="plan-poem">《春晓》</div>
+        <div class="plan-sub">今日到期 · 复习第2次</div>
+      </div>
+      <button class="btn-start">开始</button>
+    </div>
+    <div class="plan-item">
+      <span class="tag tag-new">新学</span>
+      <div style="flex:1;min-width:0;">
+        <div class="plan-poem">《登鹳雀楼》</div>
+        <div class="plan-sub">第1次学习</div>
+      </div>
+      <button class="btn-start">开始</button>
+    </div>
+    <div class="plan-item">
+      <span class="tag tag-hard">攻坚</span>
+      <div style="flex:1;min-width:0;">
+        <div class="plan-poem">《将进酒》</div>
+        <div class="plan-sub">EF 1.6 · 近期偏难</div>
+      </div>
+      <button class="btn-start">开始</button>
+    </div>
+  </div>
+  <div class="anno">
+    poem_queue 为空时自动展示。优先级：到期复习 → 新诗 → 难诗加强（EF &lt; 1.8 且近7天未背）
+  </div>
+</div>
+
+<!-- Screen 2: 手动队列模式 -->
+<div class="screen">
+  <div class="screen-label">Screen 2 · 首页 · 手动队列模式（poem_queue 有内容）</div>
+  <div class="plan-card">
+    <div class="plan-card-header">
+      <div class="plan-card-title">今日计划</div>
+      <div style="font-size:12px;color:var(--fg2);">手动安排</div>
+    </div>
+    <div class="plan-item-manual">
+      <div class="manual-badge">1</div>
+      <div style="flex:1;min-width:0;">
+        <div class="plan-poem" style="font-size:14px;font-weight:600;">《望庐山瀑布》</div>
+        <div class="plan-sub">家长手动加入</div>
+      </div>
+      <button class="btn-start">开始</button>
+    </div>
+    <div class="plan-item-manual">
+      <div class="manual-badge">2</div>
+      <div style="flex:1;min-width:0;">
+        <div class="plan-poem" style="font-size:14px;font-weight:600;">《绝句》</div>
+        <div class="plan-sub">家长手动加入</div>
+      </div>
+      <button class="btn-start">开始</button>
+    </div>
+  </div>
+  <div class="anno">
+    手动队列不为空时，显示手动模式。队列清空后自动切换回智能推荐，无需用户操作。
+  </div>
+</div>
+
+<!-- Screen 3: buildDailyPlan 算法说明 -->
+<div class="screen">
+  <div class="screen-label">Screen 3 · buildDailyPlan() 算法优先级</div>
+  <div class="algo-box">
+    <div class="algo-title">buildDailyPlan() 纯函数逻辑</div>
+    <div class="algo-step">
+      <div class="algo-num">1</div>
+      <div class="algo-text">
+        <strong>复习优先（最多3首）</strong>
+        <small>poem_review_cards 中 due ≤ today &amp;&amp; level &lt; 5，按 due 升序</small>
+      </div>
+    </div>
+    <div class="algo-arrow">↓</div>
+    <div class="algo-step">
+      <div class="algo-num">2</div>
+      <div class="algo-text">
+        <strong>新诗（1首）</strong>
+        <small>poem_queue 队列第一首；队列空则取第一首从未背过的诗</small>
+      </div>
+    </div>
+    <div class="algo-arrow">↓</div>
+    <div class="algo-step">
+      <div class="algo-num">3</div>
+      <div class="algo-text">
+        <strong>难诗加强（最多1首）</strong>
+        <small>review_schedules 中 ef &lt; 1.8 且最近7天内未背过</small>
+      </div>
+    </div>
+  </div>
+</div>

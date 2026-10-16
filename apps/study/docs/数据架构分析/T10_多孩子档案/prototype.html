@@ -1,0 +1,262 @@
+<title>T10 多孩子档案</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+  :root {
+    --red: #C62828;
+    --red-light: #FFEBEE;
+    --red-mid: rgba(198,40,40,0.10);
+    --bg: #FFFFFF;
+    --bg2: #F8F5F2;
+    --bg3: #F0EAE0;
+    --fg: #1A1A1A;
+    --fg2: #666666;
+    --fg3: #AAAAAA;
+    --border: #E8E0D8;
+    --overlay: rgba(0,0,0,0.45);
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-body: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1410; --bg2: #251C17; --bg3: #2E2218; --fg: #F0E8E0;
+      --fg2: #A89080; --fg3: #5A4A40; --border: #3A2E26;
+      --red-light: #3A1010; --overlay: rgba(0,0,0,0.65);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1410; --bg2: #251C17; --bg3: #2E2218; --fg: #F0E8E0;
+    --fg2: #A89080; --fg3: #5A4A40; --border: #3A2E26;
+    --red-light: #3A1010; --overlay: rgba(0,0,0,0.65);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-inline: 16px; padding-block: 20px;
+    max-width: 420px; margin-inline: auto;
+  }
+  .proto-header {
+    background: var(--red); color: #fff; padding: 8px 14px;
+    border-radius: 8px; margin-bottom: 24px;
+    font-family: var(--font-display); font-size: 14px;
+  }
+  .screen-label {
+    font-family: var(--font-display); color: var(--red);
+    font-size: 11px; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .screen { margin-bottom: 36px; }
+  .anno {
+    background: rgba(198,40,40,0.07); border-left: 3px solid var(--red);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: var(--fg2); margin-top: 10px;
+  }
+
+  /* 首页顶部头像气泡 */
+  .home-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 10px;
+  }
+  .home-bar-title { font-family: var(--font-display); font-size: 18px; }
+  .avatar-bubble {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 5px 10px; cursor: pointer;
+  }
+  .avatar-emoji { font-size: 18px; }
+  .avatar-name { font-size: 13px; font-family: var(--font-display); }
+  .avatar-caret { font-size: 10px; color: var(--fg2); }
+
+  /* Profile Picker 底部弹窗 */
+  .sheet-backdrop {
+    background: var(--overlay); border-radius: 10px;
+    padding: 0 0 1px; overflow: hidden;
+  }
+  .sheet {
+    background: var(--bg); border-radius: 14px 14px 0 0;
+    overflow: hidden; margin-top: 60px;
+  }
+  .sheet-handle {
+    width: 36px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 10px auto 0;
+  }
+  .sheet-title {
+    font-family: var(--font-display); font-size: 16px;
+    padding: 12px 16px 10px; border-bottom: 1px solid var(--border);
+  }
+  .profile-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px; border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .profile-row:last-child { border-bottom: none; }
+  .profile-row.active { background: var(--red-light); }
+  .profile-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--bg2); display: flex; align-items: center;
+    justify-content: center; font-size: 22px; flex-shrink: 0;
+  }
+  .profile-avatar.active { background: var(--red-light); }
+  .profile-name { flex: 1; font-family: var(--font-display); font-size: 15px; }
+  .profile-check { color: var(--red); font-size: 16px; }
+  .profile-add {
+    display: flex; align-items: center; gap: 10px;
+    padding: 13px 16px; color: var(--red);
+    font-family: var(--font-display); font-size: 15px;
+    cursor: pointer;
+  }
+  .profile-add-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px dashed var(--border); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 20px; color: var(--fg3); flex-shrink: 0;
+  }
+
+  /* 新建档案流程 */
+  .create-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .create-step-bar {
+    display: flex; align-items: center; padding: 12px 16px;
+    border-bottom: 1px solid var(--border); gap: 8px;
+  }
+  .step-dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-family: var(--font-display); flex-shrink: 0;
+  }
+  .step-dot.done { background: var(--red); color: #fff; }
+  .step-dot.current { background: var(--red); color: #fff; }
+  .step-dot.pending { background: var(--border); color: var(--fg2); }
+  .step-line { flex: 1; height: 1px; background: var(--border); }
+  .step-label { font-size: 12px; color: var(--fg2); }
+
+  .create-body { padding: 16px; }
+  .create-label { font-size: 13px; color: var(--fg2); margin-bottom: 8px; }
+  .name-input {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; font-size: 15px; background: var(--bg);
+    color: var(--fg); font-family: var(--font-body); outline: none;
+  }
+  .name-input:focus { border-color: var(--red); }
+
+  .avatar-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    margin-bottom: 16px;
+  }
+  .avatar-option {
+    aspect-ratio: 1; border-radius: 50%; background: var(--bg);
+    border: 2px solid var(--border); display: flex;
+    align-items: center; justify-content: center; font-size: 22px;
+    cursor: pointer;
+  }
+  .avatar-option.selected { border-color: var(--red); background: var(--red-light); }
+
+  .btn-primary {
+    width: 100%; background: var(--red); color: #fff; border: none;
+    border-radius: 10px; padding: 13px;
+    font-family: var(--font-display); font-size: 16px; cursor: pointer;
+    margin-top: 4px;
+  }
+  .btn-secondary {
+    width: 100%; background: var(--bg); color: var(--red);
+    border: 1.5px solid var(--red); border-radius: 10px; padding: 11px;
+    font-family: var(--font-display); font-size: 15px; cursor: pointer;
+    margin-top: 8px;
+  }
+</style>
+
+<div class="proto-header">T10 · 多孩子档案 · 原型图</div>
+
+<!-- Screen 1: 首页头像气泡 -->
+<div class="screen">
+  <div class="screen-label">Screen 1 · 首页顶部 · 头像气泡入口</div>
+  <div class="home-bar">
+    <div class="home-bar-title">古诗小课堂</div>
+    <div class="avatar-bubble">
+      <div class="avatar-emoji">🦁</div>
+      <div class="avatar-name">小明</div>
+      <div class="avatar-caret">▾</div>
+    </div>
+  </div>
+  <div class="anno">首页顶部右侧。点击弹出 Profile Picker 底部弹窗。</div>
+</div>
+
+<!-- Screen 2: Profile Picker 底部弹窗 -->
+<div class="screen">
+  <div class="screen-label">Screen 2 · Profile Picker · 底部弹窗</div>
+  <div class="sheet-backdrop">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">选择孩子</div>
+      <div class="profile-row active">
+        <div class="profile-avatar active">🦁</div>
+        <div class="profile-name">小明</div>
+        <div class="profile-check">✓</div>
+      </div>
+      <div class="profile-row">
+        <div class="profile-avatar">🐼</div>
+        <div class="profile-name">小红</div>
+      </div>
+      <div class="profile-add">
+        <div class="profile-add-icon">+</div>
+        添加孩子
+      </div>
+    </div>
+  </div>
+  <div class="anno">切换档案后调用 window.location.reload()，确保所有 hook 重新初始化。最多5个档案。</div>
+</div>
+
+<!-- Screen 3: 新建档案 — 第1步输入名字 -->
+<div class="screen">
+  <div class="screen-label">Screen 3 · 新建档案 · 第1步：输入名字</div>
+  <div class="create-card">
+    <div class="create-step-bar">
+      <div class="step-dot current">1</div>
+      <div class="step-label">输入名字</div>
+      <div class="step-line"></div>
+      <div class="step-dot pending">2</div>
+      <div class="step-label">选头像</div>
+    </div>
+    <div class="create-body">
+      <div class="create-label">孩子叫什么？</div>
+      <input class="name-input" type="text" placeholder="起个小名吧" value="小虎">
+      <button class="btn-primary" style="margin-top:16px;">下一步</button>
+    </div>
+  </div>
+</div>
+
+<!-- Screen 4: 新建档案 — 第2步选头像 -->
+<div class="screen">
+  <div class="screen-label">Screen 4 · 新建档案 · 第2步：选头像</div>
+  <div class="create-card">
+    <div class="create-step-bar">
+      <div class="step-dot done">✓</div>
+      <div class="step-label">输入名字</div>
+      <div class="step-line"></div>
+      <div class="step-dot current">2</div>
+      <div class="step-label">选头像</div>
+    </div>
+    <div class="create-body">
+      <div class="create-label">选一个头像</div>
+      <div class="avatar-grid">
+        <div class="avatar-option">🦁</div>
+        <div class="avatar-option selected">🐯</div>
+        <div class="avatar-option">🐼</div>
+        <div class="avatar-option">🐻</div>
+        <div class="avatar-option">🦊</div>
+        <div class="avatar-option">🐰</div>
+        <div class="avatar-option">🐸</div>
+        <div class="avatar-option">🐧</div>
+        <div class="avatar-option">🦋</div>
+        <div class="avatar-option">🌟</div>
+      </div>
+      <button class="btn-primary">创建档案</button>
+      <button class="btn-secondary">返回</button>
+    </div>
+  </div>
+  <div class="anno">创建后进度从零开始，不继承其他档案数据。旧用户首次运行自动迁移到 default 档案。</div>
+</div>

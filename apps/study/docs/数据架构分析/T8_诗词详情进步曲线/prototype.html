@@ -1,0 +1,236 @@
+<title>T8 诗词详情进步曲线</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+  :root {
+    --red: #C62828;
+    --red-light: #FFEBEE;
+    --red-fill: rgba(198,40,40,0.15);
+    --bg: #FFFFFF;
+    --bg2: #F8F5F2;
+    --fg: #1A1A1A;
+    --fg2: #666666;
+    --border: #E8E0D8;
+    --orange: #E65100;
+    --green: #2E7D32;
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-body: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+      --border: #3A2E26; --red-light: #3A1010;
+      --red-fill: rgba(198,40,40,0.20);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+    --border: #3A2E26; --red-light: #3A1010;
+    --red-fill: rgba(198,40,40,0.20);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-inline: 16px; padding-block: 20px;
+    max-width: 420px; margin-inline: auto;
+  }
+  .proto-header {
+    background: var(--red); color: #fff; padding: 8px 14px;
+    border-radius: 8px; margin-bottom: 24px;
+    font-family: var(--font-display); font-size: 14px;
+  }
+  .screen-label {
+    font-family: var(--font-display); color: var(--red);
+    font-size: 11px; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .screen { margin-bottom: 36px; }
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .card-header {
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-family: var(--font-display); font-size: 16px; }
+  .ef-chip {
+    font-size: 12px; font-family: var(--font-display);
+    padding: 3px 10px; border-radius: 12px;
+  }
+  .ef-hard   { background: var(--red-light); color: var(--red); }
+  .ef-mid    { background: #FFF3E0; color: var(--orange); }
+  .ef-easy   { background: #E8F5E9; color: var(--green); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .ef-mid  { background: #2A1E0A; color: #FFB74D; }
+    :root:not([data-theme="light"]) .ef-easy { background: #0A1E0E; color: #66BB6A; }
+  }
+  .chart-area { padding: 16px 14px 8px; }
+
+  /* SVG chart */
+  .chart-svg { width: 100%; display: block; }
+  .chart-label { font-size: 10px; fill: var(--fg2); font-family: var(--font-body); }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-line { stroke: var(--red); stroke-width: 2; fill: none; }
+  .chart-area-fill { fill: var(--red-fill); }
+  .chart-dot { fill: var(--red); }
+  .chart-dot-last { fill: var(--red); stroke: #fff; stroke-width: 2; r: 5; }
+  .chart-legend {
+    display: flex; gap: 14px; padding: 0 14px 12px;
+    font-size: 11px; color: var(--fg2); align-items: center;
+  }
+  .legend-line {
+    width: 16px; height: 2px; background: var(--red); display: inline-block;
+    vertical-align: middle; margin-right: 4px;
+  }
+  .legend-fill {
+    width: 12px; height: 12px; border-radius: 2px;
+    background: var(--red-fill); border: 1px solid rgba(198,40,40,0.3);
+    display: inline-block; vertical-align: middle; margin-right: 4px;
+  }
+
+  /* 逐句薄弱点 */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+  .weak-section { padding: 12px 14px; }
+  .weak-title { font-family: var(--font-display); font-size: 14px; margin-bottom: 10px; }
+  .weak-header {
+    display: grid; grid-template-columns: 1fr 56px 36px;
+    font-size: 11px; color: var(--fg2); padding: 0 0 6px;
+    letter-spacing: 0.04em;
+  }
+  .weak-row {
+    display: grid; grid-template-columns: 1fr 56px 36px;
+    align-items: center; padding: 7px 0;
+    border-bottom: 1px solid var(--border); gap: 6px;
+  }
+  .weak-row:last-child { border-bottom: none; }
+  .weak-line { font-size: 13px; min-width: 0; }
+  .weak-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .weak-bar { height: 100%; border-radius: 3px; }
+  .weak-rate { font-size: 12px; color: var(--fg2); text-align: right; font-variant-numeric: tabular-nums; }
+  .weak-hint { font-size: 12px; color: var(--fg2); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* 引导文案 */
+  .guide-card {
+    background: var(--bg2); border: 1px dashed var(--border);
+    border-radius: 12px; padding: 24px 14px; text-align: center;
+    color: var(--fg2); font-size: 13px;
+  }
+  .guide-icon { font-size: 28px; margin-bottom: 8px; color: var(--border); }
+  .anno {
+    background: rgba(198,40,40,0.07); border-left: 3px solid var(--red);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: var(--fg2); margin-top: 10px;
+  }
+</style>
+
+<div class="proto-header">T8 · 诗词详情进步曲线 · 原型图</div>
+
+<!-- Screen 1: 只背过1次 — 引导 -->
+<div class="screen">
+  <div class="screen-label">Screen 1 · 仅1条记录 · 引导文案</div>
+  <div class="guide-card">
+    <div class="guide-icon">—</div>
+    再背一次后即可查看进步曲线
+  </div>
+  <div class="anno">展示条件：recitation_sessions 中该诗记录 &lt; 2 条时显示此占位。</div>
+</div>
+
+<!-- Screen 2: 进步曲线 + 逐句薄弱点 -->
+<div class="screen">
+  <div class="screen-label">Screen 2 · ≥2条记录 · 完整学习历程卡</div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">学习历程</div>
+      <div class="ef-chip ef-hard">EF 2.1 · 还在练</div>
+    </div>
+    <div class="chart-area">
+      <svg class="chart-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Y轴标签 -->
+        <text class="chart-label" x="12" y="14" text-anchor="middle">5</text>
+        <text class="chart-label" x="12" y="44" text-anchor="middle">4</text>
+        <text class="chart-label" x="12" y="74" text-anchor="middle">3</text>
+        <text class="chart-label" x="12" y="104" text-anchor="middle">2</text>
+        <!-- 轴线 -->
+        <line class="chart-axis" x1="26" y1="8" x2="26" y2="110"/>
+        <line class="chart-axis" x1="26" y1="110" x2="315" y2="110"/>
+        <!-- passRate 面积 (0-1 映射到 y=110..10) -->
+        <polygon class="chart-area-fill"
+          points="66,80 116,65 166,50 216,42 266,35 266,110 66,110"/>
+        <!-- qScore 折线: q=[2,3,3,4,4] → y=80,50,50,20,20 (scale: y=110-q*20) -->
+        <polyline class="chart-line"
+          points="66,80 116,50 166,50 216,20 266,20"/>
+        <!-- 数据点 -->
+        <circle class="chart-dot" cx="66"  cy="80" r="4"/>
+        <circle class="chart-dot" cx="116" cy="50" r="4"/>
+        <circle class="chart-dot" cx="166" cy="50" r="4"/>
+        <circle class="chart-dot" cx="216" cy="20" r="4"/>
+        <circle class="chart-dot-last" cx="266" cy="20" r="5"/>
+        <!-- X轴标签 -->
+        <text class="chart-label" x="66"  y="122" text-anchor="middle">1次</text>
+        <text class="chart-label" x="116" y="122" text-anchor="middle">2次</text>
+        <text class="chart-label" x="166" y="122" text-anchor="middle">3次</text>
+        <text class="chart-label" x="216" y="122" text-anchor="middle">4次</text>
+        <text class="chart-label" x="266" y="122" text-anchor="middle">5次</text>
+      </svg>
+    </div>
+    <div class="chart-legend">
+      <span><span class="legend-line"></span>qScore (0–5)</span>
+      <span><span class="legend-fill"></span>通过率</span>
+    </div>
+
+    <hr class="divider">
+
+    <div class="weak-section">
+      <div class="weak-title">逐句难度</div>
+      <div class="weak-header">
+        <span>诗句</span><span style="text-align:right;">通过率</span><span style="text-align:right;">提示</span>
+      </div>
+      <!-- 按通过率升序 (最难在上) -->
+      <div class="weak-row">
+        <div class="weak-line">低头思故乡。</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <div class="weak-bar-wrap" style="flex:1;"><div class="weak-bar" style="width:40%;background:#C62828;"></div></div>
+            <div class="weak-rate">40%</div>
+          </div>
+        </div>
+        <div class="weak-hint">1.4</div>
+      </div>
+      <div class="weak-row">
+        <div class="weak-line">举头望明月，</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <div class="weak-bar-wrap" style="flex:1;"><div class="weak-bar" style="width:60%;background:rgba(198,40,40,0.55);"></div></div>
+            <div class="weak-rate">60%</div>
+          </div>
+        </div>
+        <div class="weak-hint">0.8</div>
+      </div>
+      <div class="weak-row">
+        <div class="weak-line">疑是地上霜。</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <div class="weak-bar-wrap" style="flex:1;"><div class="weak-bar" style="width:85%;background:rgba(198,40,40,0.30);"></div></div>
+            <div class="weak-rate">85%</div>
+          </div>
+        </div>
+        <div class="weak-hint">0.2</div>
+      </div>
+      <div class="weak-row">
+        <div class="weak-line">床前明月光，</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <div class="weak-bar-wrap" style="flex:1;"><div class="weak-bar" style="width:90%;background:rgba(198,40,40,0.18);"></div></div>
+            <div class="weak-rate">90%</div>
+          </div>
+        </div>
+        <div class="weak-hint">0.1</div>
+      </div>
+    </div>
+  </div>
+  <div class="anno">
+    逐句排列：通过率最低排最前（最难）。热度条颜色随通过率降低加深。"提示"列 = 平均提示次数。
+  </div>
+</div>

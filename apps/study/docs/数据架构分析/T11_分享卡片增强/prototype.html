@@ -1,0 +1,207 @@
+<title>T11 分享卡片增强</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+  :root {
+    --red: #C62828;
+    --red-light: #FFEBEE;
+    --red-mid: rgba(198,40,40,0.10);
+    --bg: #FFFFFF;
+    --bg2: #F8F5F2;
+    --fg: #1A1A1A;
+    --fg2: #666666;
+    --border: #E8E0D8;
+    --gold: #B8860B;
+    --gold-bg: #FFF8E1;
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-body: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+      --border: #3A2E26; --red-light: #3A1010; --gold-bg: #2A2010; --gold: #D4A017;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+    --border: #3A2E26; --red-light: #3A1010; --gold-bg: #2A2010; --gold: #D4A017;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-inline: 16px; padding-block: 20px;
+    max-width: 420px; margin-inline: auto;
+  }
+  .proto-header {
+    background: var(--red); color: #fff; padding: 8px 14px;
+    border-radius: 8px; margin-bottom: 24px;
+    font-family: var(--font-display); font-size: 14px;
+  }
+  .screen-label {
+    font-family: var(--font-display); color: var(--red);
+    font-size: 11px; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .screen { margin-bottom: 36px; }
+  .anno {
+    background: var(--red-mid); border-left: 3px solid var(--red);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: var(--fg2); margin-top: 10px;
+  }
+
+  /* 通用卡片框架 */
+  .share-card {
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  }
+  .share-card-footer {
+    padding: 10px 18px;
+    font-size: 11px; color: rgba(255,255,255,0.7);
+    font-family: var(--font-display); letter-spacing: 0.05em;
+  }
+
+  /* 里程碑卡 */
+  .milestone-card .share-card-top {
+    background: var(--red); color: #fff; text-align: center;
+    padding: 20px 18px 16px;
+  }
+  .milestone-card .share-card-footer { background: rgba(0,0,0,0.15); }
+  .milestone-num {
+    font-family: var(--font-display); font-size: 56px; line-height: 1;
+    margin-bottom: 2px;
+  }
+  .milestone-unit { font-size: 18px; opacity: 0.85; margin-bottom: 10px; }
+  .milestone-divider { border: none; border-top: 1px solid rgba(255,255,255,0.25); margin: 10px 0; }
+  .milestone-rank { font-family: var(--font-display); font-size: 18px; margin-bottom: 4px; }
+  .milestone-chars { font-size: 13px; opacity: 0.8; }
+
+  /* 满星成就卡 */
+  .perfect-card .share-card-top {
+    background: #1A0A0A; color: #fff; text-align: center;
+    padding: 20px 18px 16px;
+  }
+  .perfect-card .share-card-footer { background: rgba(0,0,0,0.25); }
+  .perfect-stars { font-size: 28px; letter-spacing: 4px; margin-bottom: 10px; color: #FFD700; }
+  .perfect-label { font-family: var(--font-display); font-size: 14px; opacity: 0.8; margin-bottom: 4px; }
+  .perfect-title { font-family: var(--font-display); font-size: 22px; margin-bottom: 10px; }
+  .perfect-divider { border: none; border-top: 1px solid rgba(255,255,255,0.15); margin: 10px 0; }
+  .perfect-line { font-size: 14px; opacity: 0.75; margin-bottom: 6px; }
+  .perfect-streak { font-size: 13px; opacity: 0.6; }
+
+  /* 周报摘要卡 */
+  .weekly-card .share-card-top {
+    background: linear-gradient(135deg, #B71C1C 0%, #C62828 100%);
+    color: #fff; padding: 20px 18px 16px;
+  }
+  .weekly-card .share-card-footer { background: rgba(0,0,0,0.18); }
+  .weekly-week { font-size: 12px; opacity: 0.75; margin-bottom: 6px; font-family: var(--font-display); }
+  .weekly-main { font-family: var(--font-display); font-size: 20px; margin-bottom: 14px; }
+  .weekly-stats { display: flex; }
+  .weekly-stat { flex: 1; text-align: center; }
+  .weekly-stat + .weekly-stat { border-left: 1px solid rgba(255,255,255,0.2); }
+  .weekly-stat-num { font-family: var(--font-display); font-size: 24px; line-height: 1; }
+  .weekly-stat-label { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+  /* 触发时机 */
+  .trigger-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .trigger-badge {
+    background: var(--red); color: #fff; border-radius: 5px;
+    font-family: var(--font-display); font-size: 11px;
+    padding: 2px 7px; flex-shrink: 0; margin-top: 2px;
+  }
+  .trigger-text { font-size: 13px; color: var(--fg); line-height: 1.5; }
+  .trigger-text small { display: block; color: var(--fg2); font-size: 12px; margin-top: 1px; }
+</style>
+
+<div class="proto-header">T11 · 分享卡片增强 · 原型图</div>
+
+<!-- Screen 1: 里程碑卡 -->
+<div class="screen">
+  <div class="screen-label">Screen 1 · 里程碑卡（type: 'milestone'）</div>
+  <div class="share-card milestone-card">
+    <div class="share-card-top">
+      <div class="milestone-num">20</div>
+      <div class="milestone-unit">刚刚背完第 20 首！</div>
+      <hr class="milestone-divider">
+      <div class="milestone-rank">初入诗境</div>
+      <div class="milestone-chars">已积累 1,280 字</div>
+    </div>
+    <div class="share-card-footer">古诗小课堂</div>
+  </div>
+  <div class="anno">触发：背诵首数突破 10 / 20 / 35 / 50 / 70 时，成就弹窗消失后自动弹出。</div>
+</div>
+
+<!-- Screen 2: 满星成就卡 -->
+<div class="screen">
+  <div class="screen-label">Screen 2 · 满星成就卡（type: 'perfect'）</div>
+  <div class="share-card perfect-card">
+    <div class="share-card-top">
+      <div class="perfect-stars">★★★</div>
+      <div class="perfect-label">无提示背完</div>
+      <div class="perfect-title">《静夜思》</div>
+      <hr class="perfect-divider">
+      <div class="perfect-line">床前明月光，疑是地上霜。</div>
+      <div class="perfect-streak">连续打卡 14 天</div>
+    </div>
+    <div class="share-card-footer">古诗小课堂</div>
+  </div>
+  <div class="anno">触发：某首诗 bestStars 首次从 &lt;3 变为 3。同一首诗只触发一次。</div>
+</div>
+
+<!-- Screen 3: 周报摘要卡 -->
+<div class="screen">
+  <div class="screen-label">Screen 3 · 周报摘要卡（type: 'weekly'）</div>
+  <div class="share-card weekly-card">
+    <div class="share-card-top">
+      <div class="weekly-week">第 42 周 · 10月07日 – 10月13日</div>
+      <div class="weekly-main">本周背了 5 首古诗</div>
+      <div class="weekly-stats">
+        <div class="weekly-stat">
+          <div class="weekly-stat-num">6</div>
+          <div class="weekly-stat-label">打卡天数</div>
+        </div>
+        <div class="weekly-stat">
+          <div class="weekly-stat-num">14</div>
+          <div class="weekly-stat-label">连续天数</div>
+        </div>
+        <div class="weekly-stat">
+          <div class="weekly-stat-num">3</div>
+          <div class="weekly-stat-label">满星首数</div>
+        </div>
+      </div>
+    </div>
+    <div class="share-card-footer">古诗小课堂</div>
+  </div>
+  <div class="anno">触发：T7 每周报告页底部「分享本周战报」按钮。</div>
+</div>
+
+<!-- Screen 4: 触发时机汇总 -->
+<div class="screen">
+  <div class="screen-label">Screen 4 · 三种卡片触发时机</div>
+  <div class="trigger-row">
+    <div class="trigger-badge">里程碑</div>
+    <div class="trigger-text">
+      背诵首数突破 10 / 20 / 35 / 50 / 70
+      <small>成就弹窗消失后自动弹出分享卡</small>
+    </div>
+  </div>
+  <div class="trigger-row">
+    <div class="trigger-badge">满星</div>
+    <div class="trigger-text">
+      某首诗首次获得 3 星（bestStars 从 &lt;3 → 3）
+      <small>同一首诗只触发一次，不重复弹出</small>
+    </div>
+  </div>
+  <div class="trigger-row">
+    <div class="trigger-badge">周报</div>
+    <div class="trigger-text">
+      每周报告页底部「分享本周战报」按钮
+      <small>内容与报告页数据实时一致</small>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,219 @@
+<title>T7 每周学习报告</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+  :root {
+    --red: #C62828;
+    --red-light: #FFEBEE;
+    --red-mid: rgba(198,40,40,0.10);
+    --bg: #FFFFFF;
+    --bg2: #F8F5F2;
+    --fg: #1A1A1A;
+    --fg2: #666666;
+    --border: #E8E0D8;
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-body: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+      --border: #3A2E26; --red-mid: rgba(198,40,40,0.18); --red-light: #3A1010;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+    --border: #3A2E26; --red-mid: rgba(198,40,40,0.18); --red-light: #3A1010;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-inline: 16px; padding-block: 20px;
+    max-width: 420px; margin-inline: auto;
+  }
+  .proto-header {
+    background: var(--red); color: #fff; padding: 8px 14px;
+    border-radius: 8px; margin-bottom: 24px;
+    font-family: var(--font-display); font-size: 14px;
+  }
+  .screen-label {
+    font-family: var(--font-display); color: var(--red);
+    font-size: 11px; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .screen { margin-bottom: 36px; }
+
+  /* 导航栏 */
+  .nav-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px;
+  }
+  .nav-back {
+    color: var(--red); font-family: var(--font-display); font-size: 14px;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .nav-title { font-family: var(--font-display); font-size: 18px; flex: 1; text-align: center; }
+
+  /* 周次标题 */
+  .week-header { text-align: center; margin-bottom: 18px; }
+  .week-num { font-family: var(--font-display); font-size: 15px; color: var(--red); }
+  .week-range { font-size: 13px; color: var(--fg2); margin-top: 2px; }
+
+  /* 四格统计 */
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
+  }
+  .stat-tile {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .stat-label { font-size: 12px; color: var(--fg2); margin-bottom: 4px; }
+  .stat-value {
+    font-family: var(--font-display); font-size: 26px; color: var(--red);
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .stat-unit { font-size: 13px; color: var(--fg2); }
+
+  /* 打卡日历 */
+  .calendar-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-bottom: 16px;
+  }
+  .calendar-title { font-family: var(--font-display); font-size: 15px; margin-bottom: 12px; }
+  .cal-week {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+  }
+  .cal-day { text-align: center; }
+  .cal-day-name { font-size: 11px; color: var(--fg2); margin-bottom: 4px; }
+  .cal-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .cal-dot.done { background: var(--red); color: #fff; }
+  .cal-dot.miss { background: var(--bg); border: 1.5px solid var(--border); color: var(--fg2); }
+
+  /* 最难克服 */
+  .hard-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-bottom: 16px;
+  }
+  .hard-title { font-family: var(--font-display); font-size: 15px; margin-bottom: 10px; }
+  .hard-poem {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .hard-poem-name { flex: 1; font-size: 14px; font-weight: 600; }
+  .hard-meta { font-size: 12px; color: var(--fg2); text-align: right; line-height: 1.4; }
+  .ef-chip {
+    background: var(--red-light); color: var(--red);
+    font-size: 12px; font-family: var(--font-display);
+    padding: 2px 8px; border-radius: 10px;
+  }
+
+  /* 分享按钮 */
+  .btn-share {
+    width: 100%; background: var(--red); color: #fff; border: none;
+    border-radius: 10px; padding: 14px;
+    font-family: var(--font-display); font-size: 16px; cursor: pointer;
+  }
+
+  /* 首页红点示意 */
+  .home-entry {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .home-entry-label { font-size: 14px; }
+  .home-entry-right { display: flex; align-items: center; gap: 6px; }
+  .red-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--red);
+  }
+  .anno {
+    background: var(--red-mid); border-left: 3px solid var(--red);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: var(--fg2); margin-top: 10px;
+  }
+</style>
+
+<div class="proto-header">T7 · 每周学习报告 · 原型图</div>
+
+<!-- Screen 0: 首页入口红点 -->
+<div class="screen">
+  <div class="screen-label">Screen 0 · 首页 · 学习记录入口红点提示</div>
+  <div class="home-entry">
+    <div class="home-entry-label">学习记录</div>
+    <div class="home-entry-right">
+      <div class="red-dot"></div>
+      <span style="font-size:13px;color:var(--fg2);">有新报告</span>
+      <span style="color:var(--fg2);">›</span>
+    </div>
+  </div>
+  <div class="anno">
+    上周有背诵记录且 poem_last_report_week ≠ 上周周数时显示红点。访问报告页后消失。
+  </div>
+</div>
+
+<!-- Screen 1: 周报页 -->
+<div class="screen">
+  <div class="screen-label">Screen 1 · /weekly-report · 周报页完整布局</div>
+
+  <div class="nav-bar">
+    <div class="nav-back">← 返回</div>
+    <div class="nav-title">本周学习报告</div>
+  </div>
+
+  <div class="week-header">
+    <div class="week-num">第 42 周</div>
+    <div class="week-range">10月07日 – 10月13日</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-tile">
+      <div class="stat-label">本周背诵</div>
+      <div class="stat-value">5 <span class="stat-unit">首</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">打卡天数</div>
+      <div class="stat-value">6 <span class="stat-unit">/ 7</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">连续打卡</div>
+      <div class="stat-value">14 <span class="stat-unit">天</span></div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">本周满星</div>
+      <div class="stat-value">3 <span class="stat-unit">首</span></div>
+    </div>
+  </div>
+
+  <div class="calendar-card">
+    <div class="calendar-title">本周打卡日历</div>
+    <div class="cal-week">
+      <div class="cal-day"><div class="cal-day-name">一</div><div class="cal-dot done">10</div></div>
+      <div class="cal-day"><div class="cal-day-name">二</div><div class="cal-dot done">11</div></div>
+      <div class="cal-day"><div class="cal-day-name">三</div><div class="cal-dot done">12</div></div>
+      <div class="cal-day"><div class="cal-day-name">四</div><div class="cal-dot miss">13</div></div>
+      <div class="cal-day"><div class="cal-day-name">五</div><div class="cal-dot done">14</div></div>
+      <div class="cal-day"><div class="cal-day-name">六</div><div class="cal-dot done">15</div></div>
+      <div class="cal-day"><div class="cal-day-name">日</div><div class="cal-dot done">16</div></div>
+    </div>
+  </div>
+
+  <div class="hard-card">
+    <div class="hard-title">本周最难克服</div>
+    <div class="hard-poem">
+      <div>
+        <div class="hard-poem-name">《将进酒》</div>
+        <div style="font-size:12px;color:var(--fg2);margin-top:2px;">本周背了 3 次</div>
+      </div>
+      <div class="hard-meta">
+        <div class="ef-chip">EF 1.6</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-share">分享本周战报</button>
+</div>

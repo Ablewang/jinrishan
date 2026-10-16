@@ -1,0 +1,265 @@
+<title>T6 进度可视化增强</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+  :root {
+    --red: #C62828;
+    --red-a25: rgba(198,40,40,0.25);
+    --red-a55: rgba(198,40,40,0.55);
+    --red-full: #C62828;
+    --cell-empty: #F0EAE0;
+    --bg: #FFFFFF;
+    --bg2: #F8F5F2;
+    --fg: #1A1A1A;
+    --fg2: #666666;
+    --border: #E8E0D8;
+    --orange: #E65100;
+    --green: #2E7D32;
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-body: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+      --border: #3A2E26; --cell-empty: #2A2018;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+    --border: #3A2E26; --cell-empty: #2A2018;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-inline: 16px; padding-block: 20px;
+    max-width: 420px; margin-inline: auto;
+  }
+  .proto-header {
+    background: var(--red); color: #fff; padding: 8px 14px;
+    border-radius: 8px; margin-bottom: 24px;
+    font-family: var(--font-display); font-size: 14px;
+  }
+  .screen-label {
+    font-family: var(--font-display); color: var(--red);
+    font-size: 11px; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .screen { margin-bottom: 36px; }
+  .section-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 14px 12px;
+  }
+  .section-title {
+    font-family: var(--font-display); font-size: 16px;
+    margin-bottom: 14px; display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .section-sub { font-size: 12px; color: var(--fg2); font-family: var(--font-body); font-weight: normal; }
+
+  /* === 热力图 === */
+  .heatmap-wrap { overflow-x: auto; padding-bottom: 4px; }
+  .heatmap {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-flow: column;
+    gap: 3px;
+    width: max-content;
+    min-width: 100%;
+  }
+  .hcell {
+    width: 14px; height: 14px; border-radius: 3px;
+    background: var(--cell-empty);
+  }
+  .hcell.l1 { background: var(--red-a25); }
+  .hcell.l2 { background: var(--red-a55); }
+  .hcell.l3 { background: var(--red-full); }
+  .hcell.today { outline: 2px solid var(--red); outline-offset: 1px; }
+
+  .heatmap-labels {
+    display: flex; gap: 3px; margin-top: 6px;
+    font-size: 10px; color: var(--fg2);
+    overflow-x: auto;
+  }
+  .hcol-label { width: 14px; text-align: center; flex-shrink: 0; }
+
+  .legend {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 10px; font-size: 11px; color: var(--fg2);
+  }
+  .legend-cell { width: 12px; height: 12px; border-radius: 2px; }
+  .legend-label { margin-right: 6px; }
+
+  /* === 难诗排行 === */
+  .rank-list { display: flex; flex-direction: column; gap: 8px; }
+  .rank-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; cursor: pointer;
+  }
+  .rank-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--red); color: #fff;
+    font-size: 11px; font-family: var(--font-display);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .rank-num.orange { background: var(--orange); }
+  .rank-num.green  { background: var(--green); }
+  .rank-poem { flex: 1; min-width: 0; }
+  .rank-poem-name { font-size: 14px; font-weight: 600; }
+  .rank-poem-sub { font-size: 12px; color: var(--fg2); }
+  .ef-badge {
+    font-size: 12px; font-family: var(--font-display);
+    padding: 2px 7px; border-radius: 10px; flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .ef-red    { background: #FFEBEE; color: var(--red); }
+  .ef-orange { background: #FFF3E0; color: var(--orange); }
+  .ef-green  { background: #E8F5E9; color: var(--green); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .ef-red    { background: #3A1010; }
+    :root:not([data-theme="light"]) .ef-orange { background: #2A1E0A; color: #FFB74D; }
+    :root:not([data-theme="light"]) .ef-green  { background: #0A1E0E; color: #66BB6A; }
+  }
+  .anno {
+    background: rgba(198,40,40,0.07); border-left: 3px solid var(--red);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: var(--fg2); margin-top: 10px;
+  }
+
+  /* 页面布局示意 */
+  .page-layout {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .layout-row {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    font-size: 13px; display: flex; align-items: center; gap: 8px;
+  }
+  .layout-row:last-child { border-bottom: none; }
+  .layout-row.new {
+    background: rgba(198,40,40,0.07); font-weight: 600; color: var(--red);
+  }
+  .layout-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); flex-shrink: 0;
+  }
+  .layout-dot.red { background: var(--red); }
+</style>
+
+<div class="proto-header">T6 · 进度页可视化增强 · 原型图</div>
+
+<!-- Screen 0: 页面插入位置 -->
+<div class="screen">
+  <div class="screen-label">Screen 0 · 进度页布局 · 新增区块位置</div>
+  <div class="page-layout">
+    <div class="layout-row"><div class="layout-dot"></div>四格统计（现有）</div>
+    <div class="layout-row"><div class="layout-dot"></div>总体进度条（现有）</div>
+    <div class="layout-row new"><div class="layout-dot red"></div>学习热力图【新增】</div>
+    <div class="layout-row"><div class="layout-dot"></div>间隔复习面板（现有）</div>
+    <div class="layout-row new"><div class="layout-dot red"></div>难诗排行 Top5【新增】</div>
+    <div class="layout-row"><div class="layout-dot"></div>成就勋章（现有）</div>
+    <div class="layout-row"><div class="layout-dot"></div>已背诗目列表（现有）</div>
+  </div>
+</div>
+
+<!-- Screen 1: 学习热力图 -->
+<div class="screen">
+  <div class="screen-label">Screen 1 · M1 · 学习热力图（过去12周）</div>
+  <div class="section-card">
+    <div class="section-title">
+      学习热力图
+      <span class="section-sub">过去 12 周</span>
+    </div>
+    <div class="heatmap-wrap">
+      <div class="heatmap" id="heatmap"></div>
+    </div>
+    <div class="legend">
+      <div class="legend-cell" style="background:var(--cell-empty);border:1px solid var(--border);"></div>
+      <span class="legend-label">无</span>
+      <div class="legend-cell" style="background:var(--red-a25);"></div>
+      <span class="legend-label">1–2星</span>
+      <div class="legend-cell" style="background:var(--red-a55);"></div>
+      <span class="legend-label">3–5星</span>
+      <div class="legend-cell" style="background:var(--red-full);"></div>
+      <span class="legend-label">≥6星</span>
+    </div>
+  </div>
+  <div class="anno">
+    CSS grid 12列×7行；颜色 = 当天所有 session stars 总和。今日格子有红色描边。
+  </div>
+</div>
+
+<!-- Screen 2: 难诗排行 -->
+<div class="screen">
+  <div class="screen-label">Screen 2 · M4 · 难诗排行 Top5</div>
+  <div class="section-card">
+    <div class="section-title">
+      难诗排行
+      <span class="section-sub">已练 ≥ 2次，按 EF 升序</span>
+    </div>
+    <div class="rank-list">
+      <div class="rank-item">
+        <div class="rank-num">1</div>
+        <div class="rank-poem">
+          <div class="rank-poem-name">《将进酒》</div>
+          <div class="rank-poem-sub">已练 5次</div>
+        </div>
+        <div class="ef-badge ef-red">EF 1.4</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num">2</div>
+        <div class="rank-poem">
+          <div class="rank-poem-name">《琵琶行》</div>
+          <div class="rank-poem-sub">已练 3次</div>
+        </div>
+        <div class="ef-badge ef-red">EF 1.7</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num orange">3</div>
+        <div class="rank-poem">
+          <div class="rank-poem-name">《蜀道难》</div>
+          <div class="rank-poem-sub">已练 4次</div>
+        </div>
+        <div class="ef-badge ef-orange">EF 2.0</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num orange">4</div>
+        <div class="rank-poem">
+          <div class="rank-poem-name">《长恨歌》</div>
+          <div class="rank-poem-sub">已练 2次</div>
+        </div>
+        <div class="ef-badge ef-orange">EF 2.1</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num green">5</div>
+        <div class="rank-poem">
+          <div class="rank-poem-name">《水调歌头》</div>
+          <div class="rank-poem-sub">已练 3次</div>
+        </div>
+        <div class="ef-badge ef-green">EF 2.4</div>
+      </div>
+    </div>
+  </div>
+  <div class="anno">
+    点击任意行跳转诗词详情页。EF &lt; 1.8 标红，1.8–2.2 标橙，&gt; 2.2 标绿。
+  </div>
+</div>
+
+<script>
+  // 生成热力图示例数据
+  const heatmap = document.getElementById('heatmap');
+  const levels = [0,0,0,1,0,2,3, 0,1,0,2,1,0,0, 1,2,3,1,0,2,1,
+                  0,0,1,0,2,1,3, 2,1,0,0,1,2,0, 1,3,2,1,0,0,1,
+                  0,1,2,3,1,0,2, 1,0,0,2,1,3,0, 0,2,1,0,3,2,1,
+                  1,0,2,1,0,3,2, 0,1,0,2,3,1,0, 2,0,1,0,0,0,0];
+  const todayIdx = 83;
+  const cls = ['','l1','l2','l3'];
+  levels.forEach((l, i) => {
+    const d = document.createElement('div');
+    d.className = 'hcell' + (l ? ' ' + cls[Math.min(l,3)] : '') + (i === todayIdx ? ' today' : '');
+    heatmap.appendChild(d);
+  });
+</script>

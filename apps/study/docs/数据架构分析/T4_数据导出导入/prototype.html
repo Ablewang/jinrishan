@@ -1,0 +1,232 @@
+<title>T4 数据导出导入</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+  :root {
+    --red: #C62828;
+    --red-light: #FFEBEE;
+    --red-mid: rgba(198,40,40,0.12);
+    --bg: #FFFFFF;
+    --bg2: #F8F5F2;
+    --fg: #1A1A1A;
+    --fg2: #666666;
+    --border: #E8E0D8;
+    --warn-bg: #FFF8E1;
+    --warn-border: #F9A825;
+    --success: #2E7D32;
+    --font-display: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+    --font-body: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+      --border: #3A2E26; --red-mid: rgba(198,40,40,0.18);
+      --red-light: #3A1010; --warn-bg: #2A2010; --warn-border: #B8860B;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C1410; --bg2: #251C17; --fg: #F0E8E0; --fg2: #A89080;
+    --border: #3A2E26; --red-mid: rgba(198,40,40,0.18);
+    --red-light: #3A1010; --warn-bg: #2A2010; --warn-border: #B8860B;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+    padding-inline: 16px; padding-block: 20px;
+    max-width: 420px; margin-inline: auto;
+  }
+  .screen-label {
+    font-family: var(--font-display); color: var(--red);
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .screen { margin-bottom: 32px; }
+
+  /* === 首页 Banner === */
+  .banner {
+    background: var(--warn-bg); border: 1px solid var(--warn-border);
+    border-radius: 8px; padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .banner-text { flex: 1; font-size: 13px; color: var(--fg); }
+  .banner-text strong { color: var(--warn-border); }
+  .banner-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .btn-sm {
+    background: var(--red); color: #fff; border: none;
+    border-radius: 5px; padding: 4px 10px; font-size: 12px;
+    font-family: var(--font-display); cursor: pointer;
+  }
+  .btn-close {
+    background: none; border: none; color: var(--fg2);
+    font-size: 16px; cursor: pointer; padding: 2px 4px;
+    line-height: 1;
+  }
+
+  /* === 设置页备份区块 === */
+  .section-header {
+    font-family: var(--font-display); font-size: 17px; color: var(--fg);
+    padding-bottom: 10px; border-bottom: 2px solid var(--red);
+    margin-bottom: 14px;
+  }
+  .backup-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+  }
+  .backup-meta { font-size: 13px; color: var(--fg2); margin-bottom: 14px; }
+  .backup-meta span { color: var(--red); font-weight: 600; }
+  .btn-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    flex: 1; background: var(--red); color: #fff; border: none;
+    border-radius: 7px; padding: 10px 14px; font-size: 14px;
+    font-family: var(--font-display); cursor: pointer; text-align: center;
+    min-width: 120px;
+  }
+  .btn-secondary {
+    flex: 1; background: var(--bg); color: var(--red);
+    border: 1.5px solid var(--red); border-radius: 7px;
+    padding: 10px 14px; font-size: 14px; font-family: var(--font-display);
+    cursor: pointer; text-align: center; min-width: 120px;
+  }
+  .storage-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--fg2); margin-bottom: 5px;
+  }
+  .storage-bar-track {
+    height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+  }
+  .storage-bar-fill {
+    height: 100%; width: 24%; background: var(--red); border-radius: 3px;
+  }
+
+  /* === 导入模式选择 === */
+  .import-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+  }
+  .import-title { font-family: var(--font-display); font-size: 15px; margin-bottom: 12px; }
+  .file-drop {
+    border: 2px dashed var(--border); border-radius: 8px;
+    padding: 20px; text-align: center; margin-bottom: 14px;
+    color: var(--fg2); font-size: 13px;
+  }
+  .file-drop-icon { font-size: 28px; margin-bottom: 6px; color: var(--fg2); }
+  .mode-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .mode-opt {
+    flex: 1; border: 1.5px solid var(--border); border-radius: 7px;
+    padding: 10px 8px; text-align: center; font-size: 13px; cursor: pointer;
+    background: var(--bg);
+  }
+  .mode-opt.active {
+    border-color: var(--red); background: var(--red-light); color: var(--red);
+    font-weight: 600;
+  }
+  .mode-desc { font-size: 12px; color: var(--fg2); margin-bottom: 14px; }
+
+  /* === 成就弹窗备份入口 === */
+  .achievement-modal {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; text-align: center;
+  }
+  .achievement-badge {
+    width: 56px; height: 56px; background: var(--red);
+    border-radius: 50%; margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); color: #fff; font-size: 22px;
+  }
+  .achievement-title { font-family: var(--font-display); font-size: 18px; margin-bottom: 4px; }
+  .achievement-sub { font-size: 13px; color: var(--fg2); margin-bottom: 16px; }
+  .achievement-divider {
+    border: none; border-top: 1px solid var(--border); margin-bottom: 14px;
+  }
+  .backup-hint {
+    background: var(--red-mid); border-radius: 8px;
+    padding: 10px 12px; display: flex; align-items: center; gap: 10px;
+    text-align: left;
+  }
+  .backup-hint-text { flex: 1; font-size: 13px; color: var(--fg); }
+  .backup-hint-text small { display: block; color: var(--fg2); font-size: 12px; margin-top: 2px; }
+</style>
+
+<!-- 标注 -->
+<div style="background:var(--red);color:#fff;padding:8px 14px;border-radius:8px;margin-bottom:24px;font-family:var(--font-display);font-size:14px;">
+  T4 · 数据导出 / 导入 · 原型图
+</div>
+
+<!-- Screen 1: 首页 Banner -->
+<div class="screen">
+  <div class="screen-label">Screen 1 · 首页顶部备份 Banner</div>
+  <div class="banner">
+    <div class="banner-text">
+      已背 <strong>12首</strong> 古诗，建议导出备份保存进度
+    </div>
+    <div class="banner-actions">
+      <button class="btn-sm">备份</button>
+      <button class="btn-close">✕</button>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--fg2);margin-top:8px;padding-left:4px;">
+    距上次备份 > 7天且已背 ≥ 3首时出现；关闭后本 session 不再显示
+  </div>
+</div>
+
+<!-- Screen 2: 设置页备份区块 -->
+<div class="screen">
+  <div class="screen-label">Screen 2 · 设置页 · 数据备份区块</div>
+  <div class="section-header">数据备份</div>
+  <div class="backup-card">
+    <div class="backup-meta">上次备份：2024-12-08 <span>（7天前）</span></div>
+    <div class="btn-row">
+      <button class="btn-primary">导出备份文件</button>
+      <button class="btn-secondary">从文件恢复</button>
+    </div>
+    <div class="storage-bar-label">
+      <span>存储用量</span>
+      <span>1.2MB / 5MB</span>
+    </div>
+    <div class="storage-bar-track">
+      <div class="storage-bar-fill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Screen 3: 导入面板 -->
+<div class="screen">
+  <div class="screen-label">Screen 3 · 导入文件 · 模式选择</div>
+  <div class="import-card">
+    <div class="import-title">从备份文件恢复</div>
+    <div class="file-drop">
+      <div class="file-drop-icon">+</div>
+      点击选择 JSON 备份文件
+    </div>
+    <div style="font-size:13px;color:var(--fg2);margin-bottom:8px;">选择导入模式：</div>
+    <div class="mode-row">
+      <div class="mode-opt active">合并（推荐）</div>
+      <div class="mode-opt">完全替换</div>
+    </div>
+    <div class="mode-desc">
+      合并模式：与本地数据合并，已背诗的最高星级取两份中较大值，不丢失任何进度。
+    </div>
+    <button class="btn-primary" style="width:100%;">开始恢复</button>
+  </div>
+</div>
+
+<!-- Screen 4: 成就弹窗备份入口 -->
+<div class="screen">
+  <div class="screen-label">Screen 4 · 成就弹窗 · 备份入口（第5/15/30首触发）</div>
+  <div class="achievement-modal">
+    <div class="achievement-badge">15</div>
+    <div class="achievement-title">小有所成</div>
+    <div class="achievement-sub">恭喜！你已背下第 15 首古诗</div>
+    <hr class="achievement-divider">
+    <div class="backup-hint">
+      <div style="font-size:22px;color:var(--red);">!</div>
+      <div class="backup-hint-text">
+        学到第15首了，建议导出备份保存进度
+        <small>一键备份，防止数据意外丢失</small>
+      </div>
+      <button class="btn-sm">立即备份</button>
+    </div>
+  </div>
+</div>
