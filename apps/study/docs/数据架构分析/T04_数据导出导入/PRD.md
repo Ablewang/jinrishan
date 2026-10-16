@@ -9,7 +9,7 @@
 - 用户可一键导出全部数据为 JSON 文件
 - 用户可导入备份文件恢复数据（merge / replace 两种模式）
 - 提醒用户定期备份
-- 设置页展示当前存储使用情况
+- ProfileSheet 底部展示数据管理入口和存储使用情况
 
 ## 不在范围内
 
@@ -48,14 +48,16 @@
 - 距上次备份 > 7 天 且 有新背诵记录
 - sessionStorage 中有 `backup_reminder_dismissed` 则本次会话不再提示
 
-### 4. 设置页 UI
+### 4. ProfileSheet UI
 
-设置页新增「数据管理」区块：
+入口：`ProfileSheet.tsx` 底部，「生成成果卡片」按钮下方，新增「数据管理」区块：
 
-- 显示当前存储使用量（如「已用 1.2 MB / 5 MB」进度条）
+- 上次备份时间（如「上次备份：7天前」）
 - 「导出备份」按钮
 - 「导入备份」按钮（file input，accept=".json"）
-- 上次备份时间
+- 显示当前存储使用量（如「已用 1.2 MB / 5 MB」进度条）
+
+不新建独立设置页，复用现有 ProfileSheet 弹窗结构。
 
 原型图见 → [prototype.md](prototype.md)
 

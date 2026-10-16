@@ -140,19 +140,28 @@
 
 <div class="proto-header">T7 · 每周学习报告 · 原型图</div>
 
-<!-- Screen 0: 首页入口红点 -->
+<!-- Screen 0: 进度页顶部周报卡片 -->
 <div class="screen">
-  <div class="screen-label">Screen 0 · 首页 · 学习记录入口红点提示</div>
-  <div class="home-entry">
-    <div class="home-entry-label">学习记录</div>
-    <div class="home-entry-right">
-      <div class="red-dot"></div>
-      <span style="font-size:13px;color:var(--fg2);">有新报告</span>
-      <span style="color:var(--fg2);">›</span>
-    </div>
+  <div class="screen-label">Screen 0 · 进度页 · 顶部周报入口卡片</div>
+
+  <div class="nav-bar">
+    <div class="nav-back">← 返回</div>
+    <div class="nav-title">学习记录</div>
   </div>
+
+  <div style="position:relative;margin-bottom:16px;">
+    <div class="home-entry" style="flex-direction:column;align-items:flex-start;gap:6px;padding:14px 16px;cursor:pointer;">
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+        <span style="font-family:var(--font-display);font-size:15px;color:var(--fg);">本周报告</span>
+        <span style="font-size:13px;color:var(--red);">查看 ›</span>
+      </div>
+      <div style="font-size:13px;color:var(--fg2);">10月10日–16日 · 背了 3 首 · 打卡 5 天 · 连续 14 天</div>
+    </div>
+    <div class="red-dot" style="position:absolute;top:10px;right:10px;"></div>
+  </div>
+
   <div class="anno">
-    上周有背诵记录且 poem_last_report_week ≠ 上周周数时显示红点。访问报告页后消失。
+    有上周未读报告时卡片右上角显示红点。查看后写入 poem_last_report_week，红点消失。无本周记录时整个卡片不渲染。
   </div>
 </div>
 

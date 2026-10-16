@@ -28,7 +28,7 @@
 - 每格颜色：无背诵=空白，1星总量=淡红，3星=中红，6星+=深红
 - 点击某格，弹出当天背诵简报（背了几首，共几星）
 
-实现方式：CSS grid 绘制，无图表库，纯 JS 聚合 `recitation_sessions` 数据
+实现方式：SVG 绘制，无图表库，纯 JS 聚合 `recitation_sessions` 数据。每格为一个 `<rect rx="2">`，坐标按列×(size+gap) / 行×(size+gap) 计算，月份标签用 `<text>` 置顶，整体用 `viewBox` 自适应容器宽度
 
 ### M4 · 难诗排行 Top5
 
