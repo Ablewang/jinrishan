@@ -219,7 +219,7 @@
   .task-row-icon--review { background: rgba(245,158,11,0.12); }
   .task-row-icon--new { background: rgba(198,40,40,0.08); }
   .task-row-info { flex: 1; min-width: 0; }
-  .task-row-label { font-size: 1rem; font-weight: 700; color: var(--ink); }
+  .task-row-label { font-size: 1rem; font-weight: 700; color: var(--ink); display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
   .task-row-label--dim { color: var(--ink-light); }
   .task-row-sub { font-size: 0.75rem; color: var(--ink-light); margin-top: 4px; }
   .task-row-btn {
@@ -456,10 +456,9 @@
   }
   .queue-empty-text strong { color: var(--ink); font-weight: 600; }
   .task-row-tag {
-    display: inline-flex; align-items: center; margin-left: 6px;
+    display: inline-flex; align-items: center;
     font-size: 10px; padding: 2px 6px; border-radius: 999px;
     background: rgba(198,40,40,0.08); color: #C62828; font-weight: 600;
-    vertical-align: middle;
   }
   .task-row-tag--hard {
     background: rgba(198,40,40,0.12); color: #C62828;
