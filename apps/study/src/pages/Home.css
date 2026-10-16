@@ -459,6 +459,7 @@
     display: inline-block; margin-left: 6px;
     font-size: 10px; padding: 1px 6px; border-radius: 999px;
     background: rgba(198,40,40,0.08); color: #C62828; font-weight: 600;
+    vertical-align: middle; position: relative; top: -1px;
   }
   .task-row-tag--hard {
     background: rgba(198,40,40,0.12); color: #C62828;
