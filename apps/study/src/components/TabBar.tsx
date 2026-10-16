@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
+import './TabBar.css'
 
 function IconHome({ active }: { active: boolean }) {
   return (
@@ -73,37 +74,6 @@ export default function TabBar({ onProfileClick }: Props) {
           </button>
         )
       })}
-      <style>{`
-        .tab-bar {
-          position: fixed;
-          bottom: 0; left: 50%;
-          transform: translateX(-50%);
-          width: 100%;
-          max-width: 480px;
-          display: flex;
-          background: #fff;
-          border-top: 1px solid #ede8df;
-          padding-bottom: env(safe-area-inset-bottom, 0px);
-          z-index: 200;
-          box-shadow: 0 -2px 16px rgba(0,0,0,0.07);
-        }
-        .tab-bar__item {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 3px;
-          padding: 9px 0 7px;
-          font-size: 10px;
-          color: #9e8e7e;
-          transition: color 0.15s;
-          -webkit-tap-highlight-color: transparent;
-        }
-        .tab-bar__item--active { color: #C62828; }
-        .tab-bar__item:active { opacity: 0.65; }
-        .tab-bar__item svg { display: block; }
-      `}</style>
     </nav>
   )
 }

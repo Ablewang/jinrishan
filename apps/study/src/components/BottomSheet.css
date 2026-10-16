@@ -1,0 +1,28 @@
+.bs-overlay { position: fixed; inset: 0; z-index: 200; }
+.bs-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.45);
+  animation: bs-backdrop-in 0.28s ease both;
+}
+@keyframes bs-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+.bs-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  border-radius: 18px 18px 0 0;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  will-change: transform;
+}
+.bs-sheet--enter {
+  animation: bs-slide-up 0.32s cubic-bezier(0.32,0.72,0,1) both;
+}
+@keyframes bs-slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.bs-handle-area {
+  cursor: grab; flex-shrink: 0;
+  display: flex; justify-content: center;
+  height: 28px; align-items: center;
+}
+.bs-handle {
+  width: 40px; height: 4px; border-radius: 999px;
+  background: rgba(255,255,255,0.4);
+}

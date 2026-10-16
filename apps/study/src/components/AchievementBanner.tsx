@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useProgress } from '../hooks/useProgress'
 import { useAchievements } from '../hooks/useAchievements'
 import type { Badge } from '../hooks/useAchievements'
+import './AchievementBanner.css'
 
 const SHOWN_KEY = 'poem_achievement_shown'
 
@@ -56,38 +57,6 @@ export default function AchievementBanner() {
         <div className="ach-banner__desc">成就解锁！</div>
       </div>
       <button className="ach-banner__close" onClick={() => { setCurrent(null); if (timerRef.current) clearTimeout(timerRef.current) }}>×</button>
-      <style>{`
-        .ach-banner {
-          position: fixed;
-          top: calc(env(safe-area-inset-top, 0px) + 12px);
-          left: 50%; transform: translateX(-50%);
-          z-index: 9999;
-          background: #fff;
-          border-radius: 16px;
-          padding: 12px 16px 12px 14px;
-          display: flex; align-items: center; gap: 12px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(198,40,40,0.12);
-          border: 1.5px solid rgba(198,40,40,0.15);
-          min-width: 240px; max-width: calc(100vw - 32px);
-          animation: achBannerIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-        }
-        @keyframes achBannerIn {
-          from { opacity: 0; transform: translateX(-50%) translateY(-24px) scale(0.9); }
-          to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
-        }
-        .ach-banner__icon {
-          width: 44px; height: 44px; border-radius: 50%;
-          background: rgba(198,40,40,0.1);
-          border: 2px solid rgba(198,40,40,0.25);
-          display: flex; align-items: center; justify-content: center;
-          font-family: var(--font-brush); font-size: 1.1rem;
-          color: #C62828; flex-shrink: 0;
-        }
-        .ach-banner__body { flex: 1; min-width: 0; }
-        .ach-banner__label { font-family: var(--font-brush); font-size: 1rem; color: #C62828; }
-        .ach-banner__desc { font-family: var(--font-ui); font-size: 0.7rem; color: var(--ink-light); margin-top: 2px; }
-        .ach-banner__close { font-size: 1.2rem; color: var(--ink-light); padding: 4px 6px; background: transparent; flex-shrink: 0; }
-      `}</style>
     </div>
   )
 }

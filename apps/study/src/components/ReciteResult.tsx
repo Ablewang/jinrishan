@@ -1,25 +1,10 @@
+import './ReciteResult.css'
 import { useMemo } from 'react'
 import type { Poem } from '../data/poems'
 import type { RecitationSession } from '../types/recitation'
 import { intervalLabel } from '../lib/spacedRepetition'
 import { IconStarFilled, IconStar, IconCorrect, IconWrong } from './icons'
 import imgMap from '../data/poem_img_map.json'
-
-const ANIM = `
-@keyframes rr-slide-up {
-  from { transform: translateY(40px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-@keyframes rr-star-pop {
-  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
-  60%  { transform: scale(1.3) rotate(5deg);  opacity: 1; }
-  100% { transform: scale(1)  rotate(0deg);   opacity: 1; }
-}
-@keyframes rr-fade-up {
-  from { transform: translateY(16px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-`
 
 interface Props {
   session: RecitationSession
@@ -106,7 +91,6 @@ export default function ReciteResult({ session, nextInterval, poem, onDone }: Pr
       background: '#FFFDF8', position: 'relative',
       animation: 'rr-slide-up 0.35s cubic-bezier(0.22,1,0.36,1) both',
     }}>
-      <style>{ANIM}</style>
       {/* 背景图 */}
       {imgSrc && (
         <div style={{

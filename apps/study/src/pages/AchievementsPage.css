@@ -1,0 +1,139 @@
+  .ap {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+  .ap__navbar {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    height: var(--navbar-height);
+    background: #C62828;
+    flex-shrink: 0;
+  }
+  .ap__back {
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    color: #FFF8E1;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .ap__back:active { background: rgba(255,255,255,0.28); }
+  .ap__navbar-title {
+    font-family: var(--font-brush);
+    font-size: 1.2rem;
+    color: #FFF8E1;
+    flex: 1;
+  }
+  .ap__navbar-count {
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    color: rgba(255,248,225,0.8);
+  }
+
+  /* 称号卡片 */
+  .ap__level-card {
+    margin: 16px 16px 0;
+    background: linear-gradient(135deg, #C62828, #B71C1C);
+    border-radius: 18px;
+    padding: 20px 20px 18px;
+    color: #FFF8E1;
+    box-shadow: 0 4px 20px rgba(183,28,28,0.3);
+  }
+  .ap__level-title {
+    font-family: var(--font-brush);
+    font-size: 1.8rem;
+    color: #FFF8E1;
+    margin-bottom: 4px;
+  }
+  .ap__level-sub {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: rgba(255,248,225,0.75);
+    margin-bottom: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .ap__level-bar-wrap { }
+  .ap__level-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .ap__level-bar-fill {
+    height: 100%;
+    background: #FFF8E1;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  /* 勋章网格 */
+  .ap__section-label {
+    margin: 16px 16px 10px;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .ap__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 0 16px;
+  }
+  .ap__badge {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 10px 12px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    box-shadow: var(--shadow-card);
+  }
+  .ap__badge--on {
+    opacity: 1;
+    border-color: rgba(198,40,40,0.25);
+  }
+  .ap__badge-icon {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-brush); font-size: 1.1rem; font-weight: 700;
+    background: #f0f0f0; color: #ccc;
+    margin-bottom: 4px;
+  }
+  .ap__badge--on .ap__badge-icon {
+    background: rgba(198,40,40,0.1);
+    color: #C62828;
+    border: 2px solid rgba(198,40,40,0.25);
+  }
+  .ap__badge-name {
+    font-family: var(--font-brush); font-size: 0.85rem;
+    color: var(--ink); text-align: center; line-height: 1.2;
+  }
+  .ap__badge-desc {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: var(--ink-light); text-align: center; line-height: 1.4;
+  }
+  .ap__badge-date {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: #C62828; margin-top: 2px;
+  }
+  .ap__badge-progress {
+    font-family: var(--font-ui); font-size: 0.6rem;
+    color: var(--ink-light); margin-top: 2px;
+    text-align: center;
+  }
+  @media (max-width: 340px) {
+    .ap__grid { grid-template-columns: repeat(2, 1fr); }
+  }

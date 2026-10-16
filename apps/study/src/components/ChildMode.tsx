@@ -29,16 +29,16 @@ function stripColor(state: LineState, isCurrent: boolean): string {
 }
 
 // 格子遮盖块
-function CharMasks({ count, small }: { count: number; small?: boolean }) {
+function CharMasks({ count, active }: { count: number; active?: boolean }) {
   return (
     <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
       {Array.from({ length: count }).map((_, i) => (
         <span key={i} style={{
           display: 'inline-block',
-          width: small ? '1.35rem' : '1.9rem',
-          height: small ? '1.35rem' : '1.9rem',
+          width: '1.35rem',
+          height: '1.35rem',
           borderRadius: 6,
-          background: small ? 'rgba(24,18,10,0.07)' : 'rgba(198,40,40,0.15)',
+          background: active ? 'rgba(198,40,40,0.15)' : 'rgba(24,18,10,0.07)',
           flexShrink: 0,
         }} />
       ))}
@@ -47,14 +47,14 @@ function CharMasks({ count, small }: { count: number; small?: boolean }) {
 }
 
 // 拼音小方块
-function PinyinMasks({ count, firstPinyin, small }: { count: number; firstPinyin?: string; small?: boolean }) {
+function PinyinMasks({ count, firstPinyin, active }: { count: number; firstPinyin?: string; active?: boolean }) {
   return (
     <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
       {Array.from({ length: count }).map((_, i) => (
         i === 0 && firstPinyin ? (
           <span key={i} style={{
             display: 'inline-block',
-            width: '1.9rem',
+            width: '1.35rem',
             textAlign: 'center',
             fontSize: '0.58rem',
             color: '#A08040',
@@ -63,10 +63,10 @@ function PinyinMasks({ count, firstPinyin, small }: { count: number; firstPinyin
         ) : (
           <span key={i} style={{
             display: 'inline-block',
-            width: small ? '1.35rem' : '1.9rem',
+            width: '1.35rem',
             height: '0.75rem',
             borderRadius: 4,
-            background: small ? 'rgba(24,18,10,0.05)' : 'rgba(198,40,40,0.1)',
+            background: active ? 'rgba(198,40,40,0.1)' : 'rgba(24,18,10,0.05)',
             flexShrink: 0,
           }} />
         )
@@ -215,6 +215,7 @@ export default function ChildMode({ poem, onDone, onExit }: Props) {
 
             return (
               <div key={i} style={{
+                position: 'relative',
                 background: '#fff',
                 borderRadius: 12,
                 border: `1.5px solid ${isCurrent ? (isHint1 ? '#D4A836' : '#C62828') : '#EDE8DF'}`,
@@ -234,70 +235,73 @@ export default function ChildMode({ poem, onDone, onExit }: Props) {
 
                 {/* 内容区 */}
                 <div style={{
-                  flex: 1, padding: '10px 8px', display: 'flex',
+                  flex: 1, padding: isDone ? '8px 8px 20px' : '10px 8px', display: 'flex',
                   flexDirection: 'column', alignItems: 'center', gap: 5,
                   minWidth: 0, overflow: 'hidden',
                 }}>
                   {isDone ? (
-                    // 已完成：显示拼音 + 汉字
-                    <>
-                      <div style={{ fontSize: '0.56rem', color: '#8C7A60', letterSpacing: '0.06em' }}>
-                        {line.pinyin}
-                      </div>
-                      <div style={{ fontFamily: 'var(--font-brush)', fontSize: '1.15rem', color: '#18120A', letterSpacing: '0.12em' }}>
-                        {line.text}
-                      </div>
-                    </>
+                    // 已完成：按字对齐的拼音 + 汉字
+                    <div style={{ display: 'flex', gap: 4, alignItems: 'flex-end' }}>
+                      {line.chars.map((c, ci) => (
+                        <div key={ci} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                          <span style={{ fontSize: '0.5rem', color: '#8C7A60', lineHeight: 1 }}>
+                            {c.pinyin ?? ''}
+                          </span>
+                          <span style={{ fontFamily: 'var(--font-brush)', fontSize: '1.15rem', color: '#18120A', lineHeight: 1 }}>
+                            {c.char}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   ) : isPending ? (
-                    // 未到：拼音小块 + 汉字格子（与原型图一致）
                     <>
-                      <PinyinMasks count={charCount} small />
-                      <CharMasks count={charCount} small />
+                      <PinyinMasks count={charCount} />
+                      <CharMasks count={charCount} />
                     </>
-
                   ) : (
                     // 当前句（hidden / hint1 / hint2）
                     <>
                       {isHint2 ? (
-                        // 全句提示：显示完整拼音
-                        <div style={{ fontSize: '0.56rem', color: '#8C7A60', letterSpacing: '0.06em' }}>
-                          {line.pinyin}
+                        <div style={{ display: 'flex', gap: 4, alignItems: 'flex-end' }}>
+                          {line.chars.map((c, ci) => (
+                            <div key={ci} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                              <span style={{ fontSize: '0.5rem', color: '#8C7A60', lineHeight: 1 }}>
+                                {c.pinyin ?? ''}
+                              </span>
+                              <span style={{ fontFamily: 'var(--font-brush)', fontSize: '1.15rem', color: '#18120A', lineHeight: 1 }}>
+                                {c.char}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       ) : (
-                        // hidden：拼音小方块；hint1：第一字拼音 + 其余小方块
                         <PinyinMasks
                           count={charCount}
                           firstPinyin={isHint1 ? (line.chars[0]?.pinyin ?? '') : undefined}
+                          active
                         />
                       )}
-                      {isHint2 ? (
-                        // 全句提示：显示汉字
-                        <div style={{ fontFamily: 'var(--font-brush)', fontSize: '1.3rem', color: '#18120A', letterSpacing: '0.15em' }}>
-                          {line.text}
-                        </div>
-                      ) : (
-                        // hidden / hint1：汉字格子
-                        <CharMasks count={charCount} />
+                      {isHint2 ? null : (
+                        <CharMasks count={charCount} active />
                       )}
                     </>
                   )}
                 </div>
 
-                {/* 右侧完成标签（仅已完成行） */}
+                {/* 完成标签：绝对定位右下角，不影响布局 */}
                 {isDone && (
-                  <div style={{ paddingRight: 10, flexShrink: 0 }}>
-                    <span style={{
-                      fontSize: '0.58rem', fontWeight: 700, padding: '2px 8px', borderRadius: 999,
-                      whiteSpace: 'nowrap',
-                      ...(state.hintCount === 0
-                        ? { background: '#F1F8F2', color: '#2E7D32', border: '1px solid #A5D6A7' }
-                        : state.hintCount === 1
-                        ? { background: '#FFF8F0', color: '#E65100', border: '1px solid #FFCC80' }
-                        : { background: '#FFF0E0', color: '#BF360C', border: '1px solid #FFA726' }),
-                    }}>
-                      {state.hintCount === 0 ? '无提示' : state.hintCount === 1 ? '提示×1' : '全句提示'}
-                    </span>
-                  </div>
+                  <span style={{
+                    position: 'absolute', bottom: 5, right: 8,
+                    fontSize: '0.52rem', fontWeight: 700, padding: '1px 6px', borderRadius: 999,
+                    whiteSpace: 'nowrap',
+                    ...(state.hintCount === 0
+                      ? { background: '#F1F8F2', color: '#2E7D32', border: '1px solid #A5D6A7' }
+                      : state.hintCount === 1
+                      ? { background: '#FFF8F0', color: '#E65100', border: '1px solid #FFCC80' }
+                      : { background: '#FFF0E0', color: '#BF360C', border: '1px solid #FFA726' }),
+                  }}>
+                    {state.hintCount === 0 ? '无提示' : state.hintCount === 1 ? '提示×1' : '全句提示'}
+                  </span>
                 )}
               </div>
             )

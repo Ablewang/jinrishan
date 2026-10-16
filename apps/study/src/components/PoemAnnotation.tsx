@@ -1,3 +1,5 @@
+import './PoemAnnotation.css'
+
 interface Note {
   word: string
   meaning: string
@@ -38,66 +40,6 @@ export default function PoemAnnotation({ notes, translation }: Props) {
         </div>
       )}
 
-      <style>{`
-        .annotation {
-          margin-top: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-        .annotation__section {
-          background: var(--surface);
-          border-radius: 16px;
-          border: 2px solid var(--border);
-          overflow: hidden;
-        }
-        .annotation__label {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 10px 16px;
-          background: #FFF5F4;
-          font-family: var(--font-ui);
-          font-size: var(--text-sm);
-          font-weight: 700;
-          color: #C62828;
-          border-bottom: 1.5px solid var(--border);
-        }
-        .annotation__label-icon {
-          font-size: 1rem;
-        }
-        .annotation__notes {
-          padding: 12px 16px;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .annotation__note {
-          display: flex;
-          align-items: baseline;
-          gap: 8px;
-          font-size: var(--text-sm);
-        }
-        .annotation__word {
-          font-family: var(--font-serif);
-          font-weight: 700;
-          color: #C62828;
-          flex-shrink: 0;
-          min-width: 2.5em;
-        }
-        .annotation__meaning {
-          font-family: var(--font-ui);
-          color: var(--ink-light);
-          line-height: 1.5;
-        }
-        .annotation__translation {
-          padding: 14px 16px;
-          font-family: var(--font-ui);
-          font-size: var(--text-base);
-          color: var(--ink);
-          line-height: 1.9;
-        }
-      `}</style>
     </div>
   )
 }
