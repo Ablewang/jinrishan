@@ -1,10 +1,12 @@
 import './ProfileSheet.css'
 import { useProgress } from '../hooks/useProgress'
-import { useQueue } from '../hooks/useQueue'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback } from 'react'
 import { useShareCard } from '../contexts/ShareCardContext'
+import { useRecitation } from '../hooks/useRecitation'
+import { downloadBackup, importBackup, getLastBackupDate } from '../lib/backup'
+import { getStorageReport } from '../lib/storageMonitor'
 import avatarBoy from '../assets/avatar-boy.svg'
 import avatarGirl from '../assets/avatar-gril.svg'
 import BottomSheet, { type BottomSheetActions } from './BottomSheet'
@@ -27,7 +29,8 @@ const TOTAL_POEMS = 70
 
 const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
   const { totalMemorized, totalChars, masteredCount, reviewingCount, memorizeHistory } = useProgress()
-  const { streakCount } = useQueue()
+  const { srsStreak } = useRecitation()
+  const streakCount = srsStreak.count
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [gender, setGender] = useState<'boy' | 'girl'>(() => {
     try { return (localStorage.getItem('avatar_gender') as 'boy' | 'girl') || 'girl' } catch { return 'girl' }
@@ -38,6 +41,14 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { open: openShareCard } = useShareCard()
   const sheetRef = useRef<BottomSheetActions>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const [importMsg, setImportMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [lastBackup, setLastBackup] = useState<string | null>(() => getLastBackupDate())
+
+  const storageReport = getStorageReport()
+  const usedMB = (storageReport.totalBytes / (1024 * 1024)).toFixed(1)
+  const usedPct = Math.min(100, Math.round(storageReport.usageRatio * 100))
 
   useImperativeHandle(ref, () => ({
     open: () => sheetRef.current?.open(),
@@ -59,7 +70,35 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
     setEditing(false)
   }, [editVal])
 
-  const masteredPct = totalMemorized > 0 ? Math.round((masteredCount / TOTAL_POEMS) * 100) : 0
+  const handleExport = useCallback(() => {
+    downloadBackup()
+    setLastBackup(new Date().toISOString().slice(0, 10))
+  }, [])
+
+  const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const json = ev.target?.result as string
+      const result = importBackup(json, 'merge')
+      setImportMsg(result.ok
+        ? { ok: true, text: `导入成功，已恢复 ${result.keysRestored} 项数据` }
+        : { ok: false, text: result.error ?? '导入失败' }
+      )
+      setTimeout(() => setImportMsg(null), 4000)
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }, [])
+
+  function backupLabel(): string {
+    if (!lastBackup) return '从未备份'
+    const days = Math.floor((new Date().getTime() - new Date(lastBackup + 'T00:00:00').getTime()) / 86400000)
+    if (days === 0) return '今天已备份'
+    if (days === 1) return '1 天前'
+    return `${days} 天前`
+  }
 
   const today = new Date().toISOString().slice(0, 10)
   const yesterday = (() => {
@@ -173,6 +212,31 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
         >
           生成成果卡片
         </button>
+
+        <div className="ps-section-title" style={{ marginTop: 16 }}>数据管理</div>
+        <div className="ps-data-mgmt">
+          <div className="ps-data-backup-row">
+            <span className="ps-data-label">上次备份</span>
+            <span className="ps-data-val">{backupLabel()}</span>
+          </div>
+          <div className="ps-data-storage-row">
+            <span className="ps-data-label">存储使用</span>
+            <span className="ps-data-val">{usedMB} MB / 5 MB</span>
+          </div>
+          <div className="ps-data-bar">
+            <div className="ps-data-bar-fill" style={{ width: `${usedPct}%` }} />
+          </div>
+          <div className="ps-data-btns">
+            <button className="ps-data-btn ps-data-btn--primary" onClick={handleExport}>导出备份</button>
+            <button className="ps-data-btn" onClick={() => fileInputRef.current?.click()}>导入备份</button>
+            <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImportFile} />
+          </div>
+          {importMsg && (
+            <div className={`ps-data-msg${importMsg.ok ? ' ps-data-msg--ok' : ' ps-data-msg--err'}`}>
+              {importMsg.text}
+            </div>
+          )}
+        </div>
 
         <button className="ps-close-btn" onClick={() => sheetRef.current?.close()}>关闭</button>
       </div>
