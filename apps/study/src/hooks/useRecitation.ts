@@ -1,10 +1,42 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import type { LineResult, RecitationSession, ReviewSchedule } from '../types/recitation'
 import { buildSession, updateSchedule, getTodayReviews } from '../lib/spacedRepetition'
 import { pruneOldSessions } from '../lib/storageMonitor'
 
 const SESSIONS_KEY = 'recitation_sessions'
 const SCHEDULES_KEY = 'review_schedules'
+const STREAK_KEY_V2 = 'srs_streak_v2'
+
+export interface SrsStreakData {
+  lastActivityDate: string
+  count: number
+}
+
+function loadSrsStreak(): SrsStreakData {
+  try {
+    return JSON.parse(localStorage.getItem(STREAK_KEY_V2) ?? '{"lastActivityDate":"","count":0}')
+  } catch {
+    return { lastActivityDate: '', count: 0 }
+  }
+}
+
+function updateSrsStreak(date: string): SrsStreakData {
+  const prev = loadSrsStreak()
+  if (prev.lastActivityDate === date) return prev
+
+  const d = new Date(date + 'T00:00:00')
+  d.setDate(d.getDate() - 1)
+  const yesterday = d.toISOString().slice(0, 10)
+
+  const next: SrsStreakData = {
+    lastActivityDate: date,
+    count: prev.lastActivityDate === yesterday ? prev.count + 1 : 1,
+  }
+  try {
+    localStorage.setItem(STREAK_KEY_V2, JSON.stringify(next))
+  } catch {}
+  return next
+}
 
 function loadSessions(): RecitationSession[] {
   try {
@@ -48,6 +80,8 @@ function saveSchedules(schedules: Record<number, ReviewSchedule>): void {
 }
 
 export function useRecitation() {
+  const [srsStreak, setSrsStreak] = useState<SrsStreakData>(loadSrsStreak)
+
   const saveResult = useCallback((
     poemId: number,
     mode: 'parent' | 'child',
@@ -64,6 +98,9 @@ export function useRecitation() {
     schedules[poemId] = updateSchedule(schedules[poemId] ?? null, session)
     saveSchedules(schedules)
 
+    const newStreak = updateSrsStreak(date)
+    setSrsStreak(newStreak)
+
     return session
   }, [])
 
@@ -79,5 +116,5 @@ export function useRecitation() {
     return loadSessions().filter(s => s.poemId === poemId)
   }, [])
 
-  return { saveResult, getSchedule, getTodayList, getPoemSessions }
+  return { saveResult, getSchedule, getTodayList, getPoemSessions, srsStreak }
 }

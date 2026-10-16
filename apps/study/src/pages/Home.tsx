@@ -4,6 +4,7 @@ import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
 import { useQueue } from '../hooks/useQueue'
+import { useRecitation } from '../hooks/useRecitation'
 import { IconReview, IconSparkle, IconFireworks } from '../components/icons'
 import { getLevelTitle } from '../utils/levelTitle'
 import imgMap from '../data/poem_img_map.json'
@@ -12,7 +13,9 @@ import './Home.css'
 export default function Home() {
   const navigate = useNavigate()
   const { todayDueReviews, reviewCards, totalMemorized } = useProgress()
-  const { queue, streakCount, todayComplete, isReturning } = useQueue()
+  const { queue, todayComplete, isReturning } = useQueue()
+  const { srsStreak } = useRecitation()
+  const streakCount = srsStreak.count
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [bannerVisible, setBannerVisible] = useState(false)
   const bannerTimer = useRef<ReturnType<typeof setTimeout> | null>(null)

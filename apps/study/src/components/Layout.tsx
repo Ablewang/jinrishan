@@ -4,7 +4,7 @@ import TabBar from '../components/TabBar'
 import ProfileSheet, { type ProfileSheetActions } from '../components/ProfileSheet'
 import AchievementBanner from '../components/AchievementBanner'
 import { checkAndPruneSessions } from '../lib/storageMonitor'
-import { migrateSystemBToA } from '../lib/migration'
+import { migrateSystemBToA, migrateStreak } from '../lib/migration'
 
 export default function Layout() {
   const { pathname } = useLocation()
@@ -14,6 +14,7 @@ export default function Layout() {
   useEffect(() => {
     checkAndPruneSessions(200, 90)
     migrateSystemBToA()
+    migrateStreak()
   }, [])
 
   return (
