@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Poem } from '../data/poems'
 import type { LineResult } from '../types/recitation'
 import imgMap from '../data/poem_img_map.json'
+import PageHeader from './PageHeader'
 
 interface Props {
   poem: Poem
@@ -161,35 +162,16 @@ export default function ChildMode({ poem, onDone, onExit }: Props) {
       )}
 
       {/* 顶部导航 */}
-      <header style={{
-        flexShrink: 0, background: '#C62828', zIndex: 10,
-        display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8,
-        height: `calc(44px + env(safe-area-inset-top, 0px))`,
-        paddingTop: 'env(safe-area-inset-top, 0px)',
-      }}>
-        <button onClick={onExit} style={{
-          fontSize: '0.7rem', color: 'rgba(255,248,225,0.9)',
-          background: 'rgba(255,255,255,0.15)', padding: '4px 10px', borderRadius: 999,
-        }}>← 返回</button>
-        <span style={{
-          fontFamily: 'var(--font-brush)', fontSize: '1rem',
-          color: '#FFF8E1', flex: 1, textAlign: 'center', letterSpacing: '0.08em',
-        }}>背一背</span>
-        <span style={{
-          fontSize: '0.6rem', color: 'rgba(255,248,225,0.8)',
-          background: 'rgba(255,255,255,0.15)', padding: '3px 8px', borderRadius: 999,
-        }}>第 {Math.min(currentIdx + 1, poem.lines.length)} / {poem.lines.length} 句</span>
-      </header>
+      <PageHeader
+        onBack={onExit}
+        title="背一背"
+        right={
+          <span style={{ fontSize: 'var(--text-xs)', color: 'rgba(255,248,225,0.8)', background: 'rgba(255,255,255,0.15)', padding: '3px 8px', borderRadius: 999 }}>
+            第 {Math.min(currentIdx + 1, poem.lines.length)} / {poem.lines.length} 句
+          </span>
+        }
+      />
 
-      {/* 进度条 */}
-      <div style={{ height: 3, background: '#C62828', flexShrink: 0, zIndex: 10 }}>
-        <div style={{
-          height: '100%',
-          background: 'rgba(255,248,225,0.6)',
-          width: `${(lineStates.filter(s => s.phase === 'done').length / poem.lines.length) * 100}%`,
-          transition: 'width 0.3s',
-        }} />
-      </div>
 
       {/* 句子列表 */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px 0', position: 'relative', zIndex: 1 }}>

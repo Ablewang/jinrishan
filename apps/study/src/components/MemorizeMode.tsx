@@ -219,7 +219,10 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
         {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
 
         <header className="mm__header">
-          <button className="mm__exit" onClick={e => { e.stopPropagation(); onExit() }}>← 返回</button>
+          <button className="mm__exit" onClick={e => { e.stopPropagation(); onExit() }}>
+            <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg>
+            返回
+          </button>
           <span className="mm__verify-header-title">今日复习</span>
           <span className="mm__verify-header-badge">{badgeText}</span>
         </header>
@@ -386,7 +389,10 @@ export default function MemorizeMode({ poem, onExit, onNext, onMemorized, isRevi
       {imgSrc && <div className="mm__bg-wrap"><img className="mm__bg" src={imgSrc} aria-hidden /></div>}
 
       <header className="mm__header">
-        <button className="mm__exit" onClick={e => { e.stopPropagation(); onExit() }}>退出</button>
+        <button className="mm__exit" onClick={e => { e.stopPropagation(); onExit() }}>
+          <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg>
+          退出
+        </button>
         <div className="mm__progress-wrap">
           <div className="mm__progress-bar">
             <div className="mm__progress-fill" style={{ width: `${(revealedBlanks / totalBlanks) * 100}%` }} />
