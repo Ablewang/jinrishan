@@ -100,6 +100,8 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
     return `${days} 天前`
   }
 
+  const masteredPct = totalMemorized > 0 ? Math.round((masteredCount / TOTAL_POEMS) * 100) : 0
+
   const today = new Date().toISOString().slice(0, 10)
   const yesterday = (() => {
     const d = new Date(today + 'T00:00:00'); d.setDate(d.getDate() - 1); return d.toISOString().slice(0, 10)
