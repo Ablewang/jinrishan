@@ -5,11 +5,12 @@ import { useQueue } from '../hooks/useQueue'
 import { getLevelTitle } from '../utils/levelTitle'
 import { loadPoem, loadPoemIndex } from '../data/poems'
 import type { Poem, PoemSummary } from '../data/poems'
+import { storage } from '../lib/storage'
 import './ShareCardModal.css'
 
 const NICKNAME_KEY = 'poem_nickname'
-function loadNickname(): string {
-  try { return localStorage.getItem(NICKNAME_KEY) ?? '小诗人' } catch { return '小诗人' }
+async function loadNickname(): Promise<string> {
+  try { return await storage.get(NICKNAME_KEY) ?? '小诗人' } catch { return '小诗人' }
 }
 function todayLabel(): string {
   const d = new Date()
@@ -709,8 +710,10 @@ export default function ShareCardModal() {
   const { totalMemorized, masteredCount, memorizeHistory } = useProgress()
   const { streakCount } = useQueue()
 
-  const nickname = loadNickname()
+  const [nickname, setNickname] = useState('小诗人')
   const rankTitle = getLevelTitle(totalMemorized)
+
+  useEffect(() => { loadNickname().then(setNickname) }, [])
   const today = new Date().toISOString().slice(0, 10)
   const todayPoems = memorizeHistory.filter(r => r.date === today)
   const todayCount = todayPoems.length

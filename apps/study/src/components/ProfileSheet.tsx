@@ -7,17 +7,18 @@ import { useShareCard } from '../contexts/ShareCardContext'
 import { useRecitation } from '../hooks/useRecitation'
 import { downloadBackup, importBackup, getLastBackupDate } from '../lib/backup'
 import { getStorageReport } from '../lib/storageMonitor'
+import { storage } from '../lib/storage'
 import avatarBoy from '../assets/avatar-boy.svg'
 import avatarGirl from '../assets/avatar-gril.svg'
 import BottomSheet, { type BottomSheetActions } from './BottomSheet'
 
 const NICKNAME_KEY = 'poem_nickname'
 
-function readNickname() {
-  try { return localStorage.getItem(NICKNAME_KEY) || '小诗人' } catch { return '小诗人' }
+async function readNickname() {
+  try { return await storage.get(NICKNAME_KEY) || '小诗人' } catch { return '小诗人' }
 }
-function saveNickname(v: string) {
-  try { localStorage.setItem(NICKNAME_KEY, v || '小诗人') } catch {}
+async function saveNickname(v: string) {
+  try { await storage.set(NICKNAME_KEY, v || '小诗人') } catch {}
 }
 
 export interface ProfileSheetActions {
@@ -32,10 +33,8 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
   const { srsStreak } = useRecitation()
   const streakCount = srsStreak.count
   const [poems, setPoems] = useState<PoemSummary[]>([])
-  const [gender, setGender] = useState<'boy' | 'girl'>(() => {
-    try { return (localStorage.getItem('avatar_gender') as 'boy' | 'girl') || 'girl' } catch { return 'girl' }
-  })
-  const [nickname, setNickname] = useState(readNickname)
+  const [gender, setGender] = useState<'boy' | 'girl'>('girl')
+  const [nickname, setNickname] = useState('小诗人')
   const [editing, setEditing] = useState(false)
   const [editVal, setEditVal] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -57,6 +56,13 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
 
   useEffect(() => { loadPoemIndex().then(setPoems) }, [])
 
+  useEffect(() => {
+    readNickname().then(setNickname)
+    storage.get('avatar_gender').then(v => {
+      if (v === 'boy' || v === 'girl') setGender(v)
+    })
+  }, [])
+
   const startEdit = useCallback(() => {
     setEditVal(nickname)
     setEditing(true)
@@ -69,7 +75,6 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
     saveNickname(val)
     setEditing(false)
   }, [editVal])
-
   const handleExport = useCallback(() => {
     downloadBackup()
     setLastBackup(getLastBackupDate())
@@ -144,8 +149,8 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
         </div>
         <div className="ps-profile-sub">坚持学习 · 连续 {streakCount} 天</div>
         <div className="ps-gender-switch">
-          <button className={`ps-gender-btn${gender === 'girl' ? ' ps-gender-btn--active' : ''}`} onClick={() => { setGender('girl'); try { localStorage.setItem('avatar_gender', 'girl') } catch {} }}>女孩</button>
-          <button className={`ps-gender-btn${gender === 'boy' ? ' ps-gender-btn--active' : ''}`} onClick={() => { setGender('boy'); try { localStorage.setItem('avatar_gender', 'boy') } catch {} }}>男孩</button>
+          <button className={`ps-gender-btn${gender === 'girl' ? ' ps-gender-btn--active' : ''}`} onClick={() => { setGender('girl'); storage.set('avatar_gender', 'girl') }}>女孩</button>
+          <button className={`ps-gender-btn${gender === 'boy' ? ' ps-gender-btn--active' : ''}`} onClick={() => { setGender('boy'); storage.set('avatar_gender', 'boy') }}>男孩</button>
         </div>
       </div>
 

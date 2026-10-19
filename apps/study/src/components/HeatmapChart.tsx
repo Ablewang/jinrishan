@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { buildHeatmap } from '../lib/progressStats'
+import type { HeatmapDay } from '../lib/progressStats'
 
 function heatColor(stars: number): string {
   if (stars === 0) return 'var(--border)'
@@ -14,8 +15,12 @@ function monthLabel(date: string): string {
 }
 
 export default function HeatmapChart() {
-  const days = useMemo(() => buildHeatmap(), [])
+  const [days, setDays] = useState<HeatmapDay[]>([])
   const [tooltip, setTooltip] = useState<{ date: string; stars: number; count: number } | null>(null)
+
+  useEffect(() => { buildHeatmap().then(setDays) }, [])
+
+  if (days.length === 0) return null
 
   // 84天，按列（周）×行（周几）排列
   // 第一天是哪个周几

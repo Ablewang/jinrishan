@@ -1,6 +1,7 @@
-import { useMemo, useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { buildHardRanking } from '../lib/progressStats'
+import type { HardPoem } from '../lib/progressStats'
 import type { PoemSummary } from '../data/poems'
 import BottomSheet, { type BottomSheetActions } from './BottomSheet'
 
@@ -32,15 +33,17 @@ interface SheetPoem {
 
 export default function HardRanking({ poems }: Props) {
   const navigate = useNavigate()
-  const ranking = useMemo(() => buildHardRanking(), [])
+  const [ranking, setRanking] = useState<HardPoem[]>([])
   const [sheet, setSheet] = useState<SheetPoem | null>(null)
   const sheetRef = useRef<BottomSheetActions>(null)
+
+  useEffect(() => { buildHardRanking().then(setRanking) }, [])
 
   if (ranking.length === 0) {
     return <div style={{ fontSize: '13px', color: 'var(--ink-light)', padding: '12px 0' }}>背诵次数不足，暂无难诗数据</div>
   }
 
-  function openSheet(poem: PoemSummary, item: ReturnType<typeof buildHardRanking>[0]) {
+  function openSheet(poem: PoemSummary, item: HardPoem) {
     setSheet({ id: poem.id, title: poem.title, author: poem.author, dynasty: poem.dynasty, allLines: poem.allLines, efLevel: item.efLevel, totalSessions: item.totalSessions })
     sheetRef.current?.open()
   }

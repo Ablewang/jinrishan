@@ -1,4 +1,5 @@
 import type { ReviewSchedule } from '../types/recitation'
+import { storage } from './storage'
 
 const SESSIONS_KEY = 'recitation_sessions'
 const SCHEDULES_KEY = 'review_schedules'
@@ -11,17 +12,17 @@ interface Session {
   qScore: number
 }
 
-function loadSessions(): Session[] {
+async function loadSessions(): Promise<Session[]> {
   try {
-    return JSON.parse(localStorage.getItem(SESSIONS_KEY) ?? '[]')
+    return JSON.parse(await storage.get(SESSIONS_KEY) ?? '[]')
   } catch {
     return []
   }
 }
 
-function loadSchedules(): Record<number, ReviewSchedule> {
+async function loadSchedules(): Promise<Record<number, ReviewSchedule>> {
   try {
-    return JSON.parse(localStorage.getItem(SCHEDULES_KEY) ?? '{}')
+    return JSON.parse(await storage.get(SCHEDULES_KEY) ?? '{}')
   } catch {
     return {}
   }
@@ -34,11 +35,10 @@ export interface HeatmapDay {
   count: number      // 当天背诵次数
 }
 
-export function buildHeatmap(): HeatmapDay[] {
-  const sessions = loadSessions()
+export async function buildHeatmap(): Promise<HeatmapDay[]> {
+  const sessions = await loadSessions()
   const map: Record<string, HeatmapDay> = {}
 
-  // 初始化过去84天
   for (let i = 83; i >= 0; i--) {
     const d = new Date()
     d.setDate(d.getDate() - i)
@@ -64,8 +64,8 @@ export interface HardPoem {
   efLevel: 'hard' | 'medium' | 'easy'  // <1.8=hard, 1.8-2.2=medium, >2.2=easy
 }
 
-export function buildHardRanking(): HardPoem[] {
-  const schedules = loadSchedules()
+export async function buildHardRanking(): Promise<HardPoem[]> {
+  const schedules = await loadSchedules()
   return Object.values(schedules)
     .filter(s => s.totalSessions >= 2)
     .sort((a, b) => a.ef - b.ef)
@@ -86,8 +86,8 @@ export interface TimeSlot {
   isBest: boolean
 }
 
-export function buildTimeSlots(): TimeSlot[] {
-  const sessions = loadSessions()
+export async function buildTimeSlots(): Promise<TimeSlot[]> {
+  const sessions = await loadSessions()
   const map: Record<number, { total: number; count: number }> = {}
 
   for (const s of sessions) {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { storage } from '../lib/storage'
 import type { PoemState, StreakData, MemorizeRecord } from './useProgress'
 
 const STORAGE_KEY = 'poem_achievement_dates'
@@ -36,15 +37,8 @@ interface Input {
   memorizeHistory: MemorizeRecord[]
 }
 
-function loadDates(): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch { return {} }
-}
-
-function saveDates(d: Record<string, string>) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)) } catch { /* ignore */ }
+async function saveDates(d: Record<string, string>) {
+  await storage.set(STORAGE_KEY, JSON.stringify(d))
 }
 
 function computeUnlocked(input: Input): Record<string, boolean> {
@@ -83,24 +77,32 @@ function getProgress(id: string, input: Input): string | undefined {
 }
 
 export function useAchievements(input: Input): Badge[] {
-  const [dates, setDates] = useState<Record<string, string>>(loadDates)
+  const [dates, setDates] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    storage.get(STORAGE_KEY).then(raw => {
+      try { setDates(raw ? JSON.parse(raw) : {}) } catch { /* ignore */ }
+    })
+  }, [])
 
   const unlocked = computeUnlocked(input)
 
   useEffect(() => {
-    const current = loadDates()
-    let changed = false
-    const now = new Date().toISOString()
-    for (const id of Object.keys(unlocked)) {
-      if (unlocked[id] && !current[id]) {
-        current[id] = now
-        changed = true
+    storage.get(STORAGE_KEY).then(raw => {
+      const current: Record<string, string> = (() => { try { return raw ? JSON.parse(raw) : {} } catch { return {} } })()
+      let changed = false
+      const now = new Date().toISOString()
+      for (const id of Object.keys(unlocked)) {
+        if (unlocked[id] && !current[id]) {
+          current[id] = now
+          changed = true
+        }
       }
-    }
-    if (changed) {
-      saveDates(current)
-      setDates({ ...current })
-    }
+      if (changed) {
+        saveDates(current)
+        setDates({ ...current })
+      }
+    })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     unlocked.first_poem, unlocked.streak3, unlocked.streak7,

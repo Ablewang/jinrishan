@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { storage } from '../lib/storage'
 
 export interface QueueStore {
   queue: number[]
@@ -17,11 +18,10 @@ function getDefault(): QueueStore {
   return { queue: [], streak_count: 0, last_complete_date: null, today_complete: false }
 }
 
-function load(): QueueStore {
+async function load(): Promise<QueueStore> {
   try {
-    const raw = localStorage.getItem(QUEUE_KEY)
+    const raw = await storage.get(QUEUE_KEY)
     const data: QueueStore = raw ? JSON.parse(raw) : getDefault()
-    // 跨日重置
     if (data.last_complete_date !== todayStr()) {
       data.today_complete = false
     }
@@ -31,12 +31,16 @@ function load(): QueueStore {
   }
 }
 
-function save(data: QueueStore) {
-  try { localStorage.setItem(QUEUE_KEY, JSON.stringify(data)) } catch { /* ignore */ }
+async function save(data: QueueStore) {
+  await storage.set(QUEUE_KEY, JSON.stringify(data))
 }
 
 export function useQueue() {
-  const [store, setStore] = useState<QueueStore>(load)
+  const [store, setStore] = useState<QueueStore>(getDefault)
+
+  useEffect(() => {
+    load().then(setStore)
+  }, [])
 
   const update = useCallback((updater: (prev: QueueStore) => QueueStore) => {
     setStore(prev => {
@@ -85,7 +89,6 @@ export function useQueue() {
     })
   }, [update])
 
-  // 久违：上次完成距今超过 1 天
   const isReturning = (() => {
     if (!store.last_complete_date) return false
     const last = new Date(store.last_complete_date)

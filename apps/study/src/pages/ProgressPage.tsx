@@ -43,8 +43,11 @@ export default function ProgressPage() {
   // 周报入口
   const today = new Date().toISOString().slice(0, 10)
   const thisWeekStart = getWeekStart(today)
-  const thisWeekReport = useMemo(() => buildWeeklyReport(thisWeekStart), [thisWeekStart])
-  const unread = useMemo(() => hasUnreadReport(), [])
+  const [thisWeekReport, setThisWeekReport] = useState<Awaited<ReturnType<typeof buildWeeklyReport>> | null>(null)
+  const [unread, setUnread] = useState(false)
+
+  useEffect(() => { buildWeeklyReport(thisWeekStart).then(setThisWeekReport) }, [thisWeekStart])
+  useEffect(() => { hasUnreadReport().then(setUnread) }, [])
 
   // 今日到期复习
   const dueToday = reviewCards.filter(c => c.level < 5 && c.due <= today)
@@ -61,7 +64,7 @@ export default function ProgressPage() {
       </header>
 
       {/* 周报入口卡片 */}
-      {thisWeekReport.hasData && (
+      {thisWeekReport?.hasData && (
         <button className="pg__weekly-card" onClick={() => navigate('/weekly-report')}>
           <div className="pg__weekly-left">
             <div className="pg__weekly-title">
@@ -69,7 +72,7 @@ export default function ProgressPage() {
               {unread && <span className="pg__weekly-dot" />}
             </div>
             <div className="pg__weekly-meta">
-              背了 {thisWeekReport.newPoemCount} 首 · 打卡 {thisWeekReport.checkInDays} 天 · 连续 {thisWeekReport.streakCount} 天
+              背了 {thisWeekReport?.newPoemCount} 首 · 打卡 {thisWeekReport?.checkInDays} 天 · 连续 {thisWeekReport?.streakCount} 天
             </div>
           </div>
           <span className="pg__weekly-arrow">

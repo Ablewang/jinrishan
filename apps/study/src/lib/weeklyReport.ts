@@ -1,5 +1,6 @@
 import type { RecitationSession } from '../types/recitation'
 import type { MemorizeRecord } from '../hooks/useProgress'
+import { storage } from './storage'
 
 export interface WeeklyReport {
   weekStart: string   // "2026-10-13" (周一)
@@ -36,38 +37,33 @@ export function getWeekStart(date: string): string {
   return d.toISOString().slice(0, 10)
 }
 
-export function buildWeeklyReport(weekStart: string): WeeklyReport {
+export async function buildWeeklyReport(weekStart: string): Promise<WeeklyReport> {
   const { start, end } = getWeekBounds(weekStart)
 
-  // recitation_sessions
   let sessions: RecitationSession[] = []
-  try { sessions = JSON.parse(localStorage.getItem('recitation_sessions') ?? '[]') } catch {}
+  try { sessions = JSON.parse(await storage.get('recitation_sessions') ?? '[]') } catch {}
 
-  // poem_memorize_history
   let history: MemorizeRecord[] = []
-  try { history = JSON.parse(localStorage.getItem('poem_memorize_history') ?? '[]') } catch {}
+  try { history = JSON.parse(await storage.get('poem_memorize_history') ?? '[]') } catch {}
 
-  // review_schedules
   let schedules: Record<number, { ef: number; totalSessions: number }> = {}
-  try { schedules = JSON.parse(localStorage.getItem('review_schedules') ?? '{}') } catch {}
+  try { schedules = JSON.parse(await storage.get('review_schedules') ?? '{}') } catch {}
 
-  // streak
   let streakCount = 0
   try {
-    const sv2 = JSON.parse(localStorage.getItem('srs_streak_v2') ?? 'null')
+    const sv2 = JSON.parse(await storage.get('srs_streak_v2') ?? 'null')
     if (sv2?.count) streakCount = sv2.count
     else {
-      const s = JSON.parse(localStorage.getItem('poem_streak') ?? 'null')
+      const s = JSON.parse(await storage.get('poem_streak') ?? 'null')
       if (s?.count) streakCount = s.count
     }
   } catch {}
 
-  // total chars & memorized
   let totalChars = 0
-  try { totalChars = Number(localStorage.getItem('poem_total_chars') ?? 0) } catch {}
+  try { totalChars = Number(await storage.get('poem_total_chars') ?? 0) } catch {}
   let totalMemorized = 0
   try {
-    const prog = JSON.parse(localStorage.getItem('poem_progress') ?? '{}')
+    const prog = JSON.parse(await storage.get('poem_progress') ?? '{}')
     totalMemorized = Object.values(prog as Record<string, { memorized?: boolean }>).filter(v => v.memorized).length
   } catch {}
 
@@ -124,22 +120,21 @@ export function buildWeeklyReport(weekStart: string): WeeklyReport {
   }
 }
 
-export function getLastReportWeek(): string | null {
-  try { return localStorage.getItem('poem_last_report_week') } catch { return null }
+export async function getLastReportWeek(): Promise<string | null> {
+  try { return await storage.get('poem_last_report_week') } catch { return null }
 }
 
-export function markReportRead(weekStart: string): void {
-  try { localStorage.setItem('poem_last_report_week', weekStart) } catch {}
+export async function markReportRead(weekStart: string): Promise<void> {
+  try { await storage.set('poem_last_report_week', weekStart) } catch {}
 }
 
-export function hasUnreadReport(): boolean {
+export async function hasUnreadReport(): Promise<boolean> {
   const today = new Date().toISOString().slice(0, 10)
   const lastWeekStart = getWeekStart(
     new Date(new Date().getTime() - 7 * 86400000).toISOString().slice(0, 10)
   )
-  const lastRead = getLastReportWeek()
+  const lastRead = await getLastReportWeek()
   if (lastRead && lastRead >= lastWeekStart) return false
-  // 上周有没有数据
-  const report = buildWeeklyReport(lastWeekStart)
+  const report = await buildWeeklyReport(lastWeekStart)
   return report.hasData && today > lastWeekStart
 }

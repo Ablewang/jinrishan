@@ -14,6 +14,7 @@ import type { LineResult, RecitationSession } from '../types/recitation'
 import { updateSchedule } from '../lib/spacedRepetition'
 import imgMap from '../data/poem_img_map.json'
 import { useShareCard } from '../contexts/ShareCardContext'
+import { storage } from '../lib/storage'
 import './PoemDetail.css'
 import PageHeader from '../components/PageHeader'
 
@@ -28,13 +29,13 @@ const annoCache = new Map<number, AnnotationData>()
 const MILESTONES: Record<number, string> = { 10: '初入诗门', 20: '熟读成诵', 35: '诗意渐深', 50: '半部诗书', 70: '诗书满腹' }
 const MILESTONE_TRIGGERED_KEY = 'poem_milestone_triggered'
 
-function checkMilestone(newCount: number): { count: number; title: string } | null {
+async function checkMilestone(newCount: number): Promise<{ count: number; title: string } | null> {
   const m = MILESTONES[newCount]
   if (!m) return null
   try {
-    const triggered: number[] = JSON.parse(localStorage.getItem(MILESTONE_TRIGGERED_KEY) ?? '[]')
+    const triggered: number[] = JSON.parse(await storage.get(MILESTONE_TRIGGERED_KEY) ?? '[]')
     if (triggered.includes(newCount)) return null
-    localStorage.setItem(MILESTONE_TRIGGERED_KEY, JSON.stringify([...triggered, newCount]))
+    await storage.set(MILESTONE_TRIGGERED_KEY, JSON.stringify([...triggered, newCount]))
   } catch {}
   return { count: newCount, title: m }
 }
@@ -203,7 +204,7 @@ export default function PoemDetail() {
   const prevPoem = currentIndex > 0 ? visibleIndex[currentIndex - 1] : null
   const nextPoem = currentIndex < visibleIndex.length - 1 ? visibleIndex[currentIndex + 1] : null
 
-  const handleMemorized = useCallback((stars: number, charCount: number, noHintPass?: boolean) => {
+  const handleMemorized = useCallback(async (stars: number, charCount: number, noHintPass?: boolean) => {
     if (!poem) return
     const prevState = progress[String(poem.id)]
     const oldBestStars = prevState?.bestStars ?? 0
@@ -218,8 +219,8 @@ export default function PoemDetail() {
     }
     // 里程碑触发
     try {
-      const history: { id: number }[] = JSON.parse(localStorage.getItem('poem_memorize_history') ?? '[]')
-      const milestone = checkMilestone(history.length)
+      const history: { id: number }[] = JSON.parse(await storage.get('poem_memorize_history') ?? '[]')
+      const milestone = await checkMilestone(history.length)
       if (milestone) {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
@@ -231,11 +232,11 @@ export default function PoemDetail() {
     markReviewed(poem.id, passed)
   }, [poem?.id, markReviewed])
 
-  const handleReciteDone = useCallback((lines: LineResult[]) => {
+  const handleReciteDone = useCallback(async (lines: LineResult[]) => {
     if (!poem || !reciteMode) return
     const today = new Date().toISOString().slice(0, 10)
-    const session = saveResult(poem.id, reciteMode, lines, today)
-    const prev = getSchedule(poem.id)
+    const session = await saveResult(poem.id, reciteMode, lines, today)
+    const prev = await getSchedule(poem.id)
     const updated = updateSchedule(prev, session)
 
     const oldBestStars = progress[String(poem.id)]?.bestStars ?? 0
@@ -255,8 +256,9 @@ export default function PoemDetail() {
     }
     // 里程碑触发
     try {
-      const history: { id: number }[] = JSON.parse(localStorage.getItem('poem_memorize_history') ?? '[]')
-      const milestone = checkMilestone(history.length)
+      const raw = await storage.get('poem_memorize_history')
+      const history: { id: number }[] = raw ? JSON.parse(raw) : []
+      const milestone = await checkMilestone(history.length)
       if (milestone) {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
@@ -266,7 +268,7 @@ export default function PoemDetail() {
   const handleNext = useCallback(() => {
     // Onboarding 完成：写入标志，回首页
     if (isOnboarding) {
-      try { localStorage.setItem('poem_onboarding_done', '1') } catch { /* ignore */ }
+      storage.set('poem_onboarding_done', '1')
       navigate('/', { replace: true })
       return
     }

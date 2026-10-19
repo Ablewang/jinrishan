@@ -1,24 +1,25 @@
 import './ProfilePage.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
 import { useQueue } from '../hooks/useQueue'
 import { getLevelTitle } from '../utils/levelTitle'
+import { storage } from '../lib/storage'
 
 const NICKNAME_KEY = 'poem_nickname'
 const REMINDER_KEY = 'reminder_time'
 
-function loadNickname(): string {
-  try { return localStorage.getItem(NICKNAME_KEY) ?? '小诗人' } catch { return '小诗人' }
+async function loadNickname(): Promise<string> {
+  try { return await storage.get(NICKNAME_KEY) ?? '小诗人' } catch { return '小诗人' }
 }
-function saveNickname(n: string) {
-  try { localStorage.setItem(NICKNAME_KEY, n) } catch { /* ignore */ }
+async function saveNickname(n: string) {
+  try { await storage.set(NICKNAME_KEY, n) } catch {}
 }
-function loadReminder(): string {
-  try { return localStorage.getItem(REMINDER_KEY) ?? '18:30' } catch { return '18:30' }
+async function loadReminder(): Promise<string> {
+  try { return await storage.get(REMINDER_KEY) ?? '18:30' } catch { return '18:30' }
 }
-function saveReminder(t: string) {
-  try { localStorage.setItem(REMINDER_KEY, t) } catch { /* ignore */ }
+async function saveReminder(t: string) {
+  try { await storage.set(REMINDER_KEY, t) } catch {}
 }
 
 const REMINDER_OPTIONS = [
@@ -32,11 +33,16 @@ export default function ProfilePage() {
   const navigate = useNavigate()
   const { totalMemorized, totalChars } = useProgress()
   const { streakCount } = useQueue()
-  const [selected, setSelected] = useState<string>(loadReminder)
-  const [nickname, setNickname] = useState<string>(loadNickname)
+  const [selected, setSelected] = useState<string>('18:30')
+  const [nickname, setNickname] = useState<string>('小诗人')
   const [nicknameEdit, setNicknameEdit] = useState(false)
   const [nicknameInput, setNicknameInput] = useState(nickname)
   const title = getLevelTitle(totalMemorized)
+
+  useEffect(() => {
+    loadNickname().then(setNickname)
+    loadReminder().then(setSelected)
+  }, [])
 
   function selectTime(time: string | null) {
     if (time === null) return

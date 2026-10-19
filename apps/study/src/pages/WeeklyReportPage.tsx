@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { buildWeeklyReport, getWeekStart, markReportRead } from '../lib/weeklyReport'
 import { loadPoemIndex } from '../data/poems'
@@ -38,7 +38,9 @@ export default function WeeklyReportPage() {
   )
 
   const weekStart = tab === 'this' ? thisWeekStart : lastWeekStart
-  const report = useMemo(() => buildWeeklyReport(weekStart), [weekStart])
+  const [report, setReport] = useState<Awaited<ReturnType<typeof buildWeeklyReport>> | null>(null)
+
+  useEffect(() => { buildWeeklyReport(weekStart).then(setReport) }, [weekStart])
 
   useEffect(() => {
     if (tab === 'last') markReportRead(lastWeekStart)
@@ -48,7 +50,9 @@ export default function WeeklyReportPage() {
     markReportRead(thisWeekStart)
   }, [thisWeekStart])
 
-  const hardestPoem = report.hardestPoemId ? poems.find(p => p.id === report.hardestPoemId) : null
+  const hardestPoem = report?.hardestPoemId ? poems.find(p => p.id === report.hardestPoemId) : null
+
+  if (!report) return null
 
   return (
     <div className="wr">

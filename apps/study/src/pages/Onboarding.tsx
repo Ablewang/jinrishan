@@ -1,6 +1,7 @@
 import './Onboarding.css'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQueue } from '../hooks/useQueue'
+import { storage } from '../lib/storage'
 
 const ONBOARDING_DONE_KEY = 'poem_onboarding_done'
 
@@ -11,7 +12,7 @@ const STARTER_POEMS = [
 ]
 
 export function markOnboardingDone() {
-  try { localStorage.setItem(ONBOARDING_DONE_KEY, '1') } catch { /* ignore */ }
+  storage.set(ONBOARDING_DONE_KEY, '1')
 }
 
 function AnimChars({ text, baseDelay }: { text: string; baseDelay: number }) {

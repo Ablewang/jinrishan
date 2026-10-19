@@ -54,10 +54,11 @@ export default function Home() {
 
   const allPoemIds = useMemo(() => poems.map(p => p.id), [poems])
 
-  const plan = useMemo(() =>
-    buildDailyPlan(today, queue, allPoemIds, memorizedIds),
-    [today, queue, allPoemIds, memorizedIds]
-  )
+  const [plan, setPlan] = useState<Awaited<ReturnType<typeof buildDailyPlan>>>({ reviewIds: [], newPoemId: null, newPoemAuto: false, hardPoemId: null })
+
+  useEffect(() => {
+    buildDailyPlan(today, queue, allPoemIds, memorizedIds).then(setPlan)
+  }, [today, queue, allPoemIds, memorizedIds])
 
   // 复习诗列表
   const reviewPoems = useMemo(() =>

@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { buildTimeSlots } from '../lib/progressStats'
+import type { TimeSlot } from '../lib/progressStats'
 
 function hourLabel(h: number): string {
   if (h < 6) return '凌晨'
@@ -12,7 +13,9 @@ function hourLabel(h: number): string {
 }
 
 export default function TimeSlotChart() {
-  const slots = useMemo(() => buildTimeSlots(), [])
+  const [slots, setSlots] = useState<TimeSlot[]>([])
+
+  useEffect(() => { buildTimeSlots().then(setSlots) }, [])
 
   if (slots.length === 0) {
     return <div style={{ fontSize: '13px', color: 'var(--ink-light)', padding: '12px 0' }}>背诵次数不足，暂无时段数据</div>
