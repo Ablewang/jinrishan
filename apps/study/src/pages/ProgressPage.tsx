@@ -72,7 +72,10 @@ export default function ProgressPage() {
               背了 {thisWeekReport.newPoemCount} 首 · 打卡 {thisWeekReport.checkInDays} 天 · 连续 {thisWeekReport.streakCount} 天
             </div>
           </div>
-          <span className="pg__weekly-arrow">查看 →</span>
+          <span className="pg__weekly-arrow">
+            <span>查看</span>
+            <svg viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M620.8 812.8l-59.744-59.744 198.4-198.4h-652.8v-85.344h652.8l-198.4-198.4L620.8 211.168l302.944 300.8z"/></svg>
+          </span>
         </button>
       )}
 

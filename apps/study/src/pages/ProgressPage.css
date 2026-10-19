@@ -357,6 +357,9 @@
     color: var(--ink-light);
   }
   .pg__weekly-arrow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-family: var(--font-ui);
     font-size: var(--text-xs);
     color: #C62828;

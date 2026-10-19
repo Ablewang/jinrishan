@@ -155,7 +155,7 @@ export default function WeeklyReportPage() {
 
           <div style={{ height: 32 }} />
 
-          {/* 分享本周报告 */}
+          {/* 分享报告 */}
           <button
             className="wr__share-btn"
             onClick={() => openShareCard({
@@ -171,7 +171,7 @@ export default function WeeklyReportPage() {
               weeklyPoemTitles: report.newPoems.map(p => poems.find(pm => pm.id === p.id)?.title ?? `诗${p.id}`),
             })}
           >
-            分享本周报告
+            分享{tab === 'this' ? '本周' : '上周'}报告
           </button>
 
           <div style={{ height: 24 }} />

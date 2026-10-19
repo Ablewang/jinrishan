@@ -467,7 +467,7 @@ async function drawPerfectCard(
   firstLine: string,
 ): Promise<string> {
   await document.fonts.ready
-  const HEADER_H = 140
+  const HEADER_H = 150
   const BODY_H = 160
   const FOOTER_H = 48
   const totalH = HEADER_H + BODY_H + FOOTER_H
@@ -505,7 +505,7 @@ async function drawPerfectCard(
 
   ctx.font = `11px 'PingFang SC', sans-serif`
   ctx.fillStyle = 'rgba(255,255,255,0.65)'
-  ctx.fillText('无提示完整背出', 74, 114)
+  ctx.fillText('无提示完整背出', 20, 130)
 
   // 白色主体
   ctx.fillStyle = '#ffffff'
