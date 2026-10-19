@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { goBack } from '../utils/navigation'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
@@ -163,7 +164,7 @@ export default function QueueScreen() {
   return (
     <div className="qs">
       <header className="qs__header">
-        <button className="qs__back" onClick={() => navigate(-1)}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
+        <button className="qs__back" onClick={() => goBack(navigate)}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         <h1 className="qs__title">背诗计划</h1>
       </header>
 

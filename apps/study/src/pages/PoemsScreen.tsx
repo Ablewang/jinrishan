@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { goBack } from '../utils/navigation'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
@@ -40,7 +41,7 @@ export default function PoemsScreen() {
   return (
     <div className="ps">
       <PageHeader
-        onBack={() => navigate(-1)}
+        onBack={() => goBack(navigate)}
         title="诗集"
         right={<span className="ps__count">{totalMemorized}/{total}</span>}
       />

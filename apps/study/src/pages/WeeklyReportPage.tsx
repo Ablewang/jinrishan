@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { goBack } from '../utils/navigation'
 import { buildWeeklyReport, getWeekStart, markReportRead } from '../lib/weeklyReport'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
@@ -57,7 +58,7 @@ export default function WeeklyReportPage() {
   return (
     <div className="wr">
       <header className="wr__navbar">
-        <button className="wr__back" onClick={() => navigate(-1)}>
+        <button className="wr__back" onClick={() => goBack(navigate)}>
           <svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor">
             <path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/>
           </svg>

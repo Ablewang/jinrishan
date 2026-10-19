@@ -1,6 +1,7 @@
 import './ProfilePage.css'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { goBack } from '../utils/navigation'
 import { useProgress } from '../hooks/useProgress'
 import { useQueue } from '../hooks/useQueue'
 import { getLevelTitle } from '../utils/levelTitle'
@@ -132,7 +133,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <button className="pp__close-btn" onClick={() => navigate(-1)}>关闭</button>
+        <button className="pp__close-btn" onClick={() => goBack(navigate)}>关闭</button>
       </div>
 
     </div>

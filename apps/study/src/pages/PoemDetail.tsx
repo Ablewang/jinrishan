@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react'
-import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { goBack } from '../utils/navigation'
 import { loadPoem, loadPoemIndex } from '../data/poems'
 import type { Poem, PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
@@ -59,7 +60,6 @@ export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const location = useLocation()
   const { markRead, markMemorized, markReviewed, reviewCards, progress } = useProgress()
   const { queue, completePoem } = useQueue()
   const { open: openShareCard } = useShareCard()
@@ -294,7 +294,7 @@ export default function PoemDetail() {
   if (!poem) {
     return (
       <div className="d-loading">
-        <PageHeader onBack={() => navigate('/')} title="" />
+        <PageHeader onBack={() => goBack(navigate)} title="" />
         <div className="d-loading__body">
           <img className="d-loading__icon" src="/icon.png" alt="" />
           <div className="d-loading__text">
@@ -355,7 +355,7 @@ export default function PoemDetail() {
   return (
     <div className="d">
       <PageHeader
-        onBack={() => location.key !== 'default' ? navigate(-1) : navigate('/')}
+        onBack={() => goBack(navigate)}
         title={titleHidden ? poem.title : ''}
         right={
           <div style={{ display:'flex', alignItems:'center', gap:6 }}>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { goBack } from '../utils/navigation'
 import { useProgress } from '../hooks/useProgress'
 import { useAchievements } from '../hooks/useAchievements'
 import { loadPoemIndex } from '../data/poems'
@@ -59,7 +60,7 @@ export default function ProgressPage() {
   return (
     <div className="pg">
       <header className="pg__navbar">
-        <button className="pg__back" onClick={() => navigate('/')}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
+        <button className="pg__back" onClick={() => goBack(navigate)}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         <span className="pg__title">学习记录</span>
       </header>
 
