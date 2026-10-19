@@ -181,13 +181,12 @@ export default function PoemDetail() {
   useEffect(() => { if (poem) markRead(poem.id) }, [poem?.id])
 
   useLayoutEffect(() => {
-    setSplitColumn(false)
     const wrap = notesWrapRef.current
     if (!wrap) return
-    const raf = requestAnimationFrame(() => {
-      setSplitColumn(wrap.getBoundingClientRect().width < 120)
-    })
-    return () => cancelAnimationFrame(raf)
+    const measure = () => setSplitColumn(wrap.getBoundingClientRect().width < 120)
+    const ro = new ResizeObserver(measure)
+    ro.observe(wrap)
+    return () => ro.disconnect()
   }, [poem?.id, annotation])
 
   useEffect(() => {
