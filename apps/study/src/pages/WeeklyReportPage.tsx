@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { buildWeeklyReport, getWeekStart, markReportRead } from '../lib/weeklyReport'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
+import { useShareCard } from '../contexts/ShareCardContext'
 import './WeeklyReportPage.css'
 
 const DOW_LABELS = ['一', '二', '三', '四', '五', '六', '日']
@@ -24,6 +25,7 @@ function starStr(stars: number): string {
 
 export default function WeeklyReportPage() {
   const navigate = useNavigate()
+  const { open: openShareCard } = useShareCard()
   const [tab, setTab] = useState<'this' | 'last'>('this')
   const [poems, setPoems] = useState<PoemSummary[]>([])
 
@@ -152,6 +154,27 @@ export default function WeeklyReportPage() {
           </div>
 
           <div style={{ height: 32 }} />
+
+          {/* 分享本周报告 */}
+          <button
+            className="wr__share-btn"
+            onClick={() => openShareCard({
+              type: 'weekly',
+              weeklyNewCount: report.newPoemCount,
+              weeklyCheckInDays: report.checkInDays,
+              weeklyStreakCount: report.streakCount,
+              weeklyHardPoemTitle: hardestPoem?.title,
+              weeklyTotalChars: report.totalChars,
+              weeklyTotalMemorized: report.totalMemorized,
+              weeklyStart: report.weekStart,
+              weeklyEnd: report.weekEnd,
+              weeklyPoemTitles: report.newPoems.map(p => poems.find(pm => pm.id === p.id)?.title ?? `诗${p.id}`),
+            })}
+          >
+            分享本周报告
+          </button>
+
+          <div style={{ height: 24 }} />
         </div>
       )}
     </div>

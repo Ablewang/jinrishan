@@ -25,6 +25,20 @@ interface AnnotationData {
 
 const annoCache = new Map<number, AnnotationData>()
 
+const MILESTONES: Record<number, string> = { 10: '初入诗门', 20: '熟读成诵', 35: '诗意渐深', 50: '半部诗书', 70: '诗书满腹' }
+const MILESTONE_TRIGGERED_KEY = 'poem_milestone_triggered'
+
+function checkMilestone(newCount: number): { count: number; title: string } | null {
+  const m = MILESTONES[newCount]
+  if (!m) return null
+  try {
+    const triggered: number[] = JSON.parse(localStorage.getItem(MILESTONE_TRIGGERED_KEY) ?? '[]')
+    if (triggered.includes(newCount)) return null
+    localStorage.setItem(MILESTONE_TRIGGERED_KEY, JSON.stringify([...triggered, newCount]))
+  } catch {}
+  return { count: newCount, title: m }
+}
+
 async function loadAnnotation(id: number): Promise<AnnotationData | null> {
   if (annoCache.has(id)) return annoCache.get(id)!
   try {
@@ -45,7 +59,7 @@ export default function PoemDetail() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const location = useLocation()
-  const { markRead, markMemorized, markReviewed, reviewCards } = useProgress()
+  const { markRead, markMemorized, markReviewed, reviewCards, progress } = useProgress()
   const { queue, completePoem } = useQueue()
   const { open: openShareCard } = useShareCard()
   const [showPinyin, setShowPinyin] = useState(true)
@@ -191,9 +205,26 @@ export default function PoemDetail() {
 
   const handleMemorized = useCallback((stars: number, charCount: number, noHintPass?: boolean) => {
     if (!poem) return
+    const prevState = progress[String(poem.id)]
+    const oldBestStars = prevState?.bestStars ?? 0
     markMemorized(poem.id, stars, charCount, noHintPass)
     if (!isReviewMode) completePoem(poem.id)
-  }, [poem?.id, markMemorized, completePoem, isReviewMode])
+
+    // 满星触发
+    if (stars === 3 && oldBestStars < 3) {
+      const firstLine = poem.lines[0]?.chars.map(c => c.char).join('') ?? ''
+      setTimeout(() => openShareCard({ type: 'perfect', perfectPoemTitle: poem.title, perfectFirstLine: firstLine }), 1200)
+      return
+    }
+    // 里程碑触发
+    try {
+      const history: { id: number }[] = JSON.parse(localStorage.getItem('poem_memorize_history') ?? '[]')
+      const milestone = checkMilestone(history.length)
+      if (milestone) {
+        setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
+      }
+    } catch {}
+  }, [poem, progress, markMemorized, completePoem, isReviewMode, openShareCard])
 
   const handleVerified = useCallback((passed: boolean) => {
     if (!poem) return
@@ -207,17 +238,30 @@ export default function PoemDetail() {
     const prev = getSchedule(poem.id)
     const updated = updateSchedule(prev, session)
 
-    // 打通到 useProgress
+    const oldBestStars = progress[String(poem.id)]?.bestStars ?? 0
     const charCount = poem.lines.reduce((sum, l) => sum + l.chars.filter(c => /[一-鿿]/.test(c.char)).length, 0)
     const noHintPass = session.stars === 3
-    // 首次背诵：建立 ReviewCard + 计入汉字统计
     markMemorized(poem.id, session.stars, charCount, noHintPass)
-    // 推进复习档位：2星以上算通过，1星算失败
     markReviewed(poem.id, session.stars >= 2)
 
     setReciteMode(null)
     setReciteResult({ session, interval: updated.interval })
-  }, [poem?.id, reciteMode, saveResult, getSchedule, markMemorized, markReviewed])
+
+    // 满星触发
+    if (session.stars === 3 && oldBestStars < 3) {
+      const firstLine = poem.lines[0]?.chars.map(c => c.char).join('') ?? ''
+      setTimeout(() => openShareCard({ type: 'perfect', perfectPoemTitle: poem.title, perfectFirstLine: firstLine }), 1200)
+      return
+    }
+    // 里程碑触发
+    try {
+      const history: { id: number }[] = JSON.parse(localStorage.getItem('poem_memorize_history') ?? '[]')
+      const milestone = checkMilestone(history.length)
+      if (milestone) {
+        setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
+      }
+    } catch {}
+  }, [poem, progress, reciteMode, saveResult, getSchedule, markMemorized, markReviewed, openShareCard])
 
   const handleNext = useCallback(() => {
     // Onboarding 完成：写入标志，回首页

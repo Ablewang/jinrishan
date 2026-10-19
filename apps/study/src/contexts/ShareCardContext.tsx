@@ -1,8 +1,24 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 
 export interface ShareCardParams {
-  type: 'checkin' | 'poem'
+  type: 'checkin' | 'poem' | 'milestone' | 'perfect' | 'weekly'
   poemId?: number
+  // milestone
+  milestoneCount?: number
+  milestoneTitle?: string
+  // perfect
+  perfectPoemTitle?: string
+  perfectFirstLine?: string
+  // weekly
+  weeklyNewCount?: number
+  weeklyCheckInDays?: number
+  weeklyStreakCount?: number
+  weeklyHardPoemTitle?: string
+  weeklyTotalChars?: number
+  weeklyTotalMemorized?: number
+  weeklyStart?: string
+  weeklyEnd?: string
+  weeklyPoemTitles?: string[]
 }
 
 interface ShareCardContextValue {

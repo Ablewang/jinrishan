@@ -338,6 +338,372 @@ async function drawCheckinCard(
   return canvas.toDataURL('image/png')
 }
 
+// 绘制里程碑卡片
+async function drawMilestoneCard(
+  nickname: string,
+  count: number,
+  title: string,
+  recentPoems: string[],
+): Promise<string> {
+  await document.fonts.ready
+  const HEADER_H = 150
+  const BODY_H = 160
+  const FOOTER_H = 48
+  const totalH = HEADER_H + BODY_H + FOOTER_H
+
+  const canvas = document.createElement('canvas')
+  canvas.width = W * SCALE
+  canvas.height = totalH * SCALE
+  const ctx = canvas.getContext('2d')!
+  ctx.scale(SCALE, SCALE)
+
+  // 头部渐变
+  const grad = ctx.createLinearGradient(0, 0, W, HEADER_H)
+  grad.addColorStop(0, '#B71C1C')
+  grad.addColorStop(1, '#C62828')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, W, HEADER_H)
+
+  // 装饰圆
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'
+  ctx.beginPath(); ctx.arc(W + 10, -20, 90, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = 'rgba(255,255,255,0.04)'
+  ctx.beginPath(); ctx.arc(-20, HEADER_H - 10, 60, 0, Math.PI * 2); ctx.fill()
+
+  // 「第 N 首」大字
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'alphabetic'
+  ctx.font = `11px 'PingFang SC', sans-serif`
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.fillText('里程碑达成', 20, 32)
+
+  ctx.font = `56px 'ZCOOL KuaiLe', sans-serif`
+  ctx.fillStyle = '#ffffff'
+  ctx.fillText(`第 ${count} 首`, 20, 96)
+
+  // 称号胶囊
+  const capsuleX = 20, capsuleY = 108
+  const capsuleW = ctx.measureText(title).width + 28
+  ctx.fillStyle = 'rgba(255,255,255,0.15)'
+  ctx.beginPath(); ctx.roundRect(capsuleX, capsuleY, capsuleW, 22, 999); ctx.fill()
+  ctx.font = `11px 'PingFang SC', sans-serif`
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'
+  ctx.fillText(title, capsuleX + 14, capsuleY + 14)
+
+  // 白色主体
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, HEADER_H, W, BODY_H)
+
+  // 昵称 + 说明
+  ctx.textAlign = 'left'
+  ctx.font = `13px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#A07050'
+  ctx.fillText(`${nickname} 已背诵`, 20, HEADER_H + 24)
+
+  // 最近背的诗
+  if (recentPoems.length > 0) {
+    const poemText = recentPoems.slice(0, 3).map(t => `《${t}》`).join('  ')
+    ctx.font = `16px 'Ma Shan Zheng', cursive`
+    ctx.fillStyle = '#2C1008'
+    ctx.fillText(poemText, 20, HEADER_H + 52)
+  }
+
+  // 分隔线
+  ctx.strokeStyle = '#F0E8DC'
+  ctx.lineWidth = 1
+  ctx.beginPath(); ctx.moveTo(20, HEADER_H + 68); ctx.lineTo(W - 20, HEADER_H + 68); ctx.stroke()
+
+  // 鼓励文字
+  ctx.textAlign = 'center'
+  ctx.font = `13px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#C62828'
+  ctx.fillText('继续加油，诗书万卷！', W / 2, HEADER_H + 100)
+
+  ctx.font = `10px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#B08060'
+  ctx.fillText('古诗小课堂 · 每天一首，积累经典', W / 2, HEADER_H + 120)
+
+  // 底栏
+  const footerY = HEADER_H + BODY_H
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, footerY, W, FOOTER_H)
+  ctx.strokeStyle = '#F0E8DC'
+  ctx.lineWidth = 1
+  ctx.beginPath(); ctx.moveTo(16, footerY); ctx.lineTo(W - 16, footerY); ctx.stroke()
+
+  const iconImg = await loadImage('/icon.png')
+  if (iconImg) {
+    const ix = 16, iy = footerY + (FOOTER_H - 28) / 2
+    ctx.save()
+    ctx.beginPath()
+    const r = 6
+    ctx.moveTo(ix + r, iy); ctx.lineTo(ix + 28 - r, iy)
+    ctx.quadraticCurveTo(ix + 28, iy, ix + 28, iy + r)
+    ctx.lineTo(ix + 28, iy + 28 - r)
+    ctx.quadraticCurveTo(ix + 28, iy + 28, ix + 28 - r, iy + 28)
+    ctx.lineTo(ix + r, iy + 28)
+    ctx.quadraticCurveTo(ix, iy + 28, ix, iy + 28 - r)
+    ctx.lineTo(ix, iy + r)
+    ctx.quadraticCurveTo(ix, iy, ix + r, iy)
+    ctx.closePath(); ctx.clip()
+    ctx.drawImage(iconImg, ix, iy, 28, 28)
+    ctx.restore()
+  }
+  ctx.textAlign = 'left'
+  ctx.font = `13px 'ZCOOL KuaiLe', sans-serif`
+  ctx.fillStyle = '#6B4226'
+  ctx.fillText('古诗小课堂', 52, footerY + FOOTER_H / 2 + 1)
+  ctx.font = `8px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#B08060'
+  ctx.fillText('每天一首，积累经典', 52, footerY + FOOTER_H / 2 + 13)
+
+  return canvas.toDataURL('image/png')
+}
+
+// 绘制满星成就卡片
+async function drawPerfectCard(
+  nickname: string,
+  poemTitle: string,
+  firstLine: string,
+): Promise<string> {
+  await document.fonts.ready
+  const HEADER_H = 140
+  const BODY_H = 160
+  const FOOTER_H = 48
+  const totalH = HEADER_H + BODY_H + FOOTER_H
+
+  const canvas = document.createElement('canvas')
+  canvas.width = W * SCALE
+  canvas.height = totalH * SCALE
+  const ctx = canvas.getContext('2d')!
+  ctx.scale(SCALE, SCALE)
+
+  // 头部
+  const grad = ctx.createLinearGradient(0, 0, W, HEADER_H)
+  grad.addColorStop(0, '#B71C1C')
+  grad.addColorStop(1, '#C62828')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, W, HEADER_H)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'
+  ctx.beginPath(); ctx.arc(W + 10, -20, 90, 0, Math.PI * 2); ctx.fill()
+
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'alphabetic'
+  ctx.font = `11px 'PingFang SC', sans-serif`
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.fillText('无提示背诵达成', 20, 32)
+
+  ctx.font = `36px 'Ma Shan Zheng', cursive`
+  ctx.fillStyle = '#ffffff'
+  ctx.fillText(`《${poemTitle}》`, 20, 80)
+
+  // 三星
+  ctx.font = `22px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#FFD54F'
+  ctx.fillText('★★★', 20, 114)
+
+  ctx.font = `11px 'PingFang SC', sans-serif`
+  ctx.fillStyle = 'rgba(255,255,255,0.65)'
+  ctx.fillText('无提示完整背出', 74, 114)
+
+  // 白色主体
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, HEADER_H, W, BODY_H)
+
+  // 第一句诗
+  const cardY = HEADER_H + 14
+  ctx.fillStyle = '#FBF6F0'
+  ctx.beginPath(); ctx.roundRect(16, cardY, W - 32, 60, 10); ctx.fill()
+  ctx.fillStyle = '#C62828'
+  ctx.beginPath(); ctx.roundRect(16, cardY, 3, 60, [10, 0, 0, 10]); ctx.fill()
+  ctx.font = `10px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#A07050'
+  ctx.textAlign = 'left'
+  ctx.fillText('诗句节选', 26, cardY + 18)
+  ctx.font = `18px 'Ma Shan Zheng', cursive`
+  ctx.fillStyle = '#2C1008'
+  ctx.fillText(firstLine, 26, cardY + 44)
+
+  // 昵称 + 鼓励
+  ctx.font = `13px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#A07050'
+  ctx.textAlign = 'left'
+  ctx.fillText(`${nickname} 无提示背出了这首诗！`, 20, HEADER_H + 100)
+
+  ctx.font = `11px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#C62828'
+  ctx.fillText('继续挑战下一首吧', 20, HEADER_H + 122)
+
+  // 底栏
+  const footerY = HEADER_H + BODY_H
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, footerY, W, FOOTER_H)
+  ctx.strokeStyle = '#F0E8DC'; ctx.lineWidth = 1
+  ctx.beginPath(); ctx.moveTo(16, footerY); ctx.lineTo(W - 16, footerY); ctx.stroke()
+
+  const iconImg = await loadImage('/icon.png')
+  if (iconImg) {
+    const ix = 16, iy = footerY + (FOOTER_H - 28) / 2
+    ctx.save()
+    ctx.beginPath()
+    const r = 6
+    ctx.moveTo(ix + r, iy); ctx.lineTo(ix + 28 - r, iy)
+    ctx.quadraticCurveTo(ix + 28, iy, ix + 28, iy + r)
+    ctx.lineTo(ix + 28, iy + 28 - r)
+    ctx.quadraticCurveTo(ix + 28, iy + 28, ix + 28 - r, iy + 28)
+    ctx.lineTo(ix + r, iy + 28)
+    ctx.quadraticCurveTo(ix, iy + 28, ix, iy + 28 - r)
+    ctx.lineTo(ix, iy + r)
+    ctx.quadraticCurveTo(ix, iy, ix + r, iy)
+    ctx.closePath(); ctx.clip()
+    ctx.drawImage(iconImg, ix, iy, 28, 28)
+    ctx.restore()
+  }
+  ctx.textAlign = 'left'
+  ctx.font = `13px 'ZCOOL KuaiLe', sans-serif`
+  ctx.fillStyle = '#6B4226'
+  ctx.fillText('古诗小课堂', 52, footerY + FOOTER_H / 2 + 1)
+  ctx.font = `8px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#B08060'
+  ctx.fillText('每天一首，积累经典', 52, footerY + FOOTER_H / 2 + 13)
+
+  return canvas.toDataURL('image/png')
+}
+
+// 绘制周报卡片
+async function drawWeeklyCard(
+  newCount: number,
+  checkInDays: number,
+  streakCount: number,
+  hardPoemTitle: string | null,
+  totalChars: number,
+  totalMemorized: number,
+  weekStart: string,
+  weekEnd: string,
+  poemTitles: string[],
+): Promise<string> {
+  await document.fonts.ready
+  const HEADER_H = 130
+  const BODY_H = 200
+  const FOOTER_H = 48
+  const totalH = HEADER_H + BODY_H + FOOTER_H
+
+  const canvas = document.createElement('canvas')
+  canvas.width = W * SCALE
+  canvas.height = totalH * SCALE
+  const ctx = canvas.getContext('2d')!
+  ctx.scale(SCALE, SCALE)
+
+  // 头部
+  const grad = ctx.createLinearGradient(0, 0, W, HEADER_H)
+  grad.addColorStop(0, '#B71C1C')
+  grad.addColorStop(1, '#C62828')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, W, HEADER_H)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'
+  ctx.beginPath(); ctx.arc(W + 10, -20, 90, 0, Math.PI * 2); ctx.fill()
+
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'
+  ctx.font = `10px 'PingFang SC', sans-serif`
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  // 日期范围
+  const ws = new Date(weekStart + 'T00:00:00')
+  const we = new Date(weekEnd + 'T00:00:00')
+  const rangeStr = `${ws.getMonth()+1}月${ws.getDate()}日 – ${we.getMonth()+1}月${we.getDate()}日`
+  ctx.fillText(rangeStr, 20, 26)
+
+  ctx.font = `13px 'PingFang SC', sans-serif`
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.fillText('本周学习报告', 20, 48)
+
+  ctx.font = `42px 'ZCOOL KuaiLe', sans-serif`
+  ctx.fillStyle = '#ffffff'
+  ctx.fillText(`背了 ${newCount} 首`, 20, 96)
+
+  ctx.font = `12px 'PingFang SC', sans-serif`
+  ctx.fillStyle = 'rgba(255,255,255,0.75)'
+  ctx.fillText(`打卡 ${checkInDays} 天  连续 ${streakCount} 天`, 20, 118)
+
+  // 白色主体
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, HEADER_H, W, BODY_H)
+
+  // 诗名列表
+  if (poemTitles.length > 0) {
+    ctx.font = `13px 'Ma Shan Zheng', cursive`
+    ctx.fillStyle = '#2C1008'
+    ctx.textAlign = 'left'
+    const text = poemTitles.slice(0, 4).map(t => `《${t}》`).join('  ')
+    ctx.fillText(text, 20, HEADER_H + 28)
+  }
+
+  // 分隔线
+  ctx.strokeStyle = '#F0E8DC'; ctx.lineWidth = 1
+  ctx.beginPath(); ctx.moveTo(20, HEADER_H + 42); ctx.lineTo(W - 20, HEADER_H + 42); ctx.stroke()
+
+  // 最难克服
+  if (hardPoemTitle) {
+    ctx.font = `11px 'PingFang SC', sans-serif`
+    ctx.fillStyle = '#A07050'
+    ctx.fillText('最难克服', 20, HEADER_H + 64)
+    ctx.font = `16px 'Ma Shan Zheng', cursive`
+    ctx.fillStyle = '#C62828'
+    ctx.fillText(`《${hardPoemTitle}》`, 20, HEADER_H + 86)
+    ctx.font = `10px 'PingFang SC', sans-serif`
+    ctx.fillStyle = '#B08060'
+    ctx.fillText('仍在挑战中，继续加油！', 20, HEADER_H + 104)
+  }
+
+  // 累计数据
+  const statsY = HEADER_H + (hardPoemTitle ? 124 : 70)
+  ctx.font = `11px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#A07050'
+  ctx.fillText('累计进度', 20, statsY)
+  ctx.font = `15px 'ZCOOL KuaiLe', sans-serif`
+  ctx.fillStyle = '#C62828'
+  ctx.fillText(`${totalMemorized} / 70 首`, 20, statsY + 22)
+  ctx.font = `11px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#A07050'
+  ctx.fillText(`${totalChars.toLocaleString()} 字`, 20, statsY + 40)
+
+  // 底栏
+  const footerY = HEADER_H + BODY_H
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, footerY, W, FOOTER_H)
+  ctx.strokeStyle = '#F0E8DC'; ctx.lineWidth = 1
+  ctx.beginPath(); ctx.moveTo(16, footerY); ctx.lineTo(W - 16, footerY); ctx.stroke()
+
+  const iconImg = await loadImage('/icon.png')
+  if (iconImg) {
+    const ix = 16, iy = footerY + (FOOTER_H - 28) / 2
+    ctx.save()
+    ctx.beginPath()
+    const r = 6
+    ctx.moveTo(ix + r, iy); ctx.lineTo(ix + 28 - r, iy)
+    ctx.quadraticCurveTo(ix + 28, iy, ix + 28, iy + r)
+    ctx.lineTo(ix + 28, iy + 28 - r)
+    ctx.quadraticCurveTo(ix + 28, iy + 28, ix + 28 - r, iy + 28)
+    ctx.lineTo(ix + r, iy + 28)
+    ctx.quadraticCurveTo(ix, iy + 28, ix, iy + 28 - r)
+    ctx.lineTo(ix, iy + r)
+    ctx.quadraticCurveTo(ix, iy, ix + r, iy)
+    ctx.closePath(); ctx.clip()
+    ctx.drawImage(iconImg, ix, iy, 28, 28)
+    ctx.restore()
+  }
+  ctx.textAlign = 'left'
+  ctx.font = `13px 'ZCOOL KuaiLe', sans-serif`
+  ctx.fillStyle = '#6B4226'
+  ctx.fillText('古诗小课堂', 52, footerY + FOOTER_H / 2 + 1)
+  ctx.font = `8px 'PingFang SC', sans-serif`
+  ctx.fillStyle = '#B08060'
+  ctx.fillText('每天一首，积累经典', 52, footerY + FOOTER_H / 2 + 13)
+
+  return canvas.toDataURL('image/png')
+}
+
 export default function ShareCardModal() {
   const { params, close } = useShareCard()
   const { totalMemorized, masteredCount, memorizeHistory } = useProgress()
@@ -381,6 +747,35 @@ export default function ShareCardModal() {
         if (!poem) throw new Error('poem not found')
         const summary = idx.find(p => p.id === params.poemId!) ?? null
         url = await drawPoemCard(poem, summary, bgImg)
+      } else if (params.type === 'milestone') {
+        const idx = await loadPoemIndex()
+        const recentPoems = (memorizeHistory.slice(-3).reverse()
+          .map(r => idx.find(p => p.id === r.id)?.title ?? null)
+          .filter(Boolean) as string[])
+        url = await drawMilestoneCard(
+          nickname,
+          params.milestoneCount ?? memorizeHistory.length,
+          params.milestoneTitle ?? '里程碑',
+          recentPoems,
+        )
+      } else if (params.type === 'perfect') {
+        url = await drawPerfectCard(
+          nickname,
+          params.perfectPoemTitle ?? '',
+          params.perfectFirstLine ?? '',
+        )
+      } else if (params.type === 'weekly') {
+        url = await drawWeeklyCard(
+          params.weeklyNewCount ?? 0,
+          params.weeklyCheckInDays ?? 0,
+          params.weeklyStreakCount ?? 0,
+          params.weeklyHardPoemTitle ?? null,
+          params.weeklyTotalChars ?? 0,
+          params.weeklyTotalMemorized ?? 0,
+          params.weeklyStart ?? '',
+          params.weeklyEnd ?? '',
+          params.weeklyPoemTitles ?? [],
+        )
       } else {
         // checkin
         let todayPoemTitle: string | null = null
@@ -435,7 +830,14 @@ export default function ShareCardModal() {
   }
 
   if (!params) return null
-  const isPoem = params.type === 'poem'
+  const titleMap: Record<string, string> = {
+    poem: '分享这首诗',
+    checkin: '今日打卡',
+    milestone: '里程碑达成',
+    perfect: '满星成就',
+    weekly: '分享本周报告',
+  }
+  const cardTitle = titleMap[params.type] ?? '分享'
 
   return (
     <>
@@ -444,7 +846,7 @@ export default function ShareCardModal() {
         <div className="scm-handle-bar"><div className="scm-handle" /></div>
 
         <div className="scm-header">
-          <span className="scm-title">{isPoem ? '分享这首诗' : '今日打卡'}</span>
+          <span className="scm-title">{cardTitle}</span>
           <button className="scm-close" onClick={close}>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
