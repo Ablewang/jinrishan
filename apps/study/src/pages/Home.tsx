@@ -116,9 +116,6 @@ export default function Home() {
           <span className="home__progress-chip">{totalMemorized} / 70 首</span>
           <button className="home__manage-btn" onClick={() => navigate('/queue')}>背诗计划</button>
         </div>
-        <button className="home__share-card-btn" onClick={() => navigate('/share-card')}>
-          生成成果卡片
-        </button>
       </header>
 
       {/* 久违横幅 */}

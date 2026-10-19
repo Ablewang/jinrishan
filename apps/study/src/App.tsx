@@ -8,6 +8,7 @@ import QueueScreen from './pages/QueueScreen'
 import PoemsScreen from './pages/PoemsScreen'
 import ProfilePage from './pages/ProfilePage'
 import Onboarding from './pages/Onboarding'
+import WeeklyReportPage from './pages/WeeklyReportPage'
 import { ShareCardProvider } from './contexts/ShareCardContext'
 import ShareCardModal from './components/ShareCardModal'
 
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/queue" element={<QueueScreen />} />
         </Route>
         <Route path="/poem/:id" element={<PoemDetail />} />
+        <Route path="/weekly-report" element={<WeeklyReportPage />} />
       </Routes>
       <ShareCardModal />
     </ShareCardProvider>

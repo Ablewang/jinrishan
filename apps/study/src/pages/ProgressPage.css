@@ -322,6 +322,48 @@
     width: 6px; height: 6px; border-radius: 50%; background: var(--border);
   }
   .pg__rpi-dot--filled { background: #C62828; }
+  /* ── 周报入口卡片 ── */
+  .pg__weekly-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 14px 16px 0;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-card);
+    border: 1.5px solid var(--border);
+    width: calc(100% - 32px);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    text-align: left;
+  }
+  .pg__weekly-card:active { background: rgba(198,40,40,0.03); }
+  .pg__weekly-left { display: flex; flex-direction: column; gap: 4px; }
+  .pg__weekly-title {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .pg__weekly-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #C62828; flex-shrink: 0;
+  }
+  .pg__weekly-meta {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-light);
+  }
+  .pg__weekly-arrow {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: #C62828;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
   .pg__two-col {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     padding: 0 16px; margin-bottom: 8px;

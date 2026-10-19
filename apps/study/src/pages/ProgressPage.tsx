@@ -7,6 +7,7 @@ import type { PoemSummary } from '../data/poems'
 import HeatmapChart from '../components/HeatmapChart'
 import HardRanking from '../components/HardRanking'
 import TimeSlotChart from '../components/TimeSlotChart'
+import { buildWeeklyReport, getWeekStart, hasUnreadReport } from '../lib/weeklyReport'
 import './ProgressPage.css'
 type StarFilter = '全部' | '无提示' | '少量提示' | '多次提示'
 const STAR_FILTERS: StarFilter[] = ['全部', '无提示', '少量提示', '多次提示']
@@ -39,8 +40,13 @@ export default function ProgressPage() {
 
   const RESULT_LABEL = (stars: number) => stars === 3 ? '无提示' : stars === 2 ? '少量提示' : stars === 1 ? '多次提示' : ''
 
-  // 今日到期复习
+  // 周报入口
   const today = new Date().toISOString().slice(0, 10)
+  const thisWeekStart = getWeekStart(today)
+  const thisWeekReport = useMemo(() => buildWeeklyReport(thisWeekStart), [thisWeekStart])
+  const unread = useMemo(() => hasUnreadReport(), [])
+
+  // 今日到期复习
   const dueToday = reviewCards.filter(c => c.level < 5 && c.due <= today)
   const upcoming = reviewCards
     .filter(c => c.level < 5 && c.due > today)
@@ -53,6 +59,22 @@ export default function ProgressPage() {
         <button className="pg__back" onClick={() => navigate('/')}><svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M403.2 812.8L100.256 512 403.2 211.2l59.744 59.744-198.4 198.4h652.8v85.344h-652.8l198.4 198.4z"/></svg> 返回</button>
         <span className="pg__title">学习记录</span>
       </header>
+
+      {/* 周报入口卡片 */}
+      {thisWeekReport.hasData && (
+        <button className="pg__weekly-card" onClick={() => navigate('/weekly-report')}>
+          <div className="pg__weekly-left">
+            <div className="pg__weekly-title">
+              本周报告
+              {unread && <span className="pg__weekly-dot" />}
+            </div>
+            <div className="pg__weekly-meta">
+              背了 {thisWeekReport.newPoemCount} 首 · 打卡 {thisWeekReport.checkInDays} 天 · 连续 {thisWeekReport.streakCount} 天
+            </div>
+          </div>
+          <span className="pg__weekly-arrow">查看 →</span>
+        </button>
+      )}
 
       {/* 四格统计 */}
       <div className="pg__stats">

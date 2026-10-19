@@ -10,7 +10,7 @@
   /* ── hero ── */
   .home__hero {
     background: linear-gradient(to bottom, #C62828 0%, #B71C1C 100%);
-    padding: 0 18px 28px;
+    padding: 0 18px 18px;
     flex-shrink: 0;
     position: sticky;
     top: env(safe-area-inset-top, 0px);
@@ -55,22 +55,6 @@
     font-family: var(--font-ui);
     font-weight: 600;
   }
-  .home__share-card-btn {
-    margin-top: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-    color: #FFF8E1;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,248,225,0.3);
-    border-radius: 999px;
-    padding: 7px 16px;
-    position: relative;
-    transition: background 0.15s;
-  }
-  .home__share-card-btn:active { background: rgba(255,255,255,0.25); }
   .home__hero-streak {
     margin-top: 10px;
     display: flex;
