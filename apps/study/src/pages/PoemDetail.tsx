@@ -78,6 +78,7 @@ export default function PoemDetail() {
   const [distractorLines, setDistractorLines] = useState<{ char: string; pinyin: string | null }[][]>([])
   const [titleHidden, setTitleHidden] = useState(false)
   const [splitColumn, setSplitColumn] = useState(false)
+  const [splitReady, setSplitReady] = useState(false)
   const metaRef = useRef<HTMLDivElement>(null)
   const notesWrapRef = useRef<HTMLDivElement>(null)
 
@@ -181,10 +182,14 @@ export default function PoemDetail() {
   useEffect(() => { if (poem) markRead(poem.id) }, [poem?.id])
 
   useLayoutEffect(() => {
+    setSplitReady(false)
     const wrap = notesWrapRef.current
     if (!wrap) return
-    const measure = () => setSplitColumn(wrap.getBoundingClientRect().width < 120)
-    const ro = new ResizeObserver(measure)
+    const ro = new ResizeObserver(() => {
+      setSplitColumn(wrap.getBoundingClientRect().width < 120)
+      setSplitReady(true)
+      ro.disconnect()
+    })
     ro.observe(wrap)
     return () => ro.disconnect()
   }, [poem?.id, annotation])
@@ -404,7 +409,7 @@ export default function PoemDetail() {
               <PoemText lines={poem.lines} showPinyin={showPinyin} compact />
             </div>
             {hasNotes && (
-              <div className="d-split__notes-wrap" ref={notesWrapRef}>
+              <div className="d-split__notes-wrap" ref={notesWrapRef} style={{ opacity: splitReady ? 1 : 0 }}>
                 <div className="d-split-rings">
                   <div className="d-ring" />
                   <div className="d-ring" />
