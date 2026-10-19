@@ -313,7 +313,7 @@ export default function PoemDetail() {
       <MemorizeMode
         key={poem.id}
         poem={poem}
-        onExit={() => setMemorizing(false)}
+        onExit={() => isReviewMode ? navigate('/') : setMemorizing(false)}
         onNext={handleNext}
         onMemorized={handleMemorized}
         isReview={isReviewMode}
