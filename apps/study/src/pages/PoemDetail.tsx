@@ -294,7 +294,7 @@ export default function PoemDetail() {
   if (!poem) {
     return (
       <div className="d-loading">
-        <PageHeader onBack={() => goBack(navigate)} title="" />
+        <PageHeader onBack={() => isReviewMode ? navigate('/') : goBack(navigate)} title="" />
         <div className="d-loading__body">
           <img className="d-loading__icon" src="/icon.png" alt="" />
           <div className="d-loading__text">
@@ -355,7 +355,7 @@ export default function PoemDetail() {
   return (
     <div className="d">
       <PageHeader
-        onBack={() => goBack(navigate)}
+        onBack={() => isReviewMode ? navigate('/') : goBack(navigate)}
         title={titleHidden ? poem.title : ''}
         right={
           <div style={{ display:'flex', alignItems:'center', gap:6 }}>
