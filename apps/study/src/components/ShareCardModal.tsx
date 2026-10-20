@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useShareCard } from '../contexts/ShareCardContext'
 import { useProgress } from '../hooks/useProgress'
-import { useQueue } from '../hooks/useQueue'
 import { getLevelTitle } from '../utils/levelTitle'
 import { loadPoem, loadPoemIndex } from '../data/poems'
 import type { Poem, PoemSummary } from '../data/poems'
@@ -707,8 +706,7 @@ async function drawWeeklyCard(
 
 export default function ShareCardModal() {
   const { params, close } = useShareCard()
-  const { totalMemorized, masteredCount, memorizeHistory } = useProgress()
-  const { streakCount } = useQueue()
+  const { totalMemorized, masteredCount, memorizeHistory, streakCount } = useProgress()
 
   const [nickname, setNickname] = useState('小诗人')
   const rankTitle = getLevelTitle(totalMemorized)

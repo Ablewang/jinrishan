@@ -1,25 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { buildHeatmap } from '../lib/progressStats'
 import type { HeatmapDay } from '../lib/progressStats'
-import { storage } from '../lib/storage'
 import type { PoemSummary } from '../data/poems'
+import { useProgress } from '../hooks/useProgress'
 import BottomSheet, { type BottomSheetActions } from './BottomSheet'
 
 const DOW = ['一', '二', '三', '四', '五', '六', '日']
-
-interface Session {
-  poemId: number
-  date: string
-  stars: number
-  qScore: number
-}
-
-interface ReviewCard {
-  id: number
-  level: number
-  due: string
-  lastDate: string
-}
 
 interface Props {
   poems: PoemSummary[]
@@ -51,12 +37,11 @@ function starStr(stars: number): string {
 }
 
 export default function HeatmapChart({ poems }: Props) {
+  const { sessions: allSessions, srsSchedules } = useProgress()
   const [ym, setYm] = useState(currentYM)
   const [days, setDays] = useState<HeatmapDay[]>([])
   const [tooltip, setTooltip] = useState<HeatmapDay | null>(null)
   const [detailDate, setDetailDate] = useState<string | null>(null)
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [reviewCards, setReviewCards] = useState<ReviewCard[]>([])
   const sheetRef = useRef<BottomSheetActions>(null)
 
   useEffect(() => {
@@ -64,14 +49,18 @@ export default function HeatmapChart({ poems }: Props) {
     setTooltip(null)
   }, [ym])
 
-  useEffect(() => {
-    storage.get('recitation_sessions').then(raw => {
-      setSessions(raw ? JSON.parse(raw) : [])
-    })
-    storage.get('poem_review_cards').then(raw => {
-      setReviewCards(raw ? JSON.parse(raw) : [])
-    })
-  }, [ym])
+  const sessions = useMemo(() =>
+    allSessions.filter(s => s.date.startsWith(ym)),
+    [allSessions, ym]
+  )
+
+  const reviewCards = useMemo(() =>
+    Object.values(srsSchedules).map(s => {
+      const lastSession = [...allSessions].reverse().find(r => r.poemId === s.poemId)
+      return { id: s.poemId, level: Math.min(s.repetition, 5), due: s.nextDue, lastDate: lastSession?.date ?? '' }
+    }),
+    [srsSchedules, allSessions]
+  )
 
   const [year, month] = ym.split('-').map(Number)
   const isCurrentMonth = ym === currentYM()

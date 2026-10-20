@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom'
 import { goBack } from '../utils/navigation'
 import { useProgress } from '../hooks/useProgress'
 import { useAchievements } from '../hooks/useAchievements'
-import { useQueue } from '../hooks/useQueue'
 import { getLevelTitle } from '../utils/levelTitle'
 import './AchievementsPage.css'
 
@@ -10,8 +9,7 @@ const TOTAL = 70
 
 export default function AchievementsPage() {
   const navigate = useNavigate()
-  const { progress, streak, totalChars, memorizeHistory, totalMemorized } = useProgress()
-  const { streakCount } = useQueue()
+  const { progress, streak, totalChars, memorizeHistory, totalMemorized, streakCount } = useProgress()
   const badges = useAchievements({ progress, streak, totalChars, memorizeHistory })
   const unlockedCount = badges.filter(b => b.unlocked).length
   const title = getLevelTitle(totalMemorized)

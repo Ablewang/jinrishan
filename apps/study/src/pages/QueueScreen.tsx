@@ -4,15 +4,13 @@ import { goBack } from '../utils/navigation'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
-import { useQueue } from '../hooks/useQueue'
 import './QueueScreen.css'
 
 type AddTab = 'unmemorized' | 'memorized'
 
 export default function QueueScreen() {
   const navigate = useNavigate()
-  const { getState } = useProgress()
-  const { queue, addToQueue, removeFromQueue, isInQueue, reorderQueue } = useQueue()
+  const { getState, queue, addToQueue, removeFromQueue, isInQueue, reorderQueue } = useProgress()
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [addTab, setAddTab] = useState<AddTab>('unmemorized')
   const [search, setSearch] = useState('')

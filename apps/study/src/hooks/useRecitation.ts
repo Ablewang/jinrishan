@@ -1,12 +1,11 @@
 import { useCallback, useState, useEffect } from 'react'
-import type { LineResult, RecitationSession, ReviewSchedule } from '../types/recitation'
+import type { LineResult, RecitationSession } from '../types/recitation'
 import type { SrsSchedule } from '../types/storage'
-import { buildSession, updateSchedule, getTodayReviews } from '../lib/spacedRepetition'
+import { buildSession, updateSchedule } from '../lib/spacedRepetition'
 import { pruneOldSessions } from '../lib/storageMonitor'
 import { storage } from '../lib/storage'
 
 const SESSIONS_KEY = 'recitation_sessions'
-const SCHEDULES_KEY = 'review_schedules'
 const SRS_SCHEDULES_KEY = 'srs_schedules'
 const STREAK_KEY_V2 = 'srs_streak_v2'
 
@@ -64,17 +63,6 @@ async function saveSessions(sessions: RecitationSession[]): Promise<void> {
   }
 }
 
-async function loadSchedules(): Promise<Record<number, ReviewSchedule>> {
-  try {
-    const raw = await storage.get(SCHEDULES_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch { return {} }
-}
-
-async function saveSchedules(schedules: Record<number, ReviewSchedule>): Promise<void> {
-  await storage.set(SCHEDULES_KEY, JSON.stringify(schedules))
-}
-
 async function loadSrsSchedules(): Promise<Record<number, SrsSchedule>> {
   try {
     const raw = await storage.get(SRS_SCHEDULES_KEY)
@@ -106,11 +94,6 @@ export function useRecitation() {
     sessions.push(session)
     await saveSessions(sessions)
 
-    // 同时写旧 review_schedules（兼容过渡）和新 srs_schedules
-    const schedules = await loadSchedules()
-    schedules[poemId] = updateSchedule(schedules[poemId] ?? null, session)
-    await saveSchedules(schedules)
-
     const srsSchedules = await loadSrsSchedules()
     const old = srsSchedules[poemId] ?? null
     const updated = updateSchedule(old, session)
@@ -131,13 +114,14 @@ export function useRecitation() {
     return session
   }, [])
 
-  const getSchedule = useCallback(async (poemId: number): Promise<ReviewSchedule | null> => {
-    const schedules = await loadSchedules()
+  const getSchedule = useCallback(async (poemId: number): Promise<SrsSchedule | null> => {
+    const schedules = await loadSrsSchedules()
     return schedules[poemId] ?? null
   }, [])
 
-  const getTodayList = useCallback(async (today: string): Promise<ReviewSchedule[]> => {
-    return getTodayReviews(await loadSchedules(), today)
+  const getTodayList = useCallback(async (today: string): Promise<SrsSchedule[]> => {
+    const schedules = await loadSrsSchedules()
+    return Object.values(schedules).filter(s => s.nextDue <= today)
   }, [])
 
   const getPoemSessions = useCallback(async (poemId: number): Promise<RecitationSession[]> => {

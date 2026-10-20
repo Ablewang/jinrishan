@@ -1,6 +1,6 @@
 import './Onboarding.css'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useQueue } from '../hooks/useQueue'
+import { useProgress } from '../hooks/useProgress'
 import { storage } from '../lib/storage'
 
 const ONBOARDING_DONE_KEY = 'poem_onboarding_done'
@@ -30,7 +30,7 @@ function AnimChars({ text, baseDelay }: { text: string; baseDelay: number }) {
 export default function Onboarding() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { addToQueue } = useQueue()
+  const { addToQueue } = useProgress()
   const step = searchParams.get('step') === '1' ? 1 : 0
 
   function skip() {

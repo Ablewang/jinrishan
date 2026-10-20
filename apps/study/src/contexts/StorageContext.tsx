@@ -8,8 +8,12 @@ interface StorageContextValue {
 
 const StorageContext = createContext<StorageContextValue>({ ready: false })
 
+const FADE_DURATION = 400
+
 export function StorageProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false)
+  const [fadingOut, setFadingOut] = useState(false)
+  const [showSplash, setShowSplash] = useState(true)
 
   useEffect(() => {
     const delay = new Promise(r => setTimeout(r, 2000))
@@ -19,16 +23,17 @@ export function StorageProvider({ children }: { children: React.ReactNode }) {
         else if (!storage.isIDBAvailable()) console.warn('[Storage] IDB 不可用，降级到 localStorage')
       })
       .catch(() => {})
-    Promise.all([delay, migrate]).then(() => setReady(true))
+    Promise.all([delay, migrate]).then(() => {
+      setReady(true)
+      setFadingOut(true)
+      setTimeout(() => setShowSplash(false), FADE_DURATION)
+    })
   }, [])
-
-  if (!ready) {
-    return <SplashScreen />
-  }
 
   return (
     <StorageContext.Provider value={{ ready }}>
-      {children}
+      {ready && children}
+      {showSplash && <SplashScreen fadingOut={fadingOut} />}
     </StorageContext.Provider>
   )
 }

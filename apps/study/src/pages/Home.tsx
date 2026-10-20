@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
-import { useQueue } from '../hooks/useQueue'
-import { useRecitation } from '../hooks/useRecitation'
 import { buildDailyPlan } from '../lib/dailyPlan'
 import { IconReview, IconSparkle, IconFireworks } from '../components/icons'
 import { getLevelTitle } from '../utils/levelTitle'
@@ -13,10 +11,7 @@ import './Home.css'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { todayDueReviews, reviewCards, totalMemorized, progress } = useProgress()
-  const { queue, todayComplete, isReturning } = useQueue()
-  const { srsStreak } = useRecitation()
-  const streakCount = srsStreak.count
+  const { todayDueReviews, reviewCards, totalMemorized, progress, queue, todayComplete, isReturning, streakCount } = useProgress()
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [bannerVisible, setBannerVisible] = useState(false)
   const bannerTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -325,7 +320,7 @@ export default function Home() {
                 {reviewCards.length === 0 && (
                   <div className="queue-preview__empty">还没有需要复习的诗，继续背新诗吧</div>
                 )}
-                {reviewCards.map(rc => {
+                {[...reviewCards].sort((a, b) => a.due.localeCompare(b.due)).map(rc => {
                   const p = poems.find(pm => pm.id === rc.id)
                   if (!p) return null
                   const isDue = rc.due <= today

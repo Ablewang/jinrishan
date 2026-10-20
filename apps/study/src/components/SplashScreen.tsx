@@ -1,8 +1,8 @@
 import './SplashScreen.css'
 
-export default function SplashScreen() {
+export default function SplashScreen({ fadingOut = false }: { fadingOut?: boolean }) {
   return (
-    <div className="splash">
+    <div className={`splash${fadingOut ? ' splash--out' : ''}`}>
       <div className="splash__bg-char" aria-hidden>诗</div>
       <div className="splash__deco splash__deco--1" />
       <div className="splash__deco splash__deco--2" />

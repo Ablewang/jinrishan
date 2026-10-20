@@ -4,7 +4,6 @@ import { loadPoemIndex } from '../data/poems'
 import type { PoemSummary } from '../data/poems'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback } from 'react'
 import { useShareCard } from '../contexts/ShareCardContext'
-import { useRecitation } from '../hooks/useRecitation'
 import { downloadBackup, importBackup, getLastBackupDate } from '../lib/backup'
 import { getStorageReport } from '../lib/storageMonitor'
 import { storage } from '../lib/storage'
@@ -29,9 +28,7 @@ export interface ProfileSheetActions {
 const TOTAL_POEMS = 70
 
 const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
-  const { totalMemorized, totalChars, masteredCount, reviewingCount, memorizeHistory } = useProgress()
-  const { srsStreak } = useRecitation()
-  const streakCount = srsStreak.count
+  const { totalMemorized, totalChars, masteredCount, reviewingCount, memorizeHistory, streakCount } = useProgress()
   const [poems, setPoems] = useState<PoemSummary[]>([])
   const [gender, setGender] = useState<'boy' | 'girl'>('girl')
   const [nickname, setNickname] = useState('小诗人')
@@ -118,7 +115,7 @@ const ProfileSheet = forwardRef<ProfileSheetActions>((_, ref) => {
   }))
 
   return (
-    <BottomSheet ref={sheetRef}>
+    <BottomSheet ref={sheetRef} handleColor="#C62828">
       {/* 红色 header */}
       <div className="ps-profile-header">
         <div className="ps-profile-avatar">

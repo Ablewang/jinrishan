@@ -2,7 +2,14 @@ import { useState, useEffect } from 'react'
 import { storage } from '../lib/storage'
 import type { PoemState, StreakData, MemorizeRecord } from './useProgress'
 
-const STORAGE_KEY = 'poem_achievement_dates'
+const STORAGE_KEY = 'achievement_events'
+
+// achievement_events 格式：{ id: string; unlockedAt: string }[]
+function eventsToMap(events: { id: string; unlockedAt: string }[]): Record<string, string> {
+  const m: Record<string, string> = {}
+  for (const e of events) m[e.id] = e.unlockedAt
+  return m
+}
 
 export interface AchievementDef {
   id: string
@@ -38,7 +45,8 @@ interface Input {
 }
 
 async function saveDates(d: Record<string, string>) {
-  await storage.set(STORAGE_KEY, JSON.stringify(d))
+  const events = Object.entries(d).map(([id, unlockedAt]) => ({ id, unlockedAt }))
+  await storage.set(STORAGE_KEY, JSON.stringify(events))
 }
 
 function computeUnlocked(input: Input): Record<string, boolean> {
@@ -81,7 +89,7 @@ export function useAchievements(input: Input): Badge[] {
 
   useEffect(() => {
     storage.get(STORAGE_KEY).then(raw => {
-      try { setDates(raw ? JSON.parse(raw) : {}) } catch { /* ignore */ }
+      try { setDates(raw ? eventsToMap(JSON.parse(raw)) : {}) } catch { /* ignore */ }
     })
   }, [])
 
@@ -89,7 +97,7 @@ export function useAchievements(input: Input): Badge[] {
 
   useEffect(() => {
     storage.get(STORAGE_KEY).then(raw => {
-      const current: Record<string, string> = (() => { try { return raw ? JSON.parse(raw) : {} } catch { return {} } })()
+      const current: Record<string, string> = (() => { try { return raw ? eventsToMap(JSON.parse(raw)) : {} } catch { return {} } })()
       let changed = false
       const now = new Date().toISOString()
       for (const id of Object.keys(unlocked)) {

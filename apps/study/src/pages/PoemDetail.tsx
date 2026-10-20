@@ -4,13 +4,11 @@ import { goBack } from '../utils/navigation'
 import { loadPoem, loadPoemIndex } from '../data/poems'
 import type { Poem, PoemSummary } from '../data/poems'
 import { useProgress } from '../hooks/useProgress'
-import { useQueue } from '../hooks/useQueue'
 import PoemText from '../components/PoemText'
 import MemorizeMode from '../components/MemorizeMode'
 import ParentMode from '../components/ParentMode'
 import ChildMode from '../components/ChildMode'
 import ReciteResult from '../components/ReciteResult'
-import { useRecitation } from '../hooks/useRecitation'
 import type { LineResult, RecitationSession } from '../types/recitation'
 import { updateSchedule } from '../lib/spacedRepetition'
 import imgMap from '../data/poem_img_map.json'
@@ -60,8 +58,7 @@ export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { markRead, markMemorized, reviewCards, progress } = useProgress()
-  const { queue, completePoem } = useQueue()
+  const { markRead, markMemorized, markReviewed, reviewCards, progress, queue, completePoem, saveSession, getSchedule } = useProgress()
   const { open: openShareCard } = useShareCard()
   const [showPinyin, setShowPinyin] = useState(true)
   const isOnboarding = searchParams.get('onboarding') === '1'
@@ -71,7 +68,6 @@ export default function PoemDetail() {
   const [memorizing, setMemorizing] = useState(() => searchParams.get('autoMem') === '1' || isReviewMode)
   const [reciteMode, setReciteMode] = useState<'parent' | 'child' | null>(null)
   const [reciteResult, setReciteResult] = useState<{ session: RecitationSession; interval: number; isPerfectFirst: boolean } | null>(null)
-  const { saveResult, getSchedule } = useRecitation()
   const [poem, setPoem] = useState<Poem | null>(null)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
   const [index, setIndex] = useState<PoemSummary[]>([])
@@ -216,20 +212,21 @@ export default function PoemDetail() {
 
     // MemorizeMode 也写 recitation_sessions，保证热力图/streak 数据完整
     const lines = poem.lines.map(l => ({ passed: true, hintCount: noHintPass ? 0 : 1, lineIndex: 0, mode: 'parent' as const }))
-    await saveResult(poem.id, 'parent', lines, today, charCount)
+    await saveSession(poem.id, 'parent', lines, today, charCount)
 
     markMemorized(poem.id, stars, charCount, noHintPass)
     if (!isReviewMode) completePoem(poem.id)
 
     const isPerfectFirst = stars === 3 && oldBestStars < 3
     try {
-      const history: { id: number }[] = JSON.parse(await storage.get('poem_memorize_history') ?? '[]')
-      const milestone = await checkMilestone(history.length)
+      const sessions: { poemId: number; mode?: string }[] = JSON.parse(await storage.get('recitation_sessions') ?? '[]')
+      const memorizedCount = new Set(sessions.filter(s => !s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child').map(s => s.poemId)).size
+      const milestone = await checkMilestone(memorizedCount)
       if (milestone && !isPerfectFirst) {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
     } catch {}
-  }, [poem, progress, markMemorized, completePoem, isReviewMode, openShareCard, saveResult])
+  }, [poem, progress, markMemorized, completePoem, isReviewMode, openShareCard, saveSession])
 
   const handleVerified = useCallback((passed: boolean) => {
     if (!poem) return
@@ -240,7 +237,7 @@ export default function PoemDetail() {
     if (!poem || !reciteMode) return
     const today = new Date().toISOString().slice(0, 10)
     const charCount = poem.lines.reduce((sum, l) => sum + l.chars.filter(c => /[一-鿿]/.test(c.char)).length, 0)
-    const session = await saveResult(poem.id, reciteMode, lines, today, charCount)
+    const session = await saveSession(poem.id, reciteMode, lines, today, charCount)
     const prev = await getSchedule(poem.id)
     const updated = updateSchedule(prev, session)
 
@@ -253,14 +250,14 @@ export default function PoemDetail() {
     setReciteResult({ session, interval: updated.interval, isPerfectFirst })
 
     try {
-      const raw = await storage.get('poem_memorize_history')
-      const history: { id: number }[] = raw ? JSON.parse(raw) : []
-      const milestone = await checkMilestone(history.length)
+      const sessions: { poemId: number; mode?: string }[] = JSON.parse(await storage.get('recitation_sessions') ?? '[]')
+      const memorizedCount = new Set(sessions.filter(s => !s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child').map(s => s.poemId)).size
+      const milestone = await checkMilestone(memorizedCount)
       if (milestone && !isPerfectFirst) {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
     } catch {}
-  }, [poem, progress, reciteMode, saveResult, getSchedule, markMemorized, openShareCard])
+  }, [poem, progress, reciteMode, saveSession, getSchedule, markMemorized, openShareCard])
 
   const handleNext = useCallback(() => {
     // Onboarding 完成：写入标志，回首页

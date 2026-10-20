@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { goBack } from '../utils/navigation'
 import { useProgress } from '../hooks/useProgress'
-import { useQueue } from '../hooks/useQueue'
 import { getLevelTitle } from '../utils/levelTitle'
 import { storage } from '../lib/storage'
 
@@ -32,8 +31,7 @@ const REMINDER_OPTIONS = [
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const { totalMemorized, totalChars } = useProgress()
-  const { streakCount } = useQueue()
+  const { totalMemorized, totalChars, streakCount } = useProgress()
   const [selected, setSelected] = useState<string>('18:30')
   const [nickname, setNickname] = useState<string>('小诗人')
   const [nicknameEdit, setNicknameEdit] = useState(false)

@@ -1,8 +1,8 @@
-import type { ReviewSchedule } from '../types/recitation'
+import type { SrsSchedule } from '../types/storage'
 import { storage } from './storage'
 
 const SESSIONS_KEY = 'recitation_sessions'
-const SCHEDULES_KEY = 'review_schedules'
+const SCHEDULES_KEY = 'srs_schedules'
 
 interface Session {
   poemId: number
@@ -20,7 +20,7 @@ async function loadSessions(): Promise<Session[]> {
   }
 }
 
-async function loadSchedules(): Promise<Record<number, ReviewSchedule>> {
+async function loadSchedules(): Promise<Record<number, SrsSchedule>> {
   try {
     return JSON.parse(await storage.get(SCHEDULES_KEY) ?? '{}')
   } catch {

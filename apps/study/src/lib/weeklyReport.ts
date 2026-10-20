@@ -1,5 +1,5 @@
 import type { RecitationSession } from '../types/recitation'
-import type { MemorizeRecord } from '../hooks/useProgress'
+import type { SrsSchedule } from '../types/storage'
 import { storage } from './storage'
 
 export interface WeeklyReport {
@@ -43,32 +43,32 @@ export async function buildWeeklyReport(weekStart: string): Promise<WeeklyReport
   let sessions: RecitationSession[] = []
   try { sessions = JSON.parse(await storage.get('recitation_sessions') ?? '[]') } catch {}
 
-  let history: MemorizeRecord[] = []
-  try { history = JSON.parse(await storage.get('poem_memorize_history') ?? '[]') } catch {}
-
-  let schedules: Record<number, { ef: number; totalSessions: number }> = {}
-  try { schedules = JSON.parse(await storage.get('review_schedules') ?? '{}') } catch {}
+  let schedules: Record<number, SrsSchedule> = {}
+  try { schedules = JSON.parse(await storage.get('srs_schedules') ?? '{}') } catch {}
 
   let streakCount = 0
   try {
     const sv2 = JSON.parse(await storage.get('srs_streak_v2') ?? 'null')
     if (sv2?.count) streakCount = sv2.count
-    else {
-      const s = JSON.parse(await storage.get('poem_streak') ?? 'null')
-      if (s?.count) streakCount = s.count
-    }
   } catch {}
 
-  let totalChars = 0
-  try { totalChars = Number(await storage.get('poem_total_chars') ?? 0) } catch {}
-  let totalMemorized = 0
-  try {
-    const prog = JSON.parse(await storage.get('poem_progress') ?? '{}')
-    totalMemorized = Object.values(prog as Record<string, { memorized?: boolean }>).filter(v => v.memorized).length
-  } catch {}
+  const totalChars = sessions.reduce((sum, s) => sum + (s.charCount ?? 0), 0)
+  const memorizedPoemIds = new Set(
+    sessions.filter(s => !s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child').map(s => s.poemId)
+  )
+  const totalMemorized = memorizedPoemIds.size
 
-  // 本周新背诗（memorize_history 中 date 在本周）
-  const weekPoems = history.filter(r => r.date >= start && r.date <= end)
+  // 本周新背诗（memorize sessions 中 date 在本周，每首只取最佳一次）
+  const weekMemorizeSessions = sessions.filter(s =>
+    s.date >= start && s.date <= end &&
+    (!s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child')
+  )
+  const weekPoemBest = new Map<number, { stars: number; date: string }>()
+  for (const s of weekMemorizeSessions) {
+    const prev = weekPoemBest.get(s.poemId)
+    if (!prev || s.stars > prev.stars) weekPoemBest.set(s.poemId, { stars: s.stars, date: s.date })
+  }
+  const weekPoems = [...weekPoemBest.entries()].map(([id, v]) => ({ id, ...v }))
   const newPoemCount = weekPoems.length
   const perfectStarCount = weekPoems.filter(r => r.stars === 3).length
 
