@@ -11,6 +11,8 @@ interface Props {
   nextInterval: number
   poem: Poem
   onDone: () => void
+  isPerfectFirst?: boolean
+  onShare?: () => void
 }
 
 const QUOTES: Record<number, string> = {
@@ -79,7 +81,7 @@ function stripColor(passed: boolean, hintCount: number): string {
   return '#2E7D32'
 }
 
-export default function ReciteResult({ session, nextInterval, poem, onDone }: Props) {
+export default function ReciteResult({ session, nextInterval, poem, onDone, isPerfectFirst, onShare }: Props) {
   const poemLines = useMemo(() => session.lines, [session])
   const imgFile = (imgMap as Record<string, string>)[String(poem.id)]
   const imgSrc = imgFile ? `/images/${encodeURIComponent(imgFile)}` : null
@@ -189,7 +191,22 @@ export default function ReciteResult({ session, nextInterval, poem, onDone }: Pr
         flexShrink: 0, zIndex: 10,
         padding: '12px 14px calc(12px + env(safe-area-inset-bottom, 0px))',
         background: 'rgba(255,253,248,0.95)', borderTop: '1px solid #EDE8DF',
+        display: 'flex', flexDirection: 'column', gap: 8,
       }}>
+        {isPerfectFirst && onShare && (
+          <button
+            onClick={onShare}
+            style={{
+              display: 'block', width: '100%', textAlign: 'center',
+              background: 'transparent', color: '#C62828',
+              padding: '11px', borderRadius: 999,
+              border: '1.5px solid #C62828',
+              fontFamily: 'var(--font-brush)', fontSize: '1rem', letterSpacing: '0.08em',
+            }}
+          >
+            分享满星成就
+          </button>
+        )}
         <button
           onClick={onDone}
           style={{

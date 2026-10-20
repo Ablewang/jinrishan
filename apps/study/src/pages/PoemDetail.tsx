@@ -70,7 +70,7 @@ export default function PoemDetail() {
   const reviewIdx = Number(searchParams.get('reviewIdx') ?? 0)
   const [memorizing, setMemorizing] = useState(() => searchParams.get('autoMem') === '1' || isReviewMode)
   const [reciteMode, setReciteMode] = useState<'parent' | 'child' | null>(null)
-  const [reciteResult, setReciteResult] = useState<{ session: RecitationSession; interval: number } | null>(null)
+  const [reciteResult, setReciteResult] = useState<{ session: RecitationSession; interval: number; isPerfectFirst: boolean } | null>(null)
   const { saveResult, getSchedule } = useRecitation()
   const [poem, setPoem] = useState<Poem | null>(null)
   const [annotation, setAnnotation] = useState<AnnotationData | null>(null)
@@ -215,17 +215,13 @@ export default function PoemDetail() {
     markMemorized(poem.id, stars, charCount, noHintPass)
     if (!isReviewMode) completePoem(poem.id)
 
-    // 满星触发
-    if (stars === 3 && oldBestStars < 3) {
-      const firstLine = poem.lines[0]?.chars.map(c => c.char).join('') ?? ''
-      setTimeout(() => openShareCard({ type: 'perfect', perfectPoemTitle: poem.title, perfectFirstLine: firstLine }), 1200)
-      return
-    }
+    // 满星触发（不再自动弹出，改为在结果页显示分享按钮）
+    const isPerfectFirst = stars === 3 && oldBestStars < 3
     // 里程碑触发
     try {
       const history: { id: number }[] = JSON.parse(await storage.get('poem_memorize_history') ?? '[]')
       const milestone = await checkMilestone(history.length)
-      if (milestone) {
+      if (milestone && !isPerfectFirst) {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
     } catch {}
@@ -250,20 +246,16 @@ export default function PoemDetail() {
     markReviewed(poem.id, session.stars >= 2)
 
     setReciteMode(null)
-    setReciteResult({ session, interval: updated.interval })
+    const isPerfectFirst = session.stars === 3 && oldBestStars < 3
+    setReciteResult({ session, interval: updated.interval, isPerfectFirst })
 
-    // 满星触发
-    if (session.stars === 3 && oldBestStars < 3) {
-      const firstLine = poem.lines[0]?.chars.map(c => c.char).join('') ?? ''
-      setTimeout(() => openShareCard({ type: 'perfect', perfectPoemTitle: poem.title, perfectFirstLine: firstLine }), 1200)
-      return
-    }
+    // 满星不再自动弹出，改为结果页显示分享按钮
     // 里程碑触发
     try {
       const raw = await storage.get('poem_memorize_history')
       const history: { id: number }[] = raw ? JSON.parse(raw) : []
       const milestone = await checkMilestone(history.length)
-      if (milestone) {
+      if (milestone && !isPerfectFirst) {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
     } catch {}
@@ -340,12 +332,15 @@ export default function PoemDetail() {
   }
 
   if (reciteResult) {
+    const firstLine = poem.lines[0]?.chars.map(c => c.char).join('') ?? ''
     return (
       <ReciteResult
         session={reciteResult.session}
         nextInterval={reciteResult.interval}
         poem={poem}
         onDone={() => setReciteResult(null)}
+        isPerfectFirst={reciteResult.isPerfectFirst}
+        onShare={() => openShareCard({ type: 'perfect', perfectPoemTitle: poem.title, perfectFirstLine: firstLine })}
       />
     )
   }
