@@ -1,11 +1,13 @@
 import { useCallback, useState, useEffect } from 'react'
 import type { LineResult, RecitationSession, ReviewSchedule } from '../types/recitation'
+import type { SrsSchedule } from '../types/storage'
 import { buildSession, updateSchedule, getTodayReviews } from '../lib/spacedRepetition'
 import { pruneOldSessions } from '../lib/storageMonitor'
 import { storage } from '../lib/storage'
 
 const SESSIONS_KEY = 'recitation_sessions'
 const SCHEDULES_KEY = 'review_schedules'
+const SRS_SCHEDULES_KEY = 'srs_schedules'
 const STREAK_KEY_V2 = 'srs_streak_v2'
 
 export interface SrsStreakData {
@@ -73,6 +75,17 @@ async function saveSchedules(schedules: Record<number, ReviewSchedule>): Promise
   await storage.set(SCHEDULES_KEY, JSON.stringify(schedules))
 }
 
+async function loadSrsSchedules(): Promise<Record<number, SrsSchedule>> {
+  try {
+    const raw = await storage.get(SRS_SCHEDULES_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch { return {} }
+}
+
+async function saveSrsSchedules(schedules: Record<number, SrsSchedule>): Promise<void> {
+  await storage.set(SRS_SCHEDULES_KEY, JSON.stringify(schedules))
+}
+
 export function useRecitation() {
   const [srsStreak, setSrsStreak] = useState<SrsStreakData>({ lastActivityDate: '', count: 0 })
 
@@ -84,17 +97,33 @@ export function useRecitation() {
     poemId: number,
     mode: 'parent' | 'child',
     lines: LineResult[],
-    date: string
+    date: string,
+    charCount = 0
   ): Promise<RecitationSession> => {
-    const session = buildSession(poemId, mode, lines, date)
+    const session = buildSession(poemId, mode, lines, date, charCount)
 
     const sessions = await loadSessions()
     sessions.push(session)
     await saveSessions(sessions)
 
+    // 同时写旧 review_schedules（兼容过渡）和新 srs_schedules
     const schedules = await loadSchedules()
     schedules[poemId] = updateSchedule(schedules[poemId] ?? null, session)
     await saveSchedules(schedules)
+
+    const srsSchedules = await loadSrsSchedules()
+    const old = srsSchedules[poemId] ?? null
+    const updated = updateSchedule(old, session)
+    srsSchedules[poemId] = {
+      poemId: updated.poemId,
+      ef: updated.ef,
+      interval: updated.interval,
+      repetition: updated.repetition,
+      nextDue: updated.nextReviewDate,
+      lastSessionId: updated.lastSessionId,
+      totalSessions: updated.totalSessions,
+    }
+    await saveSrsSchedules(srsSchedules)
 
     const newStreak = await updateSrsStreak(date)
     setSrsStreak(newStreak)

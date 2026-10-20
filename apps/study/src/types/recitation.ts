@@ -16,6 +16,7 @@ export interface RecitationSession {
   hintRate: number        // 用了提示的句子比例 0-1
   passRate: number        // 背出来的句子比例 0-1
   qScore: number          // SM-2 q值 0-5
+  charCount: number       // 汉字数量（不含标点）
 }
 
 export interface ReviewSchedule {

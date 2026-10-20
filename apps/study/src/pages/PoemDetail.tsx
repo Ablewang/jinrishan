@@ -60,7 +60,7 @@ export default function PoemDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { markRead, markMemorized, markReviewed, reviewCards, progress } = useProgress()
+  const { markRead, markMemorized, reviewCards, progress } = useProgress()
   const { queue, completePoem } = useQueue()
   const { open: openShareCard } = useShareCard()
   const [showPinyin, setShowPinyin] = useState(true)
@@ -212,12 +212,16 @@ export default function PoemDetail() {
     if (!poem) return
     const prevState = progress[String(poem.id)]
     const oldBestStars = prevState?.bestStars ?? 0
+    const today = new Date().toISOString().slice(0, 10)
+
+    // MemorizeMode 也写 recitation_sessions，保证热力图/streak 数据完整
+    const lines = poem.lines.map(l => ({ passed: true, hintCount: noHintPass ? 0 : 1, lineIndex: 0, mode: 'parent' as const }))
+    await saveResult(poem.id, 'parent', lines, today, charCount)
+
     markMemorized(poem.id, stars, charCount, noHintPass)
     if (!isReviewMode) completePoem(poem.id)
 
-    // 满星触发（不再自动弹出，改为在结果页显示分享按钮）
     const isPerfectFirst = stars === 3 && oldBestStars < 3
-    // 里程碑触发
     try {
       const history: { id: number }[] = JSON.parse(await storage.get('poem_memorize_history') ?? '[]')
       const milestone = await checkMilestone(history.length)
@@ -225,7 +229,7 @@ export default function PoemDetail() {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
     } catch {}
-  }, [poem, progress, markMemorized, completePoem, isReviewMode, openShareCard])
+  }, [poem, progress, markMemorized, completePoem, isReviewMode, openShareCard, saveResult])
 
   const handleVerified = useCallback((passed: boolean) => {
     if (!poem) return
@@ -235,22 +239,19 @@ export default function PoemDetail() {
   const handleReciteDone = useCallback(async (lines: LineResult[]) => {
     if (!poem || !reciteMode) return
     const today = new Date().toISOString().slice(0, 10)
-    const session = await saveResult(poem.id, reciteMode, lines, today)
+    const charCount = poem.lines.reduce((sum, l) => sum + l.chars.filter(c => /[一-鿿]/.test(c.char)).length, 0)
+    const session = await saveResult(poem.id, reciteMode, lines, today, charCount)
     const prev = await getSchedule(poem.id)
     const updated = updateSchedule(prev, session)
 
     const oldBestStars = progress[String(poem.id)]?.bestStars ?? 0
-    const charCount = poem.lines.reduce((sum, l) => sum + l.chars.filter(c => /[一-鿿]/.test(c.char)).length, 0)
     const noHintPass = session.stars === 3
     markMemorized(poem.id, session.stars, charCount, noHintPass)
-    markReviewed(poem.id, session.stars >= 2)
 
     setReciteMode(null)
     const isPerfectFirst = session.stars === 3 && oldBestStars < 3
     setReciteResult({ session, interval: updated.interval, isPerfectFirst })
 
-    // 满星不再自动弹出，改为结果页显示分享按钮
-    // 里程碑触发
     try {
       const raw = await storage.get('poem_memorize_history')
       const history: { id: number }[] = raw ? JSON.parse(raw) : []
@@ -259,7 +260,7 @@ export default function PoemDetail() {
         setTimeout(() => openShareCard({ type: 'milestone', milestoneCount: milestone.count, milestoneTitle: milestone.title }), 1200)
       }
     } catch {}
-  }, [poem, progress, reciteMode, saveResult, getSchedule, markMemorized, markReviewed, openShareCard])
+  }, [poem, progress, reciteMode, saveResult, getSchedule, markMemorized, openShareCard])
 
   const handleNext = useCallback(() => {
     // Onboarding 完成：写入标志，回首页

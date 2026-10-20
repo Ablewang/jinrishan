@@ -64,7 +64,8 @@ export function buildSession(
   poemId: number,
   mode: 'parent' | 'child',
   lines: LineResult[],
-  date: string
+  date: string,
+  charCount = 0
 ): RecitationSession {
   const stars = calcStars(lines)
   return {
@@ -78,6 +79,7 @@ export function buildSession(
     hintRate: calcHintRate(lines),
     passRate: calcPassRate(lines),
     qScore: calcQScore(lines),
+    charCount,
   }
 }
 

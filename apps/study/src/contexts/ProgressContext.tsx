@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { storage } from '../lib/storage'
-
-const USE_SYSTEM_A = false
+import type { SrsSchedule } from '../types/storage'
 
 export interface PoemState {
   read: boolean
@@ -28,13 +27,26 @@ export interface ReviewCard {
 
 export interface MemorizeRecord { id: number; stars: number; date: string }
 
+interface RawSession {
+  id: string
+  poemId: number
+  mode?: string
+  date: string
+  timestamp: number
+  stars: number
+  qScore: number
+  charCount?: number
+  lines: { passed: boolean; hintCount: number }[]
+}
+
+const SRS_KEY = 'srs_schedules'
+const SESSIONS_KEY = 'recitation_sessions'
+// 旧 key，只读兜底
 const STORAGE_KEY = 'poem_progress'
-const STREAK_KEY = 'poem_streak'
 const CHARS_KEY = 'poem_total_chars'
-const HISTORY_KEY = 'poem_memorize_history'
 const REVIEW_KEY = 'poem_review_cards'
 
-const INTERVALS = [1, 3, 7, 15, 30]
+function todayStr(): string { return new Date().toISOString().slice(0, 10) }
 
 function addDays(base: string, days: number): string {
   const d = new Date(base + 'T00:00:00')
@@ -42,32 +54,62 @@ function addDays(base: string, days: number): string {
   return d.toISOString().slice(0, 10)
 }
 
-async function loadProgress(): Promise<Progress> {
-  try { return JSON.parse(await storage.get(STORAGE_KEY) ?? '{}') } catch { return {} }
+async function loadSessions(): Promise<RawSession[]> {
+  try { return JSON.parse(await storage.get(SESSIONS_KEY) ?? '[]') } catch { return [] }
 }
-async function saveProgress(p: Progress) { await storage.set(STORAGE_KEY, JSON.stringify(p)) }
 
-async function loadStreak(): Promise<StreakData> {
-  try { return JSON.parse(await storage.get(STREAK_KEY) ?? '{"lastDate":"","count":0}') } catch { return { lastDate: '', count: 0 } }
+async function loadSrsSchedules(): Promise<Record<number, SrsSchedule>> {
+  try { return JSON.parse(await storage.get(SRS_KEY) ?? '{}') } catch { return {} }
 }
-async function saveStreak(s: StreakData) { await storage.set(STREAK_KEY, JSON.stringify(s)) }
 
-async function loadTotalChars(): Promise<number> {
-  try { return Number(await storage.get(CHARS_KEY) ?? '0') } catch { return 0 }
+async function saveSrsSchedules(s: Record<number, SrsSchedule>) {
+  await storage.set(SRS_KEY, JSON.stringify(s))
 }
-async function saveTotalChars(n: number) { await storage.set(CHARS_KEY, String(n)) }
 
-async function loadHistory(): Promise<MemorizeRecord[]> {
-  try { return JSON.parse(await storage.get(HISTORY_KEY) ?? '[]') } catch { return [] }
+// 从 sessions 构建 progress（memorized/bestStars）
+function buildProgress(sessions: RawSession[]): Progress {
+  const p: Progress = {}
+  for (const s of sessions) {
+    const key = String(s.poemId)
+    const existing = p[key] ?? { read: true, memorized: false, bestStars: 0 }
+    const isMemorize = !s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child'
+    p[key] = {
+      read: true,
+      memorized: existing.memorized || isMemorize,
+      bestStars: Math.max(existing.bestStars, s.stars ?? 0),
+      noHintPass: existing.noHintPass || s.qScore === 5,
+    }
+  }
+  return p
 }
-async function saveHistory(h: MemorizeRecord[]) { await storage.set(HISTORY_KEY, JSON.stringify(h)) }
 
-async function loadReviewCards(): Promise<ReviewCard[]> {
-  try { return JSON.parse(await storage.get(REVIEW_KEY) ?? '[]') } catch { return [] }
+// 从 sessions distinct date 计算连续天数
+function calcStreak(sessions: RawSession[]): StreakData {
+  const dates = [...new Set(sessions.map(s => s.date))].sort()
+  if (dates.length === 0) return { lastDate: '', count: 0 }
+  let count = 1
+  for (let i = dates.length - 1; i > 0; i--) {
+    const d = new Date(dates[i] + 'T00:00:00')
+    d.setDate(d.getDate() - 1)
+    if (d.toISOString().slice(0, 10) === dates[i - 1]) count++
+    else break
+  }
+  return { lastDate: dates[dates.length - 1], count }
 }
-async function saveReviewCards(cards: ReviewCard[]) { await storage.set(REVIEW_KEY, JSON.stringify(cards)) }
 
-function todayStr(): string { return new Date().toISOString().slice(0, 10) }
+// srs_schedules → ReviewCard（保持对外接口形状）
+function srsToReviewCards(schedules: Record<number, SrsSchedule>, sessions: RawSession[]): ReviewCard[] {
+  return Object.values(schedules).map(s => {
+    const lastSession = [...sessions].reverse().find(r => r.poemId === s.poemId)
+    return {
+      id: s.poemId,
+      level: Math.min(s.repetition, 5),
+      due: s.nextDue,
+      lastDate: lastSession?.date ?? '',
+      passCount: s.totalSessions,
+    }
+  })
+}
 
 interface ProgressContextValue {
   progress: Progress
@@ -92,153 +134,88 @@ interface ProgressContextValue {
 const ProgressContext = createContext<ProgressContextValue | null>(null)
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
-  const [progress, setProgress] = useState<Progress>({})
-  const [streak, setStreak] = useState<StreakData>({ lastDate: '', count: 0 })
-  const [totalChars, setTotalChars] = useState<number>(0)
-  const [memorizeHistory, setMemorizeHistory] = useState<MemorizeRecord[]>([])
-  const [reviewCards, setReviewCards] = useState<ReviewCard[]>([])
+  const [sessions, setSessions] = useState<RawSession[]>([])
+  const [srsSchedules, setSrsSchedules] = useState<Record<number, SrsSchedule>>({})
   const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
-    Promise.all([
-      loadProgress(),
-      loadStreak(),
-      loadTotalChars(),
-      loadHistory(),
-      loadReviewCards(),
-    ]).then(([p, s, c, h, r]) => {
-      setProgress(p)
-      setStreak(s)
-      setTotalChars(c)
-      setMemorizeHistory(h)
-      setReviewCards(r)
+    Promise.all([loadSessions(), loadSrsSchedules()]).then(([s, srs]) => {
+      setSessions(s)
+      setSrsSchedules(srs)
       setInitialized(true)
     })
   }, [])
+
+  // 派生状态（实时计算）
+  const progress = useMemo(() => buildProgress(sessions), [sessions])
+  const streak = useMemo(() => calcStreak(sessions), [sessions])
+  const totalChars = useMemo(() => sessions.reduce((sum, s) => sum + (s.charCount ?? 0), 0), [sessions])
+  const memorizeHistory = useMemo(() =>
+    sessions
+      .filter(s => !s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child')
+      .slice(-20)
+      .map(s => ({ id: s.poemId, stars: s.stars, date: s.date })),
+    [sessions]
+  )
+  const reviewCards = useMemo(() => srsToReviewCards(srsSchedules, sessions), [srsSchedules, sessions])
+  const totalMemorized = useMemo(() => Object.values(progress).filter(s => s.memorized).length, [progress])
+  const totalPerfect = useMemo(() => Object.values(progress).filter(s => s.bestStars === 3).length, [progress])
+  const todayDueReviews = useMemo(() => {
+    const today = todayStr()
+    return reviewCards.filter(c => c.level < 5 && c.due <= today)
+  }, [reviewCards])
+  const masteredCount = useMemo(() => reviewCards.filter(c => c.level >= 5).length, [reviewCards])
+  const reviewingCount = useMemo(() => reviewCards.filter(c => c.level > 0 && c.level < 5).length, [reviewCards])
+  const todayRecord = useMemo(() => {
+    const today = todayStr()
+    return [...memorizeHistory].reverse().find(r => r.date === today) ?? null
+  }, [memorizeHistory])
 
   const getState = useCallback((id: number): PoemState => {
     return progress[String(id)] ?? { read: false, memorized: false, bestStars: 0 }
   }, [progress])
 
   const markRead = useCallback((id: number) => {
-    setProgress(prev => {
-      const key = String(id)
-      const existing = prev[key] ?? { read: false, memorized: false, bestStars: 0 }
-      if (existing.read) return prev
-      const next = { ...prev, [key]: { ...existing, read: true } }
-      saveProgress(next)
-      return next
+    // read 状态不再持久化，仅更新内存（sessions 里有记录即视为 read）
+    // 对无 session 的诗保持兼容：写一条 read 标记到旧 poem_progress
+    setSessions(prev => {
+      const has = prev.some(s => s.poemId === id)
+      if (has) return prev
+      // 还没背过，写旧 key 兼容
+      storage.get(STORAGE_KEY).then(raw => {
+        const p: Progress = raw ? JSON.parse(raw) : {}
+        if (!p[String(id)]?.read) {
+          p[String(id)] = { ...(p[String(id)] ?? { memorized: false, bestStars: 0 }), read: true }
+          storage.set(STORAGE_KEY, JSON.stringify(p))
+        }
+      })
+      return prev
     })
   }, [])
 
   const markMemorized = useCallback((id: number, stars = 0, charCount = 0, noHintPass = false) => {
-    const today = todayStr()
-
-    setProgress(prev => {
-      const key = String(id)
-      const existing = prev[key] ?? { read: false, memorized: false, bestStars: 0 }
-      const isFirstTime = !existing.memorized
-      const next = {
-        ...prev,
-        [key]: {
-          ...existing,
-          read: true,
-          memorized: true,
-          bestStars: Math.max(existing.bestStars ?? 0, stars),
-          noHintPass: existing.noHintPass || noHintPass,
-        },
-      }
-      saveProgress(next)
-
-      if (isFirstTime && charCount > 0) {
-        loadTotalChars().then(current => {
-          const newTotal = current + charCount
-          saveTotalChars(newTotal)
-          setTotalChars(newTotal)
-        })
-      }
-      return next
-    })
-
-    setReviewCards(prev => {
-      const existing = prev.find(c => c.id === id)
-      if (existing && existing.level === 5) {
-        const updated = prev.map(c => c.id === id ? { ...c, lastDate: today } : c)
-        saveReviewCards(updated)
-        return updated
-      }
-      if (existing) return prev
-      const newCard: ReviewCard = { id, level: 0, due: addDays(today, 1), lastDate: today, passCount: 0 }
-      const updated = [...prev, newCard]
-      saveReviewCards(updated)
-      return updated
-    })
-
-    setMemorizeHistory(prev => {
-      const next = [...prev.filter(r => r.id !== id), { id, stars, date: today }].slice(-20)
-      saveHistory(next)
-      return next
-    })
-
-    loadStreak().then(current => {
-      if (current.lastDate !== today) {
-        const prevDay = new Date(today + 'T00:00:00')
-        prevDay.setDate(prevDay.getDate() - 1)
-        const prevStr = prevDay.toISOString().slice(0, 10)
-        const newStreak: StreakData = {
-          lastDate: today,
-          count: current.lastDate === prevStr ? current.count + 1 : 1,
-        }
-        saveStreak(newStreak)
-        setStreak(newStreak)
-      }
-    })
+    // sessions 已由 saveResult 写入，这里只负责刷新内存状态
+    // 重新读取 sessions 以保证 Context 与 IDB 同步
+    loadSessions().then(s => setSessions(s))
   }, [])
 
-  const markReviewed = useCallback((id: number, passed: boolean) => {
-    const today = todayStr()
-    setReviewCards(prev => {
-      const idx = prev.findIndex(c => c.id === id)
-      if (idx === -1) return prev
-      const card = prev[idx]
-      let newLevel: number
-      let newDue: string
-      if (passed) {
-        newLevel = Math.min(card.level + 1, 5)
-        newDue = newLevel < 5 ? addDays(today, INTERVALS[newLevel - 1]) : addDays(today, 365)
-      } else {
-        newLevel = Math.max(0, card.level - 1)
-        newDue = addDays(today, 1)
-      }
-      const updated = prev.map((c, i) => i === idx
-        ? { ...c, level: newLevel, due: newDue, lastDate: today, passCount: passed ? c.passCount + 1 : c.passCount }
-        : c
-      )
-      saveReviewCards(updated)
-      return updated
+  const markReviewed = useCallback((_id: number, _passed: boolean) => {
+    // srs_schedules 已由 useRecitation.saveResult 更新，这里刷新内存
+    loadSrsSchedules().then(s => setSrsSchedules(s))
+  }, [])
+
+  // 背诵/复习后外部可调用此方法强制刷新
+  const refresh = useCallback(() => {
+    Promise.all([loadSessions(), loadSrsSchedules()]).then(([s, srs]) => {
+      setSessions(s)
+      setSrsSchedules(srs)
     })
   }, [])
-
-  const todayDueReviews = useMemo(() => {
-    const today = todayStr()
-    return reviewCards.filter(c => c.level < 5 && c.due <= today)
-  }, [reviewCards])
-
-  const todayDueFromA = useMemo(() => {
-    if (!USE_SYSTEM_A) return null
-    return null as unknown as ReviewCard[]
-  }, [])
-
-  const masteredCount = useMemo(() => reviewCards.filter(c => c.level === 5).length, [reviewCards])
-  const reviewingCount = useMemo(() => reviewCards.filter(c => c.level > 0 && c.level < 5).length, [reviewCards])
-  const totalMemorized = Object.values(progress).filter(s => s.memorized).length
-  const totalPerfect = Object.values(progress).filter(s => s.bestStars === 3).length
-  const todayRecord = [...memorizeHistory].reverse().find(r => r.date === todayStr()) ?? null
 
   const value: ProgressContextValue = {
     progress, streak, totalChars, memorizeHistory, reviewCards, initialized,
     getState, markRead, markMemorized, markReviewed,
-    totalMemorized, totalPerfect, todayDueReviews, todayDueFromA,
+    totalMemorized, totalPerfect, todayDueReviews, todayDueFromA: null,
     masteredCount, reviewingCount, todayRecord,
   }
 
