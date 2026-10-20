@@ -2,117 +2,134 @@ import { useState, useEffect } from 'react'
 import { buildHeatmap } from '../lib/progressStats'
 import type { HeatmapDay } from '../lib/progressStats'
 
-function heatColor(stars: number): string {
-  if (stars === 0) return 'var(--border)'
-  if (stars <= 2) return '#FFCDD2'
-  if (stars <= 5) return '#E57373'
+const DOW = ['一', '二', '三', '四', '五', '六', '日']
+
+function heatColor(count: number): string {
+  if (count === 0) return 'var(--border)'
+  if (count === 1) return '#FFCDD2'
+  if (count <= 3) return '#E57373'
   return '#C62828'
 }
 
-function monthLabel(date: string): string {
-  const m = Number(date.slice(5, 7))
-  return `${m}月`
+function prevMonth(ym: string): string {
+  const [y, m] = ym.split('-').map(Number)
+  return m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, '0')}`
+}
+
+function nextMonth(ym: string): string {
+  const [y, m] = ym.split('-').map(Number)
+  return m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`
+}
+
+function currentYM(): string {
+  return new Date().toISOString().slice(0, 7)
 }
 
 export default function HeatmapChart() {
+  const [ym, setYm] = useState(currentYM)
   const [days, setDays] = useState<HeatmapDay[]>([])
-  const [tooltip, setTooltip] = useState<{ date: string; stars: number; count: number } | null>(null)
+  const [tooltip, setTooltip] = useState<HeatmapDay | null>(null)
 
-  useEffect(() => { buildHeatmap().then(setDays) }, [])
+  useEffect(() => {
+    buildHeatmap(ym).then(setDays)
+    setTooltip(null)
+  }, [ym])
 
-  if (days.length === 0) return null
+  const [year, month] = ym.split('-').map(Number)
+  const isCurrentMonth = ym === currentYM()
 
-  // 84天，按列（周）×行（周几）排列
-  // 第一天是哪个周几
-  const firstDay = days[0]
-  const firstDow = new Date(firstDay.date + 'T00:00:00').getDay() // 0=周日
-  // 转为周一=0
-  const firstOffset = (firstDow + 6) % 7
+  // 第一天是周几（周一=0）
+  const firstDow = (new Date(`${ym}-01T00:00:00`).getDay() + 6) % 7
 
-  const SIZE = 11
-  const GAP = 3
-  const COLS = 12
-  const ROWS = 7
-  const svgW = COLS * (SIZE + GAP) - GAP
-  const svgH = ROWS * (SIZE + GAP) - GAP + 18 // 18px for month labels
+  // 日历格子：前置空白 + 每天
+  const cells: (HeatmapDay | null)[] = [
+    ...Array(firstDow).fill(null),
+    ...days,
+  ]
 
-  // 月份标签：每列第一个格子所属月份
-  const monthLabels: { col: number; label: string }[] = []
-  let lastMonth = ''
-  for (let col = 0; col < COLS; col++) {
-    const idx = col * 7 - firstOffset
-    const day = days[Math.max(0, Math.min(idx, days.length - 1))]
-    const m = day.date.slice(0, 7)
-    if (m !== lastMonth) {
-      monthLabels.push({ col, label: monthLabel(day.date) })
-      lastMonth = m
-    }
-  }
-
-  // 每个格子的位置和数据
-  const cells = days.map((day, i) => {
-    const totalIdx = i + firstOffset
-    const col = Math.floor(totalIdx / 7)
-    const row = totalIdx % 7
-    if (col >= COLS) return null
-    return {
-      day,
-      x: col * (SIZE + GAP),
-      y: row * (SIZE + GAP) + 18,
-    }
-  }).filter(Boolean) as { day: typeof days[0]; x: number; y: number }[]
+  const totalCount = days.reduce((s, d) => s + d.count, 0)
+  const activeDays = days.filter(d => d.count > 0).length
 
   return (
-    <div style={{ position: 'relative' }}>
-      <svg
-        viewBox={`0 0 ${svgW} ${svgH}`}
-        style={{ width: '100%', display: 'block' }}
-        aria-label="学习热力图"
-      >
-        {/* 月份标签 */}
-        {monthLabels.map(({ col, label }) => (
-          <text
-            key={col}
-            x={col * (SIZE + GAP)}
-            y={12}
-            fontSize="9"
-            fill="var(--ink-light)"
-          >{label}</text>
-        ))}
+    <div>
+      {/* 月份导航 */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <button
+          onClick={() => setYm(prevMonth(ym))}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-light)', fontSize: 18, padding: '0 4px', lineHeight: 1 }}
+        >‹</button>
+        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)' }}>
+          {year}年{month}月
+        </span>
+        <button
+          onClick={() => setYm(nextMonth(ym))}
+          disabled={isCurrentMonth}
+          style={{ background: 'none', border: 'none', cursor: isCurrentMonth ? 'default' : 'pointer', color: isCurrentMonth ? 'var(--border)' : 'var(--ink-light)', fontSize: 18, padding: '0 4px', lineHeight: 1 }}
+        >›</button>
+      </div>
 
-        {/* 格子 */}
-        {cells.map(({ day, x, y }) => (
-          <rect
-            key={day.date}
-            x={x} y={y}
-            width={SIZE} height={SIZE}
-            rx={2}
-            fill={heatColor(day.stars)}
-            style={{ cursor: day.count > 0 ? 'pointer' : 'default' }}
-            onMouseEnter={() => day.count > 0 && setTooltip(day)}
-            onMouseLeave={() => setTooltip(null)}
-            onClick={() => day.count > 0 && setTooltip(t => t?.date === day.date ? null : day)}
-          />
+      {/* 周几标题 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 3 }}>
+        {DOW.map(d => (
+          <div key={d} style={{ textAlign: 'center', fontSize: '10px', color: 'var(--ink-light)' }}>{d}</div>
         ))}
-      </svg>
+      </div>
+
+      {/* 日历格子 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
+        {cells.map((day, i) => {
+          if (!day) return <div key={`empty-${i}`} />
+          const isActive = tooltip?.date === day.date
+          return (
+            <div
+              key={day.date}
+              onClick={() => setTooltip(t => t?.date === day.date ? null : day.count > 0 ? day : null)}
+              style={{
+                aspectRatio: '1',
+                borderRadius: 4,
+                background: heatColor(day.count),
+                cursor: day.count > 0 ? 'pointer' : 'default',
+                outline: isActive ? '2px solid #C62828' : 'none',
+                outlineOffset: 1,
+                position: 'relative',
+              }}
+            >
+              <span style={{
+                position: 'absolute', inset: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '9px', color: day.count > 0 ? (day.count >= 2 ? '#fff' : '#C62828') : 'var(--ink-light)',
+                fontWeight: 600,
+                pointerEvents: 'none',
+              }}>
+                {Number(day.date.slice(8))}
+              </span>
+            </div>
+          )
+        })}
+      </div>
 
       {/* tooltip */}
       {tooltip && (
         <div style={{
-          position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)',
-          background: 'var(--ink)', color: '#fff', borderRadius: 6,
-          padding: '4px 10px', fontSize: '12px', whiteSpace: 'nowrap',
-          pointerEvents: 'none', marginBottom: 4, zIndex: 10,
+          marginTop: 8, padding: '6px 12px',
+          background: 'rgba(198,40,40,0.08)', borderRadius: 8,
+          fontSize: '12px', color: 'var(--ink)', textAlign: 'center',
         }}>
-          {tooltip.date.slice(5).replace('-', '月') + '日'} · 背了 {tooltip.count} 首 · {tooltip.stars} 星
+          {tooltip.date.slice(5).replace('-', '月')}日 · 背了 {tooltip.count} 首 · {tooltip.stars} 星
         </div>
       )}
+
+      {/* 月统计 */}
+      <div style={{ display: 'flex', gap: 16, marginTop: 10, justifyContent: 'flex-end' }}>
+        <span style={{ fontSize: '11px', color: 'var(--ink-light)' }}>本月背诵 <strong style={{ color: 'var(--ink)' }}>{totalCount}</strong> 次</span>
+        <span style={{ fontSize: '11px', color: 'var(--ink-light)' }}>活跃 <strong style={{ color: 'var(--ink)' }}>{activeDays}</strong> 天</span>
+      </div>
 
       {/* 图例 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, justifyContent: 'flex-end' }}>
         <span style={{ fontSize: '10px', color: 'var(--ink-light)' }}>少</span>
         {['var(--border)', '#FFCDD2', '#E57373', '#C62828'].map(c => (
-          <svg key={c} width={SIZE} height={SIZE}><rect width={SIZE} height={SIZE} rx={2} fill={c} /></svg>
+          <div key={c} style={{ width: 11, height: 11, borderRadius: 2, background: c }} />
         ))}
         <span style={{ fontSize: '10px', color: 'var(--ink-light)' }}>多</span>
       </div>

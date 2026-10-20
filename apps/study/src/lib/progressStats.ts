@@ -28,21 +28,21 @@ async function loadSchedules(): Promise<Record<number, ReviewSchedule>> {
   }
 }
 
-// M1 热力图：过去84天每天的星数总和
+// M1 热力图：指定月份每天的背诵数据
 export interface HeatmapDay {
   date: string       // YYYY-MM-DD
   stars: number      // 当天所有session stars总和
   count: number      // 当天背诵次数
 }
 
-export async function buildHeatmap(): Promise<HeatmapDay[]> {
+export async function buildHeatmap(yearMonth: string): Promise<HeatmapDay[]> {
   const sessions = await loadSessions()
-  const map: Record<string, HeatmapDay> = {}
+  const [year, month] = yearMonth.split('-').map(Number)
+  const daysInMonth = new Date(year, month, 0).getDate()
 
-  for (let i = 83; i >= 0; i--) {
-    const d = new Date()
-    d.setDate(d.getDate() - i)
-    const date = d.toISOString().slice(0, 10)
+  const map: Record<string, HeatmapDay> = {}
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = `${yearMonth}-${String(d).padStart(2, '0')}`
     map[date] = { date, stars: 0, count: 0 }
   }
 
