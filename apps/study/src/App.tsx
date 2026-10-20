@@ -12,6 +12,7 @@ import Onboarding from './pages/Onboarding'
 import WeeklyReportPage from './pages/WeeklyReportPage'
 import { ShareCardProvider } from './contexts/ShareCardContext'
 import { StorageProvider } from './contexts/StorageContext'
+import { ProgressProvider } from './contexts/ProgressContext'
 import ShareCardModal from './components/ShareCardModal'
 import { storage } from './lib/storage'
 
@@ -30,7 +31,8 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <StorageProvider>
-      <ShareCardProvider>
+      <ProgressProvider>
+        <ShareCardProvider>
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
           <Route element={<Layout />}>
@@ -46,6 +48,7 @@ export default function App() {
         </Routes>
         <ShareCardModal />
       </ShareCardProvider>
+      </ProgressProvider>
     </StorageProvider>
   )
 }
