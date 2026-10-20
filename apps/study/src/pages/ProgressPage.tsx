@@ -117,7 +117,7 @@ export default function ProgressPage() {
         <div className="pg__section-header">
           <span className="pg__section-title">学习热力图</span>
         </div>
-        <HeatmapChart key={location.key} />
+        <HeatmapChart key={location.key} poems={poems} />
       </div>
 
       {/* 复习统计 */}

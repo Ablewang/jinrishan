@@ -191,26 +191,26 @@ export default function ReciteResult({ session, nextInterval, poem, onDone, isPe
         flexShrink: 0, zIndex: 10,
         padding: '12px 14px calc(12px + env(safe-area-inset-bottom, 0px))',
         background: 'rgba(255,253,248,0.95)', borderTop: '1px solid #EDE8DF',
-        display: 'flex', flexDirection: 'column', gap: 8,
+        display: 'flex', gap: 8,
       }}>
         {isPerfectFirst && onShare && (
           <button
             onClick={onShare}
             style={{
-              display: 'block', width: '100%', textAlign: 'center',
+              flex: 1, textAlign: 'center',
               background: 'transparent', color: '#C62828',
-              padding: '11px', borderRadius: 999,
+              padding: '13px', borderRadius: 999,
               border: '1.5px solid #C62828',
               fontFamily: 'var(--font-brush)', fontSize: '1rem', letterSpacing: '0.08em',
             }}
           >
-            分享满星成就
+            分享
           </button>
         )}
         <button
           onClick={onDone}
           style={{
-            display: 'block', width: '100%', textAlign: 'center',
+            flex: 1, textAlign: 'center',
             background: '#C62828', color: '#FFF8E1',
             padding: '13px', borderRadius: 999,
             fontFamily: 'var(--font-brush)', fontSize: '1rem', letterSpacing: '0.08em',
