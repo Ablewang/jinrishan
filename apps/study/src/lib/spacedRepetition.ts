@@ -1,4 +1,5 @@
-import type { LineResult, RecitationSession, ReviewSchedule } from '../types/recitation'
+import type { LineResult, RecitationSession } from '../types/recitation'
+import type { SrsSchedule } from '../types/storage'
 
 const INITIAL_EF = 2.5
 const MIN_EF = 1.3
@@ -30,7 +31,7 @@ export function calcQScore(lines: LineResult[]): number {
     else if (e === 'hinted') hinted++
   }
 
-  const hardFailRate = (failed + fullHint) / n  // 全句提示与失败等效
+  const hardFailRate = (failed + fullHint) / n
   const softHintRate = hinted / n
 
   if (hardFailRate > 0.5) return 0
@@ -50,13 +51,11 @@ export function calcStars(lines: LineResult[]): 1 | 2 | 3 {
 
 export function calcHintRate(lines: LineResult[]): number {
   if (lines.length === 0) return 0
-  // 展示用：仅统计首字提示（全句提示算失败不计入）
   return lines.filter(l => l.hintCount === 1).length / lines.length
 }
 
 export function calcPassRate(lines: LineResult[]): number {
   if (lines.length === 0) return 0
-  // 全句提示视为未真实背出
   return lines.filter(l => l.passed && l.hintCount < 2).length / lines.length
 }
 
@@ -84,24 +83,22 @@ export function buildSession(
 }
 
 export function updateSchedule(
-  prev: ReviewSchedule | null,
+  prev: SrsSchedule | null,
   session: RecitationSession
-): ReviewSchedule {
+): SrsSchedule {
   const q = session.qScore
   const now = session.date
 
   if (!prev) {
-    // 首次背诵：3星→3天，2星→2天，1星→1天
     const firstInterval = q === 5 ? 3 : q >= 4 ? 2 : 1
     return {
       poemId: session.poemId,
       ef: INITIAL_EF,
       interval: firstInterval,
       repetition: 1,
-      nextReviewDate: addDays(now, firstInterval),
+      nextDue: addDays(now, firstInterval),
       lastSessionId: session.id,
       totalSessions: 1,
-      bestStars: session.stars,
     }
   }
 
@@ -114,7 +111,6 @@ export function updateSchedule(
   let newRepetition: number
 
   if (q < 3) {
-    // 失败：轮次降1，间隔重置
     newRepetition = Math.max(1, prev.repetition - 1)
     newInterval = newRepetition === 1 ? 1 : 2
   } else {
@@ -130,18 +126,17 @@ export function updateSchedule(
     ef: newEF,
     interval: newInterval,
     repetition: newRepetition,
-    nextReviewDate: addDays(now, newInterval),
+    nextDue: addDays(now, newInterval),
     lastSessionId: session.id,
     totalSessions: prev.totalSessions + 1,
-    bestStars: Math.max(prev.bestStars, session.stars) as 1 | 2 | 3,
   }
 }
 
 export function getTodayReviews(
-  schedules: Record<number, ReviewSchedule>,
+  schedules: Record<number, SrsSchedule>,
   today: string
-): ReviewSchedule[] {
-  return Object.values(schedules).filter(s => s.nextReviewDate <= today)
+): SrsSchedule[] {
+  return Object.values(schedules).filter(s => s.nextDue <= today)
 }
 
 export function intervalLabel(interval: number): string {

@@ -295,7 +295,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       ef: updated.ef,
       interval: updated.interval,
       repetition: updated.repetition,
-      nextDue: updated.nextReviewDate,
+      nextDue: updated.nextDue,
       lastSessionId: updated.lastSessionId,
       totalSessions: updated.totalSessions,
     }

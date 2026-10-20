@@ -211,7 +211,7 @@ export default function PoemDetail() {
     const today = new Date().toISOString().slice(0, 10)
 
     // MemorizeMode 也写 recitation_sessions，保证热力图/streak 数据完整
-    const lines = poem.lines.map(l => ({ passed: true, hintCount: noHintPass ? 0 : 1, lineIndex: 0, mode: 'parent' as const }))
+    const lines = poem.lines.map((_l, i) => ({ passed: true, hintCount: noHintPass ? 0 : 1, lineIndex: i, mode: 'parent' as const }))
     await saveSession(poem.id, 'parent', lines, today, charCount)
 
     markMemorized(poem.id, stars, charCount, noHintPass)

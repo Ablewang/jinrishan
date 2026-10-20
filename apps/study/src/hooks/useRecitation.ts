@@ -102,7 +102,7 @@ export function useRecitation() {
       ef: updated.ef,
       interval: updated.interval,
       repetition: updated.repetition,
-      nextDue: updated.nextReviewDate,
+      nextDue: updated.nextDue,
       lastSessionId: updated.lastSessionId,
       totalSessions: updated.totalSessions,
     }

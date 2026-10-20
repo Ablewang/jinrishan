@@ -54,14 +54,14 @@ export async function buildWeeklyReport(weekStart: string): Promise<WeeklyReport
 
   const totalChars = sessions.reduce((sum, s) => sum + (s.charCount ?? 0), 0)
   const memorizedPoemIds = new Set(
-    sessions.filter(s => !s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child').map(s => s.poemId)
+    sessions.filter(s => s.mode === 'parent' || s.mode === 'child').map(s => s.poemId)
   )
   const totalMemorized = memorizedPoemIds.size
 
   // 本周新背诗（memorize sessions 中 date 在本周，每首只取最佳一次）
   const weekMemorizeSessions = sessions.filter(s =>
     s.date >= start && s.date <= end &&
-    (!s.mode || s.mode === 'memorize' || s.mode === 'parent' || s.mode === 'child')
+    (s.mode === 'parent' || s.mode === 'child')
   )
   const weekPoemBest = new Map<number, { stars: number; date: string }>()
   for (const s of weekMemorizeSessions) {

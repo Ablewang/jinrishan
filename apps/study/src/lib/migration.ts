@@ -99,6 +99,7 @@ export async function migrateToV2(): Promise<void> {
       ...s,
       mode: (s.mode === 'parent' || s.mode === 'child' || !s.mode) ? 'memorize' : s.mode as 'memorize' | 'review',
       charCount: (s as any).charCount ?? 0,
+      lines: s.lines.map((l, i) => ({ lineIndex: i, passed: l.passed, hintCount: l.hintCount, mode: 'parent' as const, ...l })),
     }))
     await storage.set('recitation_sessions', JSON.stringify(newSessions))
 
