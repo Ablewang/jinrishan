@@ -1,6 +1,7 @@
 import type { ReviewSchedule } from '../types/recitation'
 import type { ReviewCard } from '../hooks/useProgress'
 import { storage } from './storage'
+import type { RecitationSessionV2, SrsSchedule, AchievementEvent, UserProfile } from '../types/storage'
 
 const REVIEW_KEY = 'poem_review_cards'
 const SCHEDULES_KEY = 'review_schedules'
@@ -83,4 +84,78 @@ export async function migrateStreak(): Promise<void> {
   } catch {}
 
   await storage.set(STREAK_MIGRATION_KEY, '1')
+}
+
+const MIGRATION_V2_KEY = 'data_migration_v2'
+
+export async function migrateToV2(): Promise<void> {
+  if (await storage.get(MIGRATION_V2_KEY)) return
+
+  try {
+    // 1. 迁移 recitation_sessions：补全 charCount / mode 字段
+    const sessionsRaw = await storage.get('recitation_sessions')
+    const oldSessions: RecitationSession[] = sessionsRaw ? JSON.parse(sessionsRaw) : []
+    const newSessions: RecitationSessionV2[] = oldSessions.map(s => ({
+      ...s,
+      mode: (s.mode === 'parent' || s.mode === 'child' || !s.mode) ? 'memorize' : s.mode as 'memorize' | 'review',
+      charCount: (s as any).charCount ?? 0,
+    }))
+    await storage.set('recitation_sessions', JSON.stringify(newSessions))
+
+    // 2. 迁移 review_schedules → srs_schedules（nextReviewDate 改名 nextDue）
+    const schedulesRaw = await storage.get('review_schedules')
+    const oldSchedules: Record<number, ReviewSchedule> = schedulesRaw ? JSON.parse(schedulesRaw) : {}
+    const newSchedules: Record<number, SrsSchedule> = {}
+    for (const [key, s] of Object.entries(oldSchedules)) {
+      newSchedules[Number(key)] = {
+        poemId: s.poemId,
+        ef: s.ef,
+        interval: s.interval,
+        repetition: s.repetition,
+        nextDue: s.nextReviewDate,
+        lastSessionId: s.lastSessionId,
+        totalSessions: s.totalSessions,
+      }
+    }
+    await storage.set('srs_schedules', JSON.stringify(newSchedules))
+
+    // 3. 迁移 poem_achievement_dates → achievement_events
+    const achRaw = await storage.get('poem_achievement_dates')
+    const oldAch: Record<string, string> = achRaw ? JSON.parse(achRaw) : {}
+    const achEvents: AchievementEvent[] = Object.entries(oldAch).map(([id, unlockedAt]) => ({ id, unlockedAt }))
+    await storage.set('achievement_events', JSON.stringify(achEvents))
+
+    // 4. 合并 user_profile
+    const nickname = await storage.get('poem_nickname') ?? ''
+    const gender = await storage.get('avatar_gender') as 'male' | 'female' | null
+    const reminderTime = await storage.get('reminder_time') ?? undefined
+    const onboardingDone = (await storage.get('poem_onboarding_done')) === '1'
+    const profile: UserProfile = {
+      nickname,
+      ...(gender ? { gender } : {}),
+      ...(reminderTime ? { reminderTime } : {}),
+      onboardingDone,
+      createdAt: new Date().toISOString(),
+    }
+    await storage.set('user_profile', JSON.stringify(profile))
+
+    await storage.set(MIGRATION_V2_KEY, 'done')
+    console.info(`[Migration V2] 完成：sessions=${newSessions.length}, schedules=${Object.keys(newSchedules).length}`)
+  } catch (e) {
+    console.error('[Migration V2] 失败，下次启动重试', e)
+  }
+}
+
+// RecitationSession 旧类型（仅供迁移内部使用）
+interface RecitationSession {
+  id: string
+  poemId: number
+  mode?: string
+  date: string
+  timestamp: number
+  stars: number
+  qScore: number
+  lines: { passed: boolean; hintCount: number }[]
+  hintRate: number
+  passRate: number
 }

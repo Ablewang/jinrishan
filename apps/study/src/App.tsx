@@ -15,6 +15,7 @@ import { StorageProvider } from './contexts/StorageContext'
 import { ProgressProvider } from './contexts/ProgressContext'
 import ShareCardModal from './components/ShareCardModal'
 import { storage } from './lib/storage'
+import { migrateSystemBToA, migrateStreak, migrateToV2 } from './lib/migration'
 
 function OnboardingGate({ children }: { children: React.ReactNode }) {
   const [done, setDone] = useState<boolean | null>(null)
@@ -29,6 +30,12 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    migrateSystemBToA()
+    migrateStreak()
+    migrateToV2()
+  }, [])
+
   return (
     <StorageProvider>
       <ProgressProvider>
