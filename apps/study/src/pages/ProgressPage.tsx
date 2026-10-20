@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { goBack } from '../utils/navigation'
 import { useProgress } from '../hooks/useProgress'
 import { useAchievements } from '../hooks/useAchievements'
@@ -16,6 +16,7 @@ const TOTAL = 70
 
 export default function ProgressPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { progress, streak, totalChars, memorizeHistory, totalMemorized, reviewCards, masteredCount, reviewingCount } = useProgress()
   const badges = useAchievements({ progress, streak, totalChars, memorizeHistory })
   const unlockedCount = badges.filter(b => b.unlocked).length
@@ -117,7 +118,7 @@ export default function ProgressPage() {
           <span className="pg__section-title">学习热力图</span>
           <span className="pg__section-count">近12周</span>
         </div>
-        <HeatmapChart />
+        <HeatmapChart key={location.key} />
       </div>
 
       {/* 复习统计 */}
@@ -191,7 +192,7 @@ export default function ProgressPage() {
           <span className="pg__section-title">难诗排行</span>
           <span className="pg__section-count">Top 5</span>
         </div>
-        <HardRanking poems={poems} />
+        <HardRanking key={location.key} poems={poems} />
       </div>
 
       {/* M5 最佳时段 */}
@@ -199,7 +200,7 @@ export default function ProgressPage() {
         <div className="pg__section-header">
           <span className="pg__section-title">最佳时段</span>
         </div>
-        <TimeSlotChart />
+        <TimeSlotChart key={location.key} />
       </div>
 
       {/* 成就 */}
