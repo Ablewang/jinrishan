@@ -69,39 +69,41 @@ export default function HeatmapChart() {
       </div>
 
       {/* 周几标题 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 3 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
         {DOW.map(d => (
-          <div key={d} style={{ textAlign: 'center', fontSize: '10px', color: 'var(--ink-light)' }}>{d}</div>
+          <div key={d} style={{ textAlign: 'center', fontSize: '11px', color: 'var(--ink-light)' }}>{d}</div>
         ))}
       </div>
 
       {/* 日历格子 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
         {cells.map((day, i) => {
           if (!day) return <div key={`empty-${i}`} />
           const isActive = tooltip?.date === day.date
+          const dayNum = Number(day.date.slice(8))
           return (
             <div
               key={day.date}
               onClick={() => setTooltip(t => t?.date === day.date ? null : day.count > 0 ? day : null)}
               style={{
                 aspectRatio: '1',
-                borderRadius: 4,
+                borderRadius: 5,
                 background: heatColor(day.count),
                 cursor: day.count > 0 ? 'pointer' : 'default',
                 outline: isActive ? '2px solid #C62828' : 'none',
                 outlineOffset: 1,
-                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <span style={{
-                position: 'absolute', inset: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '9px', color: day.count > 0 ? (day.count >= 2 ? '#fff' : '#C62828') : 'var(--ink-light)',
-                fontWeight: 600,
-                pointerEvents: 'none',
+                fontSize: '10px',
+                color: day.count >= 2 ? '#fff' : day.count === 1 ? '#C62828' : 'var(--ink-light)',
+                fontWeight: day.count > 0 ? 700 : 400,
+                lineHeight: 1,
               }}>
-                {Number(day.date.slice(8))}
+                {dayNum}
               </span>
             </div>
           )

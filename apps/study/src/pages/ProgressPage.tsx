@@ -116,7 +116,6 @@ export default function ProgressPage() {
       <div className="pg__section">
         <div className="pg__section-header">
           <span className="pg__section-title">学习热力图</span>
-          <span className="pg__section-count">近12周</span>
         </div>
         <HeatmapChart key={location.key} />
       </div>
