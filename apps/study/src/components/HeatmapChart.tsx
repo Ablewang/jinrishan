@@ -121,19 +121,19 @@ export default function HeatmapChart() {
         </div>
       )}
 
-      {/* 月统计 */}
-      <div style={{ display: 'flex', gap: 16, marginTop: 10, justifyContent: 'flex-end' }}>
-        <span style={{ fontSize: '11px', color: 'var(--ink-light)' }}>本月背诵 <strong style={{ color: 'var(--ink)' }}>{totalCount}</strong> 次</span>
-        <span style={{ fontSize: '11px', color: 'var(--ink-light)' }}>活跃 <strong style={{ color: 'var(--ink)' }}>{activeDays}</strong> 天</span>
-      </div>
-
-      {/* 图例 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, justifyContent: 'flex-end' }}>
-        <span style={{ fontSize: '10px', color: 'var(--ink-light)' }}>少</span>
-        {['var(--border)', '#FFCDD2', '#E57373', '#C62828'].map(c => (
-          <div key={c} style={{ width: 11, height: 11, borderRadius: 2, background: c }} />
-        ))}
-        <span style={{ fontSize: '10px', color: 'var(--ink-light)' }}>多</span>
+      {/* 底部：图例左，统计右 */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: '10px', color: 'var(--ink-light)' }}>少</span>
+          {['var(--border)', '#FFCDD2', '#E57373', '#C62828'].map(c => (
+            <div key={c} style={{ width: 11, height: 11, borderRadius: 2, background: c }} />
+          ))}
+          <span style={{ fontSize: '10px', color: 'var(--ink-light)' }}>多</span>
+        </div>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <span style={{ fontSize: '11px', color: 'var(--ink-light)' }}>背诵 <strong style={{ color: 'var(--ink)' }}>{totalCount}</strong> 次</span>
+          <span style={{ fontSize: '11px', color: 'var(--ink-light)' }}>活跃 <strong style={{ color: 'var(--ink)' }}>{activeDays}</strong> 天</span>
+        </div>
       </div>
     </div>
   )
