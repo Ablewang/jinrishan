@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Header } from '../components/Header'
+import { BackTitle } from '../components/BackTitle'
 import { ItemRow } from '../components/ItemRow'
 import { useData } from '../hooks/useData'
 import { useStore } from '../hooks/useStore'
@@ -56,8 +57,7 @@ export function CategoryPage({ cat, onNavigate, onBack }: Props) {
   return (
     <div className={styles.page}>
       <Header
-        onBack={onBack}
-        title={CAT_ZH[cat] ?? cat}
+        left={<BackTitle title={CAT_ZH[cat] ?? cat} onBack={onBack} />}
         right={
           <button className={`${styles.link} ${allInWish ? styles.linkActive : ''}`} onClick={toggleAll}>
             {allInWish ? '已全部收藏' : '整组收藏'}

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { Header } from '../components/Header'
 import { MaterialList } from '../components/MaterialList'
 import { PaletteSegment } from '../components/PaletteSegment'
+import { BackTitle } from '../components/BackTitle'
 import { useData } from '../hooks/useData'
 import { useStore } from '../hooks/useStore'
 import type { Material } from '../types'
@@ -70,7 +71,7 @@ export function SummaryPage({ onBack }: Props) {
   return (
     <div className={styles.page}>
       <Header
-        left={<button className={styles.catBtn} onClick={onBack}>分类</button>}
+        left={<BackTitle title="清单汇总" onBack={onBack} />}
         right={<PaletteSegment />}
       />
       <div className={styles.tabBar} ref={tabBarRef} {...tabDragHandlers}>

@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { Header } from '../components/Header'
 import { PaletteSegment } from '../components/PaletteSegment'
+import { BackTitle } from '../components/BackTitle'
 import { useData } from '../hooks/useData'
 import { useStore } from '../hooks/useStore'
 import { sortByCode } from '../utils'
@@ -88,7 +89,7 @@ export function InventoryPage({ onBack }: Props) {
   if (!summary) {
     return (
       <div className={styles.page}>
-        <Header onBack={onBack} title="拼豆管理" right={<PaletteSegment />} />
+        <Header left={<BackTitle title="拼豆管理" onBack={onBack} />} right={<PaletteSegment />} />
         <div className={styles.loading}>加载中...</div>
       </div>
     )
@@ -96,7 +97,7 @@ export function InventoryPage({ onBack }: Props) {
 
   return (
     <div className={styles.page}>
-      <Header onBack={onBack} title="拼豆管理" right={<PaletteSegment />} />
+      <Header left={<BackTitle title="拼豆管理" onBack={onBack} />} right={<PaletteSegment />} />
       <div className={styles.content}>
         {[...groups.entries()].map(([letter, items]) => (
           <div key={letter} className={styles.group}>

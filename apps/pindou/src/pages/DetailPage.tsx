@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BeadCanvas } from '../components/BeadCanvas'
 import { Header } from '../components/Header'
+import { BackTitle } from '../components/BackTitle'
 import { MaterialList } from '../components/MaterialList'
 import { fetchItem } from '../hooks/useData'
 import { usePalette } from '../hooks/usePalette'
@@ -58,7 +59,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
   if (error) {
     return (
       <div className={styles.page}>
-        <Header onBack={onBack} title="加载失败" />
+        <Header left={<BackTitle title="加载失败" onBack={onBack} />} />
         <div className={styles.err}>无法加载物品数据</div>
       </div>
     )
@@ -67,7 +68,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
   if (!item) {
     return (
       <div className={styles.page}>
-        <Header onBack={onBack} title="加载中..." />
+        <Header left={<BackTitle title="加载中..." onBack={onBack} />} />
         <div className={styles.loading}>数据加载中</div>
       </div>
     )
@@ -88,8 +89,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
   return (
     <div className={styles.page}>
       <Header
-        onBack={onBack}
-        title={item.display_name}
+        left={<BackTitle title={item.display_name} onBack={onBack} />}
         right={<div style={{ display: 'flex', gap: 8 }}>{wishBtn}{toggleBtn}</div>}
       />
       <div className={styles.body}>

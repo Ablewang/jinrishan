@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Header } from '../components/Header'
+import { BackTitle } from '../components/BackTitle'
 import { fetchItem } from '../hooks/useData'
 import { usePalette } from '../hooks/usePalette'
 import { useStore } from '../hooks/useStore'
@@ -105,7 +106,7 @@ export function PurchasePage({ onBack }: Props) {
 
   return (
     <div className={styles.page}>
-      <Header onBack={onBack} title="购买清单" right={statSlot} />
+      <Header left={<BackTitle title="购买清单" onBack={onBack} />} right={statSlot} />
       {loading ? (
         <div className={styles.loading}>计算中...</div>
       ) : needItems.length === 0 ? (

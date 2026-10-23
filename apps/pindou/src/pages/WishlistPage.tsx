@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Header } from '../components/Header'
+import { BackTitle } from '../components/BackTitle'
 import { useStore } from '../hooks/useStore'
 import type { NavTarget } from '../App'
 import styles from './WishlistPage.module.css'
@@ -38,8 +39,7 @@ export function WishlistPage({ onBack, onNavigate }: Props) {
   return (
     <div className={styles.page}>
       <Header
-        onBack={onBack}
-        title="收藏夹"
+        left={<BackTitle title="收藏夹" onBack={onBack} />}
         right={
           items.length > 0
             ? <div style={{ display: 'flex', gap: 8 }}>
