@@ -2,6 +2,7 @@ import starSvg from '../assets/star.svg?raw'
 import starFilledSvg from '../assets/star-filled.svg?raw'
 import arrowRightSvg from '../assets/arrow-right.svg?raw'
 import arrowLeftSvg from '../assets/arrow-left.svg?raw'
+import checkSvg from '../assets/check.svg?raw'
 
 interface IconProps {
   className?: string
@@ -21,3 +22,4 @@ export const StarIcon = makeSvgComponent(starSvg)
 export const StarFilledIcon = makeSvgComponent(starFilledSvg)
 export const ArrowRightIcon = makeSvgComponent(arrowRightSvg)
 export const ArrowLeftIcon = makeSvgComponent(arrowLeftSvg)
+export const CheckIcon = makeSvgComponent(checkSvg)

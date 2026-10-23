@@ -1,4 +1,5 @@
 import type { Material } from '../types'
+import { CheckIcon } from './Icon'
 import styles from './MaterialList.module.css'
 
 interface Props {
@@ -28,11 +29,11 @@ export function MaterialList({ materials, activeCode, onSelect, showPct, invento
             <div className={styles.swatch} style={{ background: rgb(m.rgb) }} />
             <span className={styles.code}>{m.code}</span>
             <span className={styles.name}>{m.name}</span>
-            <span className={styles.count}>{fmt(m.count)}</span>
+            <span className={`${styles.count} ${stock !== null && !satisfied ? styles.countNeed : ''}`}>{fmt(m.count)}</span>
             {showPct && <span className={styles.pct}>({m.pct}%)</span>}
             {stock !== null && (
               <span className={`${styles.stock} ${satisfied ? styles.stockOk : partial ? styles.stockPartial : styles.stockNone}`}>
-                {satisfied ? '✓' : `有${fmt(stock)}`}
+                {satisfied ? <CheckIcon className={styles.checkIcon} /> : stock === 0 ? `缺${fmt(m.count)}` : `有${fmt(stock)}缺${fmt(m.count - stock)}`}
               </span>
             )}
           </div>

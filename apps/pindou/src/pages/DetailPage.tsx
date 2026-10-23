@@ -25,7 +25,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
   const [showOriginal, setShowOg] = useState(false)
   const matListRef = useRef<HTMLDivElement>(null)
   const { palette } = usePalette()
-  const { wishlist } = useStore()
+  const { wishlist, inventory } = useStore()
   const inWish = item ? wishlist.has(cat, name) : false
 
   function toggleWish() {
@@ -111,6 +111,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
               activeCode={activeCode}
               onSelect={handleMatSelect}
               showPct
+              inventory={inventory.inventory}
             />
           </div>
         </div>

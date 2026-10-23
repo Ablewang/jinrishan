@@ -19,5 +19,7 @@
 
 .stock       { font-size: 11px; font-weight: 600; min-width: 36px; text-align: right; flex-shrink: 0; }
 .stockOk     { color: var(--accent); }
+.checkIcon   { font-size: 16px; color: var(--accent); }
+.countNeed  { color: #e05c3a; }
 .stockPartial { color: #e09a3a; }
 .stockNone   { color: var(--text3); }
