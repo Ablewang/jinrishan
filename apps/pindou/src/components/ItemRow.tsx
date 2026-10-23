@@ -1,3 +1,5 @@
+import { StarIcon, StarFilledIcon } from './Icon'
+import { useStore } from '../hooks/useStore'
 import type { ManifestItem } from '../types'
 import styles from './ItemRow.module.css'
 
@@ -11,6 +13,15 @@ function fmt(n: number) { return n.toLocaleString('zh-CN') }
 
 export function ItemRow({ cat, item, onClick }: Props) {
   const src = `/gallery/${encodeURIComponent(cat)}/${item.name}.png`
+  const { wishlist } = useStore()
+  const inWish = wishlist.has(cat, item.name)
+
+  function toggleWish(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (inWish) wishlist.remove(cat, item.name)
+    else wishlist.add({ cat, name: item.name, display_name: item.display_name })
+  }
+
   return (
     <div className={styles.row} onClick={onClick}>
       <div className={styles.thumb}>
@@ -34,6 +45,9 @@ export function ItemRow({ cat, item, onClick }: Props) {
         <span className={styles.beadN}>{fmt(item.total_beads)}</span>
         <span className={styles.beadU}>颗</span>
       </div>
+      <button className={`${styles.wishBtn} ${inWish ? styles.wishActive : ''}`} onClick={toggleWish}>
+        {inWish ? <StarFilledIcon /> : <StarIcon />}
+      </button>
     </div>
   )
 }

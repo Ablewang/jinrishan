@@ -16,3 +16,8 @@
 .name   { flex: 1; font-size: 13px; color: var(--text); min-width: 0; }
 .count  { font-weight: 700; font-size: 14px; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 38px; text-align: right; flex-shrink: 0; }
 .pct    { font-size: 11px; color: var(--text3); min-width: 44px; text-align: right; flex-shrink: 0; }
+
+.stock       { font-size: 11px; font-weight: 600; min-width: 36px; text-align: right; flex-shrink: 0; }
+.stockOk     { color: var(--accent); }
+.stockPartial { color: #e09a3a; }
+.stockNone   { color: var(--text3); }

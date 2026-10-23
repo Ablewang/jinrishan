@@ -53,6 +53,22 @@
   font-size: 14px;
 }
 
+.wishBtn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1.5px solid var(--ac2);
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.wishActive {
+  background: var(--ac3);
+}
+
 .viewBtn {
   font-size: 13px;
   font-weight: 600;

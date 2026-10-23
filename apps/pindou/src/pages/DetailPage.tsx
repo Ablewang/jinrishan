@@ -81,7 +81,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
 
   const wishBtn = (
     <button className={`${styles.wishBtn} ${inWish ? styles.wishActive : ''}`} onClick={toggleWish}>
-      {inWish ? '已想拼' : '+ 想拼'}
+      {inWish ? '已收藏' : '+ 收藏'}
     </button>
   )
 

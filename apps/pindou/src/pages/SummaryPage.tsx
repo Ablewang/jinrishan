@@ -3,8 +3,10 @@ import { Header } from '../components/Header'
 import { MaterialList } from '../components/MaterialList'
 import { useData } from '../hooks/useData'
 import { usePalette } from '../hooks/usePalette'
+import { useStore } from '../hooks/useStore'
 import type { Material } from '../types'
 import styles from './SummaryPage.module.css'
+import { sortByCode } from '../utils'
 
 const CAT_ZH: Record<string, string> = {
   'Building Blocks': '建筑方块',
@@ -26,6 +28,7 @@ interface Props {
 export function SummaryPage({ onBack }: Props) {
   const { summary } = useData()
   const { palette, setPalette } = usePalette()
+  const { inventory } = useStore()
   const [curTab, setCur] = useState(0)
   const tabBarRef = useRef<HTMLDivElement>(null)
 
@@ -42,14 +45,14 @@ export function SummaryPage({ onBack }: Props) {
         else map.set(m.code, { ...m })
       }
     }
-    return [...map.values()].sort((a, b) => a.code.localeCompare(b.code))
+    return [...map.values()].sort((a, b) => sortByCode(a.code, b.code))
   }, [summary])
 
   const mats = useMemo<Material[]>(() => {
     if (!summary) return []
     if (curTab === 0) return total
     const cat = cats[curTab - 1]
-    return [...summary.categories[cat].materials].sort((a, b) => a.code.localeCompare(b.code))
+    return [...summary.categories[cat].materials].sort((a, b) => sortByCode(a.code, b.code))
   }, [summary, curTab, cats, total])
 
   // tab drag scroll
@@ -96,7 +99,7 @@ export function SummaryPage({ onBack }: Props) {
         ))}
       </div>
       <div className={styles.content}>
-        <MaterialList materials={mats} activeCode={null} onSelect={() => {}} />
+        <MaterialList materials={mats} activeCode={null} onSelect={() => {}} inventory={inventory.inventory} />
       </div>
     </div>
   )

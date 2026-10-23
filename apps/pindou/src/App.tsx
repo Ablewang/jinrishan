@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { DataProvider } from './hooks/useData'
 import { PaletteProvider } from './hooks/usePalette'
+import { StoreProvider } from './hooks/useStore'
 import { useDrawerStack } from './hooks/useDrawerStack'
 import { useMemoizedFn } from './hooks/useMemoizedFn'
 import { useSwipeBack } from './hooks/useSwipeBack'
@@ -8,12 +9,18 @@ import { CategoryPage } from './pages/CategoryPage'
 import { DetailPage } from './pages/DetailPage'
 import { HomePage } from './pages/HomePage'
 import { SummaryPage } from './pages/SummaryPage'
+import { WishlistPage } from './pages/WishlistPage'
+import { PurchasePage } from './pages/PurchasePage'
+import { InventoryPage } from './pages/InventoryPage'
 import './index.css'
 
 export type NavTarget =
   | { type: 'category'; cat: string }
   | { type: 'item'; cat: string; name: string }
   | { type: 'summary' }
+  | { type: 'wishlist' }
+  | { type: 'purchase' }
+  | { type: 'inventory' }
 
 const DRAWER_STYLE: React.CSSProperties = {
   position: 'absolute',
@@ -53,11 +60,18 @@ export default function App() {
       push(<DetailPage cat={target.cat} name={target.name} onBack={doPop} />)
     else if (target.type === 'summary')
       push(<SummaryPage onBack={doPop} />)
+    else if (target.type === 'wishlist')
+      push(<WishlistPage onBack={doPop} onNavigate={nav} />)
+    else if (target.type === 'purchase')
+      push(<PurchasePage onBack={doPop} />)
+    else if (target.type === 'inventory')
+      push(<InventoryPage onBack={doPop} />)
   }
 
   return (
     <PaletteProvider>
-      <DataProvider>
+      <StoreProvider>
+        <DataProvider>
         <div
           style={{ ...DRAWER_STYLE, zIndex: 0 }}
           ref={el => {
@@ -80,6 +94,7 @@ export default function App() {
           </div>
         ))}
       </DataProvider>
+      </StoreProvider>
     </PaletteProvider>
   )
 }

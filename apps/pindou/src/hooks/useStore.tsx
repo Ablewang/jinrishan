@@ -1,0 +1,26 @@
+import { createContext, useContext } from 'react'
+import { useWishlist, type WishItem } from './useWishlist'
+import { useInventory } from './useInventory'
+import { usePalette } from './usePalette'
+
+interface StoreCtx {
+  wishlist: ReturnType<typeof useWishlist>
+  inventory: ReturnType<typeof useInventory>
+}
+
+const Ctx = createContext<StoreCtx | null>(null)
+
+export function StoreProvider({ children }: { children: React.ReactNode }) {
+  const { palette } = usePalette()
+  const wishlist = useWishlist()
+  const inventory = useInventory(palette)
+  return <Ctx.Provider value={{ wishlist, inventory }}>{children}</Ctx.Provider>
+}
+
+export function useStore() {
+  const ctx = useContext(Ctx)
+  if (!ctx) throw new Error('useStore must be used within StoreProvider')
+  return ctx
+}
+
+export type { WishItem }

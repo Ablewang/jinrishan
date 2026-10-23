@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Header } from '../components/Header'
 import { ItemRow } from '../components/ItemRow'
 import { useData } from '../hooks/useData'
+import { useStore } from '../hooks/useStore'
 import type { NavTarget } from '../App'
 import type { ManifestItem } from '../types'
 import styles from './CategoryPage.module.css'
@@ -26,6 +27,7 @@ interface Props {
 
 export function CategoryPage({ cat, onNavigate, onBack }: Props) {
   const { manifest } = useData()
+  const { wishlist } = useStore()
   const [query, setQuery] = useState('')
   const [composing, setComposing] = useState(false)
 
@@ -40,12 +42,27 @@ export function CategoryPage({ cat, onNavigate, onBack }: Props) {
     )
   }, [data, query])
 
+  const allInWish = data ? data.items.every(i => wishlist.has(cat, i.name)) : false
+
+  function toggleAll() {
+    if (!data) return
+    if (allInWish) {
+      wishlist.removeAll(cat)
+    } else {
+      wishlist.addAll(data.items.map(i => ({ cat, name: i.name, display_name: i.display_name })))
+    }
+  }
+
   return (
     <div className={styles.page}>
       <Header
         onBack={onBack}
         title={CAT_ZH[cat] ?? cat}
-        right={<button className={styles.link} onClick={() => onNavigate({ type: 'summary' })}>清单汇总</button>}
+        right={
+          <button className={`${styles.link} ${allInWish ? styles.linkActive : ''}`} onClick={toggleAll}>
+            {allInWish ? '已全部收藏' : '整组收藏'}
+          </button>
+        }
       />
       <div className={styles.searchWrap}>
         <input

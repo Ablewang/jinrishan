@@ -33,7 +33,10 @@ export function HomePage({ onNavigate }: Props) {
   const leftSlot = (
     <div className={styles.headerLeft}>
       {LOGO}
+      <span className={styles.divider}>|</span>
       <button className={styles.link} onClick={() => onNavigate({ type: 'summary' })}>清单汇总</button>
+      <span className={styles.divider}>|</span>
+      <button className={styles.link} onClick={() => onNavigate({ type: 'wishlist' })}>收藏夹</button>
     </div>
   )
 
