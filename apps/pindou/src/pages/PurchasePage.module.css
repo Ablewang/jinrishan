@@ -13,14 +13,12 @@
 
 .content {
   flex: 1;
-  overflow-y: auto;
 }
 
 .stat {
   display: flex;
-  gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--br);
+  gap: 8px;
+  align-items: center;
 }
 
 .statNeed {
@@ -40,16 +38,14 @@
 }
 
 .sectionTitle {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--text3);
-  padding: 8px 14px 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text2);
+  padding: 8px 14px 6px;
   background: var(--bg2);
   border-bottom: 1px solid var(--br);
   position: sticky;
-  top: 0;
+  top: calc(56px + env(safe-area-inset-top, 0px));
   z-index: 10;
 }
 
@@ -133,10 +129,13 @@
 }
 
 .letterHeader {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--text3);
-  padding: 5px 14px 3px;
+  color: var(--text2);
+  padding: 8px 14px 6px;
   background: var(--bg2);
-  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--br);
+  position: sticky;
+  top: calc(56px + env(safe-area-inset-top, 0px));
+  z-index: 9;
 }

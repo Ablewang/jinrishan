@@ -13,7 +13,6 @@
 
 .content {
   flex: 1;
-  overflow-y: auto;
 }
 
 .group {
@@ -21,15 +20,49 @@
 }
 
 .groupHeader {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--text3);
-  padding: 5px 14px 3px;
+  color: var(--text2);
+  padding: 8px 14px 6px;
   background: var(--bg2);
-  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--br);
   position: sticky;
-  top: 0;
+  top: calc(56px + env(safe-area-inset-top, 0px));
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.groupHeader:active { background: var(--bg3); }
+
+.groupCollapsed {
+  border-bottom: none;
+}
+
+.groupArrow {
+  font-size: 12px;
+  color: var(--text3);
+  transition: transform 0.2s;
+  transform: rotate(0deg);
+}
+
+.groupArrowDown {
+  transform: rotate(90deg);
+}
+
+.groupItems {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.groupItemsCollapsed {
+  grid-template-rows: 0fr;
+}
+
+.groupItemsInner {
+  overflow: hidden;
 }
 
 .row {

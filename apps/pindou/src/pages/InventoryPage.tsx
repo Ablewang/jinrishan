@@ -1,10 +1,12 @@
 import { useMemo, useRef, useState } from 'react'
 import { Header } from '../components/Header'
+import { PaletteSegment } from '../components/PaletteSegment'
 import { useData } from '../hooks/useData'
 import { useStore } from '../hooks/useStore'
 import { sortByCode } from '../utils'
 import type { Material } from '../types'
 import styles from './InventoryPage.module.css'
+import { ArrowRightIcon } from '../components/Icon'
 
 interface Props {
   onBack: () => void
@@ -28,7 +30,17 @@ export function InventoryPage({ onBack }: Props) {
   const { inventory } = useStore()
   const [openCode, setOpenCode] = useState<string | null>(null)
   const [editVal, setEditVal] = useState('')
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set())
   const inputRef = useRef<HTMLInputElement>(null)
+
+  function toggleGroup(letter: string) {
+    setCollapsedGroups(prev => {
+      const next = new Set(prev)
+      if (next.has(letter)) next.delete(letter)
+      else next.add(letter)
+      return next
+    })
+  }
 
   const allColors = useMemo<Material[]>(() => {
     if (!summary) return []
@@ -76,7 +88,7 @@ export function InventoryPage({ onBack }: Props) {
   if (!summary) {
     return (
       <div className={styles.page}>
-        <Header onBack={onBack} title="拼豆管理" />
+        <Header onBack={onBack} title="拼豆管理" right={<PaletteSegment />} />
         <div className={styles.loading}>加载中...</div>
       </div>
     )
@@ -84,11 +96,16 @@ export function InventoryPage({ onBack }: Props) {
 
   return (
     <div className={styles.page}>
-      <Header onBack={onBack} title="拼豆管理" />
+      <Header onBack={onBack} title="拼豆管理" right={<PaletteSegment />} />
       <div className={styles.content}>
         {[...groups.entries()].map(([letter, items]) => (
           <div key={letter} className={styles.group}>
-            <div className={styles.groupHeader}>{letter} 系</div>
+            <div className={`${styles.groupHeader} ${collapsedGroups.has(letter) ? styles.groupCollapsed : ''}`} onClick={() => toggleGroup(letter)}>
+              <span>{letter} 系</span>
+              <ArrowRightIcon className={`${styles.groupArrow} ${collapsedGroups.has(letter) ? '' : styles.groupArrowDown}`} />
+            </div>
+            <div className={`${styles.groupItems} ${collapsedGroups.has(letter) ? styles.groupItemsCollapsed : ''}`}>
+            <div className={styles.groupItemsInner}>
             {items.map(m => {
               const stock = inventory.get(m.code)
               const isOpen = openCode === m.code
@@ -138,6 +155,8 @@ export function InventoryPage({ onBack }: Props) {
                 </div>
               )
             })}
+            </div>
+            </div>
           </div>
         ))}
       </div>

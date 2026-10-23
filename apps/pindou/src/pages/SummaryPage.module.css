@@ -4,27 +4,6 @@
   flex-direction: column;
 }
 
-.segment {
-  display: flex;
-  border: 1.5px solid var(--ac2);
-  border-radius: 8px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.segBtn {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text2);
-  padding: 5px 10px;
-  background: transparent;
-}
-
-.segActive {
-  background: var(--ac3);
-  color: var(--accent);
-}
-
 .catBtn {
   font-size: 14px;
   font-weight: 700;

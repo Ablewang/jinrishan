@@ -1,7 +1,7 @@
 import { CategoryCard } from '../components/CategoryCard'
 import { Header } from '../components/Header'
+import { PaletteSegment } from '../components/PaletteSegment'
 import { useData } from '../hooks/useData'
-import { usePalette } from '../hooks/usePalette'
 import type { NavTarget } from '../App'
 import styles from './HomePage.module.css'
 
@@ -15,20 +15,6 @@ interface Props {
 
 export function HomePage({ onNavigate }: Props) {
   const { manifest, summary, error } = useData()
-  const { palette, setPalette } = usePalette()
-
-  const paletteSegment = (
-    <div className={styles.segment}>
-      <button
-        className={`${styles.segBtn} ${palette === 'full' ? styles.segActive : ''}`}
-        onClick={() => setPalette('full')}
-      >完整色</button>
-      <button
-        className={`${styles.segBtn} ${palette === '221' ? styles.segActive : ''}`}
-        onClick={() => setPalette('221')}
-      >221色</button>
-    </div>
-  )
 
   const leftSlot = (
     <div className={styles.headerLeft}>
@@ -43,7 +29,7 @@ export function HomePage({ onNavigate }: Props) {
   if (error) {
     return (
       <div className={styles.page}>
-        <Header left={leftSlot} right={paletteSegment} />
+        <Header left={leftSlot} right={<PaletteSegment />} />
         <div className={styles.err}>{error}</div>
       </div>
     )
@@ -52,7 +38,7 @@ export function HomePage({ onNavigate }: Props) {
   if (!manifest) {
     return (
       <div className={styles.page}>
-        <Header left={leftSlot} right={paletteSegment} />
+        <Header left={leftSlot} right={<PaletteSegment />} />
         <div className={styles.loading}>加载中...</div>
       </div>
     )
@@ -60,7 +46,7 @@ export function HomePage({ onNavigate }: Props) {
 
   return (
     <div className={styles.page}>
-      <Header left={leftSlot} right={paletteSegment} />
+      <Header left={leftSlot} right={<PaletteSegment />} />
       <main className={styles.grid}>
         {Object.entries(manifest.categories).map(([cat, data]) => (
           <CategoryCard

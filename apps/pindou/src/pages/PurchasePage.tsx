@@ -96,23 +96,24 @@ export function PurchasePage({ onBack }: Props) {
     ))
   }
 
+  const statSlot = !loading && needItems.length > 0 ? (
+    <div className={styles.stat}>
+      <span className={styles.statNeed}>{toBuy.length} 待购</span>
+      <span className={styles.statOk}>{satisfied.length} 已满足</span>
+    </div>
+  ) : undefined
+
   return (
     <div className={styles.page}>
-      <Header onBack={onBack} title="购买清单" />
+      <Header onBack={onBack} title="购买清单" right={statSlot} />
       {loading ? (
         <div className={styles.loading}>计算中...</div>
       ) : needItems.length === 0 ? (
         <div className={styles.empty}>收藏夹为空</div>
       ) : (
         <div className={styles.content}>
-          <div className={styles.stat}>
-            <span className={styles.statNeed}>{toBuy.length} 种待购买</span>
-            <span className={styles.statOk}>{satisfied.length} 种已满足</span>
-          </div>
-
           {toBuy.length > 0 && (
             <div className={styles.section}>
-              <div className={styles.sectionTitle}>待购买</div>
               {renderGroups(toBuyGroups, true)}
             </div>
           )}
