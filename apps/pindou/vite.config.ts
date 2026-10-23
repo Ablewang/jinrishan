@@ -43,9 +43,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webp}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
           {
-            urlPattern: /\/output\/.*/,
+            urlPattern: /\/output(_221)?\/.*/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'data-cache',

@@ -3,6 +3,7 @@ import { BeadCanvas } from '../components/BeadCanvas'
 import { Header } from '../components/Header'
 import { MaterialList } from '../components/MaterialList'
 import { fetchItem } from '../hooks/useData'
+import { usePalette } from '../hooks/usePalette'
 import type { ItemDetail } from '../types'
 import styles from './DetailPage.module.css'
 
@@ -20,11 +21,12 @@ export function DetailPage({ cat, name, onBack }: Props) {
   const [activeCode, setActive]   = useState<string | null>(null)
   const [showOriginal, setShowOg] = useState(false)
   const matListRef = useRef<HTMLDivElement>(null)
+  const { palette } = usePalette()
 
   useEffect(() => {
     setItem(null); setError(false); setActive(null); setShowOg(false)
-    fetchItem(cat, name).then(setItem).catch(() => setError(true))
-  }, [cat, name])
+    fetchItem(cat, name, palette).then(setItem).catch(() => setError(true))
+  }, [cat, name, palette])
 
   const sortedMats = useMemo(
     () => item ? [...item.materials].sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' })) : [],

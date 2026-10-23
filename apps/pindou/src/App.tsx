@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { DataProvider } from './hooks/useData'
+import { PaletteProvider } from './hooks/usePalette'
 import { useDrawerStack } from './hooks/useDrawerStack'
 import { useMemoizedFn } from './hooks/useMemoizedFn'
 import { useSwipeBack } from './hooks/useSwipeBack'
@@ -55,28 +56,30 @@ export default function App() {
   }
 
   return (
-    <DataProvider>
-      <div
-        style={{ ...DRAWER_STYLE, zIndex: 0 }}
-        ref={el => {
-          if (el) onMount(0, el)
-          else    onUnmount(0)
-        }}
-      >
-        <HomePage onNavigate={nav} />
-      </div>
-      {stack.map((entry, idx) => (
+    <PaletteProvider>
+      <DataProvider>
         <div
-          key={entry.id}
-          style={{ ...DRAWER_STYLE, zIndex: idx + 1 }}
+          style={{ ...DRAWER_STYLE, zIndex: 0 }}
           ref={el => {
-            if (el) onMount(entry.id, el)
-            else    onUnmount(entry.id)
+            if (el) onMount(0, el)
+            else    onUnmount(0)
           }}
         >
-          {entry.content}
+          <HomePage onNavigate={nav} />
         </div>
-      ))}
-    </DataProvider>
+        {stack.map((entry, idx) => (
+          <div
+            key={entry.id}
+            style={{ ...DRAWER_STYLE, zIndex: idx + 1 }}
+            ref={el => {
+              if (el) onMount(entry.id, el)
+              else    onUnmount(entry.id)
+            }}
+          >
+            {entry.content}
+          </div>
+        ))}
+      </DataProvider>
+    </PaletteProvider>
   )
 }

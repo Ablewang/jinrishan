@@ -1,0 +1,432 @@
+{
+  "name": "trial_key",
+  "display_name": "试炼钥匙",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 97,
+  "color_count": 12,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "H21",
+      "H21",
+      "H21",
+      "H21",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "H11",
+      "M10",
+      "M10",
+      "H9",
+      "M14",
+      "H11",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "H9",
+      "M14",
+      "M14",
+      "M14",
+      "M14",
+      "M14",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "M14",
+      "A9",
+      "H11",
+      "H11",
+      "A9",
+      "H11",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "M14",
+      "H11",
+      "M10",
+      "M14",
+      "H11",
+      "M14",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "H11",
+      "H12",
+      "H12",
+      "H11",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H13",
+      "H12",
+      "F10",
+      "F10",
+      "H12",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "H13",
+      "F10",
+      "F10",
+      "H13",
+      "H12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "F10",
+      "F10",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "F11",
+      "F10",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "F1",
+      "F11",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "F1",
+      "F11",
+      "F10",
+      "F10",
+      "F10",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "F1",
+      "F1",
+      "F1",
+      "F1",
+      "G12",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "F1",
+      "F1",
+      "G12",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F10",
+      "F1",
+      "F1",
+      "F1",
+      "F11",
+      "F10",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "F10",
+      "name": "红棕",
+      "rgb": [
+        138,
+        69,
+        38
+      ],
+      "count": 18,
+      "pct": 18.6
+    },
+    {
+      "code": "G12",
+      "name": "巧克力色",
+      "rgb": [
+        61,
+        35,
+        20
+      ],
+      "count": 12,
+      "pct": 12.4
+    },
+    {
+      "code": "F1",
+      "name": "浅珊瑚红",
+      "rgb": [
+        253,
+        149,
+        123
+      ],
+      "count": 11,
+      "pct": 11.3
+    },
+    {
+      "code": "H13",
+      "name": "近黑灰",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "count": 10,
+      "pct": 10.3
+    },
+    {
+      "code": "M14",
+      "name": "莫兰迪深灰",
+      "rgb": [
+        115,
+        115,
+        115
+      ],
+      "count": 10,
+      "pct": 10.3
+    },
+    {
+      "code": "H21",
+      "name": "石墨灰",
+      "rgb": [
+        71,
+        71,
+        71
+      ],
+      "count": 9,
+      "pct": 9.3
+    },
+    {
+      "code": "H11",
+      "name": "暗灰色",
+      "rgb": [
+        80,
+        80,
+        80
+      ],
+      "count": 9,
+      "pct": 9.3
+    },
+    {
+      "code": "H12",
+      "name": "深炭灰",
+      "rgb": [
+        58,
+        58,
+        58
+      ],
+      "count": 7,
+      "pct": 7.2
+    },
+    {
+      "code": "F11",
+      "name": "暗砖红",
+      "rgb": [
+        168,
+        60,
+        50
+      ],
+      "count": 4,
+      "pct": 4.1
+    },
+    {
+      "code": "M10",
+      "name": "莫兰迪中灰",
+      "rgb": [
+        166,
+        166,
+        166
+      ],
+      "count": 3,
+      "pct": 3.1
+    },
+    {
+      "code": "H9",
+      "name": "深灰色",
+      "rgb": [
+        128,
+        128,
+        128
+      ],
+      "count": 2,
+      "pct": 2.1
+    },
+    {
+      "code": "A9",
+      "name": "杏橙色",
+      "rgb": [
+        255,
+        153,
+        91
+      ],
+      "count": 2,
+      "pct": 2.1
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { Header } from '../components/Header'
 import { MaterialList } from '../components/MaterialList'
 import { useData } from '../hooks/useData'
+import { usePalette } from '../hooks/usePalette'
 import type { Material } from '../types'
 import styles from './SummaryPage.module.css'
 
@@ -10,6 +11,7 @@ const CAT_ZH: Record<string, string> = {
   'Combat':          '战斗',
   'Decorations':     '装饰',
   'Food & Drinks':   '食物与饮料',
+  'Food and Drinks': '食物与饮料',
   'Materials':       '材料',
   'Miscellaneous':   '杂项',
   'Redstone':        '红石',
@@ -23,6 +25,7 @@ interface Props {
 
 export function SummaryPage({ onBack }: Props) {
   const { summary } = useData()
+  const { palette, setPalette } = usePalette()
   const [curTab, setCur] = useState(0)
   const tabBarRef = useRef<HTMLDivElement>(null)
 
@@ -62,11 +65,24 @@ export function SummaryPage({ onBack }: Props) {
     },
   }
 
+  const paletteSegment = (
+    <div className={styles.segment}>
+      <button
+        className={`${styles.segBtn} ${palette === 'full' ? styles.segActive : ''}`}
+        onClick={() => setPalette('full')}
+      >完整色</button>
+      <button
+        className={`${styles.segBtn} ${palette === '221' ? styles.segActive : ''}`}
+        onClick={() => setPalette('221')}
+      >221色</button>
+    </div>
+  )
+
   return (
     <div className={styles.page}>
       <Header
         left={<button className={styles.catBtn} onClick={onBack}>分类</button>}
-        right={<span className={styles.logo}>清单汇总</span>}
+        right={paletteSegment}
       />
       <div className={styles.tabBar} ref={tabBarRef} {...tabDragHandlers}>
         {tabs.map((t, i) => (

@@ -1,0 +1,498 @@
+{
+  "name": "nether_star",
+  "display_name": "下界之星",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 81,
+  "color_count": 18,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M11",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M11",
+      "M11",
+      "H18",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M11",
+      "D11",
+      "D23",
+      "M11",
+      "H18",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M11",
+      "D8",
+      "A2",
+      "D17",
+      "H18",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "M11",
+      "M11",
+      "M11",
+      "D8",
+      "A2",
+      "D8",
+      "M11",
+      "H18",
+      "H18",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "D2",
+      "D1",
+      "D17",
+      "C27",
+      "D8",
+      "H3",
+      "D8",
+      "D8",
+      "D11",
+      "D11",
+      "C20",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "D2",
+      "D1",
+      "D23",
+      "H3",
+      "A2",
+      "A2",
+      "A5",
+      "A1",
+      "H4",
+      "H3",
+      "D8",
+      "D1",
+      "D2",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "D2",
+      "D1",
+      "D8",
+      "D8",
+      "D8",
+      "A1",
+      "D8",
+      "D8",
+      "D1",
+      "D1",
+      "D2",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "D24",
+      "D2",
+      "D1",
+      "D23",
+      "H1",
+      "D8",
+      "D1",
+      "D2",
+      "D2",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "D24",
+      "D8",
+      "H16",
+      "D1",
+      "D2",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "D24",
+      "D1",
+      "D23",
+      "D1",
+      "C20",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "D2",
+      "M11",
+      "H18",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H18",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "D8",
+      "name": "浅淡紫",
+      "rgb": [
+        226,
+        211,
+        255
+      ],
+      "count": 14,
+      "pct": 17.3
+    },
+    {
+      "code": "M11",
+      "name": "莫兰迪中蓝",
+      "rgb": [
+        138,
+        156,
+        179
+      ],
+      "count": 11,
+      "pct": 13.6
+    },
+    {
+      "code": "D1",
+      "name": "浅薰衣草",
+      "rgb": [
+        174,
+        180,
+        242
+      ],
+      "count": 11,
+      "pct": 13.6
+    },
+    {
+      "code": "D2",
+      "name": "蓝紫色",
+      "rgb": [
+        133,
+        142,
+        221
+      ],
+      "count": 10,
+      "pct": 12.3
+    },
+    {
+      "code": "H18",
+      "name": "铅灰色",
+      "rgb": [
+        112,
+        128,
+        144
+      ],
+      "count": 7,
+      "pct": 8.6
+    },
+    {
+      "code": "D23",
+      "name": "浅粉紫",
+      "rgb": [
+        235,
+        218,
+        252
+      ],
+      "count": 4,
+      "pct": 4.9
+    },
+    {
+      "code": "A2",
+      "name": "象牙黄",
+      "rgb": [
+        255,
+        255,
+        213
+      ],
+      "count": 4,
+      "pct": 4.9
+    },
+    {
+      "code": "D11",
+      "name": "灰蓝紫",
+      "rgb": [
+        185,
+        186,
+        225
+      ],
+      "count": 3,
+      "pct": 3.7
+    },
+    {
+      "code": "H3",
+      "name": "米白色",
+      "rgb": [
+        245,
+        245,
+        220
+      ],
+      "count": 3,
+      "pct": 3.7
+    },
+    {
+      "code": "D24",
+      "name": "中蓝紫",
+      "rgb": [
+        119,
+        134,
+        229
+      ],
+      "count": 3,
+      "pct": 3.7
+    },
+    {
+      "code": "D17",
+      "name": "浅蓝紫",
+      "rgb": [
+        196,
+        212,
+        246
+      ],
+      "count": 2,
+      "pct": 2.5
+    },
+    {
+      "code": "C20",
+      "name": "中海蓝",
+      "rgb": [
+        23,
+        109,
+        175
+      ],
+      "count": 2,
+      "pct": 2.5
+    },
+    {
+      "code": "A1",
+      "name": "奶油米黄",
+      "rgb": [
+        250,
+        244,
+        200
+      ],
+      "count": 2,
+      "pct": 2.5
+    },
+    {
+      "code": "C27",
+      "name": "浅紫蓝",
+      "rgb": [
+        211,
+        223,
+        250
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "A5",
+      "name": "向日葵黄",
+      "rgb": [
+        244,
+        215,
+        56
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "H4",
+      "name": "奶白色",
+      "rgb": [
+        255,
+        255,
+        240
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "H1",
+      "name": "透明色",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "count": 1,
+      "pct": 1.2
+    },
+    {
+      "code": "H16",
+      "name": "暖白",
+      "rgb": [
+        255,
+        250,
+        240
+      ],
+      "count": 1,
+      "pct": 1.2
+    }
+  ]
+}

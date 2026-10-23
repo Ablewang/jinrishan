@@ -1,0 +1,454 @@
+{
+  "name": "drowned_spawn_egg",
+  "display_name": "溺尸刷怪蛋",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 134,
+  "color_count": 14,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B11",
+      "B11",
+      "B11",
+      "B11",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B11",
+      "B8",
+      "B8",
+      "B8",
+      "B11",
+      "H11",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "B11",
+      "B8",
+      "B8",
+      "B8",
+      "B8",
+      "B25",
+      "C11",
+      "C22",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "B11",
+      "B8",
+      "B11",
+      "B8",
+      "B8",
+      "B25",
+      "C11",
+      "B28",
+      "B28",
+      "H11",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "B11",
+      "B8",
+      "B28",
+      "B8",
+      "B11",
+      "B25",
+      "B25",
+      "H10",
+      "H10",
+      "B22",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H11",
+      "B8",
+      "B7",
+      "B25",
+      "B11",
+      "B25",
+      "C22",
+      "B25",
+      "B25",
+      "H10",
+      "H10",
+      "B22",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H11",
+      "B25",
+      "B7",
+      "B7",
+      "B25",
+      "C11",
+      "B25",
+      "B25",
+      "B25",
+      "H10",
+      "H10",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H11",
+      "B25",
+      "B25",
+      "B7",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "G18",
+      "H10",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G21",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "G11",
+      "B25",
+      "G18",
+      "G18",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G21",
+      "G11",
+      "B25",
+      "B25",
+      "B25",
+      "G11",
+      "G11",
+      "G11",
+      "H10",
+      "G18",
+      "G18",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G21",
+      "G18",
+      "G11",
+      "B25",
+      "G11",
+      "G11",
+      "G11",
+      "G18",
+      "G18",
+      "G18",
+      "G21",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G21",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "G12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G12",
+      "G21",
+      "G18",
+      "G18",
+      "G18",
+      "G18",
+      "G21",
+      "G12",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "B25",
+      "name": "灰蓝绿",
+      "rgb": [
+        78,
+        132,
+        109
+      ],
+      "count": 31,
+      "pct": 23.1
+    },
+    {
+      "code": "G18",
+      "name": "深褐色",
+      "rgb": [
+        92,
+        64,
+        51
+      ],
+      "count": 21,
+      "pct": 15.7
+    },
+    {
+      "code": "G12",
+      "name": "巧克力色",
+      "rgb": [
+        61,
+        35,
+        20
+      ],
+      "count": 14,
+      "pct": 10.4
+    },
+    {
+      "code": "B8",
+      "name": "森林绿",
+      "rgb": [
+        28,
+        156,
+        79
+      ],
+      "count": 13,
+      "pct": 9.7
+    },
+    {
+      "code": "B11",
+      "name": "橄榄绿",
+      "rgb": [
+        93,
+        114,
+        42
+      ],
+      "count": 12,
+      "pct": 9.0
+    },
+    {
+      "code": "G11",
+      "name": "深棕色",
+      "rgb": [
+        101,
+        67,
+        33
+      ],
+      "count": 9,
+      "pct": 6.7
+    },
+    {
+      "code": "H10",
+      "name": "炭灰色",
+      "rgb": [
+        105,
+        105,
+        105
+      ],
+      "count": 8,
+      "pct": 6.0
+    },
+    {
+      "code": "G21",
+      "name": "暗棕色",
+      "rgb": [
+        74,
+        55,
+        40
+      ],
+      "count": 7,
+      "pct": 5.2
+    },
+    {
+      "code": "H11",
+      "name": "暗灰色",
+      "rgb": [
+        80,
+        80,
+        80
+      ],
+      "count": 5,
+      "pct": 3.7
+    },
+    {
+      "code": "B7",
+      "name": "深薄荷",
+      "rgb": [
+        61,
+        175,
+        128
+      ],
+      "count": 4,
+      "pct": 3.0
+    },
+    {
+      "code": "C11",
+      "name": "青蓝色",
+      "rgb": [
+        40,
+        221,
+        222
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "B28",
+      "name": "浅薄荷青",
+      "rgb": [
+        158,
+        229,
+        185
+      ],
+      "count": 3,
+      "pct": 2.2
+    },
+    {
+      "code": "C22",
+      "name": "灰蓝绿",
+      "rgb": [
+        103,
+        180,
+        190
+      ],
+      "count": 2,
+      "pct": 1.5
+    },
+    {
+      "code": "B22",
+      "name": "暗青色",
+      "rgb": [
+        11,
+        60,
+        67
+      ],
+      "count": 2,
+      "pct": 1.5
+    }
+  ]
+}

@@ -12,6 +12,7 @@ from collections import Counter
 FONT_PATH = '/mnt/c/Windows/Fonts/msyh.ttc'
 BASE = '/home/jeffrey/yong/jinrishan/minecraft'
 TS_PATH = f'{BASE}/utils/color.ts'
+TS_PATH_221 = f'{BASE}/utils/color221.ts'
 GALLERY_DIR = f'{BASE}/gallery'
 OUTPUT_DIR = f'{BASE}/output'
 
@@ -1143,13 +1144,13 @@ def process_image(img_path, palette, colors_by_code, out_dir, grid_size=16, cell
     print(f'  done: {name}')
 
 # ── 汇总统计 ─────────────────────────────────────────────────────
-def aggregate_stats(colors_by_code):
-    cats = [d for d in os.listdir(OUTPUT_DIR) if os.path.isdir(os.path.join(OUTPUT_DIR, d))]
+def aggregate_stats(colors_by_code, output_dir=OUTPUT_DIR):
+    cats = [d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d))]
     summary = {}  # cat -> {code: count}
     global_counts = Counter()
 
     for cat in sorted(cats):
-        cat_dir = os.path.join(OUTPUT_DIR, cat)
+        cat_dir = os.path.join(output_dir, cat)
         cat_counts = Counter()
         for fname in os.listdir(cat_dir):
             if not fname.endswith('.json'):
@@ -1182,19 +1183,19 @@ def aggregate_stats(colors_by_code):
     g_items, g_total = make_items(global_counts)
     out['global'] = {'total_beads': g_total, 'color_count': len(global_counts), 'materials': g_items}
 
-    json_path = os.path.join(OUTPUT_DIR, 'summary.json')
+    json_path = os.path.join(output_dir, 'summary.json')
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f'  saved {json_path}')
 
     # 全局汇总：多列布局（A-Z 从上到下，满列换下一列）
     _render_multicolumn_img(g_items, g_total, '拼豆用料总汇总',
-                            os.path.join(OUTPUT_DIR, '_summary.png'))
+                            os.path.join(output_dir, '_summary.png'))
 
     # 每个分类：各自单列
     for cat, cat_data in out['categories'].items():
         _render_singlecolumn_img(cat_data['materials'], cat_data['total_beads'], cat,
-                                 os.path.join(OUTPUT_DIR, cat, '_summary.png'))
+                                 os.path.join(output_dir, cat, '_summary.png'))
 
     print('  summary images done')
 
@@ -1332,16 +1333,25 @@ if __name__ == '__main__':
     parser.add_argument('--file',     help='只处理单张图片路径')
     parser.add_argument('--grid',     type=int, default=16, help='格子数 (默认16)')
     parser.add_argument('--quantize', type=int, default=8,  help='预量化色数 (默认8)')
+    parser.add_argument('--palette',  choices=['full', '221'], default='full',
+                        help='色板: full=原始完整版, 221=221色版 (默认full)')
     args = parser.parse_args()
 
-    print('parsing colors...')
-    colors = parse_colors(TS_PATH)
+    if args.palette == '221':
+        ts_path = TS_PATH_221
+        output_dir = OUTPUT_DIR + '_221'
+    else:
+        ts_path = TS_PATH
+        output_dir = OUTPUT_DIR
+
+    print(f'parsing colors ({args.palette})...')
+    colors = parse_colors(ts_path)
     print(f'  {len(colors)} unique color codes')
     palette = build_palette(colors)
     colors_by_code = {c['code']: c for c in colors}
 
     if args.file:
-        out_dir = os.path.join(OUTPUT_DIR, 'single')
+        out_dir = os.path.join(output_dir, 'single')
         os.makedirs(out_dir, exist_ok=True)
         process_image(args.file, palette, colors_by_code, out_dir,
                       args.grid, quantize=args.quantize)
@@ -1354,7 +1364,7 @@ if __name__ == '__main__':
             if not os.path.isdir(cat_dir):
                 print(f'category not found: {cat}')
                 continue
-            out_dir = os.path.join(OUTPUT_DIR, cat)
+            out_dir = os.path.join(output_dir, cat)
             os.makedirs(out_dir, exist_ok=True)
             files = sorted(f for f in os.listdir(cat_dir) if f.endswith('.png'))
             print(f'\n[{cat}] {len(files)} images')
@@ -1364,7 +1374,7 @@ if __name__ == '__main__':
 
     if not args.file:
         print('\naggregating stats...')
-        aggregate_stats(colors_by_code)
+        aggregate_stats(colors_by_code, output_dir)
 
     print('\nall done!')
 
