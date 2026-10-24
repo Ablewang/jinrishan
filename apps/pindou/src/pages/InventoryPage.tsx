@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Header } from '../components/Header'
 import { PaletteSegment } from '../components/PaletteSegment'
 import { BackTitle } from '../components/BackTitle'
@@ -7,7 +7,6 @@ import { useStore } from '../hooks/useStore'
 import { sortByCode } from '../utils'
 import type { Material } from '../types'
 import styles from './InventoryPage.module.css'
-import { ArrowRightIcon } from '../components/Icon'
 
 interface Props {
   onBack: () => void
@@ -23,7 +22,7 @@ const PRESETS = [
   { label: '没有', value: 0 },
   { label: '少量', value: 50 },
   { label: '足够', value: 500 },
-  { label: '很多', value: 2000 },
+  { label: '很多', value: 1000 },
 ]
 
 export function InventoryPage({ onBack }: Props) {
@@ -31,17 +30,12 @@ export function InventoryPage({ onBack }: Props) {
   const { inventory } = useStore()
   const [openCode, setOpenCode] = useState<string | null>(null)
   const [editVal, setEditVal] = useState('')
-  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set())
+  const [activeGroup, setActiveGroup] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const groupHeaderRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
-  function toggleGroup(letter: string) {
-    setCollapsedGroups(prev => {
-      const next = new Set(prev)
-      if (next.has(letter)) next.delete(letter)
-      else next.add(letter)
-      return next
-    })
-  }
+  const jumpBarRef = useRef<HTMLDivElement>(null)
+  const scrollerRef = useRef<HTMLElement | null>(null)
 
   const allColors = useMemo<Material[]>(() => {
     if (!summary) return []
@@ -64,11 +58,53 @@ export function InventoryPage({ onBack }: Props) {
     return map
   }, [allColors])
 
-  function toggleOpen(code: string) {
-    if (openCode === code) {
-      setOpenCode(null)
-      return
+  useEffect(() => {
+    const headers = groupHeaderRefs.current
+    if (headers.size === 0) return
+
+    // 找滚动容器
+    const first = headers.values().next().value as HTMLElement | undefined
+    if (!first) return
+    let cur = first.parentElement
+    while (cur) {
+      const s = window.getComputedStyle(cur)
+      if (s.overflowY === 'auto' || s.overflowY === 'scroll') { scrollerRef.current = cur; break }
+      cur = cur.parentElement
     }
+    const scroller = scrollerRef.current
+    if (!scroller) return
+
+    function update() {
+      const threshold = (jumpBarRef.current?.getBoundingClientRect().bottom ?? 100)
+      let current: string | null = null
+      for (const [letter, el] of headers) {
+        if (el.getBoundingClientRect().top <= threshold) current = letter
+      }
+      setActiveGroup(current)
+    }
+
+    scroller.addEventListener('scroll', update, { passive: true })
+    update()
+    return () => scroller.removeEventListener('scroll', update)
+  }, [allColors])
+
+  function scrollToGroup(letter: string) {
+    const headerEl = groupHeaderRefs.current.get(letter)
+    if (!headerEl) return
+    let scroller = headerEl.parentElement
+    while (scroller) {
+      const s = window.getComputedStyle(scroller)
+      if (s.overflowY === 'auto' || s.overflowY === 'scroll') break
+      scroller = scroller.parentElement
+    }
+    if (!scroller) return
+    const scrollerRect = scroller.getBoundingClientRect()
+    const headerRect = headerEl.getBoundingClientRect()
+    scroller.scrollTop += headerRect.top - scrollerRect.top
+  }
+
+  function toggleOpen(code: string) {
+    if (openCode === code) { setOpenCode(null); return }
     const current = inventory.get(code)
     setOpenCode(code)
     setEditVal(current > 0 ? String(current) : '')
@@ -95,18 +131,25 @@ export function InventoryPage({ onBack }: Props) {
     )
   }
 
+  const letters = [...groups.keys()]
+
   return (
     <div className={styles.page}>
       <Header left={<BackTitle title="拼豆管理" onBack={onBack} />} right={<PaletteSegment />} />
+      <div className={styles.jumpBar} ref={jumpBarRef}>
+        {letters.map(l => (
+          <button key={l} className={`${styles.jumpBtn} ${activeGroup === l ? styles.jumpBtnActive : ''}`} onClick={() => scrollToGroup(l)}>{l}</button>
+        ))}
+      </div>
       <div className={styles.content}>
         {[...groups.entries()].map(([letter, items]) => (
           <div key={letter} className={styles.group}>
-            <div className={`${styles.groupHeader} ${collapsedGroups.has(letter) ? styles.groupCollapsed : ''}`} onClick={() => toggleGroup(letter)}>
-              <span>{letter} 系</span>
-              <ArrowRightIcon className={`${styles.groupArrow} ${collapsedGroups.has(letter) ? '' : styles.groupArrowDown}`} />
+            <div
+              className={styles.groupHeader}
+              ref={el => { if (el) groupHeaderRefs.current.set(letter, el) }}
+            >
+              {letter} 系
             </div>
-            <div className={`${styles.groupItems} ${collapsedGroups.has(letter) ? styles.groupItemsCollapsed : ''}`}>
-            <div className={styles.groupItemsInner}>
             {items.map(m => {
               const stock = inventory.get(m.code)
               const isOpen = openCode === m.code
@@ -156,8 +199,6 @@ export function InventoryPage({ onBack }: Props) {
                 </div>
               )
             })}
-            </div>
-            </div>
           </div>
         ))}
       </div>
