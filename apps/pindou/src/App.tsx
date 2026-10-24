@@ -5,6 +5,7 @@ import { StoreProvider } from './hooks/useStore'
 import { useDrawerStack } from './hooks/useDrawerStack'
 import { useMemoizedFn } from './hooks/useMemoizedFn'
 import { useSwipeBack } from './hooks/useSwipeBack'
+import { DonePage } from './pages/DonePage'
 import { CategoryPage } from './pages/CategoryPage'
 import { DetailPage } from './pages/DetailPage'
 import { HomePage } from './pages/HomePage'
@@ -21,6 +22,7 @@ export type NavTarget =
   | { type: 'wishlist' }
   | { type: 'purchase' }
   | { type: 'inventory' }
+  | { type: 'done' }
 
 const DRAWER_STYLE: React.CSSProperties = {
   position: 'absolute',
@@ -66,6 +68,8 @@ export default function App() {
       push(<PurchasePage onBack={doPop} />)
     else if (target.type === 'inventory')
       push(<InventoryPage onBack={doPop} />)
+    else if (target.type === 'done')
+      push(<DonePage onBack={doPop} onNavigate={nav} />)
   }
 
   return (
