@@ -13,8 +13,9 @@ function fmt(n: number) { return n.toLocaleString('zh-CN') }
 
 export function ItemRow({ cat, item, onClick }: Props) {
   const src = `/gallery/${encodeURIComponent(cat)}/${item.name}.png`
-  const { wishlist } = useStore()
+  const { wishlist, done } = useStore()
   const inWish = wishlist.has(cat, item.name)
+  const isDone = done.has(cat, item.name)
 
   function toggleWish(e: React.MouseEvent) {
     e.stopPropagation()
@@ -38,7 +39,10 @@ export function ItemRow({ cat, item, onClick }: Props) {
         <div className={styles.thumbFb}>{item.display_name.charAt(0)}</div>
       </div>
       <div className={styles.info}>
-        <span className={styles.name}>{item.display_name}</span>
+        <div className={styles.nameRow}>
+          <span className={styles.name}>{item.display_name}</span>
+          {isDone && <span className={styles.doneTag}>已拼</span>}
+        </div>
         <span className={styles.en}>{item.name}</span>
       </div>
       <div className={styles.beads}>

@@ -53,30 +53,43 @@
   font-size: 14px;
 }
 
+.doneBtn {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text3);
+  border: none;
+  padding: 4px 2px;
+  background: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.doneActive {
+  color: var(--accent);
+}
+
 .wishBtn {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--accent);
-  border: 1.5px solid var(--ac2);
-  padding: 4px 10px;
-  border-radius: 8px;
+  border: none;
+  padding: 4px 2px;
   background: transparent;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .wishActive {
-  background: var(--ac3);
+  color: var(--text2);
 }
 
 .viewBtn {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--accent);
-  border: 1.5px solid var(--ac2);
-  padding: 4px 10px;
-  border-radius: 8px;
-  background: var(--ac3);
+  border: none;
+  padding: 4px 2px;
+  background: transparent;
   white-space: nowrap;
   flex-shrink: 0;
 }

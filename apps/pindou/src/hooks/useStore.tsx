@@ -2,10 +2,12 @@ import { createContext, useContext } from 'react'
 import { useWishlist, type WishItem } from './useWishlist'
 import { useInventory } from './useInventory'
 import { usePalette } from './usePalette'
+import { useDone, type DoneItem } from './useDone'
 
 interface StoreCtx {
   wishlist: ReturnType<typeof useWishlist>
   inventory: ReturnType<typeof useInventory>
+  done: ReturnType<typeof useDone>
 }
 
 const Ctx = createContext<StoreCtx | null>(null)
@@ -14,7 +16,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const { palette } = usePalette()
   const wishlist = useWishlist()
   const inventory = useInventory(palette)
-  return <Ctx.Provider value={{ wishlist, inventory }}>{children}</Ctx.Provider>
+  const done = useDone()
+  return <Ctx.Provider value={{ wishlist, inventory, done }}>{children}</Ctx.Provider>
 }
 
 export function useStore() {
@@ -23,4 +26,4 @@ export function useStore() {
   return ctx
 }
 
-export type { WishItem }
+export type { WishItem, DoneItem }

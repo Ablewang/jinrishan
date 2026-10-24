@@ -25,13 +25,19 @@ export function DetailPage({ cat, name, onBack }: Props) {
   const [showOriginal, setShowOg] = useState(false)
   const matListRef = useRef<HTMLDivElement>(null)
   const { palette } = usePalette()
-  const { wishlist, inventory } = useStore()
+  const { wishlist, inventory, done } = useStore()
   const inWish = item ? wishlist.has(cat, name) : false
+  const isDone = done.has(cat, name)
 
   function toggleWish() {
     if (!item) return
     if (inWish) wishlist.remove(cat, name)
     else wishlist.add({ cat, name, display_name: item.display_name })
+  }
+
+  function toggleDone() {
+    if (!item) return
+    done.toggle({ cat, name, display_name: item.display_name })
   }
 
   useEffect(() => {
@@ -80,9 +86,15 @@ export function DetailPage({ cat, name, onBack }: Props) {
     </button>
   )
 
+  const doneBtn = (
+    <button className={`${styles.doneBtn} ${isDone ? styles.doneActive : ''}`} onClick={toggleDone}>
+      {isDone ? '已拼' : '标记已拼'}
+    </button>
+  )
+
   const wishBtn = (
     <button className={`${styles.wishBtn} ${inWish ? styles.wishActive : ''}`} onClick={toggleWish}>
-      {inWish ? '已收藏' : '+ 收藏'}
+      {inWish ? '取消收藏' : '+ 收藏'}
     </button>
   )
 
@@ -90,7 +102,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
     <div className={styles.page}>
       <Header
         left={<BackTitle title={item.display_name} onBack={onBack} />}
-        right={<div style={{ display: 'flex', gap: 8 }}>{wishBtn}{toggleBtn}</div>}
+        right={<div style={{ display: 'flex', gap: 8 }}>{doneBtn}{wishBtn}{toggleBtn}</div>}
       />
       <div className={styles.body}>
         <BeadCanvas

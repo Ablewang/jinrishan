@@ -80,6 +80,21 @@
   text-overflow: ellipsis;
 }
 
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.doneTag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
 .removeBtn {
   font-size: 12px;
   color: var(--text3);
@@ -89,13 +104,27 @@
   flex-shrink: 0;
 }
 
+.doneBtn {
+  font-size: 12px;
+  color: var(--text3);
+  border: none;
+  background: transparent;
+  padding: 3px 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.doneActive {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .purchaseBtn {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--accent);
-  border: 1.5px solid var(--ac2);
-  padding: 5px 12px;
-  border-radius: 8px;
-  background: var(--ac3);
+  border: none;
+  padding: 4px 2px;
+  background: transparent;
   white-space: nowrap;
 }

@@ -23,7 +23,7 @@ interface Props {
 }
 
 export function WishlistPage({ onBack, onNavigate }: Props) {
-  const { wishlist } = useStore()
+  const { wishlist, done } = useStore()
   const { items, remove, removeAll } = wishlist
 
   const grouped = useMemo(() => {
@@ -68,7 +68,10 @@ export function WishlistPage({ onBack, onNavigate }: Props) {
                     loading="lazy"
                     onError={e => { e.currentTarget.style.display = 'none' }}
                   />
-                  <span className={styles.itemName}>{item.display_name}</span>
+                  <div className={styles.itemInfo}>
+                    <span className={styles.itemName}>{item.display_name}</span>
+                    {done.has(item.cat, item.name) && <span className={styles.doneTag}>已拼</span>}
+                  </div>
                   <button className={styles.removeBtn} onClick={e => { e.stopPropagation(); remove(item.cat, item.name) }}>移除</button>
                 </div>
               ))}

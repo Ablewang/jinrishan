@@ -59,8 +59,8 @@ export function CategoryPage({ cat, onNavigate, onBack }: Props) {
       <Header
         left={<BackTitle title={CAT_ZH[cat] ?? cat} onBack={onBack} />}
         right={
-          <button className={`${styles.link} ${allInWish ? styles.linkActive : ''}`} onClick={toggleAll}>
-            {allInWish ? '已全部收藏' : '整组收藏'}
+          <button className={styles.link} onClick={toggleAll}>
+            {allInWish ? '整组取消收藏' : '整组收藏'}
           </button>
         }
       />
