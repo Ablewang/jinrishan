@@ -17,7 +17,7 @@
 .divider {
   color: var(--text3);
   font-size: 12px;
-  padding: 0 5px;
+  padding: 0 8px;
   user-select: none;
 }
 
@@ -30,7 +30,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px;
 }
 
 .grid {
