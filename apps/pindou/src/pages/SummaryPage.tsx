@@ -70,7 +70,7 @@ export function SummaryPage({ onBack }: Props) {
   return (
     <div className={styles.page}>
       <Header
-        left={<BackTitle title="清单汇总" onBack={onBack} />}
+        left={<BackTitle title="材料表" onBack={onBack} />}
         right={<PaletteSegment />}
       />
       <div className={styles.tabBar} ref={tabBarRef} {...tabDragHandlers}>

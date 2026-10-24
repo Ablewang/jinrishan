@@ -6,7 +6,7 @@ import type { NavTarget } from '../App'
 import styles from './HomePage.module.css'
 
 const LOGO = (
-  <span className={styles.logo}>分类 </span>
+  <span className={styles.logo}>首页 </span>
 )
 
 interface Props {
@@ -20,9 +20,11 @@ export function HomePage({ onNavigate }: Props) {
     <div className={styles.headerLeft}>
       {LOGO}
       <span className={styles.divider}>|</span>
-      <button className={styles.link} onClick={() => onNavigate({ type: 'summary' })}>清单汇总</button>
+      <button className={styles.link} onClick={() => onNavigate({ type: 'summary' })}>材料表</button>
       <span className={styles.divider}>|</span>
       <button className={styles.link} onClick={() => onNavigate({ type: 'wishlist' })}>收藏夹</button>
+      <span className={styles.divider}>|</span>
+      <button className={styles.link} onClick={() => onNavigate({ type: 'done' })}>已拼</button>
     </div>
   )
 
