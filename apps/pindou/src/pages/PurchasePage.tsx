@@ -23,16 +23,17 @@ function getGroup(code: string) {
 }
 
 export function PurchasePage({ onBack }: Props) {
-  const { wishlist, inventory } = useStore()
+  const { wishlist, inventory, done } = useStore()
   const { palette } = usePalette()
   const [loading, setLoading] = useState(true)
   const [totals, setTotals] = useState<Map<string, Material>>(new Map())
 
   useEffect(() => {
-    if (wishlist.items.length === 0) { setTotals(new Map()); setLoading(false); return }
+    const activeItems = wishlist.items.filter(i => !done.has(i.cat, i.name))
+    if (activeItems.length === 0) { setTotals(new Map()); setLoading(false); return }
     setLoading(true)
     Promise.all(
-      wishlist.items.map(i => fetchItem(i.cat, i.name, palette).catch(() => null))
+      activeItems.map(i => fetchItem(i.cat, i.name, palette).catch(() => null))
     ).then(results => {
       const map = new Map<string, Material>()
       for (const item of results) {
@@ -46,7 +47,7 @@ export function PurchasePage({ onBack }: Props) {
       setTotals(map)
       setLoading(false)
     })
-  }, [wishlist.items, palette])
+  }, [wishlist.items, done.items, palette])
 
   const needItems = useMemo<NeedItem[]>(() => {
     return [...totals.values()]
