@@ -1165,7 +1165,7 @@ def aggregate_stats(colors_by_code, output_dir=OUTPUT_DIR):
     def make_items(counts):
         total = sum(counts.values())
         items = []
-        for code, count in sorted(counts.items()):  # 按色号字母排序
+        for code, count in sorted(counts.items(), key=lambda x: (re.match(r'^[A-Za-z]+', x[0]).group(0).upper(), int(re.search(r'\d+', x[0]).group()))):
             info = colors_by_code.get(code, {})
             items.append({
                 'code': code,
