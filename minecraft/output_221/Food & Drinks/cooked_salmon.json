@@ -1,0 +1,432 @@
+{
+  "name": "cooked_salmon",
+  "display_name": "熟鲑鱼",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 90,
+  "color_count": 12,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G11",
+      "G11",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G11",
+      "G5",
+      "G11",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G11",
+      "G5",
+      "G5",
+      "G14",
+      "G21",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G11",
+      "G11",
+      null,
+      "G11",
+      "G11",
+      "F11",
+      "F10",
+      "G14",
+      "G21",
+      "G21",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G11",
+      "G5",
+      "G14",
+      "G11",
+      "F10",
+      "F11",
+      "A12",
+      "F10",
+      "G21",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G11",
+      "G14",
+      "F11",
+      "F11",
+      "F11",
+      "A12",
+      "F11",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G11",
+      "F11",
+      "F11",
+      "F11",
+      "A12",
+      "F11",
+      "F10",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H21",
+      "B25",
+      "B25",
+      "F10",
+      "A12",
+      "F11",
+      "F10",
+      "F10",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H21",
+      "H21",
+      "B25",
+      "B25",
+      "F10",
+      "F11",
+      "F10",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H21",
+      "B25",
+      "B25",
+      "H21",
+      "B25",
+      "B25",
+      "F10",
+      "F10",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H21",
+      "H22",
+      "B9",
+      "B9",
+      "B25",
+      "H21",
+      "F10",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H21",
+      "B9",
+      null,
+      "G11",
+      "H21",
+      "H21",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H21",
+      null,
+      null,
+      "G14",
+      "G11",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G14",
+      "G14",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "G11",
+      "name": "深棕色",
+      "rgb": [
+        101,
+        67,
+        33
+      ],
+      "count": 15,
+      "pct": 16.7
+    },
+    {
+      "code": "F11",
+      "name": "暗砖红",
+      "rgb": [
+        168,
+        60,
+        50
+      ],
+      "count": 12,
+      "pct": 13.3
+    },
+    {
+      "code": "F10",
+      "name": "红棕",
+      "rgb": [
+        138,
+        69,
+        38
+      ],
+      "count": 12,
+      "pct": 13.3
+    },
+    {
+      "code": "H21",
+      "name": "石墨灰",
+      "rgb": [
+        71,
+        71,
+        71
+      ],
+      "count": 11,
+      "pct": 12.2
+    },
+    {
+      "code": "B25",
+      "name": "灰蓝绿",
+      "rgb": [
+        78,
+        132,
+        109
+      ],
+      "count": 9,
+      "pct": 10.0
+    },
+    {
+      "code": "H13",
+      "name": "近黑灰",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "count": 8,
+      "pct": 8.9
+    },
+    {
+      "code": "G14",
+      "name": "驼色",
+      "rgb": [
+        160,
+        107,
+        62
+      ],
+      "count": 7,
+      "pct": 7.8
+    },
+    {
+      "code": "G5",
+      "name": "深棕肤色",
+      "rgb": [
+        198,
+        140,
+        106
+      ],
+      "count": 4,
+      "pct": 4.4
+    },
+    {
+      "code": "G21",
+      "name": "暗棕色",
+      "rgb": [
+        74,
+        55,
+        40
+      ],
+      "count": 4,
+      "pct": 4.4
+    },
+    {
+      "code": "A12",
+      "name": "桃橙色",
+      "rgb": [
+        254,
+        159,
+        114
+      ],
+      "count": 4,
+      "pct": 4.4
+    },
+    {
+      "code": "B9",
+      "name": "深森林绿",
+      "rgb": [
+        39,
+        82,
+        58
+      ],
+      "count": 3,
+      "pct": 3.3
+    },
+    {
+      "code": "H22",
+      "name": "煤黑色",
+      "rgb": [
+        26,
+        26,
+        26
+      ],
+      "count": 1,
+      "pct": 1.1
+    }
+  ]
+}

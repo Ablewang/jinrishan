@@ -1,0 +1,443 @@
+{
+  "name": "weathered_cut_copper_stairs",
+  "display_name": "部分氧化切制铜楼梯",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 158,
+  "color_count": 13,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B25",
+      "G17",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G17",
+      "B25",
+      "B11",
+      "B11",
+      "B25",
+      "G17",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G17",
+      "B25",
+      "B25",
+      "M12",
+      "B25",
+      "M13",
+      "B7",
+      "B9",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "G17",
+      "B11",
+      "M13",
+      "B11",
+      "M13",
+      "B11",
+      "G17",
+      "B9",
+      "B23",
+      "H12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "B15",
+      "B25",
+      "M12",
+      "M13",
+      "M12",
+      "B9",
+      "H13",
+      "H12",
+      "B23",
+      "B23",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "B15",
+      "M15",
+      "B15",
+      "B9",
+      "B23",
+      "B23",
+      "H13",
+      "B23",
+      "B23",
+      "B23",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "B9",
+      "M15",
+      "B9",
+      "B9",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "H12",
+      "H13",
+      "B25",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "B15",
+      "B9",
+      "B15",
+      "B9",
+      "B23",
+      "B23",
+      "H13",
+      "H13",
+      "G17",
+      "B11",
+      "B25",
+      "B11",
+      "G17",
+      null,
+      null
+    ],
+    [
+      null,
+      "B25",
+      "H21",
+      "M15",
+      "B9",
+      "B23",
+      "B23",
+      "B25",
+      "B25",
+      "B7",
+      "B11",
+      "B11",
+      "B11",
+      "B7",
+      "B9",
+      null
+    ],
+    [
+      null,
+      "B15",
+      "B15",
+      "B15",
+      "B23",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "M12",
+      "B9",
+      "B23",
+      "B23",
+      null
+    ],
+    [
+      null,
+      "B15",
+      "B9",
+      "M15",
+      "B15",
+      "B25",
+      "M12",
+      "B11",
+      "B11",
+      "M12",
+      "B9",
+      "B9",
+      "H12",
+      "H12",
+      "B23",
+      null
+    ],
+    [
+      null,
+      "B9",
+      "B15",
+      "B15",
+      "B15",
+      "M15",
+      "B9",
+      "B15",
+      "B9",
+      "B23",
+      "H12",
+      "B9",
+      "B23",
+      "B23",
+      "H12",
+      null
+    ],
+    [
+      null,
+      "B23",
+      "B15",
+      "M15",
+      "B25",
+      "B15",
+      "M15",
+      "B9",
+      "B23",
+      "B23",
+      "B23",
+      "B9",
+      "B23",
+      "H13",
+      "B23",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H21",
+      "B15",
+      "B9",
+      "B15",
+      "B15",
+      "B23",
+      "B23",
+      "H12",
+      "B23",
+      "B23",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B23",
+      "M15",
+      "B15",
+      "B23",
+      "B23",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B23",
+      "B23",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "B23",
+      "name": "暗橄榄",
+      "rgb": [
+        48,
+        58,
+        33
+      ],
+      "count": 38,
+      "pct": 24.1
+    },
+    {
+      "code": "B9",
+      "name": "深森林绿",
+      "rgb": [
+        39,
+        82,
+        58
+      ],
+      "count": 22,
+      "pct": 13.9
+    },
+    {
+      "code": "B25",
+      "name": "灰蓝绿",
+      "rgb": [
+        78,
+        132,
+        109
+      ],
+      "count": 20,
+      "pct": 12.7
+    },
+    {
+      "code": "B15",
+      "name": "暗绿",
+      "rgb": [
+        46,
+        81,
+        50
+      ],
+      "count": 20,
+      "pct": 12.7
+    },
+    {
+      "code": "B11",
+      "name": "橄榄绿",
+      "rgb": [
+        93,
+        114,
+        42
+      ],
+      "count": 12,
+      "pct": 7.6
+    },
+    {
+      "code": "G17",
+      "name": "褐色",
+      "rgb": [
+        139,
+        115,
+        85
+      ],
+      "count": 8,
+      "pct": 5.1
+    },
+    {
+      "code": "H12",
+      "name": "深炭灰",
+      "rgb": [
+        58,
+        58,
+        58
+      ],
+      "count": 8,
+      "pct": 5.1
+    },
+    {
+      "code": "M15",
+      "name": "莫兰迪深褐",
+      "rgb": [
+        89,
+        74,
+        66
+      ],
+      "count": 8,
+      "pct": 5.1
+    },
+    {
+      "code": "H13",
+      "name": "近黑灰",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "count": 7,
+      "pct": 4.4
+    },
+    {
+      "code": "M12",
+      "name": "莫兰迪中绿",
+      "rgb": [
+        138,
+        168,
+        143
+      ],
+      "count": 6,
+      "pct": 3.8
+    },
+    {
+      "code": "M13",
+      "name": "莫兰迪中棕",
+      "rgb": [
+        140,
+        120,
+        99
+      ],
+      "count": 4,
+      "pct": 2.5
+    },
+    {
+      "code": "B7",
+      "name": "深薄荷",
+      "rgb": [
+        61,
+        175,
+        128
+      ],
+      "count": 3,
+      "pct": 1.9
+    },
+    {
+      "code": "H21",
+      "name": "石墨灰",
+      "rgb": [
+        71,
+        71,
+        71
+      ],
+      "count": 2,
+      "pct": 1.3
+    }
+  ]
+}

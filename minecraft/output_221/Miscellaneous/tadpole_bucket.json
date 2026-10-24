@@ -1,0 +1,421 @@
+{
+  "name": "tadpole_bucket",
+  "display_name": "桶装蝌蚪",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 146,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H12",
+      "H12",
+      "M14",
+      "M14",
+      "M10",
+      "M10",
+      "M10",
+      "M10",
+      "H12",
+      "H12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "M14",
+      "B21",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B25",
+      "B21",
+      "M14",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "B21",
+      "B25",
+      "B25",
+      "H23",
+      "G20",
+      "H23",
+      "B9",
+      "B9",
+      "B25",
+      "B21",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "H12",
+      "H12",
+      "B25",
+      "G20",
+      "G10",
+      "G20",
+      "B9",
+      "B25",
+      "H12",
+      "H12",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "H6",
+      "M10",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "H6",
+      "H6",
+      "H6",
+      "H6",
+      "M10",
+      "M10",
+      "M10",
+      "M14",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "H6",
+      "H6",
+      "H2",
+      "H6",
+      "M10",
+      "M10",
+      "M10",
+      "M14",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "M10",
+      "H6",
+      "H2",
+      "H6",
+      "M10",
+      "M10",
+      "M10",
+      "M14",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H12",
+      "M14",
+      "H6",
+      "H2",
+      "H6",
+      "M10",
+      "M10",
+      "M10",
+      "M14",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H12",
+      "H6",
+      "H6",
+      "H6",
+      "M10",
+      "M10",
+      "M10",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "H12",
+      "M10",
+      "H6",
+      "H6",
+      "M10",
+      "M10",
+      "M10",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "M10",
+      "H6",
+      "M10",
+      "M10",
+      "M14",
+      "M10",
+      "H12",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "H12",
+      "name": "深炭灰",
+      "rgb": [
+        58,
+        58,
+        58
+      ],
+      "count": 48,
+      "pct": 32.9
+    },
+    {
+      "code": "M10",
+      "name": "莫兰迪中灰",
+      "rgb": [
+        166,
+        166,
+        166
+      ],
+      "count": 36,
+      "pct": 24.7
+    },
+    {
+      "code": "H6",
+      "name": "浅灰色",
+      "rgb": [
+        211,
+        211,
+        211
+      ],
+      "count": 18,
+      "pct": 12.3
+    },
+    {
+      "code": "M14",
+      "name": "莫兰迪深灰",
+      "rgb": [
+        115,
+        115,
+        115
+      ],
+      "count": 17,
+      "pct": 11.6
+    },
+    {
+      "code": "B25",
+      "name": "灰蓝绿",
+      "rgb": [
+        78,
+        132,
+        109
+      ],
+      "count": 11,
+      "pct": 7.5
+    },
+    {
+      "code": "B21",
+      "name": "深青色",
+      "rgb": [
+        21,
+        106,
+        107
+      ],
+      "count": 4,
+      "pct": 2.7
+    },
+    {
+      "code": "G20",
+      "name": "黄褐色",
+      "rgb": [
+        166,
+        123,
+        91
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "B9",
+      "name": "深森林绿",
+      "rgb": [
+        39,
+        82,
+        58
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "H2",
+      "name": "纯白色",
+      "rgb": [
+        255,
+        254,
+        255
+      ],
+      "count": 3,
+      "pct": 2.1
+    },
+    {
+      "code": "H23",
+      "name": "哑光黑",
+      "rgb": [
+        13,
+        13,
+        13
+      ],
+      "count": 2,
+      "pct": 1.4
+    },
+    {
+      "code": "G10",
+      "name": "中棕色",
+      "rgb": [
+        139,
+        90,
+        43
+      ],
+      "count": 1,
+      "pct": 0.7
+    }
+  ]
+}
