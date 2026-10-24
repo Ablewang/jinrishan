@@ -1,0 +1,421 @@
+{
+  "name": "red_bed",
+  "display_name": "红色床",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 115,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H6",
+      "H7",
+      "H8",
+      "H7",
+      "H7",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H6",
+      "H8",
+      "H5",
+      "H5",
+      "H5",
+      "H5",
+      "H6",
+      "H8",
+      "H6",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F11",
+      "F11",
+      "F6",
+      "F6",
+      "F6",
+      "M10",
+      "M10",
+      "H7",
+      "H6",
+      "H10",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F11",
+      "F6",
+      "F6",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F6",
+      "H11",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F6",
+      "G12",
+      "G21",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "G12",
+      "G12",
+      "G21",
+      null
+    ],
+    [
+      null,
+      null,
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "G12",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "G12",
+      "G12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "F11",
+      "F11",
+      "F11",
+      "F11",
+      "G12",
+      "G21",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G21",
+      "G21",
+      "G21",
+      "G21",
+      "G21",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G21",
+      "G12",
+      null,
+      null,
+      null,
+      "G12",
+      "G21",
+      "G21",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G21",
+      "G21",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "F11",
+      "name": "暗砖红",
+      "rgb": [
+        168,
+        60,
+        50
+      ],
+      "count": 48,
+      "pct": 41.7
+    },
+    {
+      "code": "G12",
+      "name": "巧克力色",
+      "rgb": [
+        61,
+        35,
+        20
+      ],
+      "count": 27,
+      "pct": 23.5
+    },
+    {
+      "code": "G21",
+      "name": "暗棕色",
+      "rgb": [
+        74,
+        55,
+        40
+      ],
+      "count": 13,
+      "pct": 11.3
+    },
+    {
+      "code": "F6",
+      "name": "深红褐",
+      "rgb": [
+        148,
+        54,
+        48
+      ],
+      "count": 7,
+      "pct": 6.1
+    },
+    {
+      "code": "H6",
+      "name": "浅灰色",
+      "rgb": [
+        211,
+        211,
+        211
+      ],
+      "count": 5,
+      "pct": 4.3
+    },
+    {
+      "code": "H7",
+      "name": "中浅灰",
+      "rgb": [
+        192,
+        192,
+        192
+      ],
+      "count": 4,
+      "pct": 3.5
+    },
+    {
+      "code": "H5",
+      "name": "极浅灰",
+      "rgb": [
+        240,
+        240,
+        240
+      ],
+      "count": 4,
+      "pct": 3.5
+    },
+    {
+      "code": "H8",
+      "name": "中灰色",
+      "rgb": [
+        169,
+        169,
+        169
+      ],
+      "count": 3,
+      "pct": 2.6
+    },
+    {
+      "code": "M10",
+      "name": "莫兰迪中灰",
+      "rgb": [
+        166,
+        166,
+        166
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "H10",
+      "name": "炭灰色",
+      "rgb": [
+        105,
+        105,
+        105
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "H11",
+      "name": "暗灰色",
+      "rgb": [
+        80,
+        80,
+        80
+      ],
+      "count": 1,
+      "pct": 0.9
+    }
+  ]
+}

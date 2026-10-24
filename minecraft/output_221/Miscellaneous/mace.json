@@ -1,0 +1,421 @@
+{
+  "name": "mace",
+  "display_name": "重锤",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 99,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "H21",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "M11",
+      "C28",
+      "H21",
+      null,
+      "H11",
+      "H21",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "M11",
+      "H11",
+      "M11",
+      "C28",
+      "H13",
+      "H12",
+      "H13",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "M11",
+      "H11",
+      "H12",
+      "H18",
+      "M11",
+      "C28",
+      "H13",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "M11",
+      "H11",
+      "H21",
+      "H18",
+      "M11",
+      "C28",
+      "H21",
+      "H11",
+      "H13",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "H18",
+      "H18",
+      "H18",
+      "H18",
+      "C28",
+      "H21",
+      "H21",
+      "H21",
+      "H11",
+      "H13"
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H21",
+      "H18",
+      "H18",
+      "M11",
+      "H21",
+      "H21",
+      "H13",
+      "H12",
+      "H21",
+      "H13"
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H13",
+      "H18",
+      "H21",
+      "H21",
+      "H13",
+      "H12",
+      "H21",
+      "H13",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "C20",
+      "D2",
+      "H13",
+      "H12",
+      "H21",
+      "H12",
+      "H21",
+      "H13",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "C20",
+      "D2",
+      "C12",
+      null,
+      "H13",
+      "H12",
+      "H21",
+      "H13",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "C20",
+      "M6",
+      "C12",
+      null,
+      null,
+      null,
+      "H13",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "C20",
+      "M6",
+      "C12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "C20",
+      "M6",
+      "C12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      "H21",
+      "H21",
+      "D2",
+      "C12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      "H21",
+      "H18",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      "H13",
+      "H13",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "H21",
+      "name": "石墨灰",
+      "rgb": [
+        71,
+        71,
+        71
+      ],
+      "count": 27,
+      "pct": 27.3
+    },
+    {
+      "code": "H13",
+      "name": "近黑灰",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "count": 20,
+      "pct": 20.2
+    },
+    {
+      "code": "H18",
+      "name": "铅灰色",
+      "rgb": [
+        112,
+        128,
+        144
+      ],
+      "count": 10,
+      "pct": 10.1
+    },
+    {
+      "code": "M11",
+      "name": "莫兰迪中蓝",
+      "rgb": [
+        138,
+        156,
+        179
+      ],
+      "count": 8,
+      "pct": 8.1
+    },
+    {
+      "code": "H12",
+      "name": "深炭灰",
+      "rgb": [
+        58,
+        58,
+        58
+      ],
+      "count": 7,
+      "pct": 7.1
+    },
+    {
+      "code": "H11",
+      "name": "暗灰色",
+      "rgb": [
+        80,
+        80,
+        80
+      ],
+      "count": 6,
+      "pct": 6.1
+    },
+    {
+      "code": "C28",
+      "name": "浅灰蓝",
+      "rgb": [
+        187,
+        207,
+        237
+      ],
+      "count": 5,
+      "pct": 5.1
+    },
+    {
+      "code": "C20",
+      "name": "中海蓝",
+      "rgb": [
+        23,
+        109,
+        175
+      ],
+      "count": 5,
+      "pct": 5.1
+    },
+    {
+      "code": "C12",
+      "name": "深海军蓝",
+      "rgb": [
+        28,
+        51,
+        77
+      ],
+      "count": 5,
+      "pct": 5.1
+    },
+    {
+      "code": "D2",
+      "name": "蓝紫色",
+      "rgb": [
+        133,
+        142,
+        221
+      ],
+      "count": 3,
+      "pct": 3.0
+    },
+    {
+      "code": "M6",
+      "name": "莫兰迪浅紫",
+      "rgb": [
+        191,
+        182,
+        217
+      ],
+      "count": 3,
+      "pct": 3.0
+    }
+  ]
+}

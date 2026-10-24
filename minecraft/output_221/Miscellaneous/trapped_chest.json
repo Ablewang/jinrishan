@@ -1,0 +1,432 @@
+{
+  "name": "trapped_chest",
+  "display_name": "陷阱箱",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 132,
+  "color_count": 12,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "G10",
+      "G10",
+      "H12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H12",
+      "G10",
+      "G8",
+      "B26",
+      "G14",
+      "G14",
+      "G14",
+      "H13",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H13",
+      "G10",
+      "G8",
+      "G14",
+      "G14",
+      "G8",
+      "G14",
+      "B26",
+      "G14",
+      "G14",
+      "G14",
+      "H12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H13",
+      "H12",
+      "G10",
+      "G14",
+      "G14",
+      "G14",
+      "B26",
+      "G8",
+      "B26",
+      "G10",
+      "H13",
+      "H22",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "G11",
+      "H13",
+      "H13",
+      "G10",
+      "G8",
+      "G14",
+      "G14",
+      "G21",
+      "H22",
+      "G12",
+      "G11",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H22",
+      "G11",
+      "G11",
+      "G11",
+      "H13",
+      "H12",
+      "G21",
+      "H22",
+      "G12",
+      "G12",
+      "G12",
+      "H23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "G21",
+      "H22",
+      "G11",
+      "G11",
+      "H22",
+      "G11",
+      "G11",
+      "G12",
+      "H21",
+      "G12",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "G11",
+      "G11",
+      "G21",
+      "H22",
+      "H22",
+      "G12",
+      "H22",
+      "G12",
+      "H12",
+      "G12",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "G11",
+      "G11",
+      "G11",
+      "G11",
+      "H22",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G11",
+      "G11",
+      "G11",
+      "G11",
+      "G11",
+      "H22",
+      "G11",
+      "G12",
+      "G12",
+      "G11",
+      "G12",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H22",
+      "G11",
+      "G11",
+      "G11",
+      "G11",
+      "H22",
+      "G12",
+      "G12",
+      "G11",
+      "G21",
+      "G12",
+      "H23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "H22",
+      "G11",
+      "G11",
+      "H22",
+      "G11",
+      "G12",
+      "G21",
+      "H23",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H22",
+      "H22",
+      "G21",
+      "H23",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "G11",
+      "name": "深棕色",
+      "rgb": [
+        101,
+        67,
+        33
+      ],
+      "count": 34,
+      "pct": 25.8
+    },
+    {
+      "code": "G12",
+      "name": "巧克力色",
+      "rgb": [
+        61,
+        35,
+        20
+      ],
+      "count": 25,
+      "pct": 18.9
+    },
+    {
+      "code": "H22",
+      "name": "煤黑色",
+      "rgb": [
+        26,
+        26,
+        26
+      ],
+      "count": 17,
+      "pct": 12.9
+    },
+    {
+      "code": "G14",
+      "name": "驼色",
+      "rgb": [
+        160,
+        107,
+        62
+      ],
+      "count": 14,
+      "pct": 10.6
+    },
+    {
+      "code": "H12",
+      "name": "深炭灰",
+      "rgb": [
+        58,
+        58,
+        58
+      ],
+      "count": 7,
+      "pct": 5.3
+    },
+    {
+      "code": "G10",
+      "name": "中棕色",
+      "rgb": [
+        139,
+        90,
+        43
+      ],
+      "count": 7,
+      "pct": 5.3
+    },
+    {
+      "code": "H13",
+      "name": "近黑灰",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "count": 7,
+      "pct": 5.3
+    },
+    {
+      "code": "G21",
+      "name": "暗棕色",
+      "rgb": [
+        74,
+        55,
+        40
+      ],
+      "count": 7,
+      "pct": 5.3
+    },
+    {
+      "code": "G8",
+      "name": "深卡其",
+      "rgb": [
+        184,
+        134,
+        11
+      ],
+      "count": 5,
+      "pct": 3.8
+    },
+    {
+      "code": "B26",
+      "name": "暗黄绿",
+      "rgb": [
+        141,
+        122,
+        53
+      ],
+      "count": 4,
+      "pct": 3.0
+    },
+    {
+      "code": "H23",
+      "name": "哑光黑",
+      "rgb": [
+        13,
+        13,
+        13
+      ],
+      "count": 4,
+      "pct": 3.0
+    },
+    {
+      "code": "H21",
+      "name": "石墨灰",
+      "rgb": [
+        71,
+        71,
+        71
+      ],
+      "count": 1,
+      "pct": 0.8
+    }
+  ]
+}

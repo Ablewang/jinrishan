@@ -1,0 +1,454 @@
+{
+  "name": "bogged_spawn_egg",
+  "display_name": "沼泽骷髅刷怪蛋",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 148,
+  "color_count": 14,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F8",
+      "F8",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M15",
+      "M15",
+      "M15",
+      "M15",
+      "F8",
+      "C25",
+      "F19",
+      "F8",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G20",
+      "B11",
+      "M12",
+      "M13",
+      "M13",
+      "M15",
+      "F19",
+      "F19",
+      "F19",
+      "F6",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G20",
+      "G5",
+      "B11",
+      "M12",
+      "M13",
+      "M12",
+      "M13",
+      "M15",
+      "M10",
+      "F19",
+      "F6",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "M15",
+      "B11",
+      "B11",
+      "M13",
+      "M13",
+      "M13",
+      "B11",
+      "M12",
+      "M13",
+      "M15",
+      "F6",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "M15",
+      "M12",
+      "B11",
+      "M12",
+      "M13",
+      "M12",
+      "B11",
+      "B11",
+      "B11",
+      "B23",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "M15",
+      "M13",
+      "M9",
+      "H7",
+      "H7",
+      "M12",
+      "M13",
+      "B11",
+      "B11",
+      "B11",
+      "M13",
+      "B23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "M15",
+      "M12",
+      "M9",
+      "H7",
+      "M9",
+      "M12",
+      "B11",
+      "B11",
+      "B11",
+      "B11",
+      "M13",
+      "B23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "M15",
+      "M13",
+      "B11",
+      "M9",
+      "M12",
+      "M12",
+      "M12",
+      "B11",
+      "B11",
+      "B11",
+      "M13",
+      "B23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "M15",
+      "B11",
+      "B11",
+      "M12",
+      "M9",
+      "M12",
+      "M12",
+      "M12",
+      "M12",
+      "M13",
+      "M12",
+      "B23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "B23",
+      "B11",
+      "B11",
+      "M12",
+      "M12",
+      "M9",
+      "M9",
+      "M12",
+      "B11",
+      "M12",
+      "M13",
+      "B23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "B23",
+      "B23",
+      "B23",
+      "M13",
+      "B11",
+      "M13",
+      "M12",
+      "B11",
+      "B11",
+      "M13",
+      "B23",
+      "B23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "B23",
+      "B23",
+      "B11",
+      "B11",
+      "M13",
+      "B23",
+      "B23",
+      "B11",
+      "B23",
+      "B23",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      "B23",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "B23",
+      "name": "暗橄榄",
+      "rgb": [
+        48,
+        58,
+        33
+      ],
+      "count": 32,
+      "pct": 21.6
+    },
+    {
+      "code": "B11",
+      "name": "橄榄绿",
+      "rgb": [
+        93,
+        114,
+        42
+      ],
+      "count": 31,
+      "pct": 20.9
+    },
+    {
+      "code": "M12",
+      "name": "莫兰迪中绿",
+      "rgb": [
+        138,
+        168,
+        143
+      ],
+      "count": 24,
+      "pct": 16.2
+    },
+    {
+      "code": "M13",
+      "name": "莫兰迪中棕",
+      "rgb": [
+        140,
+        120,
+        99
+      ],
+      "count": 21,
+      "pct": 14.2
+    },
+    {
+      "code": "M15",
+      "name": "莫兰迪深褐",
+      "rgb": [
+        89,
+        74,
+        66
+      ],
+      "count": 13,
+      "pct": 8.8
+    },
+    {
+      "code": "M9",
+      "name": "莫兰迪浅棕",
+      "rgb": [
+        191,
+        169,
+        147
+      ],
+      "count": 7,
+      "pct": 4.7
+    },
+    {
+      "code": "F19",
+      "name": "正红",
+      "rgb": [
+        230,
+        0,
+        38
+      ],
+      "count": 5,
+      "pct": 3.4
+    },
+    {
+      "code": "F8",
+      "name": "深酒红",
+      "rgb": [
+        188,
+        0,
+        40
+      ],
+      "count": 4,
+      "pct": 2.7
+    },
+    {
+      "code": "F6",
+      "name": "深红褐",
+      "rgb": [
+        148,
+        54,
+        48
+      ],
+      "count": 3,
+      "pct": 2.0
+    },
+    {
+      "code": "H7",
+      "name": "中浅灰",
+      "rgb": [
+        192,
+        192,
+        192
+      ],
+      "count": 3,
+      "pct": 2.0
+    },
+    {
+      "code": "G20",
+      "name": "黄褐色",
+      "rgb": [
+        166,
+        123,
+        91
+      ],
+      "count": 2,
+      "pct": 1.4
+    },
+    {
+      "code": "C25",
+      "name": "浅青绿",
+      "rgb": [
+        169,
+        229,
+        229
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "G5",
+      "name": "深棕肤色",
+      "rgb": [
+        198,
+        140,
+        106
+      ],
+      "count": 1,
+      "pct": 0.7
+    },
+    {
+      "code": "M10",
+      "name": "莫兰迪中灰",
+      "rgb": [
+        166,
+        166,
+        166
+      ],
+      "count": 1,
+      "pct": 0.7
+    }
+  ]
+}

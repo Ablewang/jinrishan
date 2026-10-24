@@ -1,0 +1,421 @@
+{
+  "name": "music_disc_otherside",
+  "display_name": "唱片 Otherside",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 118,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H13",
+      "H13",
+      "H13",
+      "H13",
+      "H13",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H13",
+      "H13",
+      "H13",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H13",
+      "H13",
+      "H13",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "H13",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H11",
+      "H12",
+      "H11",
+      "H11",
+      "H12",
+      "H12",
+      "H12",
+      "H13",
+      null,
+      null
+    ],
+    [
+      "H13",
+      "H12",
+      "H12",
+      "H11",
+      "H11",
+      "H12",
+      "C6",
+      "C6",
+      "B21",
+      "H12",
+      "H12",
+      "H11",
+      "H12",
+      "H12",
+      "H13",
+      null
+    ],
+    [
+      "H13",
+      "H12",
+      "H11",
+      "H12",
+      "H12",
+      "C4",
+      "B12",
+      "H13",
+      "B12",
+      "B3",
+      "H12",
+      "H12",
+      "H11",
+      "H12",
+      "H13",
+      null
+    ],
+    [
+      "H13",
+      "H12",
+      "H12",
+      "H11",
+      "H12",
+      "H12",
+      "B8",
+      "B5",
+      "B5",
+      "H12",
+      "H11",
+      "H11",
+      "H12",
+      "H12",
+      "H13",
+      null
+    ],
+    [
+      "H13",
+      "H13",
+      "H12",
+      "H12",
+      "H12",
+      "H11",
+      "H11",
+      "H12",
+      "H11",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H13",
+      "H13",
+      null
+    ],
+    [
+      null,
+      "H23",
+      "H13",
+      "H13",
+      "H13",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H12",
+      "H13",
+      "H13",
+      "H13",
+      "H23",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "H23",
+      "H23",
+      "H23",
+      "H13",
+      "H13",
+      "H13",
+      "H13",
+      "H13",
+      "H23",
+      "H23",
+      "H23",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H23",
+      "H23",
+      "H23",
+      "H23",
+      "H23",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "H12",
+      "name": "深炭灰",
+      "rgb": [
+        58,
+        58,
+        58
+      ],
+      "count": 46,
+      "pct": 39.0
+    },
+    {
+      "code": "H13",
+      "name": "近黑灰",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "count": 35,
+      "pct": 29.7
+    },
+    {
+      "code": "H11",
+      "name": "暗灰色",
+      "rgb": [
+        80,
+        80,
+        80
+      ],
+      "count": 14,
+      "pct": 11.9
+    },
+    {
+      "code": "H23",
+      "name": "哑光黑",
+      "rgb": [
+        13,
+        13,
+        13
+      ],
+      "count": 13,
+      "pct": 11.0
+    },
+    {
+      "code": "C6",
+      "name": "浅钴蓝",
+      "rgb": [
+        80,
+        170,
+        240
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "B12",
+      "name": "深翠绿",
+      "rgb": [
+        22,
+        111,
+        65
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "B5",
+      "name": "翠绿",
+      "rgb": [
+        53,
+        227,
+        82
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "B21",
+      "name": "深青色",
+      "rgb": [
+        21,
+        106,
+        107
+      ],
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "code": "C4",
+      "name": "亮蓝色",
+      "rgb": [
+        65,
+        204,
+        255
+      ],
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "code": "B3",
+      "name": "浅绿",
+      "rgb": [
+        158,
+        247,
+        128
+      ],
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "code": "B8",
+      "name": "森林绿",
+      "rgb": [
+        28,
+        156,
+        79
+      ],
+      "count": 1,
+      "pct": 0.8
+    }
+  ]
+}

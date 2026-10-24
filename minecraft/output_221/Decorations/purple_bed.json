@@ -1,0 +1,443 @@
+{
+  "name": "purple_bed",
+  "display_name": "紫色床",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 115,
+  "color_count": 13,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H6",
+      "H7",
+      "H8",
+      "H7",
+      "H7",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H6",
+      "H8",
+      "H5",
+      "H5",
+      "H5",
+      "H5",
+      "H6",
+      "H8",
+      "H6",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "D15",
+      "D15",
+      "D15",
+      "D15",
+      "D10",
+      "M10",
+      "M10",
+      "H7",
+      "H6",
+      "H10",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "D14",
+      "D15",
+      "D15",
+      "D20",
+      "D15",
+      "D15",
+      "D20",
+      "D15",
+      "D15",
+      "H11",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D15",
+      "D14",
+      "D15",
+      "D14",
+      "D15",
+      "D10",
+      "G21",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "D15",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D20",
+      "D20",
+      "D20",
+      "D20",
+      "D10",
+      "D10",
+      "G21",
+      null
+    ],
+    [
+      null,
+      null,
+      "D20",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D10",
+      "G12",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "D14",
+      "D20",
+      "D20",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D20",
+      "D10",
+      "G12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "D10",
+      "D10",
+      "D10",
+      "D10",
+      "D14",
+      "D14",
+      "D14",
+      "D14",
+      "D10",
+      "G21",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "D10",
+      "D10",
+      "D10",
+      "D10",
+      "D10",
+      "D10",
+      "D10",
+      "D10",
+      "D10",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G21",
+      "G21",
+      "G21",
+      "G21",
+      "G21",
+      "D10",
+      "D10",
+      "D10",
+      "G12",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G21",
+      "G12",
+      null,
+      null,
+      null,
+      "G12",
+      "G21",
+      "G21",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G21",
+      "G21",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "D14",
+      "name": "深紫红",
+      "rgb": [
+        139,
+        39,
+        155
+      ],
+      "count": 30,
+      "pct": 26.1
+    },
+    {
+      "code": "D10",
+      "name": "深紫黑",
+      "rgb": [
+        54,
+        24,
+        81
+      ],
+      "count": 23,
+      "pct": 20.0
+    },
+    {
+      "code": "D15",
+      "name": "深蓝紫",
+      "rgb": [
+        47,
+        31,
+        144
+      ],
+      "count": 14,
+      "pct": 12.2
+    },
+    {
+      "code": "G21",
+      "name": "暗棕色",
+      "rgb": [
+        74,
+        55,
+        40
+      ],
+      "count": 13,
+      "pct": 11.3
+    },
+    {
+      "code": "D20",
+      "name": "深洋红",
+      "rgb": [
+        156,
+        50,
+        178
+      ],
+      "count": 10,
+      "pct": 8.7
+    },
+    {
+      "code": "H6",
+      "name": "浅灰色",
+      "rgb": [
+        211,
+        211,
+        211
+      ],
+      "count": 5,
+      "pct": 4.3
+    },
+    {
+      "code": "G12",
+      "name": "巧克力色",
+      "rgb": [
+        61,
+        35,
+        20
+      ],
+      "count": 5,
+      "pct": 4.3
+    },
+    {
+      "code": "H7",
+      "name": "中浅灰",
+      "rgb": [
+        192,
+        192,
+        192
+      ],
+      "count": 4,
+      "pct": 3.5
+    },
+    {
+      "code": "H5",
+      "name": "极浅灰",
+      "rgb": [
+        240,
+        240,
+        240
+      ],
+      "count": 4,
+      "pct": 3.5
+    },
+    {
+      "code": "H8",
+      "name": "中灰色",
+      "rgb": [
+        169,
+        169,
+        169
+      ],
+      "count": 3,
+      "pct": 2.6
+    },
+    {
+      "code": "M10",
+      "name": "莫兰迪中灰",
+      "rgb": [
+        166,
+        166,
+        166
+      ],
+      "count": 2,
+      "pct": 1.7
+    },
+    {
+      "code": "H10",
+      "name": "炭灰色",
+      "rgb": [
+        105,
+        105,
+        105
+      ],
+      "count": 1,
+      "pct": 0.9
+    },
+    {
+      "code": "H11",
+      "name": "暗灰色",
+      "rgb": [
+        80,
+        80,
+        80
+      ],
+      "count": 1,
+      "pct": 0.9
+    }
+  ]
+}
