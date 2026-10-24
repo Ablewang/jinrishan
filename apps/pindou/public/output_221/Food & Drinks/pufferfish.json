@@ -1,0 +1,421 @@
+{
+  "name": "pufferfish",
+  "display_name": "河豚",
+  "grid_size": 16,
+  "board_size": 20,
+  "total_beads": 145,
+  "color_count": 11,
+  "grid": [
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "A26",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "A26",
+      "G20",
+      "G5",
+      "G20",
+      "A26",
+      null,
+      null,
+      "H17",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G20",
+      "G5",
+      "A26",
+      "A26",
+      "A26",
+      "G20",
+      "G20",
+      "G5",
+      "H17",
+      "H17",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "A26",
+      "G20",
+      "A26",
+      "A26",
+      "A26",
+      "A26",
+      "G5",
+      "G5",
+      "G5",
+      "H17",
+      "H17",
+      "C19",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G20",
+      "G5",
+      "G5",
+      "A26",
+      "A26",
+      "G5",
+      "H2",
+      "H7",
+      "G5",
+      "C19",
+      "H17",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "G5",
+      "G20",
+      "H7",
+      "H2",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "A26",
+      "G5",
+      "C19",
+      "G5",
+      "G5"
+    ],
+    [
+      "H17",
+      "H17",
+      "G20",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G11",
+      "G11",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G17",
+      "G20",
+      null
+    ],
+    [
+      "C19",
+      "H17",
+      "H17",
+      "G5",
+      "G5",
+      "G5",
+      "G11",
+      "H7",
+      "H7",
+      "G17",
+      "G5",
+      "G17",
+      "G15",
+      "G15",
+      "G20",
+      null
+    ],
+    [
+      null,
+      "C19",
+      "C19",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G17",
+      "G17",
+      "G11",
+      "G11",
+      "G15",
+      "G11",
+      "G17",
+      "G20",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "G20",
+      "G11",
+      "G15",
+      "G15",
+      "G11",
+      "G15",
+      "G11",
+      "G15",
+      "G17",
+      "G15",
+      "G20",
+      "G17",
+      null
+    ],
+    [
+      null,
+      null,
+      "G5",
+      "G20",
+      "G17",
+      "G15",
+      "G15",
+      "G15",
+      "G11",
+      "G15",
+      "G11",
+      "G15",
+      "G17",
+      "G20",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G20",
+      "G11",
+      "G15",
+      "G17",
+      "G15",
+      "G11",
+      "G15",
+      "G17",
+      "G20",
+      "G17",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      "G3",
+      "G20",
+      "G17",
+      "G11",
+      "G11",
+      "G17",
+      "G20",
+      "G20",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G20",
+      "G20",
+      "G20",
+      "G20",
+      "G17",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "materials": [
+    {
+      "code": "G5",
+      "name": "暗金棕",
+      "rgb": [
+        184,
+        134,
+        11
+      ],
+      "count": 36,
+      "pct": 24.8
+    },
+    {
+      "code": "G20",
+      "name": "深古铜",
+      "rgb": [
+        139,
+        90,
+        43
+      ],
+      "count": 25,
+      "pct": 17.2
+    },
+    {
+      "code": "G17",
+      "name": "深肤色",
+      "rgb": [
+        217,
+        165,
+        102
+      ],
+      "count": 16,
+      "pct": 11.0
+    },
+    {
+      "code": "G15",
+      "name": "浅肤色",
+      "rgb": [
+        255,
+        218,
+        185
+      ],
+      "count": 16,
+      "pct": 11.0
+    },
+    {
+      "code": "G11",
+      "name": "米棕色",
+      "rgb": [
+        211,
+        195,
+        145
+      ],
+      "count": 15,
+      "pct": 10.3
+    },
+    {
+      "code": "A26",
+      "name": "琥珀黄",
+      "rgb": [
+        255,
+        200,
+        48
+      ],
+      "count": 14,
+      "pct": 9.7
+    },
+    {
+      "code": "H17",
+      "name": "冷灰",
+      "rgb": [
+        144,
+        164,
+        174
+      ],
+      "count": 10,
+      "pct": 6.9
+    },
+    {
+      "code": "C19",
+      "name": "深湖蓝",
+      "rgb": [
+        24,
+        135,
+        162
+      ],
+      "count": 6,
+      "pct": 4.1
+    },
+    {
+      "code": "H7",
+      "name": "纯黑色",
+      "rgb": [
+        33,
+        33,
+        33
+      ],
+      "count": 4,
+      "pct": 2.8
+    },
+    {
+      "code": "H2",
+      "name": "纯白色",
+      "rgb": [
+        250,
+        250,
+        250
+      ],
+      "count": 2,
+      "pct": 1.4
+    },
+    {
+      "code": "G3",
+      "name": "卡其色",
+      "rgb": [
+        215,
+        184,
+        143
+      ],
+      "count": 1,
+      "pct": 0.7
+    }
+  ]
+}

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 32,
-  "color_count": 7,
+  "color_count": 9,
   "grid": [
     [
       null,
@@ -176,9 +176,9 @@
       null,
       null,
       "C25",
-      "F19",
-      "F19",
-      "F19",
+      "F4",
+      "F4",
+      "F4",
       null,
       null,
       null,
@@ -192,12 +192,12 @@
       null,
       null,
       null,
-      "F19",
-      "F19",
-      "F19",
-      "F19",
-      "F19",
-      "F19",
+      "F5",
+      "F4",
+      "F4",
+      "F4",
+      "F5",
+      "F5",
       null,
       null,
       null,
@@ -209,14 +209,14 @@
       null,
       null,
       null,
-      "F19",
-      "F19",
-      "F19",
-      "F19",
-      "F19",
-      "F19",
-      "H8",
-      "F19",
+      "F5",
+      "F5",
+      "F4",
+      "F4",
+      "F5",
+      "F5",
+      "H17",
+      "F5",
       null,
       null,
       null,
@@ -227,14 +227,14 @@
       null,
       null,
       null,
-      "H8",
+      "H17",
       "F8",
-      "F19",
-      "F19",
-      "F8",
-      "F8",
+      "F5",
+      "F5",
       "F8",
       "F8",
+      "F8",
+      "F8",
       null,
       null,
       null,
@@ -248,26 +248,8 @@
       null,
       null,
       null,
-      "G19",
-      "G19",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "M2",
-      "G19",
+      "G11",
+      "G4",
       null,
       null,
       null,
@@ -284,8 +266,26 @@
       null,
       null,
       null,
-      "M2",
-      "G6",
+      "M1",
+      "G11",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "M1",
+      "M8",
       null,
       null,
       null,
@@ -297,15 +297,26 @@
   ],
   "materials": [
     {
-      "code": "F19",
-      "name": "正红",
+      "code": "F5",
+      "name": "大红色",
       "rgb": [
-        230,
+        231,
         0,
-        38
+        47
       ],
-      "count": 18,
-      "pct": 56.2
+      "count": 10,
+      "pct": 31.2
+    },
+    {
+      "code": "F4",
+      "name": "深红色",
+      "rgb": [
+        252,
+        40,
+        60
+      ],
+      "count": 8,
+      "pct": 25.0
     },
     {
       "code": "F8",
@@ -319,34 +330,34 @@
       "pct": 15.6
     },
     {
-      "code": "G19",
-      "name": "土黄色",
+      "code": "H17",
+      "name": "冷灰",
       "rgb": [
-        194,
-        178,
-        128
-      ],
-      "count": 3,
-      "pct": 9.4
-    },
-    {
-      "code": "H8",
-      "name": "中灰色",
-      "rgb": [
-        169,
-        169,
-        169
+        144,
+        164,
+        174
       ],
       "count": 2,
       "pct": 6.2
     },
     {
-      "code": "M2",
-      "name": "莫兰迪浅黄",
+      "code": "G11",
+      "name": "米棕色",
       "rgb": [
-        233,
-        226,
-        199
+        211,
+        195,
+        145
+      ],
+      "count": 2,
+      "pct": 6.2
+    },
+    {
+      "code": "M1",
+      "name": "莫兰浅黄",
+      "rgb": [
+        240,
+        230,
+        200
       ],
       "count": 2,
       "pct": 6.2
@@ -363,12 +374,23 @@
       "pct": 3.1
     },
     {
-      "code": "G6",
-      "name": "浅卡其",
+      "code": "G4",
+      "name": "浅棕",
       "rgb": [
-        232,
-        212,
-        184
+        201,
+        166,
+        107
+      ],
+      "count": 1,
+      "pct": 3.1
+    },
+    {
+      "code": "M8",
+      "name": "莫兰中黄",
+      "rgb": [
+        215,
+        196,
+        158
       ],
       "count": 1,
       "pct": 3.1

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 14,
-  "color_count": 6,
+  "color_count": 5,
   "grid": [
     [
       null,
@@ -122,8 +122,8 @@
       null,
       null,
       null,
+      "G9",
       "G14",
-      "G11",
       "G9",
       null,
       null,
@@ -139,43 +139,43 @@
       null,
       null,
       null,
-      "G11",
-      "G5",
-      "G21",
-      "G21",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G11",
-      "G21",
-      "G21",
-      "G21",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      "G14",
       "G18",
+      "G21",
+      "G8",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G14",
+      "G21",
+      "G21",
+      "G8",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G14",
       "G21",
       "G21",
       null,
@@ -298,66 +298,55 @@
   "materials": [
     {
       "code": "G21",
-      "name": "暗棕色",
+      "name": "黑棕色",
       "rgb": [
-        74,
-        55,
-        40
+        62,
+        39,
+        35
       ],
-      "count": 7,
-      "pct": 50.0
-    },
-    {
-      "code": "G11",
-      "name": "深棕色",
-      "rgb": [
-        101,
-        67,
-        33
-      ],
-      "count": 3,
-      "pct": 21.4
+      "count": 5,
+      "pct": 35.7
     },
     {
       "code": "G14",
-      "name": "驼色",
+      "name": "深红棕",
       "rgb": [
-        160,
-        107,
-        62
+        109,
+        76,
+        65
       ],
-      "count": 1,
-      "pct": 7.1
+      "count": 4,
+      "pct": 28.6
     },
     {
       "code": "G9",
-      "name": "浅棕色",
+      "name": "浅咖啡",
       "rgb": [
         166,
         124,
         82
       ],
-      "count": 1,
-      "pct": 7.1
+      "count": 2,
+      "pct": 14.3
     },
     {
-      "code": "G5",
-      "name": "深棕肤色",
+      "code": "G8",
+      "name": "深咖啡",
       "rgb": [
-        198,
-        140,
-        106
+        105,
+        74,
+        66
       ],
-      "count": 1,
-      "pct": 7.1
+      "count": 2,
+      "pct": 14.3
     },
     {
       "code": "G18",
-      "name": "深褐色",
+      "name": "小麦色",
       "rgb": [
-        92,
-        64,
-        51
+        198,
+        142,
+        101
       ],
       "count": 1,
       "pct": 7.1

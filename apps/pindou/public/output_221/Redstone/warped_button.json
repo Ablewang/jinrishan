@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 14,
-  "color_count": 5,
+  "color_count": 4,
   "grid": [
     [
       null,
@@ -141,7 +141,7 @@
       null,
       "B9",
       "B21",
-      "H13",
+      "H7",
       "B22",
       null,
       null,
@@ -158,8 +158,8 @@
       null,
       null,
       "B9",
-      "H13",
-      "H13",
+      "H7",
+      "H7",
       "B22",
       null,
       null,
@@ -177,7 +177,7 @@
       null,
       "B22",
       "B22",
-      "H22",
+      "H7",
       null,
       null,
       null,
@@ -308,15 +308,15 @@
       "pct": 42.9
     },
     {
-      "code": "H13",
-      "name": "近黑灰",
+      "code": "H7",
+      "name": "纯黑色",
       "rgb": [
-        40,
-        40,
-        40
+        33,
+        33,
+        33
       ],
-      "count": 3,
-      "pct": 21.4
+      "count": 4,
+      "pct": 28.6
     },
     {
       "code": "B21",
@@ -339,17 +339,6 @@
       ],
       "count": 2,
       "pct": 14.3
-    },
-    {
-      "code": "H22",
-      "name": "煤黑色",
-      "rgb": [
-        26,
-        26,
-        26
-      ],
-      "count": 1,
-      "pct": 7.1
     }
   ]
 }

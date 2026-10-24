@@ -122,9 +122,9 @@
       null,
       null,
       null,
-      "G16",
+      "A20",
       "B26",
-      "G16",
+      "B32",
       null,
       null,
       null,
@@ -140,26 +140,8 @@
       null,
       null,
       "B26",
-      "G16",
+      "A20",
       "B23",
-      "G11",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "B26",
-      "G11",
-      "G11",
       "B23",
       null,
       null,
@@ -175,8 +157,26 @@
       null,
       null,
       null,
-      "G11",
-      "G11",
+      "B26",
+      "B23",
+      "B23",
+      "B23",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B23",
+      "B23",
       "B23",
       null,
       null,
@@ -297,26 +297,15 @@
   ],
   "materials": [
     {
-      "code": "G11",
-      "name": "深棕色",
+      "code": "B23",
+      "name": "暗橄榄",
       "rgb": [
-        101,
-        67,
+        48,
+        58,
         33
       ],
-      "count": 5,
-      "pct": 35.7
-    },
-    {
-      "code": "G16",
-      "name": "浅褐色",
-      "rgb": [
-        181,
-        166,
-        66
-      ],
-      "count": 3,
-      "pct": 21.4
+      "count": 8,
+      "pct": 57.1
     },
     {
       "code": "B26",
@@ -330,15 +319,26 @@
       "pct": 21.4
     },
     {
-      "code": "B23",
-      "name": "暗橄榄",
+      "code": "A20",
+      "name": "金杏黄",
       "rgb": [
-        48,
-        58,
-        33
+        255,
+        213,
+        104
       ],
-      "count": 3,
-      "pct": 21.4
+      "count": 2,
+      "pct": 14.3
+    },
+    {
+      "code": "B32",
+      "name": "灰橄榄绿",
+      "rgb": [
+        156,
+        171,
+        90
+      ],
+      "count": 1,
+      "pct": 7.1
     }
   ]
 }

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 48,
-  "color_count": 5,
+  "color_count": 4,
   "grid": [
     [
       null,
@@ -236,7 +236,7 @@
       "B22",
       "B21",
       "B22",
-      "H23",
+      "H7",
       null,
       null
     ],
@@ -252,7 +252,7 @@
       "B22",
       "B9",
       "B21",
-      "H22",
+      "H7",
       null,
       null,
       null,
@@ -268,7 +268,7 @@
       "B22",
       "B21",
       "B21",
-      "H23",
+      "H7",
       null,
       null,
       null,
@@ -330,26 +330,15 @@
       "pct": 22.9
     },
     {
-      "code": "H23",
-      "name": "哑光黑",
+      "code": "H7",
+      "name": "纯黑色",
       "rgb": [
-        13,
-        13,
-        13
+        33,
+        33,
+        33
       ],
-      "count": 2,
-      "pct": 4.2
-    },
-    {
-      "code": "H22",
-      "name": "煤黑色",
-      "rgb": [
-        26,
-        26,
-        26
-      ],
-      "count": 1,
-      "pct": 2.1
+      "count": 3,
+      "pct": 6.2
     }
   ]
 }

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 64,
-  "color_count": 3,
+  "color_count": 4,
   "grid": [
     [
       null,
@@ -224,7 +224,7 @@
     ],
     [
       null,
-      "G15",
+      "G6",
       "A10",
       "A10",
       "A10",
@@ -236,15 +236,15 @@
       "A10",
       "A10",
       "A10",
-      "G15",
-      "G15",
+      "G7",
+      "G7",
       null
     ],
     [
       null,
       null,
       null,
-      "G15",
+      "G6",
       "A10",
       "A10",
       "A10",
@@ -252,26 +252,8 @@
       "A10",
       "A10",
       "A10",
-      "G15",
-      "G15",
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G15",
-      "A10",
-      "A10",
-      "A10",
-      "G15",
-      "G15",
-      null,
-      null,
+      "G7",
+      "G7",
       null,
       null,
       null
@@ -282,10 +264,28 @@
       null,
       null,
       null,
+      "G6",
+      "A10",
+      "A10",
+      "A10",
+      "G7",
+      "G7",
       null,
       null,
-      "G15",
-      "G15",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G6",
+      "G7",
       null,
       null,
       null,
@@ -308,15 +308,15 @@
       "pct": 76.6
     },
     {
-      "code": "G15",
-      "name": "深驼色",
+      "code": "G7",
+      "name": "巧克力棕",
       "rgb": [
-        123,
-        63,
-        0
+        93,
+        41,
+        6
       ],
-      "count": 11,
-      "pct": 17.2
+      "count": 7,
+      "pct": 10.9
     },
     {
       "code": "A6",
@@ -325,6 +325,17 @@
         254,
         172,
         76
+      ],
+      "count": 4,
+      "pct": 6.2
+    },
+    {
+      "code": "G6",
+      "name": "深棕",
+      "rgb": [
+        139,
+        69,
+        19
       ],
       "count": 4,
       "pct": 6.2

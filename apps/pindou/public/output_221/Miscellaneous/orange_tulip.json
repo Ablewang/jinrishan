@@ -103,9 +103,9 @@
       null,
       null,
       null,
-      "G8",
+      "G6",
       "A9",
-      "G8",
+      "G6",
       null,
       null,
       null,
@@ -122,7 +122,7 @@
       null,
       null,
       null,
-      "G8",
+      "G6",
       null,
       null,
       null,
@@ -319,12 +319,12 @@
       "pct": 9.8
     },
     {
-      "code": "G8",
-      "name": "深卡其",
+      "code": "G6",
+      "name": "深棕",
       "rgb": [
-        184,
-        134,
-        11
+        139,
+        69,
+        19
       ],
       "count": 3,
       "pct": 7.3

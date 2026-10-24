@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 64,
-  "color_count": 6,
+  "color_count": 5,
   "grid": [
     [
       null,
@@ -224,7 +224,7 @@
     ],
     [
       null,
-      "G8",
+      "G5",
       "A26",
       "A26",
       "A26",
@@ -236,7 +236,7 @@
       "A26",
       "A8",
       "A8",
-      "G10",
+      "G20",
       "B26",
       null
     ],
@@ -244,7 +244,7 @@
       null,
       null,
       null,
-      "G8",
+      "G5",
       "A8",
       "A26",
       "A26",
@@ -252,26 +252,8 @@
       "A8",
       "A26",
       "A26",
-      "G10",
+      "G20",
       "B26",
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G8",
-      "A8",
-      "A26",
-      "A26",
-      "B26",
-      "G10",
-      null,
-      null,
       null,
       null,
       null
@@ -282,10 +264,28 @@
       null,
       null,
       null,
+      "G5",
+      "A8",
+      "A26",
+      "A26",
+      "B26",
+      "G20",
       null,
       null,
-      "G16",
-      "G10",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G5",
+      "G20",
       null,
       null,
       null,
@@ -319,8 +319,19 @@
       "pct": 29.7
     },
     {
-      "code": "G10",
-      "name": "中棕色",
+      "code": "G5",
+      "name": "暗金棕",
+      "rgb": [
+        184,
+        134,
+        11
+      ],
+      "count": 4,
+      "pct": 6.2
+    },
+    {
+      "code": "G20",
+      "name": "深古铜",
       "rgb": [
         139,
         90,
@@ -328,17 +339,6 @@
       ],
       "count": 4,
       "pct": 6.2
-    },
-    {
-      "code": "G8",
-      "name": "深卡其",
-      "rgb": [
-        184,
-        134,
-        11
-      ],
-      "count": 3,
-      "pct": 4.7
     },
     {
       "code": "B26",
@@ -350,17 +350,6 @@
       ],
       "count": 3,
       "pct": 4.7
-    },
-    {
-      "code": "G16",
-      "name": "浅褐色",
-      "rgb": [
-        181,
-        166,
-        66
-      ],
-      "count": 1,
-      "pct": 1.6
     }
   ]
 }

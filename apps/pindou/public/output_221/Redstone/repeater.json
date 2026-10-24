@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 60,
-  "color_count": 10,
+  "color_count": 7,
   "grid": [
     [
       null,
@@ -55,8 +55,8 @@
       null,
       null,
       null,
-      "F20",
-      "F20",
+      "F14",
+      "F14",
       null,
       null
     ],
@@ -73,43 +73,7 @@
       null,
       null,
       null,
-      "F20",
-      "G12",
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G9",
-      "G11",
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G9",
+      "F14",
       "G21",
       null,
       null
@@ -127,7 +91,25 @@
       null,
       null,
       null,
-      "G9",
+      "G12",
+      "H16",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G12",
       "G21",
       null,
       null
@@ -135,85 +117,103 @@
     [
       null,
       null,
-      "F20",
-      "F20",
       null,
       null,
       null,
       null,
-      "M10",
-      "M10",
-      "H10",
       null,
-      "G17",
+      null,
+      null,
+      null,
+      null,
+      null,
       "G12",
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      "F20",
-      "G12",
-      null,
-      null,
-      "M10",
-      "M10",
-      "F6",
-      "F6",
-      "M10",
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      "G9",
-      "G11",
-      "H7",
-      "M10",
-      "F20",
-      "F20",
-      "G12",
-      "G12",
-      "M10",
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      "G9",
       "G21",
-      "F6",
-      "F20",
-      "F20",
-      "G12",
-      "M10",
-      "M10",
-      "H10",
-      null,
-      null,
-      null,
       null,
       null
     ],
     [
       null,
-      "H7",
-      "G9",
+      null,
+      "F14",
+      "F14",
+      null,
+      null,
+      null,
+      null,
+      "H9",
+      "H9",
+      "H8",
+      null,
+      "G12",
       "G21",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "F14",
+      "G21",
+      null,
+      null,
+      "H9",
+      "H9",
+      "F14",
+      "F14",
+      "H9",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
       "G12",
+      "H16",
+      "H22",
+      "H9",
+      "F14",
+      "F14",
+      "G21",
+      "G21",
+      "H9",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
       "G12",
-      "H7",
-      "H7",
-      "H10",
+      "G21",
+      "F14",
+      "F14",
+      "F14",
+      "G21",
+      "H9",
+      "H9",
+      "H8",
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "H22",
+      "G12",
+      "G21",
+      "G21",
+      "G21",
+      "H22",
+      "H22",
+      "H8",
       null,
       null,
       null,
@@ -224,12 +224,12 @@
     ],
     [
       null,
-      "H7",
-      "G17",
+      "H22",
       "G12",
-      "H7",
-      "H7",
-      "M10",
+      "G21",
+      "H22",
+      "H22",
+      "H9",
       null,
       null,
       null,
@@ -242,10 +242,10 @@
     ],
     [
       null,
-      "M10",
-      "H7",
-      "H7",
-      "M10",
+      "H9",
+      "H22",
+      "H22",
+      "H9",
       null,
       null,
       null,
@@ -297,41 +297,41 @@
   ],
   "materials": [
     {
-      "code": "M10",
-      "name": "莫兰迪中灰",
+      "code": "F14",
+      "name": "深棕红",
       "rgb": [
-        166,
-        166,
-        166
+        122,
+        32,
+        32
+      ],
+      "count": 13,
+      "pct": 21.7
+    },
+    {
+      "code": "G21",
+      "name": "黑棕色",
+      "rgb": [
+        62,
+        39,
+        35
+      ],
+      "count": 13,
+      "pct": 21.7
+    },
+    {
+      "code": "H9",
+      "name": "中灰",
+      "rgb": [
+        158,
+        158,
+        158
       ],
       "count": 12,
       "pct": 20.0
     },
     {
-      "code": "F20",
-      "name": "枣红",
-      "rgb": [
-        139,
-        0,
-        0
-      ],
-      "count": 10,
-      "pct": 16.7
-    },
-    {
-      "code": "G12",
-      "name": "巧克力色",
-      "rgb": [
-        61,
-        35,
-        20
-      ],
-      "count": 9,
-      "pct": 15.0
-    },
-    {
-      "code": "H7",
-      "name": "中浅灰",
+      "code": "H22",
+      "name": "银灰色",
       "rgb": [
         192,
         192,
@@ -341,67 +341,34 @@
       "pct": 15.0
     },
     {
-      "code": "G9",
-      "name": "浅棕色",
+      "code": "G12",
+      "name": "深卡其",
       "rgb": [
-        166,
-        124,
-        82
+        158,
+        125,
+        84
       ],
-      "count": 6,
-      "pct": 10.0
+      "count": 8,
+      "pct": 13.3
     },
     {
-      "code": "G21",
-      "name": "暗棕色",
+      "code": "H8",
+      "name": "深灰",
       "rgb": [
-        74,
-        55,
-        40
-      ],
-      "count": 4,
-      "pct": 6.7
-    },
-    {
-      "code": "H10",
-      "name": "炭灰色",
-      "rgb": [
-        105,
-        105,
-        105
+        97,
+        97,
+        97
       ],
       "count": 3,
       "pct": 5.0
     },
     {
-      "code": "F6",
-      "name": "深红褐",
+      "code": "H16",
+      "name": "深暖灰",
       "rgb": [
-        148,
-        54,
-        48
-      ],
-      "count": 3,
-      "pct": 5.0
-    },
-    {
-      "code": "G11",
-      "name": "深棕色",
-      "rgb": [
-        101,
-        67,
-        33
-      ],
-      "count": 2,
-      "pct": 3.3
-    },
-    {
-      "code": "G17",
-      "name": "褐色",
-      "rgb": [
-        139,
-        115,
-        85
+        121,
+        85,
+        72
       ],
       "count": 2,
       "pct": 3.3

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 14,
-  "color_count": 4,
+  "color_count": 5,
   "grid": [
     [
       null,
@@ -124,7 +124,7 @@
       null,
       "F10",
       "F10",
-      "F10",
+      "F20",
       null,
       null,
       null,
@@ -139,10 +139,10 @@
       null,
       null,
       null,
-      "G11",
-      "G14",
-      "G12",
-      "G12",
+      "G7",
+      "M14",
+      "G21",
+      "G7",
       null,
       null,
       null,
@@ -157,10 +157,10 @@
       null,
       null,
       null,
-      "G11",
-      "G12",
-      "G12",
-      "G12",
+      "G7",
+      "G21",
+      "G21",
+      "G7",
       null,
       null,
       null,
@@ -175,9 +175,9 @@
       null,
       null,
       null,
-      "G11",
-      "G12",
-      "G12",
+      "G7",
+      "G21",
+      "G21",
       null,
       null,
       null,
@@ -297,15 +297,26 @@
   ],
   "materials": [
     {
-      "code": "G12",
-      "name": "巧克力色",
+      "code": "G7",
+      "name": "巧克力棕",
       "rgb": [
-        61,
-        35,
-        20
+        93,
+        41,
+        6
       ],
-      "count": 7,
-      "pct": 50.0
+      "count": 5,
+      "pct": 35.7
+    },
+    {
+      "code": "G21",
+      "name": "黑棕色",
+      "rgb": [
+        62,
+        39,
+        35
+      ],
+      "count": 5,
+      "pct": 35.7
     },
     {
       "code": "F10",
@@ -315,27 +326,27 @@
         69,
         38
       ],
-      "count": 3,
-      "pct": 21.4
+      "count": 2,
+      "pct": 14.3
     },
     {
-      "code": "G11",
-      "name": "深棕色",
+      "code": "F20",
+      "name": "浅红棕",
       "rgb": [
-        101,
-        67,
-        33
+        188,
+        90,
+        69
       ],
-      "count": 3,
-      "pct": 21.4
+      "count": 1,
+      "pct": 7.1
     },
     {
-      "code": "G14",
-      "name": "驼色",
+      "code": "M14",
+      "name": "莫兰中红",
       "rgb": [
-        160,
-        107,
-        62
+        202,
+        105,
+        79
       ],
       "count": 1,
       "pct": 7.1

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 51,
-  "color_count": 4,
+  "color_count": 5,
   "grid": [
     [
       null,
@@ -55,7 +55,7 @@
       null,
       null,
       "C20",
-      "M6",
+      "D11",
       "D2",
       "C12",
       null
@@ -72,7 +72,7 @@
       null,
       null,
       "C20",
-      "M6",
+      "D19",
       "D2",
       "C20",
       null,
@@ -89,7 +89,7 @@
       null,
       null,
       "C20",
-      "M6",
+      "D19",
       "D2",
       "C20",
       null,
@@ -106,7 +106,7 @@
       null,
       null,
       "C20",
-      "M6",
+      "D11",
       "D2",
       "C20",
       null,
@@ -123,7 +123,7 @@
       null,
       null,
       "C20",
-      "M6",
+      "D11",
       "D2",
       "C20",
       null,
@@ -140,7 +140,7 @@
       null,
       null,
       "C20",
-      "M6",
+      "D19",
       "D2",
       "C20",
       null,
@@ -157,24 +157,7 @@
       null,
       null,
       "C20",
-      "M6",
-      "D2",
-      "C12",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      "C20",
-      "M6",
+      "D19",
       "D2",
       "C12",
       null,
@@ -183,15 +166,15 @@
       null,
       null,
       null,
-      null,
       null
     ],
     [
       null,
       null,
       null,
+      null,
       "C20",
-      "M6",
+      "D11",
       "D2",
       "C12",
       null,
@@ -201,14 +184,14 @@
       null,
       null,
       null,
-      null,
       null
     ],
     [
       null,
       null,
+      null,
       "C20",
-      "M6",
+      "D19",
       "D2",
       "C12",
       null,
@@ -219,13 +202,30 @@
       null,
       null,
       null,
+      null
+    ],
+    [
+      null,
+      null,
+      "C20",
+      "D19",
+      "D2",
+      "C12",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       null,
       null
     ],
     [
       null,
       "C20",
-      "M6",
+      "D11",
       "D2",
       "C20",
       null,
@@ -298,7 +298,7 @@
   "materials": [
     {
       "code": "C20",
-      "name": "中海蓝",
+      "name": "深海蓝",
       "rgb": [
         23,
         109,
@@ -319,17 +319,6 @@
       "pct": 23.5
     },
     {
-      "code": "M6",
-      "name": "莫兰迪浅紫",
-      "rgb": [
-        191,
-        182,
-        217
-      ],
-      "count": 11,
-      "pct": 21.6
-    },
-    {
       "code": "C12",
       "name": "深海军蓝",
       "rgb": [
@@ -339,6 +328,28 @@
       ],
       "count": 6,
       "pct": 11.8
+    },
+    {
+      "code": "D19",
+      "name": "灰丁香紫",
+      "rgb": [
+        216,
+        195,
+        215
+      ],
+      "count": 6,
+      "pct": 11.8
+    },
+    {
+      "code": "D11",
+      "name": "灰蓝紫",
+      "rgb": [
+        185,
+        186,
+        225
+      ],
+      "count": 5,
+      "pct": 9.8
     }
   ]
 }

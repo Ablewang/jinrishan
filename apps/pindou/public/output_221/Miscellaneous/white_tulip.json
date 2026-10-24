@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 45,
-  "color_count": 3,
+  "color_count": 4,
   "grid": [
     [
       null,
@@ -67,27 +67,9 @@
       null,
       null,
       null,
-      "H5",
+      "H12",
       null,
-      "H5",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "H5",
-      "H5",
-      "H5",
+      "H18",
       null,
       null,
       null,
@@ -103,9 +85,27 @@
       null,
       null,
       null,
-      "M7",
-      "H5",
-      "M7",
+      "H12",
+      "H12",
+      "H18",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H17",
+      "H18",
+      "H17",
       null,
       null,
       null,
@@ -122,7 +122,7 @@
       null,
       null,
       null,
-      "M7",
+      "H17",
       null,
       null,
       "B8",
@@ -308,23 +308,34 @@
       "pct": 80.0
     },
     {
-      "code": "H5",
-      "name": "极浅灰",
+      "code": "H12",
+      "name": "冷白",
       "rgb": [
-        240,
-        240,
-        240
+        245,
+        245,
+        245
       ],
-      "count": 6,
-      "pct": 13.3
+      "count": 3,
+      "pct": 6.7
     },
     {
-      "code": "M7",
-      "name": "莫兰迪浅蓝",
+      "code": "H18",
+      "name": "浅冷灰",
       "rgb": [
-        182,
-        200,
-        217
+        207,
+        216,
+        220
+      ],
+      "count": 3,
+      "pct": 6.7
+    },
+    {
+      "code": "H17",
+      "name": "冷灰",
+      "rgb": [
+        144,
+        164,
+        174
       ],
       "count": 3,
       "pct": 6.7

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 64,
-  "color_count": 3,
+  "color_count": 5,
   "grid": [
     [
       null,
@@ -224,7 +224,7 @@
     ],
     [
       null,
-      "F6",
+      "F14",
       "F11",
       "F11",
       "F11",
@@ -236,15 +236,15 @@
       "F11",
       "F11",
       "F11",
-      "G12",
-      "G12",
+      "G21",
+      "G7",
       null
     ],
     [
       null,
       null,
       null,
-      "F6",
+      "F14",
       "F11",
       "F11",
       "F11",
@@ -252,26 +252,8 @@
       "F11",
       "F11",
       "F11",
-      "G12",
-      "G12",
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      "F6",
-      "F11",
-      "F11",
-      "F11",
-      "G12",
-      "G12",
-      null,
-      null,
+      "G21",
+      "G7",
       null,
       null,
       null
@@ -282,10 +264,28 @@
       null,
       null,
       null,
+      "F14",
+      "F11",
+      "F11",
+      "F11",
+      "G21",
+      "G21",
       null,
       null,
-      "F6",
-      "G12",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "F14",
+      "G21",
       null,
       null,
       null,
@@ -308,6 +308,28 @@
       "pct": 78.1
     },
     {
+      "code": "G21",
+      "name": "黑棕色",
+      "rgb": [
+        62,
+        39,
+        35
+      ],
+      "count": 5,
+      "pct": 7.8
+    },
+    {
+      "code": "F14",
+      "name": "深棕红",
+      "rgb": [
+        122,
+        32,
+        32
+      ],
+      "count": 4,
+      "pct": 6.2
+    },
+    {
       "code": "F6",
       "name": "深红褐",
       "rgb": [
@@ -315,19 +337,19 @@
         54,
         48
       ],
-      "count": 7,
-      "pct": 10.9
+      "count": 3,
+      "pct": 4.7
     },
     {
-      "code": "G12",
-      "name": "巧克力色",
+      "code": "G7",
+      "name": "巧克力棕",
       "rgb": [
-        61,
-        35,
-        20
+        93,
+        41,
+        6
       ],
-      "count": 7,
-      "pct": 10.9
+      "count": 2,
+      "pct": 3.1
     }
   ]
 }
