@@ -22,7 +22,7 @@ export function HomePage({ onNavigate }: Props) {
       <span className={styles.divider}>|</span>
       <button className={styles.link} onClick={() => onNavigate({ type: 'summary' })}>材料表</button>
       <span className={styles.divider}>|</span>
-      <button className={styles.link} onClick={() => onNavigate({ type: 'wishlist' })}>收藏夹</button>
+      <button className={styles.link} onClick={() => onNavigate({ type: 'wishlist' })}>收藏</button>
       <span className={styles.divider}>|</span>
       <button className={styles.link} onClick={() => onNavigate({ type: 'done' })}>已拼</button>
     </div>
