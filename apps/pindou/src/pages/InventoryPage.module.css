@@ -20,7 +20,7 @@
   flex-shrink: 0;
   border-bottom: 1px solid var(--br);
   position: sticky;
-  top: calc(56px + env(safe-area-inset-top, 0px));
+  top: 0;
   z-index: 10;
   background: var(--bg);
 }

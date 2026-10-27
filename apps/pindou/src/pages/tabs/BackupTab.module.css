@@ -1,0 +1,37 @@
+.page {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--ac3);
+  border: 1.5px solid var(--ac2);
+  border-radius: 10px;
+  cursor: pointer;
+}

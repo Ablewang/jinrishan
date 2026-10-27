@@ -10,18 +10,14 @@ import { CategoryPage } from './pages/CategoryPage'
 import { DetailPage } from './pages/DetailPage'
 import { HomePage } from './pages/HomePage'
 import { SummaryPage } from './pages/SummaryPage'
-import { WishlistPage } from './pages/WishlistPage'
-import { PurchasePage } from './pages/PurchasePage'
-import { InventoryPage } from './pages/InventoryPage'
+import { MyPage } from './pages/MyPage'
 import './index.css'
 
 export type NavTarget =
   | { type: 'category'; cat: string }
   | { type: 'item'; cat: string; name: string }
   | { type: 'summary' }
-  | { type: 'wishlist' }
-  | { type: 'purchase' }
-  | { type: 'inventory' }
+  | { type: 'my'; tab?: 'wishlist' | 'inventory' | 'purchase' | 'backup' }
   | { type: 'done' }
 
 const DRAWER_STYLE: React.CSSProperties = {
@@ -62,12 +58,8 @@ export default function App() {
       push(<DetailPage cat={target.cat} name={target.name} onBack={doPop} />)
     else if (target.type === 'summary')
       push(<SummaryPage onBack={doPop} />)
-    else if (target.type === 'wishlist')
-      push(<WishlistPage onBack={doPop} onNavigate={nav} />)
-    else if (target.type === 'purchase')
-      push(<PurchasePage onBack={doPop} />)
-    else if (target.type === 'inventory')
-      push(<InventoryPage onBack={doPop} />)
+    else if (target.type === 'my')
+      push(<MyPage onBack={doPop} onNavigate={nav} initialTab={target.tab ?? 'wishlist'} />)
     else if (target.type === 'done')
       push(<DonePage onBack={doPop} onNavigate={nav} />)
   }
