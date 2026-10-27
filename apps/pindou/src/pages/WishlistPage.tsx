@@ -70,10 +70,10 @@ export function WishlistPage({ onBack, onNavigate }: Props) {
         right={
           items.length > 0
             ? <div style={{ display: 'flex', gap: 8 }}>
-                <button className={styles.purchaseBtn} onClick={() => onNavigate({ type: 'inventory' })}>拼豆管理</button>
-                <button className={styles.purchaseBtn} onClick={() => onNavigate({ type: 'purchase' })}>查看购买清单</button>
+                <button className={styles.purchaseBtn} onClick={() => onNavigate({ type: 'my', tab: 'inventory' })}>拼豆管理</button>
+                <button className={styles.purchaseBtn} onClick={() => onNavigate({ type: 'my', tab: 'purchase' })}>查看购买清单</button>
               </div>
-            : <button className={styles.purchaseBtn} onClick={() => onNavigate({ type: 'inventory' })}>拼豆管理</button>
+            : <button className={styles.purchaseBtn} onClick={() => onNavigate({ type: 'my', tab: 'inventory' })}>拼豆管理</button>
         }
       />
       {items.length === 0 ? (
