@@ -35,7 +35,7 @@ export function InventoryPage({ onBack }: Props) {
   const groupHeaderRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
   const jumpBarRef = useRef<HTMLDivElement>(null)
-  const scrollerRef = useRef<HTMLElement | null>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const allColors = useMemo<Material[]>(() => {
     if (!summary) return []
@@ -61,17 +61,7 @@ export function InventoryPage({ onBack }: Props) {
   useEffect(() => {
     const headers = groupHeaderRefs.current
     if (headers.size === 0) return
-
-    // 找滚动容器
-    const first = headers.values().next().value as HTMLElement | undefined
-    if (!first) return
-    let cur = first.parentElement
-    while (cur) {
-      const s = window.getComputedStyle(cur)
-      if (s.overflowY === 'auto' || s.overflowY === 'scroll') { scrollerRef.current = cur; break }
-      cur = cur.parentElement
-    }
-    const scroller = scrollerRef.current
+    const scroller = getScroller()
     if (!scroller) return
 
     function update() {
@@ -88,19 +78,26 @@ export function InventoryPage({ onBack }: Props) {
     return () => scroller.removeEventListener('scroll', update)
   }, [allColors])
 
+  function getScroller(): HTMLElement | null {
+    let el: HTMLElement | null = contentRef.current
+    while (el) {
+      const style = window.getComputedStyle(el)
+      if (style.overflowY === 'auto' || style.overflowY === 'scroll') return el
+      el = el.parentElement
+    }
+    return null
+  }
+
   function scrollToGroup(letter: string) {
     const headerEl = groupHeaderRefs.current.get(letter)
     if (!headerEl) return
-    let scroller = headerEl.parentElement
-    while (scroller) {
-      const s = window.getComputedStyle(scroller)
-      if (s.overflowY === 'auto' || s.overflowY === 'scroll') break
-      scroller = scroller.parentElement
-    }
+    const scroller = getScroller()
     if (!scroller) return
     const scrollerRect = scroller.getBoundingClientRect()
     const headerRect = headerEl.getBoundingClientRect()
-    scroller.scrollTop += headerRect.top - scrollerRect.top
+    const jumpBarHeight = jumpBarRef.current?.getBoundingClientRect().height ?? 0
+    const headerH = 56
+    scroller.scrollTop += headerRect.top - scrollerRect.top - headerH - jumpBarHeight
   }
 
   function toggleOpen(code: string) {
@@ -141,7 +138,7 @@ export function InventoryPage({ onBack }: Props) {
           <button key={l} className={`${styles.jumpBtn} ${activeGroup === l ? styles.jumpBtnActive : ''}`} onClick={() => scrollToGroup(l)}>{l}</button>
         ))}
       </div>
-      <div className={styles.content}>
+      <div className={styles.content} ref={contentRef}>
         {[...groups.entries()].map(([letter, items]) => (
           <div key={letter} className={styles.group}>
             <div
