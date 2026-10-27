@@ -119,7 +119,7 @@ export function PurchaseTab({ onStat }: Props) {
     const scrollerRect = scroller.getBoundingClientRect()
     const headerRect = headerEl.getBoundingClientRect()
     const jumpBarHeight = jumpBarRef.current?.getBoundingClientRect().height ?? 0
-    scroller.scrollTop += headerRect.top - scrollerRect.top - 56 - jumpBarHeight
+    scroller.scrollTop += headerRect.top - scrollerRect.top - jumpBarHeight
   }
 
   function renderRow(m: NeedItem, isBuy: boolean) {

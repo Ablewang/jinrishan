@@ -85,8 +85,7 @@ export function InventoryTab() {
     const scrollerRect = scroller.getBoundingClientRect()
     const headerRect = headerEl.getBoundingClientRect()
     const jumpBarHeight = jumpBarRef.current?.getBoundingClientRect().height ?? 0
-    const headerH = 56
-    scroller.scrollTop += headerRect.top - scrollerRect.top - headerH - jumpBarHeight
+    scroller.scrollTop += headerRect.top - scrollerRect.top - jumpBarHeight
   }
 
   function toggleOpen(code: string) {
