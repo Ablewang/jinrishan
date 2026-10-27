@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 23,
-  "color_count": 11,
+  "color_count": 10,
   "grid": [
     [
       null,
@@ -67,7 +67,7 @@
       null,
       null,
       null,
-      "B10",
+      "M2",
       "B7",
       "B11",
       null,
@@ -122,8 +122,8 @@
       null,
       null,
       null,
-      "H21",
-      "H7",
+      "B22",
+      "H6",
       null,
       null,
       null,
@@ -140,8 +140,8 @@
       null,
       null,
       null,
-      "H20",
-      "H7",
+      "B9",
+      "H6",
       null,
       null,
       null,
@@ -158,8 +158,8 @@
       null,
       null,
       null,
-      "H8",
-      "H21",
+      "M12",
+      "H6",
       null,
       null,
       null,
@@ -194,8 +194,8 @@
       null,
       null,
       null,
-      "H21",
-      "H7",
+      "B22",
+      "H6",
       null,
       null,
       null,
@@ -212,8 +212,8 @@
       null,
       null,
       null,
-      "H21",
-      "H7",
+      "B22",
+      "H6",
       null,
       null,
       null,
@@ -297,6 +297,17 @@
   ],
   "materials": [
     {
+      "code": "H6",
+      "name": "炭灰",
+      "rgb": [
+        47,
+        43,
+        47
+      ],
+      "count": 5,
+      "pct": 21.7
+    },
+    {
       "code": "B15",
       "name": "暗绿",
       "rgb": [
@@ -308,34 +319,23 @@
       "pct": 17.4
     },
     {
-      "code": "H21",
-      "name": "炭灰色",
-      "rgb": [
-        66,
-        66,
-        66
-      ],
-      "count": 4,
-      "pct": 17.4
-    },
-    {
-      "code": "H7",
-      "name": "纯黑色",
-      "rgb": [
-        33,
-        33,
-        33
-      ],
-      "count": 4,
-      "pct": 17.4
-    },
-    {
       "code": "B9",
       "name": "深森林绿",
       "rgb": [
         39,
         82,
         58
+      ],
+      "count": 4,
+      "pct": 17.4
+    },
+    {
+      "code": "B22",
+      "name": "暗青色",
+      "rgb": [
+        11,
+        60,
+        67
       ],
       "count": 3,
       "pct": 13.0
@@ -352,12 +352,12 @@
       "pct": 8.7
     },
     {
-      "code": "B10",
-      "name": "灰绿",
+      "code": "M2",
+      "name": "灰绿色",
       "rgb": [
-        149,
-        211,
-        194
+        138,
+        163,
+        134
       ],
       "count": 1,
       "pct": 4.3
@@ -386,7 +386,7 @@
     },
     {
       "code": "B25",
-      "name": "深灰绿",
+      "name": "灰蓝绿",
       "rgb": [
         78,
         132,
@@ -396,23 +396,12 @@
       "pct": 4.3
     },
     {
-      "code": "H20",
-      "name": "深冷灰",
+      "code": "M12",
+      "name": "深暗紫",
       "rgb": [
-        55,
+        100,
         71,
-        79
-      ],
-      "count": 1,
-      "pct": 4.3
-    },
-    {
-      "code": "H8",
-      "name": "深灰",
-      "rgb": [
-        97,
-        97,
-        97
+        73
       ],
       "count": 1,
       "pct": 4.3

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 124,
-  "color_count": 6,
+  "color_count": 7,
   "grid": [
     [
       null,
@@ -47,14 +47,14 @@
       null,
       null,
       "B26",
+      "G5",
+      "G5",
       "A20",
       "A20",
+      "G5",
+      "G5",
       "A20",
-      "A20",
-      "A20",
-      "A20",
-      "A20",
-      "A20",
+      "G5",
       "A20",
       null,
       null,
@@ -326,8 +326,8 @@
         213,
         104
       ],
-      "count": 23,
-      "pct": 18.5
+      "count": 18,
+      "pct": 14.5
     },
     {
       "code": "B32",
@@ -339,6 +339,17 @@
       ],
       "count": 17,
       "pct": 13.7
+    },
+    {
+      "code": "G5",
+      "name": "焦糖色",
+      "rgb": [
+        237,
+        176,
+        69
+      ],
+      "count": 5,
+      "pct": 4.0
     },
     {
       "code": "B17",

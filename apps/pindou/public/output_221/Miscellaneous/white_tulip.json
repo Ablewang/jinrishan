@@ -67,27 +67,9 @@
       null,
       null,
       null,
-      "H12",
+      "H1",
       null,
-      "H18",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "H12",
-      "H12",
-      "H18",
+      "H14",
       null,
       null,
       null,
@@ -103,9 +85,27 @@
       null,
       null,
       null,
-      "H17",
-      "H18",
-      "H17",
+      "H1",
+      "H1",
+      "H14",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "H15",
+      "H14",
+      "H15",
       null,
       null,
       null,
@@ -122,7 +122,7 @@
       null,
       null,
       null,
-      "H17",
+      "H15",
       null,
       null,
       "B8",
@@ -308,34 +308,34 @@
       "pct": 80.0
     },
     {
-      "code": "H12",
-      "name": "冷白",
+      "code": "H1",
+      "name": "暖白",
       "rgb": [
-        245,
-        245,
-        245
+        253,
+        251,
+        255
       ],
       "count": 3,
       "pct": 6.7
     },
     {
-      "code": "H18",
-      "name": "浅冷灰",
+      "code": "H14",
+      "name": "灰绿色",
       "rgb": [
         207,
-        216,
-        220
+        215,
+        211
       ],
       "count": 3,
       "pct": 6.7
     },
     {
-      "code": "H17",
-      "name": "冷灰",
+      "code": "H15",
+      "name": "蓝灰色",
       "rgb": [
-        144,
-        164,
-        174
+        152,
+        166,
+        168
       ],
       "count": 3,
       "pct": 6.7

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 91,
-  "color_count": 5,
+  "color_count": 6,
   "grid": [
     [
       null,
@@ -31,12 +31,48 @@
       null,
       null,
       null,
+      "G17",
       "G14",
-      "H16",
       "A8",
       "G5",
       "G5",
+      "B26",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
       "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "G5",
+      "B26",
       null,
       null,
       null,
@@ -198,43 +234,7 @@
       "G5",
       "G5",
       "G5",
-      "G5",
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G5",
-      "G5",
-      "G5",
-      "G5",
-      "G5",
-      "G5",
-      "G5",
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G5",
-      "G5",
-      "G5",
-      "G5",
-      "G5",
-      "G5",
-      "G5",
+      "B26",
       null,
       null,
       null,
@@ -264,9 +264,9 @@
       null,
       null,
       null,
-      "G5",
+      "B26",
       null,
-      "G21",
+      "B23",
       null,
       null,
       null,
@@ -298,33 +298,44 @@
   "materials": [
     {
       "code": "G5",
-      "name": "暗金棕",
+      "name": "焦糖色",
       "rgb": [
-        184,
-        134,
-        11
+        237,
+        176,
+        69
       ],
-      "count": 87,
-      "pct": 95.6
+      "count": 83,
+      "pct": 91.2
     },
     {
-      "code": "G14",
-      "name": "深红棕",
+      "code": "B26",
+      "name": "暗黄绿",
       "rgb": [
-        109,
-        76,
-        65
+        141,
+        122,
+        53
+      ],
+      "count": 4,
+      "pct": 4.4
+    },
+    {
+      "code": "G17",
+      "name": "深咖啡",
+      "rgb": [
+        120,
+        82,
+        75
       ],
       "count": 1,
       "pct": 1.1
     },
     {
-      "code": "H16",
-      "name": "深暖灰",
+      "code": "G14",
+      "name": "灰咖棕",
       "rgb": [
-        121,
-        85,
-        72
+        141,
+        97,
+        76
       ],
       "count": 1,
       "pct": 1.1
@@ -341,12 +352,12 @@
       "pct": 1.1
     },
     {
-      "code": "G21",
-      "name": "黑棕色",
+      "code": "B23",
+      "name": "暗橄榄",
       "rgb": [
-        62,
-        39,
-        35
+        48,
+        58,
+        33
       ],
       "count": 1,
       "pct": 1.1

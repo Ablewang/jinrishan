@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 14,
-  "color_count": 3,
+  "color_count": 4,
   "grid": [
     [
       null,
@@ -122,9 +122,27 @@
       null,
       null,
       null,
+      "G17",
+      "G17",
       "G14",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      "B23",
       "G14",
-      "G20",
+      "H16",
+      "B23",
       null,
       null,
       null,
@@ -139,10 +157,10 @@
       null,
       null,
       null,
-      "G21",
-      "G20",
-      "G21",
-      "G21",
+      "B23",
+      "H16",
+      "H16",
+      "B23",
       null,
       null,
       null,
@@ -157,27 +175,9 @@
       null,
       null,
       null,
-      "G21",
-      "G21",
-      "G21",
-      "G21",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "G21",
-      "G21",
-      "G21",
+      "B23",
+      "B23",
+      "H16",
       null,
       null,
       null,
@@ -297,34 +297,45 @@
   ],
   "materials": [
     {
-      "code": "G21",
-      "name": "黑棕色",
+      "code": "B23",
+      "name": "暗橄榄",
       "rgb": [
-        62,
-        39,
-        35
+        48,
+        58,
+        33
       ],
-      "count": 10,
-      "pct": 71.4
+      "count": 6,
+      "pct": 42.9
     },
     {
-      "code": "G14",
-      "name": "深红棕",
+      "code": "H16",
+      "name": "墨黑色",
       "rgb": [
-        109,
-        76,
-        65
+        29,
+        20,
+        20
+      ],
+      "count": 4,
+      "pct": 28.6
+    },
+    {
+      "code": "G17",
+      "name": "深咖啡",
+      "rgb": [
+        120,
+        82,
+        75
       ],
       "count": 2,
       "pct": 14.3
     },
     {
-      "code": "G20",
-      "name": "深古铜",
+      "code": "G14",
+      "name": "灰咖棕",
       "rgb": [
-        139,
-        90,
-        43
+        141,
+        97,
+        76
       ],
       "count": 2,
       "pct": 14.3

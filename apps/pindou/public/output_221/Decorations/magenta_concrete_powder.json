@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 176,
-  "color_count": 6,
+  "color_count": 7,
   "grid": [
     [
       null,
@@ -152,7 +152,7 @@
     ],
     [
       null,
-      "D7",
+      "M11",
       "D7",
       "D7",
       "D7",
@@ -315,8 +315,8 @@
         84,
         179
       ],
-      "count": 29,
-      "pct": 16.5
+      "count": 28,
+      "pct": 15.9
     },
     {
       "code": "D5",
@@ -361,6 +361,17 @@
       ],
       "count": 3,
       "pct": 1.7
+    },
+    {
+      "code": "M11",
+      "name": "紫灰色",
+      "rgb": [
+        159,
+        117,
+        148
+      ],
+      "count": 1,
+      "pct": 0.6
     }
   ]
 }

@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 14,
-  "color_count": 3,
+  "color_count": 4,
   "grid": [
     [
       null,
@@ -122,9 +122,9 @@
       null,
       null,
       null,
-      "F14",
-      "F14",
-      "F14",
+      "G8",
+      "F11",
+      "G8",
       null,
       null,
       null,
@@ -139,10 +139,10 @@
       null,
       null,
       null,
-      "G21",
-      "F10",
-      "G21",
-      "G21",
+      "F11",
+      "G7",
+      "H16",
+      "H16",
       null,
       null,
       null,
@@ -157,10 +157,10 @@
       null,
       null,
       null,
-      "G21",
-      "G21",
-      "G21",
-      "G21",
+      "F11",
+      "H16",
+      "H16",
+      "H16",
       null,
       null,
       null,
@@ -175,9 +175,9 @@
       null,
       null,
       null,
-      "G21",
-      "G21",
-      "G21",
+      "F11",
+      "H16",
+      "H16",
       null,
       null,
       null,
@@ -297,34 +297,45 @@
   ],
   "materials": [
     {
-      "code": "G21",
-      "name": "黑棕色",
+      "code": "H16",
+      "name": "墨黑色",
       "rgb": [
-        62,
-        39,
-        35
+        29,
+        20,
+        20
       ],
-      "count": 10,
-      "pct": 71.4
+      "count": 7,
+      "pct": 50.0
     },
     {
-      "code": "F14",
-      "name": "深棕红",
+      "code": "F11",
+      "name": "暗红棕",
       "rgb": [
-        122,
-        32,
-        32
+        90,
+        33,
+        33
       ],
-      "count": 3,
-      "pct": 21.4
+      "count": 4,
+      "pct": 28.6
     },
     {
-      "code": "F10",
-      "name": "红棕",
+      "code": "G8",
+      "name": "巧克力棕",
       "rgb": [
-        138,
-        69,
-        38
+        117,
+        56,
+        50
+      ],
+      "count": 2,
+      "pct": 14.3
+    },
+    {
+      "code": "G7",
+      "name": "深棕色",
+      "rgb": [
+        157,
+        91,
+        62
       ],
       "count": 1,
       "pct": 7.1

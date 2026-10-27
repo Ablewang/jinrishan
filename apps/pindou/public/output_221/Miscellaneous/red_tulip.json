@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 49,
-  "color_count": 5,
+  "color_count": 4,
   "grid": [
     [
       null,
@@ -67,9 +67,9 @@
       null,
       null,
       null,
-      "F23",
+      "F3",
       null,
-      "F23",
+      "F3",
       null,
       null,
       null,
@@ -85,7 +85,7 @@
       null,
       null,
       null,
-      "F23",
+      "F3",
       "F3",
       "F8",
       null,
@@ -104,8 +104,8 @@
       "B8",
       null,
       "F8",
-      "F23",
-      "F11",
+      "F3",
+      "G20",
       null,
       null,
       null,
@@ -122,7 +122,7 @@
       "B8",
       "B8",
       null,
-      "F11",
+      "G20",
       null,
       null,
       null,
@@ -308,15 +308,15 @@
       "pct": 81.6
     },
     {
-      "code": "F23",
-      "name": "亮砖红",
+      "code": "F3",
+      "name": "鲜红色",
       "rgb": [
-        229,
-        57,
-        53
+        247,
+        73,
+        65
       ],
-      "count": 4,
-      "pct": 8.2
+      "count": 5,
+      "pct": 10.2
     },
     {
       "code": "F8",
@@ -330,26 +330,15 @@
       "pct": 4.1
     },
     {
-      "code": "F11",
-      "name": "暗砖红",
+      "code": "G20",
+      "name": "红棕色",
       "rgb": [
-        168,
-        60,
-        50
+        169,
+        64,
+        35
       ],
       "count": 2,
       "pct": 4.1
-    },
-    {
-      "code": "F3",
-      "name": "鲜红色",
-      "rgb": [
-        247,
-        73,
-        65
-      ],
-      "count": 1,
-      "pct": 2.0
     }
   ]
 }

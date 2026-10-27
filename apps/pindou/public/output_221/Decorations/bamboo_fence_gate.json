@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 75,
-  "color_count": 6,
+  "color_count": 7,
   "grid": [
     [
       null,
@@ -54,7 +54,7 @@
       null,
       null,
       "A25",
-      "A20",
+      "G5",
       "B23",
       null,
       null,
@@ -86,7 +86,7 @@
       null,
       null,
       "B17",
-      "A20",
+      "G5",
       "B23",
       "B23",
       "B23",
@@ -341,17 +341,6 @@
       "pct": 4.0
     },
     {
-      "code": "A20",
-      "name": "金杏黄",
-      "rgb": [
-        255,
-        213,
-        104
-      ],
-      "count": 3,
-      "pct": 4.0
-    },
-    {
       "code": "A25",
       "name": "杏仁黄",
       "rgb": [
@@ -361,6 +350,28 @@
       ],
       "count": 2,
       "pct": 2.7
+    },
+    {
+      "code": "G5",
+      "name": "焦糖色",
+      "rgb": [
+        237,
+        176,
+        69
+      ],
+      "count": 2,
+      "pct": 2.7
+    },
+    {
+      "code": "A20",
+      "name": "金杏黄",
+      "rgb": [
+        255,
+        213,
+        104
+      ],
+      "count": 1,
+      "pct": 1.3
     }
   ]
 }

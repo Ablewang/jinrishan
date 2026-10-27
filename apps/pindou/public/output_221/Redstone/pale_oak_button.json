@@ -4,7 +4,7 @@
   "grid_size": 16,
   "board_size": 20,
   "total_beads": 14,
-  "color_count": 7,
+  "color_count": 6,
   "grid": [
     [
       null,
@@ -122,27 +122,27 @@
       null,
       null,
       null,
-      "H14",
-      "M13",
+      "E20",
+      "M10",
+      "H10",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       "H4",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      "H23",
       "H2",
-      "H8",
-      "H8",
+      "H5",
+      "H5",
       null,
       null,
       null,
@@ -157,10 +157,10 @@
       null,
       null,
       null,
-      "H23",
-      "H8",
-      "H8",
-      "H8",
+      "H4",
+      "H5",
+      "H5",
+      "H5",
       null,
       null,
       null,
@@ -175,9 +175,9 @@
       null,
       null,
       null,
-      "H23",
-      "H8",
-      "H21",
+      "H4",
+      "H5",
+      "H5",
       null,
       null,
       null,
@@ -297,78 +297,67 @@
   ],
   "materials": [
     {
-      "code": "H8",
+      "code": "H5",
       "name": "深灰",
       "rgb": [
-        97,
-        97,
-        97
+        72,
+        70,
+        78
       ],
-      "count": 6,
-      "pct": 42.9
+      "count": 7,
+      "pct": 50.0
     },
     {
-      "code": "H23",
-      "name": "烟灰色",
+      "code": "H4",
+      "name": "中灰",
       "rgb": [
-        117,
-        117,
-        117
+        137,
+        133,
+        140
       ],
       "count": 3,
       "pct": 21.4
     },
     {
-      "code": "H14",
-      "name": "浅暖灰",
+      "code": "E20",
+      "name": "灰紫粉",
       "rgb": [
-        215,
-        204,
-        200
+        216,
+        199,
+        209
       ],
       "count": 1,
       "pct": 7.1
     },
     {
-      "code": "M13",
-      "name": "莫兰中棕",
+      "code": "M10",
+      "name": "灰紫色",
       "rgb": [
-        188,
-        170,
-        164
+        197,
+        178,
+        188
       ],
       "count": 1,
       "pct": 7.1
     },
     {
-      "code": "H4",
-      "name": "极浅灰",
+      "code": "H10",
+      "name": "珍珠灰",
       "rgb": [
-        232,
-        232,
-        232
+        238,
+        233,
+        234
       ],
       "count": 1,
       "pct": 7.1
     },
     {
       "code": "H2",
-      "name": "纯白色",
+      "name": "纯白",
       "rgb": [
-        250,
-        250,
-        250
-      ],
-      "count": 1,
-      "pct": 7.1
-    },
-    {
-      "code": "H21",
-      "name": "炭灰色",
-      "rgb": [
-        66,
-        66,
-        66
+        254,
+        255,
+        255
       ],
       "count": 1,
       "pct": 7.1
