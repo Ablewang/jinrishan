@@ -52,7 +52,7 @@ export function BackupTab() {
     <div className={styles.page}>
       <div className={styles.section}>
         <div className={styles.sectionTitle}>导出数据</div>
-        <div className={styles.desc}>将收藏、库存、已拼数据导出为 JSON 文件，可用于备份或迁移到其他设备。</div>
+        <div className={styles.desc}>将收藏、拼豆库、已拼数据导出为 JSON 文件，可用于备份或迁移到其他设备。</div>
         <button className={styles.btn} onClick={exportData}>导出备份文件</button>
       </div>
       <div className={styles.section}>

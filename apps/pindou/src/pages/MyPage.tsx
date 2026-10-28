@@ -13,7 +13,7 @@ type Tab = 'wishlist' | 'inventory' | 'purchase' | 'backup'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'wishlist', label: '收藏' },
-  { id: 'inventory', label: '库存' },
+  { id: 'inventory', label: '拼豆库' },
   { id: 'purchase', label: '购买清单' },
   { id: 'backup', label: '数据备份' },
 ]
