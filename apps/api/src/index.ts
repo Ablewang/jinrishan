@@ -1,6 +1,8 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import auth from './routes/auth'
+import appAuth from './routes/appAuth'
+import store from './routes/store'
 import enums from './routes/enums'
 import recipes from './routes/recipes'
 import families from './routes/families'
@@ -20,6 +22,8 @@ const app = new Hono<AppContext>()
 app.use('/api/*', cors())
 
 app.route('/api/auth', auth)
+app.route('/api/app/auth', appAuth)
+app.route('/api/store', store)
 app.route('/api/enums', enums)
 app.route('/api/recipes', recipes)
 app.route('/api/families', families)
