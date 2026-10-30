@@ -224,6 +224,19 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@24.11.2)(lightningcss@1.33.0)(terser@5.51.2)
 
+  packages/auth-context:
+    dependencies:
+      react:
+        specifier: '>=18.0.0'
+        version: 19.2.8
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.18
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+
 packages:
 
   '@ant-design/colors@7.2.1':
