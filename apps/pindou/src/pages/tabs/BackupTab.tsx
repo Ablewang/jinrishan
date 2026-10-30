@@ -1,67 +1,70 @@
-import { useStore } from '../../hooks/useStore'
+import { useState } from 'react'
+import { useAuth } from '@jinrishan/auth-context'
 import styles from './BackupTab.module.css'
 
 export function BackupTab() {
-  const { wishlist, inventory, done } = useStore()
+  const { user, logout, updateName } = useAuth()
+  const [editing, setEditing] = useState(false)
+  const [name, setName] = useState(user?.name ?? '')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
-  function exportData() {
-    const data = {
-      w: wishlist.items.map(i => [i.cat, i.name, i.display_name]),
-      i: Object.fromEntries(
-        Object.entries(inventory.inventory).filter(([, v]) => v > 0)
-      ),
-      d: done.items.map(i => [i.cat, i.name, i.display_name, i.doneAt]),
+  async function handleSave() {
+    if (!name.trim()) return
+    setSaving(true)
+    setError('')
+    try {
+      await updateName(name.trim())
+      setEditing(false)
+    } catch {
+      setError('保存失败，请重试')
+    } finally {
+      setSaving(false)
     }
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `pindou-backup-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
   }
 
-  function importData(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target?.result as string)
-        if (data.w) wishlist.addAll(data.w.map(([cat, name, display_name]: [string, string, string]) => ({ cat, name, display_name })))
-        if (data.i) {
-          for (const [code, count] of Object.entries(data.i)) {
-            inventory.set(code, count as number)
-          }
-        }
-        if (data.d) {
-          for (const [cat, name, display_name] of data.d) {
-            done.mark({ cat, name, display_name })
-          }
-        }
-        alert('导入成功')
-      } catch {
-        alert('文件格式错误')
-      }
-    }
-    reader.readAsText(file)
-    e.target.value = ''
+  function handleCancel() {
+    setName(user?.name ?? '')
+    setEditing(false)
+    setError('')
   }
 
   return (
     <div className={styles.page}>
       <div className={styles.section}>
-        <div className={styles.sectionTitle}>导出数据</div>
-        <div className={styles.desc}>将收藏、拼豆库、已拼数据导出为 JSON 文件，可用于备份或迁移到其他设备。</div>
-        <button className={styles.btn} onClick={exportData}>导出备份文件</button>
+        <div className={styles.sectionTitle}>账号信息</div>
+        <div className={styles.row}>
+          <span className={styles.label}>手机号</span>
+          <span className={styles.value}>{user?.phone}</span>
+        </div>
+        <div className={styles.row}>
+          <span className={styles.label}>昵称</span>
+          {editing ? (
+            <div className={styles.editRow}>
+              <input
+                className={styles.input}
+                value={name}
+                onChange={e => setName(e.target.value)}
+                maxLength={20}
+                autoFocus
+              />
+              <button className={styles.saveBtn} onClick={handleSave} disabled={saving}>
+                {saving ? '保存…' : '保存'}
+              </button>
+              <button className={styles.cancelBtn} onClick={handleCancel} disabled={saving}>取消</button>
+            </div>
+          ) : (
+            <div className={styles.editRow}>
+              <span className={styles.value}>{user?.name}</span>
+              <button className={styles.editBtn} onClick={() => { setName(user?.name ?? ''); setEditing(true) }}>编辑</button>
+            </div>
+          )}
+        </div>
+        {error && <div className={styles.error}>{error}</div>}
       </div>
+
       <div className={styles.section}>
-        <div className={styles.sectionTitle}>导入数据</div>
-        <div className={styles.desc}>从之前导出的 JSON 文件中恢复数据，已有数据会被合并。</div>
-        <label className={styles.btn}>
-          选择备份文件
-          <input type="file" accept=".json" style={{ display: 'none' }} onChange={importData} />
-        </label>
+        <button className={styles.logoutBtn} onClick={logout}>退出登录</button>
       </div>
     </div>
   )
