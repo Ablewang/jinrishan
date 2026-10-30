@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "db:migrate:local": "wrangler d1 migrations apply DB --local",
-    "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
+    "db:migrate:local": "wrangler d1 migrations apply jinrishan --local",
+    "db:migrate:remote": "wrangler d1 migrations apply jinrishan --remote"
   },
   "dependencies": {
     "hono": "^4.7.10"
