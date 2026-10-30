@@ -15,7 +15,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'wishlist', label: '收藏' },
   { id: 'inventory', label: '拼豆库' },
   { id: 'purchase', label: '购买清单' },
-  { id: 'backup', label: '数据备份' },
+  { id: 'backup', label: '我的账号' },
 ]
 
 interface Props {
