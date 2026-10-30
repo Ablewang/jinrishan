@@ -15,6 +15,9 @@ import bot from './routes/bot'
 import admin from './routes/admin'
 import upload from './routes/upload'
 import logs from './routes/logs'
+import pindouWishlist from './routes/pindouWishlist'
+import pindouDone from './routes/pindouDone'
+import pindouInventory from './routes/pindouInventory'
 import type { AppContext } from './types'
 
 const app = new Hono<AppContext>()
@@ -36,6 +39,9 @@ app.route('/api/upload', upload)
 app.route('/api/logs', logs)
 app.route('/api/bot', bot)
 app.route('/api/admin', admin)
+app.route('/api/pindou/wishlist', pindouWishlist)
+app.route('/api/pindou/done', pindouDone)
+app.route('/api/pindou/inventory', pindouInventory)
 
 app.get('/health', (c) => c.json({ ok: true }))
 
