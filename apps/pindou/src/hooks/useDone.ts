@@ -37,7 +37,7 @@ export function useDone(token: string | null) {
     setItems(prev => {
       if (prev.some(i => i.cat === item.cat && i.name === item.name)) return prev
       const next = [...prev, { ...item, doneAt }]
-      saveLocal(next)
+      if (!token) saveLocal(next)
       return next
     })
     if (token) doneApi.mark(token, { ...item, done_at: doneAt }).catch(() => {})
@@ -46,7 +46,7 @@ export function useDone(token: string | null) {
   const unmark = useCallback((cat: string, name: string) => {
     setItems(prev => {
       const next = prev.filter(i => !(i.cat === cat && i.name === name))
-      saveLocal(next)
+      if (!token) saveLocal(next)
       return next
     })
     if (token) doneApi.unmark(token, cat, name).catch(() => {})
@@ -59,7 +59,7 @@ export function useDone(token: string | null) {
       const next = exists
         ? prev.filter(i => !(i.cat === item.cat && i.name === item.name))
         : [...prev, { ...item, doneAt }]
-      saveLocal(next)
+      if (!token) saveLocal(next)
       if (token) {
         if (exists) doneApi.unmark(token, item.cat, item.name).catch(() => {})
         else doneApi.mark(token, { ...item, done_at: doneAt }).catch(() => {})

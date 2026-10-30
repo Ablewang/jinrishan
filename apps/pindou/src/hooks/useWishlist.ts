@@ -33,7 +33,7 @@ export function useWishlist(token: string | null) {
     setItems(prev => {
       if (prev.some(i => i.cat === item.cat && i.name === item.name)) return prev
       const next = [...prev, item]
-      saveLocal(next)
+      if (!token) saveLocal(next)
       return next
     })
     if (token) wishlistApi.add(token, item).catch(() => {})
@@ -42,7 +42,7 @@ export function useWishlist(token: string | null) {
   const remove = useCallback((cat: string, name: string) => {
     setItems(prev => {
       const next = prev.filter(i => !(i.cat === cat && i.name === name))
-      saveLocal(next)
+      if (!token) saveLocal(next)
       return next
     })
     if (token) wishlistApi.remove(token, cat, name).catch(() => {})
@@ -54,7 +54,7 @@ export function useWishlist(token: string | null) {
       const toAdd = newItems.filter(i => !existing.has(`${i.cat}/${i.name}`))
       if (toAdd.length === 0) return prev
       const next = [...prev, ...toAdd]
-      saveLocal(next)
+      if (!token) saveLocal(next)
       if (token) wishlistApi.addBatch(token, toAdd).catch(() => {})
       return next
     })
@@ -63,7 +63,7 @@ export function useWishlist(token: string | null) {
   const removeAll = useCallback((cat: string) => {
     setItems(prev => {
       const next = prev.filter(i => i.cat !== cat)
-      saveLocal(next)
+      if (!token) saveLocal(next)
       return next
     })
     if (token) wishlistApi.removeCat(token, cat).catch(() => {})

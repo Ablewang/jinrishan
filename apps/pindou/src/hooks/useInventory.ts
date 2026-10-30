@@ -31,7 +31,7 @@ export function useInventory(palette: Palette, token: string | null) {
       const next = { ...prev }
       if (count <= 0) delete next[code]
       else next[code] = count
-      saveLocal(palette, next)
+      if (!token) saveLocal(palette, next)
       return next
     })
     if (token) inventoryApi.set(token, palette, code, count).catch(() => {})
