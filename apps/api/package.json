@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "wrangler dev",
-    "publish": "wrangler deploy",
+    "ship": "wrangler deploy",
     "db:migrate:local": "wrangler d1 migrations apply jinrishan --local",
     "db:migrate:remote": "wrangler d1 migrations apply jinrishan --remote"
   },
