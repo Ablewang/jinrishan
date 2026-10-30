@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { wishlistApi } from '../api/pindou'
 
 export interface WishItem {
   cat: string
@@ -8,7 +9,7 @@ export interface WishItem {
 
 const STORAGE_KEY = 'pindou_wishlist'
 
-function load(): WishItem[] {
+function loadLocal(): WishItem[] {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
   } catch {
@@ -16,29 +17,36 @@ function load(): WishItem[] {
   }
 }
 
-function save(items: WishItem[]) {
+function saveLocal(items: WishItem[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
 }
 
-export function useWishlist() {
-  const [items, setItems] = useState<WishItem[]>(load)
+export function useWishlist(token: string | null) {
+  const [items, setItems] = useState<WishItem[]>(loadLocal)
+
+  useEffect(() => {
+    if (!token) return
+    wishlistApi.getAll(token).then(res => setItems(res.data)).catch(() => {})
+  }, [token])
 
   const add = useCallback((item: WishItem) => {
     setItems(prev => {
       if (prev.some(i => i.cat === item.cat && i.name === item.name)) return prev
       const next = [...prev, item]
-      save(next)
+      saveLocal(next)
       return next
     })
-  }, [])
+    if (token) wishlistApi.add(token, item).catch(() => {})
+  }, [token])
 
   const remove = useCallback((cat: string, name: string) => {
     setItems(prev => {
       const next = prev.filter(i => !(i.cat === cat && i.name === name))
-      save(next)
+      saveLocal(next)
       return next
     })
-  }, [])
+    if (token) wishlistApi.remove(token, cat, name).catch(() => {})
+  }, [token])
 
   const addAll = useCallback((newItems: WishItem[]) => {
     setItems(prev => {
@@ -46,18 +54,20 @@ export function useWishlist() {
       const toAdd = newItems.filter(i => !existing.has(`${i.cat}/${i.name}`))
       if (toAdd.length === 0) return prev
       const next = [...prev, ...toAdd]
-      save(next)
+      saveLocal(next)
+      if (token) wishlistApi.addBatch(token, toAdd).catch(() => {})
       return next
     })
-  }, [])
+  }, [token])
 
   const removeAll = useCallback((cat: string) => {
     setItems(prev => {
       const next = prev.filter(i => i.cat !== cat)
-      save(next)
+      saveLocal(next)
       return next
     })
-  }, [])
+    if (token) wishlistApi.removeCat(token, cat).catch(() => {})
+  }, [token])
 
   const has = useCallback((cat: string, name: string) => {
     return items.some(i => i.cat === cat && i.name === name)

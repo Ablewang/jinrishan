@@ -102,13 +102,13 @@ function AppInner() {
 export default function App() {
   return (
     <PaletteProvider>
-      <StoreProvider>
-        <DataProvider>
-          <AuthProvider>
+      <AuthProvider>
+        <StoreProvider>
+          <DataProvider>
             <AppInner />
-          </AuthProvider>
-        </DataProvider>
-      </StoreProvider>
+          </DataProvider>
+        </StoreProvider>
+      </AuthProvider>
     </PaletteProvider>
   )
 }

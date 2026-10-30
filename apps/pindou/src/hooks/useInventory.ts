@@ -1,11 +1,12 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { Palette } from './usePalette'
+import { inventoryApi } from '../api/pindou'
 
 function storageKey(palette: Palette) {
   return `pindou_inventory_${palette}`
 }
 
-function load(palette: Palette): Record<string, number> {
+function loadLocal(palette: Palette): Record<string, number> {
   try {
     return JSON.parse(localStorage.getItem(storageKey(palette)) ?? '{}')
   } catch {
@@ -13,22 +14,28 @@ function load(palette: Palette): Record<string, number> {
   }
 }
 
-function save(palette: Palette, data: Record<string, number>) {
+function saveLocal(palette: Palette, data: Record<string, number>) {
   localStorage.setItem(storageKey(palette), JSON.stringify(data))
 }
 
-export function useInventory(palette: Palette) {
-  const [inventory, setInventory] = useState<Record<string, number>>(() => load(palette))
+export function useInventory(palette: Palette, token: string | null) {
+  const [inventory, setInventory] = useState<Record<string, number>>(() => loadLocal(palette))
+
+  useEffect(() => {
+    if (!token) return
+    inventoryApi.getAll(token, palette).then(res => setInventory(res.data)).catch(() => {})
+  }, [token, palette])
 
   const set = useCallback((code: string, count: number) => {
     setInventory(prev => {
       const next = { ...prev }
       if (count <= 0) delete next[code]
       else next[code] = count
-      save(palette, next)
+      saveLocal(palette, next)
       return next
     })
-  }, [palette])
+    if (token) inventoryApi.set(token, palette, code, count).catch(() => {})
+  }, [palette, token])
 
   const get = useCallback((code: string) => inventory[code] ?? 0, [inventory])
 
