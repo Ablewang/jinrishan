@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { AppContext } from '../types'
 import { signToken } from '../lib/jwt'
+import { authMiddleware } from '../middleware/auth'
 
 const appAuth = new Hono<AppContext>()
 
@@ -85,6 +86,33 @@ appAuth.post('/login', async (c) => {
   const token = await signToken(user.id, c.env.JWT_SECRET)
   const { password: _, ...safeUser } = user
   return c.json({ data: { token, user: safeUser } })
+})
+
+// 获取当前用户信息
+appAuth.get('/me', authMiddleware, async (c) => {
+  const userId = c.get('userId')
+  const user = await c.env.DB.prepare(
+    'SELECT id, phone, name FROM app_users WHERE id = ?'
+  ).bind(userId).first<{ id: number; phone: string; name: string }>()
+  if (!user) return c.json({ error: '用户不存在' }, 404)
+  return c.json({ data: user })
+})
+
+// 修改用户名
+appAuth.put('/me', authMiddleware, async (c) => {
+  const userId = c.get('userId')
+  const { name } = await c.req.json<{ name?: string }>()
+  if (!name?.trim()) return c.json({ error: '用户名不能为空' }, 400)
+
+  await c.env.DB.prepare(
+    'UPDATE app_users SET name = ? WHERE id = ?'
+  ).bind(name.trim(), userId).run()
+
+  const user = await c.env.DB.prepare(
+    'SELECT id, phone, name FROM app_users WHERE id = ?'
+  ).bind(userId).first<{ id: number; phone: string; name: string }>()
+
+  return c.json({ data: user })
 })
 
 export default appAuth
