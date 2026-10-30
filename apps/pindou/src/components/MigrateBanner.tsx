@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { useAuth } from '@jinrishan/auth-context'
-import { storeApi } from '@jinrishan/auth-context'
+import { wishlistApi, doneApi, inventoryApi } from '../api/pindou'
+import type { WishItem } from '../api/pindou'
 import styles from './MigrateBanner.module.css'
-
-const APP = 'pindou'
 
 const KEYS_TO_MIGRATE = [
   'pindou_wishlist',
@@ -40,12 +39,49 @@ export function MigrateBanner() {
     setSyncing(true)
     setError('')
     try {
-      for (const key of KEYS_TO_MIGRATE) {
-        const raw = localStorage.getItem(key)
-        if (!raw) continue
-        await storeApi.set(token, APP, key, raw)
-        localStorage.removeItem(key)
+      // 收藏
+      const wishRaw = localStorage.getItem('pindou_wishlist')
+      if (wishRaw) {
+        const items = JSON.parse(wishRaw) as WishItem[]
+        if (items.length > 0) await wishlistApi.addBatch(token, items)
+        localStorage.removeItem('pindou_wishlist')
       }
+
+      // 已拼
+      const doneRaw = localStorage.getItem('pindou_done')
+      if (doneRaw) {
+        const items = JSON.parse(doneRaw) as { cat: string; name: string; display_name: string; doneAt: number }[]
+        for (const item of items) {
+          await doneApi.mark(token, {
+            cat: item.cat,
+            name: item.name,
+            display_name: item.display_name,
+            done_at: item.doneAt ?? Date.now(),
+          })
+        }
+        localStorage.removeItem('pindou_done')
+      }
+
+      // 库存 full
+      const invFullRaw = localStorage.getItem('pindou_inventory_full')
+      if (invFullRaw) {
+        const inv = JSON.parse(invFullRaw) as Record<string, number>
+        for (const [code, count] of Object.entries(inv)) {
+          if (count > 0) await inventoryApi.set(token, 'full', code, count)
+        }
+        localStorage.removeItem('pindou_inventory_full')
+      }
+
+      // 库存 221
+      const inv221Raw = localStorage.getItem('pindou_inventory_221')
+      if (inv221Raw) {
+        const inv = JSON.parse(inv221Raw) as Record<string, number>
+        for (const [code, count] of Object.entries(inv)) {
+          if (count > 0) await inventoryApi.set(token, '221', code, count)
+        }
+        localStorage.removeItem('pindou_inventory_221')
+      }
+
       setVisible(false)
     } catch {
       setError('同步失败，请重试')
