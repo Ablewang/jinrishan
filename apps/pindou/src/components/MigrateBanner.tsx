@@ -44,6 +44,7 @@ export function MigrateBanner() {
         const raw = localStorage.getItem(key)
         if (!raw) continue
         await storeApi.set(token, APP, key, raw)
+        localStorage.removeItem(key)
       }
       setVisible(false)
     } catch {
