@@ -115,4 +115,28 @@ appAuth.put('/me', authMiddleware, async (c) => {
   return c.json({ data: user })
 })
 
+// 管理员重置密码
+appAuth.post('/admin/reset-password', async (c) => {
+  const adminToken = c.req.header('Authorization')?.replace('Bearer ', '')
+  if (!adminToken || adminToken !== c.env.ADMIN_TOKEN) {
+    return c.json({ error: '无权限' }, 403)
+  }
+
+  const { phone, password } = await c.req.json<{ phone: string; password: string }>()
+  if (!phone) return c.json({ error: '手机号不能为空' }, 400)
+  if (!password || password.length < 6) return c.json({ error: '密码至少 6 位' }, 400)
+
+  const user = await c.env.DB.prepare(
+    'SELECT id FROM app_users WHERE phone = ?'
+  ).bind(phone).first<{ id: number }>()
+  if (!user) return c.json({ error: '用户不存在' }, 404)
+
+  const hash = await hashPassword(password)
+  await c.env.DB.prepare(
+    'UPDATE app_users SET password = ? WHERE phone = ?'
+  ).bind(hash, phone).run()
+
+  return c.json({ data: { ok: true } })
+})
+
 export default appAuth

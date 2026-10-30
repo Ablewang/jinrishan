@@ -1,6 +1,7 @@
 export type Bindings = {
   DB: D1Database
   JWT_SECRET: string
+  ADMIN_TOKEN: string
   ENV?: string
   CLOUDINARY_CLOUD_NAME: string
   CLOUDINARY_API_KEY: string

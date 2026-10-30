@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { AuthProvider, useAuth } from '@jinrishan/auth-context'
 import { DataProvider } from './hooks/useData'
 import { PaletteProvider } from './hooks/usePalette'
 import { StoreProvider } from './hooks/useStore'
@@ -11,6 +12,8 @@ import { DetailPage } from './pages/DetailPage'
 import { HomePage } from './pages/HomePage'
 import { SummaryPage } from './pages/SummaryPage'
 import { MyPage } from './pages/MyPage'
+import { AuthModal } from './components/AuthModal'
+import { MigrateBanner } from './components/MigrateBanner'
 import './index.css'
 
 export type NavTarget =
@@ -29,7 +32,8 @@ const DRAWER_STYLE: React.CSSProperties = {
   overflowX: 'hidden',
 }
 
-export default function App() {
+function AppInner() {
+  const { user, loading } = useAuth()
   const { stack, push, pop, canPop, onMount, onUnmount, drawerRefs } = useDrawerStack()
   const stackRef = useRef(stack)
   stackRef.current = stack
@@ -64,32 +68,46 @@ export default function App() {
       push(<DonePage onBack={doPop} onNavigate={nav} />)
   }
 
+  if (loading) return null
+
+  return (
+    <>
+      {!user && <AuthModal />}
+      {user && <MigrateBanner />}
+      <div
+        style={{ ...DRAWER_STYLE, zIndex: 0 }}
+        ref={el => {
+          if (el) onMount(0, el)
+          else    onUnmount(0)
+        }}
+      >
+        <HomePage onNavigate={nav} />
+      </div>
+      {stack.map((entry, idx) => (
+        <div
+          key={entry.id}
+          style={{ ...DRAWER_STYLE, zIndex: idx + 1 }}
+          ref={el => {
+            if (el) onMount(entry.id, el)
+            else    onUnmount(entry.id)
+          }}
+        >
+          {entry.content}
+        </div>
+      ))}
+    </>
+  )
+}
+
+export default function App() {
   return (
     <PaletteProvider>
       <StoreProvider>
         <DataProvider>
-        <div
-          style={{ ...DRAWER_STYLE, zIndex: 0 }}
-          ref={el => {
-            if (el) onMount(0, el)
-            else    onUnmount(0)
-          }}
-        >
-          <HomePage onNavigate={nav} />
-        </div>
-        {stack.map((entry, idx) => (
-          <div
-            key={entry.id}
-            style={{ ...DRAWER_STYLE, zIndex: idx + 1 }}
-            ref={el => {
-              if (el) onMount(entry.id, el)
-              else    onUnmount(entry.id)
-            }}
-          >
-            {entry.content}
-          </div>
-        ))}
-      </DataProvider>
+          <AuthProvider>
+            <AppInner />
+          </AuthProvider>
+        </DataProvider>
       </StoreProvider>
     </PaletteProvider>
   )
