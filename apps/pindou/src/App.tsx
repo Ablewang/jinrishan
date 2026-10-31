@@ -33,7 +33,7 @@ const DRAWER_STYLE: React.CSSProperties = {
 }
 
 function AppInner() {
-  const { user, loading } = useAuth()
+  const { user, token, loading } = useAuth()
   const { stack, push, pop, canPop, onMount, onUnmount, drawerRefs } = useDrawerStack()
   const stackRef = useRef(stack)
   stackRef.current = stack
@@ -72,7 +72,7 @@ function AppInner() {
 
   return (
     <>
-      {!user && <AuthModal />}
+      {!token && <AuthModal />}
       {user && <MigrateBanner />}
       <div
         style={{ ...DRAWER_STYLE, zIndex: 0 }}

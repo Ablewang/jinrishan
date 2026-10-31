@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import type { ItemDetail } from '../types'
+import styles from './BeadCanvas.module.css'
 
 const PAD  = 4
 const NUMW = 20
@@ -17,9 +18,10 @@ interface Props {
   onCellClick: (code: string | null) => void
   showOriginal?: boolean
   originalSrc?: string
+  fullSize?: boolean
 }
 
-export function BeadCanvas({ item, activeCode, onCellClick, showOriginal, originalSrc }: Props) {
+export function BeadCanvas({ item, activeCode, onCellClick, showOriginal, originalSrc, fullSize }: Props) {
   const sectionRef = useRef<HTMLDivElement>(null)
   const canvasRef  = useRef<HTMLCanvasElement>(null)
   const csRef      = useRef(16)
@@ -153,7 +155,9 @@ export function BeadCanvas({ item, activeCode, onCellClick, showOriginal, origin
     const canvas  = canvasRef.current
     if (!section || !canvas) return
     const ctx = canvas.getContext('2d')!
-    const availW = section.clientWidth - PAD * 2
+    const availW = fullSize
+      ? Math.min(window.innerWidth, window.innerHeight) - PAD * 2
+      : section.clientWidth - PAD * 2
     const cs = Math.max(10, Math.floor((availW - NUMW - GAP) / board_size))
     csRef.current = cs
     const W = PAD + NUMW + GAP + board_size * cs + PAD
@@ -164,7 +168,7 @@ export function BeadCanvas({ item, activeCode, onCellClick, showOriginal, origin
     ctx.scale(dpr.current, dpr.current)
     if (showOriginal) drawOriginal(cs)
     else drawBead(cs, activeCode)
-  }, [board_size, showOriginal, drawOriginal, drawBead, activeCode])
+  }, [board_size, fullSize, showOriginal, drawOriginal, drawBead, activeCode])
 
   // load original image when src changes
   useEffect(() => {
@@ -209,7 +213,7 @@ export function BeadCanvas({ item, activeCode, onCellClick, showOriginal, origin
   }
 
   return (
-    <div ref={sectionRef} style={{ paddingBottom: 12, background: 'var(--bg2)', borderBottom: '1px solid var(--br)' }}>
+    <div ref={sectionRef} className={fullSize ? styles.sectionFull : styles.section}>
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} onClick={handleClick} />
     </div>
   )

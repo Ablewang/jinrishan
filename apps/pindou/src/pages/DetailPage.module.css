@@ -93,3 +93,139 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* 放大浮层 */
+.zoomOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoomCanvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoomClose {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.matFab {
+  display: none;
+}
+
+.matDrawer {
+  display: none;
+}
+
+.matOverlay {
+  display: none;
+}
+
+@media (orientation: landscape) {
+  /* 横屏时隐藏内嵌材料列表 */
+  .matSection {
+    display: none;
+  }
+
+  /* 浮动按钮 */
+  .matFab {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+
+  /* 右侧抽屉 */
+  .matDrawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 320px;
+    max-width: 80vw;
+    background: var(--bg);
+    z-index: 200;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  }
+
+  .matDrawerOpen {
+    transform: translateX(0);
+  }
+
+  .matDrawerHeader {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    border-bottom: 1px solid var(--br);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .matDrawerHeader span:first-child {
+    flex-shrink: 0;
+  }
+
+  .matDrawerHeader .matSummary {
+    flex: 1;
+  }
+
+  .matDrawerClose {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--text2);
+    padding: 0 4px;
+    cursor: pointer;
+  }
+
+  .matDrawerScroll {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 遮罩 */
+  .matOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 199;
+  }
+}

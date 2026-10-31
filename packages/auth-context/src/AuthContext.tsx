@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
-import { authApi } from './api'
+import { authApi, AuthApiError } from './api'
 import type { AppUser } from './api'
 
 const TOKEN_KEY = 'app_auth_token'
@@ -28,7 +28,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     authApi.getMe(saved)
       .then(res => { setToken(saved); setUser(res.data) })
-      .catch(() => localStorage.removeItem(TOKEN_KEY))
+      .catch(err => {
+        if (err instanceof AuthApiError && err.status === 401) {
+          localStorage.removeItem(TOKEN_KEY)
+        } else {
+          // 网络错误等暂时性问题，保留 token，下次打开再试
+          setToken(saved)
+        }
+      })
       .finally(() => setLoading(false))
   }, [])
 

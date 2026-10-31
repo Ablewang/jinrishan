@@ -23,3 +23,14 @@
 .countNeed  { color: #e05c3a; }
 .stockPartial { color: #e09a3a; }
 .stockNone   { color: var(--text3); }
+
+@media (orientation: landscape) {
+  .row {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .name  { font-size: 12px; }
+  .count { font-size: 13px; min-width: 28px; }
+  .pct   { min-width: 36px; }
+  .swatch { width: 18px; height: 18px; }
+}

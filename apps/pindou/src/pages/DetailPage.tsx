@@ -23,7 +23,10 @@ export function DetailPage({ cat, name, onBack }: Props) {
   const [error, setError]         = useState(false)
   const [activeCode, setActive]   = useState<string | null>(null)
   const [showOriginal, setShowOg] = useState(false)
+  const [matOpen, setMatOpen]     = useState(false)
+  const [zoomed, setZoomed]       = useState(false)
   const matListRef = useRef<HTMLDivElement>(null)
+  const matDrawerScrollRef = useRef<HTMLDivElement>(null)
   const { palette } = usePalette()
   const { wishlist, inventory, done } = useStore()
   const inWish = item ? wishlist.has(cat, name) : false
@@ -52,12 +55,15 @@ export function DetailPage({ cat, name, onBack }: Props) {
 
   const handleMatSelect = useCallback((code: string | null) => {
     setActive(code)
-    if (code && matListRef.current) {
-      const row = matListRef.current.querySelector<HTMLElement>(`[data-code="${code}"]`)
-      if (row) {
-        const listRect = matListRef.current.getBoundingClientRect()
-        const rowRect  = row.getBoundingClientRect()
-        matListRef.current.scrollTop += rowRect.top - listRect.top - matListRef.current.clientHeight / 2 + row.clientHeight / 2
+    if (code) {
+      for (const ref of [matListRef, matDrawerScrollRef]) {
+        if (!ref.current) continue
+        const row = ref.current.querySelector<HTMLElement>(`[data-code="${code}"]`)
+        if (row) {
+          const listRect = ref.current.getBoundingClientRect()
+          const rowRect  = row.getBoundingClientRect()
+          ref.current.scrollTop += rowRect.top - listRect.top - ref.current.clientHeight / 2 + row.clientHeight / 2
+        }
       }
     }
   }, [])
@@ -102,7 +108,7 @@ export function DetailPage({ cat, name, onBack }: Props) {
     <div className={styles.page}>
       <Header
         left={<BackTitle title={item.display_name} onBack={onBack} />}
-        right={<div style={{ display: 'flex', gap: 8 }}>{doneBtn}{wishBtn}{toggleBtn}</div>}
+        right={<div style={{ display: 'flex', gap: 8 }}>{doneBtn}{wishBtn}{toggleBtn}<button className={styles.viewBtn} onClick={() => setZoomed(true)}>放大</button></div>}
       />
       <div className={styles.body}>
         <BeadCanvas
@@ -128,6 +134,47 @@ export function DetailPage({ cat, name, onBack }: Props) {
           </div>
         </div>
       </div>
+
+      {/* 横屏浮动按钮 */}
+      <button className={styles.matFab} onClick={() => setMatOpen(v => !v)}>
+        材料清单
+      </button>
+
+      {/* 横屏抽屉 */}
+      <div className={`${styles.matDrawer} ${matOpen ? styles.matDrawerOpen : ''}`}>
+        <div className={styles.matDrawerHeader}>
+          <span>材料清单</span>
+          <span className={styles.matSummary}>{item.board_size}×{item.board_size} · {item.color_count} 色 · {fmt(item.total_beads)} 颗</span>
+          <button className={styles.matDrawerClose} onClick={() => setMatOpen(false)}>✕</button>
+        </div>
+        <div className={styles.matDrawerScroll} ref={matDrawerScrollRef}>
+          <MaterialList
+            materials={sortedMats}
+            activeCode={activeCode}
+            onSelect={code => { handleMatSelect(code); setMatOpen(false) }}
+            showPct
+            inventory={inventory.inventory}
+          />
+        </div>
+      </div>
+      {matOpen && <div className={styles.matOverlay} onClick={() => setMatOpen(false)} />}
+
+      {/* 放大浮层 */}
+      {zoomed && (
+        <div className={styles.zoomOverlay} onClick={() => setZoomed(false)}>
+          <div className={styles.zoomCanvas} onClick={e => e.stopPropagation()}>
+            <BeadCanvas
+              item={item}
+              activeCode={showOriginal ? null : activeCode}
+              onCellClick={showOriginal ? () => {} : handleMatSelect}
+              showOriginal={showOriginal}
+              originalSrc={`/gallery/${encodeURIComponent(cat)}/${name}.png`}
+              fullSize
+            />
+          </div>
+          <button className={styles.zoomClose} onClick={() => setZoomed(false)}>✕</button>
+        </div>
+      )}
     </div>
   )
 }
